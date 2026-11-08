@@ -221,7 +221,7 @@ def run(root,inventory_file,detection_config,output):
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--data-dir',type=Path,default=det.audit.REPO_DIR/'data/6_synthetic')
+    parser.add_argument('--data-dir',type=Path,default=det.audit.REPO_DIR/'data/5_synthetic')
     parser.add_argument('--inventory',type=Path,default=det.audit.REPO_DIR/'results/t4/step1_inventory.json')
     parser.add_argument('--detection-config',type=Path,default=det.audit.REPO_DIR/'results/t4/train_detection/config.json')
     parser.add_argument('--output-dir',type=Path,default=det.audit.REPO_DIR/'results/t4/train_val_restoration')

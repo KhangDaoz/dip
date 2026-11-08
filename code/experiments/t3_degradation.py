@@ -555,7 +555,7 @@ def parse_args(argv=None):
     modes.add_argument('--check-inputs-only', action='store_true')
     modes.add_argument('--train-sanity', action='store_true')
     modes.add_argument('--formal-test', action='store_true')
-    parser.add_argument('--data-dir', type=Path, default=REPO_DIR / 'data/6_synthetic')
+    parser.add_argument('--data-dir', type=Path, default=REPO_DIR / 'data/5_synthetic')
     parser.add_argument('--t1-dir', type=Path, default=REPO_DIR / 'results/t1_v2')
     parser.add_argument('--t2-dir', type=Path, default=REPO_DIR / 'results/t2_v2')
     parser.add_argument('--compatibility-evidence', type=Path, required=True)

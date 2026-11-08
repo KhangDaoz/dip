@@ -69,7 +69,7 @@ def run(root,output):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--data-dir',type=Path,default=pilot.det.audit.REPO_DIR/'data/6_synthetic')
+    parser.add_argument('--data-dir',type=Path,default=pilot.det.audit.REPO_DIR/'data/5_synthetic')
     parser.add_argument('--results-dir',type=Path,default=pilot.det.audit.REPO_DIR/'results/t4/train_val_restoration')
     args=parser.parse_args();run(args.data_dir,args.results_dir)
 

@@ -16,14 +16,14 @@ Phạm vi, thí nghiệm, độ đo và phân công **đã chốt** ở [docs/De
 | 3. Làm sạch & tách lớp mực | Trường | Khử bóng, tách mực HSV, inpainting, nhị phân hóa Sauvola | `code/src/cleaning/` |
 | 4A. Dựng bảng phiếu xét nghiệm | Khang | Gom dòng / cột bằng Projection + Dilation, cờ bất thường | `code/src/table_extraction/` |
 | 4B. Bóc tách đơn thuốc | Thắng | Tách từng khoản thuốc bằng Projection + Dilation | `code/src/prescription_segmentation/` |
-| Dùng chung | Khang · Thắng | Bộ OCR + CER/WER · bộ sinh benchmark tổng hợp (bộ 6) | `code/src/ocr/` · `code/src/synthetic/` |
+| Dùng chung | Khang · Thắng | Bộ OCR + CER/WER · bộ sinh benchmark tổng hợp (bộ 5) | `code/src/ocr/` · `code/src/synthetic/` |
 
 ## Cấu trúc repo
 
 ```
 .
 ├── code/          Mã nguồn pipeline: src/ (module từng người), tests/, experiments/, scripts/, examples/, samples/
-├── data/          Dữ liệu bộ 1–6 (KHÔNG commit, tải từ Drive nhóm); chỉ theo dõi README và nguồn/license
+├── data/          Dữ liệu bộ 1–5 (KHÔNG commit, tải từ Drive nhóm); chỉ theo dõi README và nguồn/license
 ├── docs/          Đề tài chi tiết (đã chốt), trang tra cứu lý thuyết theo chương
 │   └── references/  Tài liệu của thầy: requirements/ (quy định đồ án), lectures/ (bài giảng chương 1–8), practices/ (notebook thực hành)
 ├── report/        Báo cáo: dàn ý, hướng dẫn viết, khung LaTeX

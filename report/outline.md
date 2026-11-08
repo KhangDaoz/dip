@@ -5,10 +5,10 @@ Bối cảnh số hóa hồ sơ y tế giấy; khó khăn của ảnh chụp đi
 
 ## 2. Dữ liệu
 ### 2.1. Các bộ dữ liệu
-Bộ 1–5: nguồn, số ảnh gốc, loại nhãn, mục đích sử dụng.
+Bộ 1–4: nguồn, số ảnh gốc, loại nhãn, mục đích sử dụng.
 ### 2.2. Chia tập và chống rò rỉ
 Chia theo ảnh gốc, gom bản tăng cường của Roboflow; tham số chọn trên val, báo cáo trên test.
-### 2.3. Bộ 6 — benchmark tổng hợp
+### 2.3. Bộ 5 — benchmark tổng hợp
 Cách sinh từ ảnh sạch, các loại và mức hỏng, ground truth đi kèm, mức độ giống ảnh thật.
 
 ## 3. Phương pháp

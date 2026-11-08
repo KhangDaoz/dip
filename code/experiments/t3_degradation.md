@@ -26,7 +26,7 @@ Không dùng bộ ⑤, không thay dữ liệu gốc, không nối pipeline.
 
 ## 1. Dữ liệu đã kiểm tra thực tế
 
-- Root: `data/6_synthetic/`, manifest `manifest_v2.json`.
+- Root: `data/5_synthetic/`, manifest `manifest_v2.json`.
 - SHA-256 manifest hiện tại: `05dd1a8da9268610d5194e334d7173716865bc14ac6d2da333f9fdb8e4dcd8ad`.
 - 1.500 mẫu; 100 nguồn, 60 train / 10 val / 30 test. Các nguồn khác split
   của VAIPE ban đầu được dùng theo split chung trong manifest, không suy split từ tên ID.
@@ -156,7 +156,7 @@ phân biệt rõ bằng chứng lượt 1/sanity và kết quả chính thức. 
 
 clean_binary là Otsu tự sinh, chưa phải GT thủ công; F1 có thiên lệch thuận Otsu.
 Không suy ra CER/WER/OCR hay hiệu quả trên phiếu màu/chữ đỏ bộ ⑤. Đây là
-biến thể kiểm soát từ nguồn bộ ⑥, không phải benchmark toàn bộ 1.500 ảnh hỏng.
+biến thể kiểm soát từ nguồn bộ ⑤, không phải benchmark toàn bộ 1.500 ảnh hỏng.
 Nguồn test đã dùng T1/T2, không phải test độc lập mới. Các mức trên cùng nguồn
 phụ thuộc nhau. Đường cong dấu không chứng minh T4 hoặc T5 đã đạt.
 
@@ -194,7 +194,7 @@ code/.venv/Scripts/python.exe code/experiments/t3_degradation.py --train-sanity 
 
 Preflight chỉ hash/metadata, không decode ảnh và không tạo output. Cần ZIP bằng
 chứng T1 gốc được chia sẻ riêng và bốn file config/selection lịch sử. Không có
-cờ bỏ checksum. Pin manifest và cả hai danh sách checksum của phiên bản bộ 6
+cờ bỏ checksum. Pin manifest và cả hai danh sách checksum của phiên bản bộ 5
 hiện tại; đối chiếu toàn bộ 300 references và archive T1 để chứng minh code,
 runtime và 138 references lịch sử tương thích. Metric phải khớp hash T2.
 Các hash mới trong config dùng truy vết, không thay thế phép đối chiếu baseline.

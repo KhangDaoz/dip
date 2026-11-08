@@ -1,11 +1,11 @@
-"""Lấy bộ 4 — tài liệu "khác" (lớp `other`) từ RVL-CDIP. Phụ trách: Hiếu.
+"""Lấy bộ 3 — tài liệu "khác" (lớp `other`) từ RVL-CDIP. Phụ trách: Hiếu.
 
 Nguồn: HuggingFace `jordyvl/rvl_cdip_100_examples_per_class` (16 lớp × 100 ảnh, đã chia sẵn
 50 train / 25 validation / 25 test mỗi lớp, ~180 MB) — tập con của RVL-CDIP (Harley et al., 2015).
 License RVL-CDIP: chỉ dùng cho nghiên cứu (ảnh gốc thuộc IIT-CDIP / Legacy Tobacco Documents Library).
 
-Kết quả (cùng cấu trúc với bộ 1–3):
-    data/4_other_rvl_cdip/
+Kết quả (cùng cấu trúc với bộ 1–2):
+    data/3_other_rvl_cdip/
     ├── train/images/   valid/images/   test/images/   ← 8 lớp TRAIN_CLASSES, nhãn doc_type = other
     ├── openset/images/                                ← OPENSET_CLASSES, KHÔNG dùng khi train (KeHoach_Hieu.md mục 3.5)
     ├── labels.csv                                     ← file, split, rvl_class, doc_type
@@ -89,7 +89,7 @@ def write_readme(out_dir: Path, labels: pd.DataFrame) -> None:
         lines.append(f"| {cls} | " + " | ".join(str(v) for v in r.values) + " |")
     total = " | ".join(str(v) for v in table.sum().values)
     lines.append(f"| **Tổng** | {total} |")
-    (out_dir / "README.md").write_text(f"""# Bộ 4 — Tài liệu khác (RVL-CDIP)
+    (out_dir / "README.md").write_text(f"""# Bộ 3 — Tài liệu khác (RVL-CDIP)
 
 Lớp `other` cho phân loại 3 lớp (DIP D10). Sinh bằng `code/scripts/fetch_rvl_cdip.py`.
 
@@ -102,14 +102,14 @@ Lớp `other` cho phân loại 3 lớp (DIP D10). Sinh bằng `code/scripts/fetc
 
 {chr(10).join(lines)}
 
-**Lưu ý shortcut:** ảnh RVL-CDIP là ảnh scan xám, độ phân giải thấp — khác hẳn bộ 1 (ảnh phẳng màu) và bộ 2, 3
+**Lưu ý shortcut:** ảnh RVL-CDIP là ảnh scan xám, độ phân giải thấp — khác hẳn bộ 1 (ảnh phẳng màu) và bộ 2
 (ảnh chụp 640×640). Bắt buộc chuẩn hóa ảnh trước khi trích đặc trưng (KeHoach_Hieu.md mục 3.5).
 """, encoding="utf-8")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Lấy bộ 4 (RVL-CDIP) cho lớp other")
-    parser.add_argument("--out", type=Path, default=DATASETS[4])
+    parser = argparse.ArgumentParser(description="Lấy bộ 3 (RVL-CDIP) cho lớp other")
+    parser.add_argument("--out", type=Path, default=DATASETS[3])
     parser.add_argument("--cache", type=Path, default=DATA_DIR / "_cache" / "rvl_cdip")
     args = parser.parse_args()
     labels = fetch(ensure_dir(args.out), ensure_dir(args.cache))

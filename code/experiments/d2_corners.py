@@ -1,7 +1,7 @@
 """D2 — Tìm 4 góc: contour vs Hough vs minAreaRect vs kết hợp có dự phòng
 Người làm: Hiếu. Kế hoạch: team/KeHoach_Hieu.md (mục 3.2).
 
-Dữ liệu: bộ 6 tập test, bỏ mẫu có góc giấy nằm ngoài khung (mẫu chỉ xoay — dùng cho D4).
+Dữ liệu: bộ 5 tập test, bỏ mẫu có góc giấy nằm ngoài khung (mẫu chỉ xoay — dùng cho D4).
 Mẫu không biến dạng hình học (chỉ mờ / bóng) có 4 góc = khung ảnh: đáp án đúng là "full_image".
 Độ đo: sai số góc lớn nhất (% đường chéo) so với ground truth; thành công khi < 2% đường chéo;
        tỉ lệ không tìm được (phương án đơn lẻ trả None); thời gian ms/ảnh.
@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-import bo6
+import bo5
 from common.experiment import save_config, save_figure, save_table
 from common.seed import set_seed
 from preprocessing import corners as C
@@ -28,11 +28,11 @@ LABELS = {"contour": "Contour", "hough": "Hough", "minrect": "minAreaRect", "com
 
 
 def load_data(config: dict):
-    m = bo6.manifest((config["split"],))
+    m = bo5.manifest((config["split"],))
     rows = []
     for _, r in m.iterrows():
-        gt = bo6.label(r)
-        if bo6.corners_inside(gt):
+        gt = bo5.label(r)
+        if bo5.corners_inside(gt):
             rows.append((r, gt))
     return rows
 
@@ -49,7 +49,7 @@ def _detect(img, method: str, long_side: int):
 def run(data, config: dict) -> pd.DataFrame:
     out = []
     for r, gt in data:
-        img = bo6.degraded(r)
+        img = bo5.degraded(r)
         diag = float(np.hypot(*img.shape[:2]))
         truth = C.order_corners(np.asarray(gt["corners"], np.float32))
         for method in METHODS:

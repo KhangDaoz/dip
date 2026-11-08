@@ -44,7 +44,7 @@ def preprocess(img: np.ndarray, image_id: str, out_dir: Path = OUT_DIR,
         0. denoise: có nhiễu muối tiêu (> 0,05% điểm nhiễu xung) → trung vị chọn lọc (D11); không đổi hình học
         1. find_corners; assess_quality đo trong tờ giấy; lóa nhẹ (1–8%) và inpaint_glare → remove_glare
            (mặc định TẮT: inpainting không khôi phục được chữ, báo lóa nhầm thì xóa luôn chữ — chỉ bật khi D5
-           trên bộ 6 v2 chứng minh CER tốt lên; quality.has_glare vẫn báo cho app)
+           trên bộ 5 v2 chứng minh CER tốt lên; quality.has_glare vẫn báo cho app)
         2. rectify theo 4 góc                           → (warped, H_persp); full_image thì giữ nguyên ảnh
         3. orientation_turns: dòng chữ chạy dọc → xoay 90° → (oriented, H_turn)
         4. deskew trên oriented                         → (rect, skew_deg); đo lại trên rect, còn lệch > RESIDUAL_MAX → không xoay

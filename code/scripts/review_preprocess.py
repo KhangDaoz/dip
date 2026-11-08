@@ -116,7 +116,7 @@ def contact_sheets(panels, out):
 
 def main():
     ap = argparse.ArgumentParser(description="Kiểm tra diện rộng preprocess() trên ảnh thật")
-    ap.add_argument("--sets", type=int, nargs="+", default=[3, 2])
+    ap.add_argument("--sets", type=int, nargs="+", default=[2])
     ap.add_argument("--per-set", type=int, nargs="+", default=[0, 150])
     ap.add_argument("--out", default="review_0211")
     ap.add_argument("--seed", type=int, default=42)

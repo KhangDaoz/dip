@@ -1,9 +1,9 @@
 """D1 (phần lóa) — Phát hiện lóa: dò ngưỡng V, S của glare_mask; IoU với mask lóa và phát hiện ảnh có lóa
 Người làm: Hiếu. Kế hoạch: team/KeHoach_Hieu.md (mục 3.2).
 
-Dữ liệu: bộ 6 v2.1 (manifest_v2.csv) — dò tham số trên val, báo cáo trên test. Ảnh có lóa: v10, v14
+Dữ liệu: bộ 5 v2.1 (manifest_v2.csv) — dò tham số trên val, báo cáo trên test. Ảnh có lóa: v10, v14
 (glare_level 1–3, đã giảm phơi sáng 0,80–0,92 nên giấy ≈ 175–235 như ảnh chụp); mẫu âm: còn lại (có cả mờ, bóng).
-Vùng giấy lấy từ page_mask của bộ 6 (tách sai số tìm góc ra khỏi phép đo lóa). Ảnh resize cạnh dài 1000 px như assess_quality.
+Vùng giấy lấy từ page_mask của bộ 5 (tách sai số tìm góc ra khỏi phép đo lóa). Ảnh resize cạnh dài 1000 px như assess_quality.
 Độ đo: IoU mask lóa (ảnh dương, theo mức); phát hiện ảnh có lóa: AUC của glare_ratio, F1 tại ngưỡng diện tích chọn trên val.
 Đầu ra: results/d1_glare/table.csv, summary.csv, by_level.csv, figure.png
 
@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import f1_score, roc_auc_score, roc_curve
 
-import bo6
+import bo5
 from common.experiment import save_config, save_figure, save_table
 from common.io import read_image
 from common.seed import set_seed
@@ -29,17 +29,17 @@ CONFIG = {"seed": 42, "glare_v": [220, 230, 240, 250], "glare_s": [20, 30, 40, 6
 
 
 def load_data(config: dict):
-    m = pd.read_csv(bo6.ROOT / "manifest_v2.csv")
+    m = pd.read_csv(bo5.ROOT / "manifest_v2.csv")
     m = m[m.split.isin([config["select_split"], config["report_split"]])].reset_index(drop=True)
     data = []
     for _, r in m.iterrows():
-        img, scale = resize_long_side(read_image(bo6.ROOT / r.rel_degraded_path), config["long_side"])
+        img, scale = resize_long_side(read_image(bo5.ROOT / r.rel_degraded_path), config["long_side"])
         size = (img.shape[1], img.shape[0])
-        page = cv2.resize(read_image(bo6.ROOT / r.rel_degraded_path.replace("/images/", "/page_mask/"), gray=True),
+        page = cv2.resize(read_image(bo5.ROOT / r.rel_degraded_path.replace("/images/", "/page_mask/"), gray=True),
                           size, interpolation=cv2.INTER_NEAREST)
         gt = np.zeros(img.shape[:2], bool)
         if r.glare_level > 0:
-            gt = cv2.resize(read_image(bo6.ROOT / r.rel_glare_mask_path, gray=True), size, interpolation=cv2.INTER_NEAREST) > 0
+            gt = cv2.resize(read_image(bo5.ROOT / r.rel_glare_mask_path, gray=True), size, interpolation=cv2.INTER_NEAREST) > 0
         data.append((r, img, page, gt))
     return data
 

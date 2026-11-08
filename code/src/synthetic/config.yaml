@@ -1,4 +1,4 @@
-# Cấu hình sinh bộ 6 — KeHoach_Thang.md mục 2.1 & KeHoach_Hieu.md mục 2
+# Cấu hình sinh bộ 5 — KeHoach_Thang.md mục 2.1 & KeHoach_Hieu.md mục 2
 seed: 42
 n_source_images: 100        # số ảnh sạch lấy từ bộ 1 (VAIPE)
 variants_per_image: 10

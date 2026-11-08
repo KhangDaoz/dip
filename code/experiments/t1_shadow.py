@@ -291,7 +291,7 @@ def save_examples(samples, root, recipes, output):
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset-version", choices=["legacy", "v2"], default="v2")
-    parser.add_argument("--data-dir", type=Path, default=DATASETS[6])
+    parser.add_argument("--data-dir", type=Path, default=DATASETS[5])
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--check-inputs-only", action="store_true",
                         help="Validate metadata/reference files without running or writing results")

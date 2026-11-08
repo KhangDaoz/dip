@@ -5,7 +5,7 @@ parameter phrase), not guaranteed one-box-per-token labels. Rows are inferred
 from y-centres; columns are retained as semantic roles from the source labels.
 
 Run from ``code/`` after installing the package:
-    python experiments/k0_dataset3_ground_truth.py
+    python experiments/k0_dataset2_ground_truth.py
 
 Outputs go under ``results/khang_dataset3_ground_truth/`` (git-ignored).
 """
@@ -182,7 +182,7 @@ def save_review_images(records: list[dict], dataset_dir: Path, output_dir: Path)
     image_dir = output_dir / "review_images"
     image_dir.mkdir(parents=True, exist_ok=True)
     index_lines = [
-        "# Review ground truth bộ 3",
+        "# Review ground truth bộ 2",
         "",
         "Mở từng ảnh ở độ phân giải gốc. Box màu biểu thị role; số ở lề trái là row_id do script suy ra.",
         "",
@@ -233,8 +233,8 @@ def save_review_images(records: list[dict], dataset_dir: Path, output_dir: Path)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Sinh ground truth dòng/cột phrase-level cho bộ 3")
-    parser.add_argument("--dataset", type=Path, default=DATASETS[3])
+    parser = argparse.ArgumentParser(description="Sinh ground truth dòng/cột phrase-level cho bộ 2")
+    parser.add_argument("--dataset", type=Path, default=DATASETS[2])
     parser.add_argument("--split", choices=("train", "valid", "test"), default="train")
     parser.add_argument("--sample-size", type=int, default=20,
                         help="Số nhóm ảnh nguồn duy nhất; 0 = tất cả nhóm trong split")

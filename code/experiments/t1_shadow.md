@@ -5,10 +5,10 @@
 CLI hiện mặc định v2, output `results/t1_v2/`. Có thể kiểm tra đầu vào mà không chạy đo/ghi kết quả bằng `python code/experiments/t1_shadow.py --check-inputs-only`. Lần chạy T1 mới lưu `input_contract.json` với hash tham chiếu và fingerprint code liên quan; config ràng buộc checksum contract, rồi ràng buộc selection trước khi đo test. Chọn output mới để giữ kết quả lịch sử.
 
 ```powershell
-python code/experiments/t1_shadow.py --dataset-version v2 --data-dir data/6_synthetic --output-dir results/t1_v2
+python code/experiments/t1_shadow.py --dataset-version v2 --data-dir data/5_synthetic --output-dir results/t1_v2
 ```
 
-Dùng `manifest_v2.json` tại `data/6_synthetic/`. Gói v2 có 70 mẫu `single_shadow` (60 train, 10 val), **không có mẫu bóng đơn test**. Vì vậy phép đo mới sinh **chỉ bóng** từ ảnh sạch v2 cho cả ba split; không trộn snapshot cũ hay mẫu tổ hợp v14.
+Dùng `manifest_v2.json` tại `data/5_synthetic/`. Gói v2 có 70 mẫu `single_shadow` (60 train, 10 val), **không có mẫu bóng đơn test**. Vì vậy phép đo mới sinh **chỉ bóng** từ ảnh sạch v2 cho cả ba split; không trộn snapshot cũ hay mẫu tổ hợp v14.
 
 Giữ 100 nguồn và split 60/10/30. Sắp ID nguồn trong từng split rồi luân phiên planar/silhouette và mức 1/2/3 (darkness 0,2/0,45/0,7). Seed từng nguồn lấy 8 byte đầu SHA-256 của `42:<source_id>:derived_shadow_v2`, little-endian. Gọi `synthetic.degrade.shadow` trên BGR sạch rồi chuyển xám; giữ kích thước và H đơn vị. V00 chỉ dùng tra đường dẫn ảnh sạch, không dùng ảnh hỏng/H của v00; metadata gốc ở trường `provenance` trong `samples.json`.
 
@@ -33,7 +33,7 @@ python code/experiments/t1_shadow.py --dataset-version legacy --data-dir data/6_
 
 Từ thư mục `code/`, đổi thành `python experiments/t1_shadow.py --dataset-version legacy --data-dir ../data/6_synthetic_v1_old/6_synthetic --output-dir ../results/t1`.
 
-Mặc định `--data-dir` lấy từ `common.paths.DATASETS[6]`; dùng tham số để trỏ tới vị trí dữ liệu thực tế, không sửa đường dẫn chung của nhóm. Script từ chối ghi đè thư mục kết quả không rỗng; dùng `--output-dir results/t1_repeat` nếu cần chạy lại có chủ đích.
+Mặc định `--data-dir` lấy từ `common.paths.DATASETS[5]`; dùng tham số để trỏ tới vị trí dữ liệu thực tế, không sửa đường dẫn chung của nhóm. Script từ chối ghi đè thư mục kết quả không rỗng; dùng `--output-dir results/t1_repeat` nếu cần chạy lại có chủ đích.
 
 ## Giao thức đo
 

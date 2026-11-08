@@ -1,7 +1,7 @@
-"""Chuẩn bị review bộ 5 (ảnh tự chụp): trang ảnh thu nhỏ theo loại + nhóm ảnh gần trùng (cùng tài liệu chụp lại).
+"""Chuẩn bị review bộ 4 (ảnh tự chụp): trang ảnh thu nhỏ theo loại + nhóm ảnh gần trùng (cùng tài liệu chụp lại).
 
-Chỉ đọc data/5_self_captured/, không sửa ảnh hay manifest.csv (theo README của bộ 5).
-Chạy (từ code/):  python scripts/review_set5.py
+Chỉ đọc data/4_self_captured/, không sửa ảnh hay manifest.csv (theo README của bộ 4).
+Chạy (từ code/):  python scripts/review_set4.py
 Kết quả: results/set5_review/<loại>_XX.jpg, near_duplicates.csv, labels_doc_type_draft.csv (bản nháp để Hiếu sửa)
 """
 import cv2
@@ -14,7 +14,7 @@ from common.experiment import results_dir
 from common.io import read_image, write_image
 from common.paths import DATASETS
 
-ROOT = DATASETS[5]
+ROOT = DATASETS[4]
 CELL, COLS, ROWS = 300, 5, 4
 PHASH_MAX = 10      # khoảng cách Hamming pHash ≤ 10 → nghi cùng tài liệu
 

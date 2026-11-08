@@ -1,4 +1,4 @@
-"""Kiểm tra Bộ 6 v2 sau khi sinh (python -m synthetic.generate --version v2) và ghi checksum phần mới.
+"""Kiểm tra Bộ 5 v2 sau khi sinh (python -m synthetic.generate --version v2) và ghi checksum phần mới.
 
 Kiểm:
 1. 6.000 file v1 vẫn khớp checksums_v1.sha256 (v2 không được sửa v1).
@@ -7,7 +7,7 @@ Kiểm:
 4. Mỗi mức của lóa / dấu / bút / nén có ở cả train, val, test; có mẫu âm và dương cho lóa.
 5. v10, v14: exposure_gain trong EXPOSURE_GAIN_RANGE, clean_exposed = clean × gain; v11–v13 không đổi phơi sáng.
    Ghi thêm độ sáng giấy trong / ngoài vùng lóa (single_glare): trong mask giấy phải lên ít nhất nửa đường tới 255.
-Ghi: data/6_synthetic/checksums_v2.sha256 (file mới của v2), results/bo6_v2_audit/{audit.json, stats.csv, sheet_*.png}.
+Ghi: data/5_synthetic/checksums_v2.sha256 (file mới của v2), results/bo6_v2_audit/{audit.json, stats.csv, sheet_*.png}.
 
 Chạy (từ thư mục code/): python scripts/audit_synthetic_v2.py
 """
@@ -24,7 +24,7 @@ from common.paths import DATASETS
 from synthetic import degrade
 from synthetic.generate import GLARE_VARIANTS, RECIPE_NAMES_V2, V2_MASKS, transform_items
 
-ROOT = DATASETS[6]
+ROOT = DATASETS[5]
 FILE_DIRS = ("images", "labels", "clean", "clean_binary", "shadow_mask", "page_mask") + V2_MASKS
 EXPECTED = {"single_glare": {"glare"}, "single_stamp": {"stamp"}, "single_pen": {"pen"},
             "single_jpeg_noise": {"jpeg_noise"},

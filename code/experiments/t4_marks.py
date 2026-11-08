@@ -208,7 +208,7 @@ def inventory(root):
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--data-dir',type=Path,default=REPO_DIR/'data/6_synthetic')
+    parser.add_argument('--data-dir',type=Path,default=REPO_DIR/'data/5_synthetic')
     parser.add_argument('--output-dir',type=Path,default=REPO_DIR/'results/t4')
     args=parser.parse_args(argv)
     if any((args.output_dir/name).exists() for name in FILES):

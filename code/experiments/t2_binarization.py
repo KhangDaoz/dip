@@ -208,7 +208,7 @@ def save_development_preview(selection, shadow_recipe, output):
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--data-dir", type=Path, default=DATASETS[6])
+    parser.add_argument("--data-dir", type=Path, default=DATASETS[5])
     parser.add_argument("--t1-selection", type=Path, default=RESULTS_DIR / "t1_v2/selection.json")
     parser.add_argument("--output-dir", type=Path, default=RESULTS_DIR / "t2_v2")
     parser.add_argument("--compatibility-evidence", type=Path,

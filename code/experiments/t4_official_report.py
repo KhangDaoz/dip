@@ -73,7 +73,7 @@ def render(output):
         '- Same source split was used in T1-T3; dataset inventory/crops were already examined before this run.',
         '- Do not infer CER, OCR gains, general signature detection, real-image accuracy or T5 completion.','',
         '## Reproduce','',
-        'From repo root (same frozen code, libraries, original data/6_synthetic and prior T4 evidence required):','',
+        'From repo root (same frozen code, libraries, original data/5_synthetic and prior T4 evidence required):','',
         '```powershell',
         'code/.venv/Scripts/python.exe code/experiments/t4_official.py --output-dir results/t4/official_test_repeat',
         'code/.venv/Scripts/python.exe code/experiments/t4_official.py --verify-only --output-dir results/t4/official_test_repeat',

@@ -8,7 +8,7 @@ Không dùng bộ ⑤, không sửa dữ liệu gốc hoặc code/kết quả T1
 
 ## 1. Dữ liệu đã kiểm tra thực tế
 
-Root `data/6_synthetic/`, manifest v2 SHA-256
+Root `data/5_synthetic/`, manifest v2 SHA-256
 `05dd1a8da9268610d5194e334d7173716865bc14ac6d2da333f9fdb8e4dcd8ad`.
 Checksum list v2 SHA
 `39dbf3164f0e426beae4b2884bc0a71c137ccc2953651b3307f77179abd503fc`.
@@ -215,7 +215,7 @@ Lượt kiểm kê này có 19 test hợp đồng đạt, không có IoU/PSNR/CE
 Chạy lại kiểm kê (chọn output mới nếu đã có):
 
 ```powershell
-code/.venv/Scripts/python.exe code/experiments/t4_marks.py --data-dir data/6_synthetic --output-dir results/t4/reinventory
+code/.venv/Scripts/python.exe code/experiments/t4_marks.py --data-dir data/5_synthetic --output-dir results/t4/reinventory
 ```
 
 Không cập nhật tiến độ T4 hoàn thành ở phiên 1. Chưa commit/push.
@@ -278,7 +278,7 @@ controls khớp hash, macro summary và code/input SHA không đổi. Tổng 167
 quan đạt (35 test T4 inventory/detection +132 ink/stamp); chưa phải full repo suite.
 
 ```powershell
-code/.venv/Scripts/python.exe code/experiments/t4_detection.py --data-dir data/6_synthetic --inventory results/t4/step1_inventory.json --output-dir results/t4/train_detection_repeat
+code/.venv/Scripts/python.exe code/experiments/t4_detection.py --data-dir data/5_synthetic --inventory results/t4/step1_inventory.json --output-dir results/t4/train_detection_repeat
 ```
 
 Có thể sang phiên 3 để đo bốn phương án xóa với cùng mask; nhánh prediction
@@ -462,6 +462,6 @@ không tạo completion thành công. Output đã có bị từ chối, giữ l�
 
 Đây là freeze trước **lần đo benchmark T4 test**, không tuyên bố test chưa từng
 được xem: inventory phiên1 và crop phiên4 đã decode ảnh; nguồn test cũng đã dùng
-ở T1–T3. Các mức trong bộ6 có nguồn khác nhau, không là đường cong severity ghép
+ở T1–T3. Các mức trong bộ5 có nguồn khác nhau, không là đường cong severity ghép
 cặp. GT alpha>0,15 có thể che chữ đen; GT diagnostic không là upper bound.
 Chất lượng ảnh/IoU không chứng minh CER, độ chính xác OCR, T5 hay hiệu quả thực tế.

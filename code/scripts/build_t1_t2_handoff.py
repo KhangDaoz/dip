@@ -27,7 +27,7 @@ def main():
             or verification["replayed_t1_test_rows"] != 120
             or verification["replayed_t2_test_rows"] != 300):
         raise ValueError("Current frozen-result verification is missing or incomplete")
-    if sha(ROOT / "data/6_synthetic/manifest_v2.json") != verification["compatibility"]["current_manifest_sha256"]["manifest_v2.json"]:
+    if sha(ROOT / "data/5_synthetic/manifest_v2.json") != verification["compatibility"]["current_manifest_sha256"]["manifest_v2.json"]:
         raise ValueError("Dataset changed after verification")
     if sha(ROOT / "code/src/synthetic/degrade.py") != verification["compatibility"]["current_generator_sha256"]:
         raise ValueError("Generator changed after verification")

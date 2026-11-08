@@ -1,7 +1,7 @@
 """D5 — Khử lóa: không khử vs Telea vs Navier–Stokes (inpainting), với mask lóa thật và mask phát hiện được
 Người làm: Hiếu. Kế hoạch: team/KeHoach_Hieu.md (mục 3.2).
 
-Dữ liệu: bộ 6 v2.1 tập test, ảnh chỉ lóa (v10 single_glare, mức 1–3) — cô lập tác động của lóa.
+Dữ liệu: bộ 5 v2.1 tập test, ảnh chỉ lóa (v10 single_glare, mức 1–3) — cô lập tác động của lóa.
 Ảnh tham chiếu: clean_exposed/ (ảnh sạch cùng mức phơi sáng với ảnh hỏng).
 Mask: "gt" = glare_mask thật (cận trên, như có bộ phát hiện hoàn hảo); "detected" = quality.glare_mask (thực tế).
 Độ đo trong vùng lóa thật: PSNR, SSIM (ảnh xám), F-measure nét chữ so với Otsu của clean_exposed, nhị phân hóa ảnh
@@ -18,7 +18,7 @@ import pandas as pd
 from skimage.filters import threshold_sauvola
 from skimage.metrics import peak_signal_noise_ratio, structural_similarity
 
-import bo6
+import bo5
 from common.experiment import save_config, save_figure, save_table
 from common.io import read_image, to_gray
 from common.seed import set_seed
@@ -31,7 +31,7 @@ LABELS = {"none": "Không khử", "telea": "Telea", "ns": "Navier–Stokes"}
 
 
 def load_data(config: dict) -> pd.DataFrame:
-    m = pd.read_csv(bo6.ROOT / "manifest_v2.csv")
+    m = pd.read_csv(bo5.ROOT / "manifest_v2.csv")
     return m[(m.split == config["split"]) & (m.recipe_name == config["recipe"])].reset_index(drop=True)
 
 
@@ -54,9 +54,9 @@ def f_in(pred: np.ndarray, gt: np.ndarray, region: np.ndarray) -> float:
 def run(data: pd.DataFrame, config: dict) -> pd.DataFrame:
     out = []
     for _, r in data.iterrows():
-        img = read_image(bo6.ROOT / r.rel_degraded_path)
-        ref = read_image(bo6.ROOT / r.rel_clean_exposed_path)
-        gt_mask = read_image(bo6.ROOT / r.rel_glare_mask_path, gray=True)
+        img = read_image(bo5.ROOT / r.rel_degraded_path)
+        ref = read_image(bo5.ROOT / r.rel_clean_exposed_path)
+        gt_mask = read_image(bo5.ROOT / r.rel_glare_mask_path, gray=True)
         region = gt_mask > 0
         g_ref = to_gray(ref)
         ink_ref = ink(g_ref)
@@ -77,9 +77,9 @@ def run(data: pd.DataFrame, config: dict) -> pd.DataFrame:
 
 def examples(data: pd.DataFrame, config: dict):
     r = data[data.glare_level == 3].iloc[0]
-    img = read_image(bo6.ROOT / r.rel_degraded_path)
-    ref = read_image(bo6.ROOT / r.rel_clean_exposed_path)
-    gm = read_image(bo6.ROOT / r.rel_glare_mask_path, gray=True)
+    img = read_image(bo5.ROOT / r.rel_degraded_path)
+    ref = read_image(bo5.ROOT / r.rel_clean_exposed_path)
+    gm = read_image(bo5.ROOT / r.rel_glare_mask_path, gray=True)
     ys, xs = np.nonzero(gm)
     pad = 20
     crop = (slice(max(ys.min() - pad, 0), ys.max() + pad), slice(max(xs.min() - pad, 0), xs.max() + pad))

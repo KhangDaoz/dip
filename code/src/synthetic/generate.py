@@ -1,4 +1,4 @@
-"""Bộ sinh dữ liệu tổng hợp (Synthetic Benchmark Bộ 6).
+"""Bộ sinh dữ liệu tổng hợp (Synthetic Benchmark Bộ 5).
 
 Hỗ trợ:
 - v1 (02/11): [perspective, rotate, blur, shadow]
@@ -629,7 +629,7 @@ def _generate_v2(sources: list, out_dir: Path, v1_dir: Path, seed: int, start_ti
     """Sinh v10–v14 cho mọi ảnh gốc vào cùng cây thư mục với v1; ghi manifest_v2 (= hàng v1 + hàng mới)."""
     manifest_v1_csv = v1_dir / "manifest_v1.csv"
     if not manifest_v1_csv.exists():
-        raise FileNotFoundError(f"v2 cần Bộ 6 v1 có sẵn (thiếu {manifest_v1_csv}). Sinh v1 trước: --version v1")
+        raise FileNotFoundError(f"v2 cần Bộ 5 v1 có sẵn (thiếu {manifest_v1_csv}). Sinh v1 trước: --version v1")
 
     new_rows = []
     split_counts = defaultdict(int)
@@ -892,16 +892,16 @@ def generate(
     limit_sources: int = None,
     v1_dir: Path = None,
 ) -> dict:
-    """Hàm chính sinh bộ 6 benchmark tổng hợp.
+    """Hàm chính sinh bộ 5 benchmark tổng hợp.
 
     Args:
         config_path: Đường dẫn file config.yaml (mặc định lấy config.yaml nội bộ).
         src_dir: Thư mục ảnh sạch (nếu None, ưu tiên dùng sources_manifest hoặc results/t03/).
-        out_dir: Thư mục đích ra (mặc định: data/6_synthetic).
+        out_dir: Thư mục đích ra (mặc định: data/5_synthetic).
         version: Phiên bản bộ sinh ("v1" hoặc "v2").
         sources_manifest: Đường dẫn file manifest JSON nguồn sạch (mặc định: results/t03/synthetic_100_sources.json).
         limit_sources: Giới hạn số lượng ảnh nguồn (tiện cho unit test hoặc pilot).
-        v1_dir: (chỉ v2) thư mục Bộ 6 v1 để đọc manifest_v1 và GT khoản thuốc của v00 (mặc định = out_dir).
+        v1_dir: (chỉ v2) thư mục Bộ 5 v1 để đọc manifest_v1 và GT khoản thuốc của v00 (mặc định = out_dir).
             v2 chỉ sinh thêm v10–v14, không ghi lại file nào của v1.
 
     Returns:
@@ -923,7 +923,7 @@ def generate(
 
     # 2. Xác định thư mục đầu ra
     if out_dir is None:
-        out_dir = REPO_ROOT / "data" / "6_synthetic"
+        out_dir = REPO_ROOT / "data" / "5_synthetic"
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -942,10 +942,10 @@ def generate(
             )
 
     if version == "v2":
-        print(f"Bắt đầu sinh Bộ 6 V2: {len(sources)} ảnh nguồn x {len(RECIPE_NAMES_V2)} biến thể mới (v10–v14), giữ nguyên v1...")
+        print(f"Bắt đầu sinh Bộ 5 V2: {len(sources)} ảnh nguồn x {len(RECIPE_NAMES_V2)} biến thể mới (v10–v14), giữ nguyên v1...")
         return _generate_v2(sources, out_dir, Path(v1_dir) if v1_dir is not None else out_dir, seed, start_time)
 
-    print(f"Bắt đầu sinh Bộ 6 {version.upper()}: {len(sources)} ảnh nguồn x {variants_per_image} biến thể...")
+    print(f"Bắt đầu sinh Bộ 5 {version.upper()}: {len(sources)} ảnh nguồn x {variants_per_image} biến thể...")
 
     all_samples_meta = []
     split_counts = defaultdict(int)
@@ -1137,10 +1137,10 @@ def generate(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Sinh bộ 6 (benchmark tổng hợp)")
+    parser = argparse.ArgumentParser(description="Sinh bộ 5 (benchmark tổng hợp)")
     parser.add_argument("--config", type=Path, default=None, help="Đường dẫn file config.yaml")
     parser.add_argument("--src", type=Path, default=None, help="Thư mục ảnh sạch (tùy chọn)")
-    parser.add_argument("--out", type=Path, default=None, help="Thư mục ra (mặc định: data/6_synthetic)")
+    parser.add_argument("--out", type=Path, default=None, help="Thư mục ra (mặc định: data/5_synthetic)")
     parser.add_argument("--version", choices=("v1", "v2"), default="v1", help="Phiên bản bộ sinh (v1 hoặc v2)")
     parser.add_argument(
         "--manifest",
@@ -1149,7 +1149,7 @@ def main():
         help="Đường dẫn file manifest nguồn (mặc định: results/t03/synthetic_100_sources.json)"
     )
     parser.add_argument("--limit", type=int, default=None, help="Giới hạn số ảnh nguồn khi chạy thử")
-    parser.add_argument("--v1-dir", type=Path, default=None, help="(v2) Thư mục Bộ 6 v1 nếu khác --out, ví dụ khi chạy pilot")
+    parser.add_argument("--v1-dir", type=Path, default=None, help="(v2) Thư mục Bộ 5 v1 nếu khác --out, ví dụ khi chạy pilot")
     args = parser.parse_args()
 
     generate(

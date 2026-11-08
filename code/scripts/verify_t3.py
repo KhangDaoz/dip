@@ -169,7 +169,7 @@ def accept(root, data, evidence, t1_dir, t2_dir, replay=False):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--results-dir',type=Path,default=REPO/'results/t3')
-    parser.add_argument('--data-dir',type=Path,default=REPO/'data/6_synthetic')
+    parser.add_argument('--data-dir',type=Path,default=REPO/'data/5_synthetic')
     parser.add_argument('--t1-dir',type=Path,default=REPO/'results/t1_v2')
     parser.add_argument('--t2-dir',type=Path,default=REPO/'results/t2_v2')
     parser.add_argument('--compatibility-evidence',type=Path,required=True)

@@ -2,7 +2,7 @@
 vs Gauss / bilateral (đối chứng). Chương 3, bài giảng slide 56, 73–78.
 Người làm: Hiếu. Kế hoạch: team/KeHoach_Hieu.md (mục 3.2).
 
-Dữ liệu: ảnh sạch bộ 6 (30 ảnh gốc của tập test), thu nhỏ cạnh dài về 640 px như ảnh Roboflow (chữ nhỏ —
+Dữ liệu: ảnh sạch bộ 5 (30 ảnh gốc của tập test), thu nhỏ cạnh dài về 640 px như ảnh Roboflow (chữ nhỏ —
 trường hợp lọc trung vị dễ làm mòn nét nhất), thêm muối tiêu mật độ d rồi nén JPEG q=90 như Roboflow.
 d = 0 để kiểm tra phương án có làm hỏng ảnh sạch không.
 Độ đo: PSNR, SSIM (ảnh xám) so với ảnh sạch; F-measure nét chữ: Otsu trên ảnh đã khử so với Otsu trên ảnh
@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 from skimage.metrics import peak_signal_noise_ratio, structural_similarity
 
-import bo6
+import bo5
 from common.experiment import save_config, save_figure, save_table
 from common.io import to_gray
 from common.seed import set_seed
@@ -57,8 +57,8 @@ def f_measure(pred: np.ndarray, gt: np.ndarray) -> float:
 
 
 def load_data(config: dict):
-    m = bo6.manifest((config["split"],)).drop_duplicates("source_id")
-    return [(r.source_id.split(":")[-1], resize_long_side(bo6.clean(r), config["long_side"])[0]) for _, r in m.iterrows()]
+    m = bo5.manifest((config["split"],)).drop_duplicates("source_id")
+    return [(r.source_id.split(":")[-1], resize_long_side(bo5.clean(r), config["long_side"])[0]) for _, r in m.iterrows()]
 
 
 def run(data, config: dict) -> pd.DataFrame:

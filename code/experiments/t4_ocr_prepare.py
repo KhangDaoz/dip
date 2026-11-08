@@ -179,7 +179,7 @@ def run(root,inventory_path,runtime_path,output):
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--data-dir',type=Path,default=audit.REPO_DIR/'data/6_synthetic')
+    parser.add_argument('--data-dir',type=Path,default=audit.REPO_DIR/'data/5_synthetic')
     parser.add_argument('--inventory',type=Path,default=audit.REPO_DIR/'results/t4/step1_inventory.json')
     parser.add_argument('--runtime',type=Path,default=audit.REPO_DIR/'code/.venv/t4_ocr_setup/runtime.json')
     parser.add_argument('--output-dir',type=Path,default=audit.REPO_DIR/'results/t4/ocr_preparation')

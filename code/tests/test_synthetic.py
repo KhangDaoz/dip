@@ -1,4 +1,4 @@
-"""Bộ sinh bộ 6 (Thắng)."""
+"""Bộ sinh bộ 5 (Thắng)."""
 import json
 from pathlib import Path
 
@@ -399,10 +399,10 @@ def test_v1_motion_blur_metadata_has_angle_deg(page):
 
 
 def test_v1_items_gt_mapping():
-    """Kiểm tra ánh xạ items_clean -> items_degraded qua Homography H trong Bộ 6 v1."""
-    samples = sorted(DATASETS[6].glob("*/labels/*.json"))
+    """Kiểm tra ánh xạ items_clean -> items_degraded qua Homography H trong Bộ 5 v1."""
+    samples = sorted(DATASETS[5].glob("*/labels/*.json"))
     if not samples:
-        pytest.skip("Chưa có dữ liệu Bộ 6 v1 để kiểm tra.")
+        pytest.skip("Chưa có dữ liệu Bộ 5 v1 để kiểm tra.")
 
     sample_path = samples[0]
     with open(sample_path, "r", encoding="utf-8") as f:
@@ -441,8 +441,8 @@ def test_v1_items_gt_mapping():
 
 
 def test_v1_test_split_d3_d4_coverage():
-    """Kiểm tra độ phủ 100% của Lưới D3 (15 ô) và Tập D4 (9 góc xoay) trong tập test Bộ 6 v1."""
-    manifest_csv = DATASETS[6] / "manifest_v1.csv"
+    """Kiểm tra độ phủ 100% của Lưới D3 (15 ô) và Tập D4 (9 góc xoay) trong tập test Bộ 5 v1."""
+    manifest_csv = DATASETS[5] / "manifest_v1.csv"
     if not manifest_csv.exists():
         pytest.skip("Chưa có manifest_v1.csv để kiểm tra.")
 
@@ -666,8 +666,8 @@ def test_generate_v2_requires_v1(tmp_path, page):
 
 
 def test_v2_dataset_level_coverage():
-    """Bộ 6 v2 thật: mỗi mức của từng loại hỏng mới đều có ở cả train, val, test; v1 vẫn đủ 1.000 mẫu."""
-    manifest_csv = DATASETS[6] / "manifest_v2.csv"
+    """Bộ 5 v2 thật: mỗi mức của từng loại hỏng mới đều có ở cả train, val, test; v1 vẫn đủ 1.000 mẫu."""
+    manifest_csv = DATASETS[5] / "manifest_v2.csv"
     if not manifest_csv.exists():
         pytest.skip("Chưa có manifest_v2.csv để kiểm tra.")
     import pandas as pd

@@ -790,7 +790,7 @@ def exposure(img, gain: float) -> np.ndarray:
     """Giảm phơi sáng: nhân cả ảnh với gain (∈ EXPOSURE_GAIN_RANGE), mô phỏng mức giấy của ảnh chụp.
 
     Ảnh nguồn VAIPE là bản scan, giấy V = 255 → lóa (V' = V + (255 − V)·B) không làm giấy sáng thêm được,
-    bộ phát hiện tìm vùng sáng hơn mặt giấy không thấy lóa. Ảnh chụp thật: giấy ≈ 170–235 (bộ 2, phân vị 70 của V).
+    bộ phát hiện tìm vùng sáng hơn mặt giấy không thấy lóa. Ảnh chụp thật: giấy ≈ 170–235 (bộ Roboflow đơn thuốc cũ — đã bỏ, phân vị 70 của V).
     Không bốc số ngẫu nhiên, không đọc nội dung ảnh → không đổi vị trí lóa / dấu / bút khi chèn vào công thức.
     """
     return np.clip(np.round(img.astype(np.float32) * float(gain)), 0, 255).astype(np.uint8)

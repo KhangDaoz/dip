@@ -234,7 +234,7 @@ def test_switching_median_restores_text_better_than_global_median(page, text_mas
 
 @todo
 def test_glare_ignores_zebra_table_rows(page):
-    """Bảng hàng trắng xen hàng xám (như phiếu xét nghiệm bộ 3): hàng trắng có chữ không phải lóa."""
+    """Bảng hàng trắng xen hàng xám (như phiếu xét nghiệm bộ 2): hàng trắng có chữ không phải lóa."""
     img = page.copy()
     for i, y in enumerate(range(0, img.shape[0], 40)):
         band = img[y:y + 40]

@@ -1,11 +1,11 @@
 """D4 — Chỉnh nghiêng: Projection profile vs Hough vs Radon
 Người làm: Hiếu. Kế hoạch: team/KeHoach_Hieu.md (mục 3.2).
 
-Dữ liệu: bộ 6 tập test, tập chỉ xoay (±2, ±5, ±10, ±15°, mỗi góc 10 ảnh) — chạy chỉnh nghiêng trực tiếp,
-không nắn phối cảnh trước. Mức 0°: bộ 6 không có mẫu chỉ xoay 0° → đo trên ảnh sạch (clean/) của
+Dữ liệu: bộ 5 tập test, tập chỉ xoay (±2, ±5, ±10, ±15°, mỗi góc 10 ảnh) — chạy chỉnh nghiêng trực tiếp,
+không nắn phối cảnh trước. Mức 0°: bộ 5 không có mẫu chỉ xoay 0° → đo trên ảnh sạch (clean/) của
 các ảnh gốc trong tập test.
 Độ đo: sai số góc tuyệt đối (độ); tỉ lệ sai số ≤ 0,5°; thời gian ms/ảnh.
-Quy ước dấu: bộ 6 angle_deg dương = ngược chiều kim đồng hồ, trùng quy ước của deskew_* → đáp án = angle_deg.
+Quy ước dấu: bộ 5 angle_deg dương = ngược chiều kim đồng hồ, trùng quy ước của deskew_* → đáp án = angle_deg.
 Đầu ra: results/d4/table.csv, results/d4/summary.csv, results/d4/by_angle.csv, results/d4/figure.png
 
 Chạy: python experiments/d4_deskew.py
@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-import bo6
+import bo5
 from common.experiment import save_config, save_figure, save_table
 from common.seed import set_seed
 from preprocessing import deskew
@@ -28,11 +28,11 @@ LABELS = {"projection": "Projection profile", "hough": "Hough", "radon": "Radon"
 
 
 def load_data(config: dict):
-    m = bo6.manifest((config["split"],))
+    m = bo5.manifest((config["split"],))
     rot = m[(m.applied_degradations == "rotate") & (m.perspective_strength == 0)]
-    data = [(r.sample_id, float(r.angle_deg), lambda r=r: bo6.degraded(r)) for _, r in rot.iterrows()]
+    data = [(r.sample_id, float(r.angle_deg), lambda r=r: bo5.degraded(r)) for _, r in rot.iterrows()]
     for _, r in m.drop_duplicates("source_id").iterrows():          # 0°: ảnh sạch của mỗi ảnh gốc
-        data.append((f"{r.source_id.split(':')[-1]}_clean", 0.0, lambda r=r: bo6.clean(r)))
+        data.append((f"{r.source_id.split(':')[-1]}_clean", 0.0, lambda r=r: bo5.clean(r)))
     return data
 
 

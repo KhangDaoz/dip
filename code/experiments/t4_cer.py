@@ -315,7 +315,7 @@ def run(root,preparation,official_dir,review_path,runtime_path,output,split='tes
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--data-dir',type=Path,default=a.REPO_DIR/'data/6_synthetic')
+    p.add_argument('--data-dir',type=Path,default=a.REPO_DIR/'data/5_synthetic')
     p.add_argument('--preparation',type=Path,default=a.REPO_DIR/'results/t4/ocr_preparation')
     p.add_argument('--official-dir',type=Path,default=a.REPO_DIR/'results/t4/official_test_v1')
     p.add_argument('--review',type=Path,default=a.REPO_DIR/'results/t4/ocr_preparation/t4_transcript_review_reduced_v1.json')

@@ -1,6 +1,6 @@
-"""Đọc bộ 6 (benchmark tổng hợp của Thắng) cho các script thí nghiệm.
+"""Đọc bộ 5 (benchmark tổng hợp của Thắng) cho các script thí nghiệm.
 
-Cấu trúc (từ 02/11): data/6_synthetic/<split>/{images,labels,clean,clean_binary,shadow_mask,page_mask}/<sample_id>
+Cấu trúc (từ 02/11): data/5_synthetic/<split>/{images,labels,clean,clean_binary,shadow_mask,page_mask}/<sample_id>
 Mọi đường dẫn lấy từ manifest_v1.csv (cột rel_*_path), nên không phụ thuộc cách đặt thư mục.
 """
 import json
@@ -11,7 +11,7 @@ import pandas as pd
 from common.io import read_image
 from common.paths import DATASETS
 
-ROOT = DATASETS[6]
+ROOT = DATASETS[5]
 
 
 def manifest(splits=("test",)) -> pd.DataFrame:

@@ -142,7 +142,7 @@ FINDERS = (("contour", find_corners_contour), ("hough", find_corners_hough), ("m
 BORDER_TOL = 0.015        # cạnh cách mép ảnh ≤ 1,5% cạnh dài → coi như nằm trên khung
 OUTSIDE_TEXT_MAX = 0.05   # > 5% ký tự nằm ngoài tứ giác → cắt mất nội dung (mép giả; 10% còn cắt dải đầu / cuối trang, review 02/11)
 OUTSIDE_MARGIN = 0.005    # ký tự phải cách tứ giác > 0,5% đường chéo mới tính là "ngoài" (1,5% bỏ lọt dải đầu / cuối trang sát khung)
-MAX_ANGLE_DEV = 40.0      # góc trong lệch > 40° so với 90° → không phải tờ giấy (bộ 6, phối cảnh 20%: tối đa 31,6°)
+MAX_ANGLE_DEV = 40.0      # góc trong lệch > 40° so với 90° → không phải tờ giấy (bộ 5, phối cảnh 20%: tối đa 31,6°)
 
 
 def max_angle_deviation(quad: np.ndarray) -> float:

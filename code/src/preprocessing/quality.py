@@ -6,10 +6,10 @@ from common.contracts import Quality
 from common.io import to_gray
 
 BLUR_THRESHOLD = 100.0                  # chọn lại bằng ROC (D1)
-GLARE_V, GLARE_S = 230, 30              # pixel lóa: V > GLARE_V và S < GLARE_S — D1 (bộ 6 v2.1): V 230 IoU 0,62 / AUC 0,93 (240: 0,50 / 0,86); S gần như không ảnh hưởng
+GLARE_V, GLARE_S = 230, 30              # pixel lóa: V > GLARE_V và S < GLARE_S — D1 (bộ 5 v2.1): V 230 IoU 0,62 / AUC 0,93 (240: 0,50 / 0,86); S gần như không ảnh hưởng
 GLARE_DELTA = 15                        # và sáng hơn mức giấy trung vị ít nhất GLARE_DELTA
 GLARE_LIGHT, GLARE_HEAVY = 0.01, 0.08   # < 1%: không lóa · 1–8%: lóa nhẹ (khử) · > 8%: chụp lại
-GLARE_MIN_AREA_RATIO = 0.001            # một vùng lóa phải ≥ 0,1% diện tích giấy (chỉnh lại trên bộ 6 v2, D1)
+GLARE_MIN_AREA_RATIO = 0.001            # một vùng lóa phải ≥ 0,1% diện tích giấy (chỉnh lại trên bộ 5 v2, D1)
 GLARE_PAPER_PCT = 70                    # mức giấy = phân vị 70 của V trong tờ giấy (trung vị bị hàng nền xám của bảng kéo xuống)
 
 
@@ -63,7 +63,7 @@ def glare_mask(img: np.ndarray, v_thresh: int = GLARE_V, s_thresh: int = GLARE_S
     region (255 = tờ giấy, ví dụ quad_mask của 4 góc): mức giấy chỉ lấy trong region và lóa chỉ tính
     trong region — tránh nền tối quanh giấy (viền màn hình, mặt bàn) kéo mức giấy xuống làm báo lóa giả.
     Ngưỡng diện tích tương đối: lóa thật là một khối liền; bảng có hàng nền trắng xen hàng nền xám cho hàng
-    trăm mảnh trắng nhỏ giữa các chữ — trước đây bị cộng dồn thành "lóa nhẹ" (ảnh bộ 3 report1, 02/11).
+    trăm mảnh trắng nhỏ giữa các chữ — trước đây bị cộng dồn thành "lóa nhẹ" (ảnh bộ 2 report1, 02/11).
     """
     if img.ndim == 2:
         img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)

@@ -7,7 +7,7 @@ Khung code chung cho đồ án Xử lý ảnh (DIP). **Mỗi người chỉ sử
  preprocessing/                cleaning/                     table_extraction/
  classification/                                          ④ Thắng (đơn thuốc) ──PrescriptionResult─► app
                                                              prescription_segmentation/
-                               Dùng chung: common/ · ocr/ (Khang) · synthetic/ = bộ 6 (Thắng)
+                               Dùng chung: common/ · ocr/ (Khang) · synthetic/ = bộ 5 (Thắng)
 ```
 
 ## 1. Cài đặt (làm một lần)
@@ -33,7 +33,7 @@ pytest                    # phải XANH: test của hàm chưa viết sẽ hiệ
 | `cleaning/` | Trường | `background`, `ink`, `inpaint`, `binarize`, `components`, `pipeline` | T1–T8 | `test_cleaning.py` |
 | `ocr/` *(dùng chung)* | Khang | `engines` (cần viết), `metrics` (**đã có** `cer`, `wer`, `corpus_cer`) | — | `test_ocr_metrics.py` |
 | `table_extraction/` | Khang | `geometry`, `rows`, `columns`, `cells`, `flags`, `pipeline` | K1–K7 | `test_table.py` |
-| `synthetic/` *(bộ 6)* | Thắng | `degrade`, `generate`, `config.yaml` | — | `test_synthetic.py` |
+| `synthetic/` *(bộ 5)* | Thắng | `degrade`, `generate`, `config.yaml` | — | `test_synthetic.py` |
 | `prescription_segmentation/` | Thắng | `region`, `lines`, `items`, `fields`, `pipeline` | S1–S6 | `test_prescription.py` |
 | `common/` | Cả nhóm | `contracts`, `io`, `paths`, `seed`, `experiment`, `testing` | — | `test_contracts.py` |
 
@@ -80,7 +80,7 @@ pytest tests/test_cleaning.py -v              # test một module
 python run_pipeline.py samples/               # đầu-cuối ① → ② → ③/④ (mốc tích hợp 05/11)
 python run_pipeline.py anh.jpg --doc-type lab_report   # ép loại tài liệu khi bộ phân loại chưa xong
 python experiments/d1_iqa_roc.py              # một thí nghiệm → results/d1/
-python -m synthetic.generate                  # sinh bộ 6 → data/6_synthetic/
+python -m synthetic.generate                  # sinh bộ 5 → data/5_synthetic/
 ```
 
 `run_pipeline.py` in ra trạng thái từng bước của từng ảnh (`ok` / `chưa làm` / `LỖI`). Kết quả JSON ghi vào `out/`.
@@ -105,11 +105,11 @@ Thí nghiệm: copy file mẫu của mình trong `experiments/` (`d1_`, `t1_`, `
 ```
 data/
 ├── 1_vaipe/                     # bộ 1 (đơn thuốc VN, đã lọc bỏ ảnh viên thuốc)
-├── 2_roboflow_prescription/     # bộ 2 (đơn thuốc Practo)
-├── 3_roboflow_report_keywords/  # bộ 3 (phiếu xét nghiệm)
-├── 4_other_rvl_cdip/            # bộ 4 (Hiếu) — sinh bằng: python scripts/fetch_rvl_cdip.py (đã có trên Drive)
-├── 5_self_captured/             # bộ 5 — ĐÃ CHE thông tin cá nhân trước khi chép vào
-└── 6_synthetic/                 # bộ 6 (Thắng sinh)
+├── 2_roboflow_report_keywords/  # bộ 2 (phiếu xét nghiệm) — 57 ảnh gốc
+├── 2_roboflow_report_keywords_augmented/  # bản tăng cường của bộ 2, chỉ dùng khi cần
+├── 3_other_rvl_cdip/            # bộ 3 (Hiếu) — sinh bằng: python scripts/fetch_rvl_cdip.py (đã có trên Drive)
+├── 4_self_captured/             # bộ 4 — ĐÃ CHE thông tin cá nhân trước khi chép vào
+└── 5_synthetic/                 # bộ 5 (Thắng sinh)
 ```
 
 `code/samples/` chứa 5–10 ảnh mẫu **có commit**, dùng cho demo và mốc tích hợp. Chỉ bỏ vào đây ảnh đã che thông tin cá nhân.

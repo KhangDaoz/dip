@@ -69,7 +69,7 @@ def process(path, out) -> tuple:
 
 def main():
     parser = argparse.ArgumentParser(description="Xem trước tiền xử lý trên ảnh thật")
-    parser.add_argument("--sets", type=int, nargs="+", default=[2, 3])
+    parser.add_argument("--sets", type=int, nargs="+", default=[2])
     parser.add_argument("--per-set", type=int, default=5)
     parser.add_argument("--out", default="preview_0111")
     parser.add_argument("--seed", type=int, default=42)

@@ -147,7 +147,7 @@ def run_benchmark(dataset_dir: Path, engines: list[str], out_dir: Path,
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Benchmark Tesseract/Paddle trên 50 crop đã duyệt")
-    parser.add_argument("--dataset", type=Path, default=REPO_DIR / "data/dataset3_50")
+    parser.add_argument("--dataset", type=Path, default=REPO_DIR / "data/dataset2_50")
     parser.add_argument("--out", type=Path, default=RESULTS_DIR / "ocr_benchmark_dataset3_50")
     parser.add_argument("--engines", nargs="+", choices=("tesseract", "paddle"),
                         default=("tesseract", "paddle"))

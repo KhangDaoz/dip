@@ -366,7 +366,7 @@ def verify(root, output):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--data-dir', type=Path, default=a.REPO_DIR/'data/6_synthetic')
+    p.add_argument('--data-dir', type=Path, default=a.REPO_DIR/'data/5_synthetic')
     p.add_argument('--output-dir', type=Path, default=a.REPO_DIR/'results/t4/official_test_v1')
     p.add_argument('--verify-only', action='store_true')
     args = p.parse_args()

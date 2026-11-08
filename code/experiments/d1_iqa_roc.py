@@ -1,10 +1,10 @@
 """D1 — IQA như bộ phát hiện mờ / lóa
 Người làm: Hiếu. Kế hoạch: team/KeHoach_Hieu.md (mục 3.2).
 
-Dữ liệu: bộ 6 — chọn ngưỡng trên val, báo cáo trên test.
-Phần mờ (bộ 6 v1): nhãn "mờ" = blur_level ≥ 1 (chính) và ≥ 2 (mờ đủ ảnh hưởng đọc chữ).
+Dữ liệu: bộ 5 — chọn ngưỡng trên val, báo cáo trên test.
+Phần mờ (bộ 5 v1): nhãn "mờ" = blur_level ≥ 1 (chính) và ≥ 2 (mờ đủ ảnh hưởng đọc chữ).
     Điểm độ nét tính trên ảnh đã resize cạnh dài 1000 px (như assess_quality); điểm thấp = mờ.
-Phần lóa: chờ bộ 6 v2 có mask lóa (04/11) — CONFIG glare_* để sẵn.
+Phần lóa: chờ bộ 5 v2 có mask lóa (04/11) — CONFIG glare_* để sẵn.
 Độ đo: ROC, AUC; F1, precision, recall trên test tại ngưỡng chọn trên val (F1 lớn nhất).
 Đầu ra: results/d1/table.csv (điểm từng mẫu), results/d1/summary.csv, results/d1/figure.png (ROC test)
 
@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score, roc_curve
 
-import bo6
+import bo5
 from common.experiment import save_config, save_figure, save_table
 from common.seed import set_seed
 from preprocessing.quality import BLUR_THRESHOLD, blur_score, resize_long_side
@@ -28,13 +28,13 @@ LABELS = {"laplacian": "Phương sai Laplacian", "tenengrad": "Tenengrad", "fft"
 
 
 def load_data(config: dict) -> pd.DataFrame:
-    return bo6.manifest((config["select_split"], config["report_split"]))
+    return bo5.manifest((config["select_split"], config["report_split"]))
 
 
 def run(data: pd.DataFrame, config: dict) -> pd.DataFrame:
     rows = []
     for _, r in data.iterrows():
-        small, _ = resize_long_side(bo6.degraded(r), config["long_side"])
+        small, _ = resize_long_side(bo5.degraded(r), config["long_side"])
         row = {"sample_id": r.sample_id, "split": r.split, "blur_level": r.blur_level, "blur_kind": r.blur_kind}
         for m in config["blur_methods"]:
             row[m] = blur_score(small, m)

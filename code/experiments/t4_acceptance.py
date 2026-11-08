@@ -38,7 +38,7 @@ def check_cer(folder):
     for name,digest in cfg['code_sha256'].items():
         if a.sha(a.REPO_DIR/name)!=digest:raise ValueError('Frozen CER code changed: '+name)
     for name,digest in cfg['input_sha256'].items():
-        p=Path(name) if Path(name).is_absolute() else a.REPO_DIR/'data/6_synthetic'/name
+        p=Path(name) if Path(name).is_absolute() else a.REPO_DIR/'data/5_synthetic'/name
         if a.sha(p)!=digest:raise ValueError('CER input changed: '+name)
     if cfg['tuning'] or cfg['engine_fallback'] or cfg['clean_ocr_is_gt']:raise ValueError('CER policy changed')
     if a.sha(folder/'review_export.json')!=cfg['review_sha256']:
@@ -118,7 +118,7 @@ def native_sheet(path,outputs):
 def run():
     out=BASE/'acceptance_v1'
     if out.exists():raise FileExistsError('Keep acceptance history')
-    root=a.REPO_DIR/'data/6_synthetic';official=BASE/'official_test_v1'
+    root=a.REPO_DIR/'data/5_synthetic';official=BASE/'official_test_v1'
     runs={'val':BASE/'cer_reduced_val_v2','test':BASE/'cer_reduced_test_v1'}
     configs={split:c.json_load(path/'config.json') for split,path in runs.items()}
     plan=dict(created_at_utc=datetime.now(timezone.utc).isoformat(),

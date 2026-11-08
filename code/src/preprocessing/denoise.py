@@ -1,6 +1,6 @@
 """Khử nhiễu (Chương 3 — bộ lọc không gian; bài giảng slide 56, 73–78; bài thực hành Chương 3 mục 5). Thí nghiệm D11.
 
-Ảnh bộ 2, 3 (Roboflow) có nhiễu muối tiêu do tăng cường dữ liệu; nhiễu này làm hỏng các bước sau:
+Ảnh bộ 2 (Roboflow) có nhiễu muối tiêu do tăng cường dữ liệu; nhiễu này làm hỏng các bước sau:
 điểm trắng bị tính là lóa, điểm đen bị tính là mực khi chỉnh nghiêng / nhị phân hóa.
 
 Phương án (đều trả ảnh cùng shape, dtype uint8, BGR hoặc xám):
@@ -38,7 +38,7 @@ def impulse_mask(img: np.ndarray, salt_margin: int = SALT_MARGIN, pepper_margin:
        "lệch trung vị 3×3", cách này không bắt nhầm nét chữ rộng 1 px (điểm trên nét có láng giềng cùng màu).
     2. Cụm nhỏ: điểm là cực đại (cực tiểu) của cửa sổ 3×3 và sáng (tối) hơn mọi điểm của vòng 5×5 bao quanh —
        nhiễu dày tạo cụm 2–3 điểm dính nhau mà tiêu chí 1 bỏ sót.
-    Hiệu chỉnh 02/11 (D11): ảnh sạch bộ 6 bắt nhầm ≤ 0,02%; nhiễu nhân tạo + JPEG: độ chính xác ≈ 1,0
+    Hiệu chỉnh 02/11 (D11): ảnh sạch bộ 5 bắt nhầm ≤ 0,02%; nhiễu nhân tạo + JPEG: độ chính xác ≈ 1,0
     (bỏ sót chủ yếu điểm muối trên nền trắng / tiêu trên nét đen — vốn vô hại).
     """
     g = to_gray(img)

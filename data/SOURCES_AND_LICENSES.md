@@ -1,4 +1,6 @@
-# Nguồn và license — bộ dữ liệu ①–③
+# Nguồn và license — bộ dữ liệu ①–②
+
+> Cập nhật 08/11/2026: đã bỏ bộ Roboflow đơn thuốc (bộ 2 cũ); Report Keywords đổi số thành bộ ②.
 
 Đối chiếu ngày **01/11/2026**. Mục đích là ghi chính xác khai báo của bên phát hành và điểm còn thiếu của gói nhóm đang dùng. Không sửa `data.yaml`, không gán license cho dữ liệu chỉ dựa trên tên tương tự.
 
@@ -7,8 +9,7 @@
 | Bộ local | Nguồn đã đối chiếu | License được nguồn khai báo | Trạng thái |
 |---|---|---|---|
 | `1_vaipe/` | Kaggle `tommyngx/vaipepill2022`, version 1, dataset ID 2347404 | API metadata: `DbCL-1.0`; API view: `Database: Open Database, Contents: Database Contents` | **Đã xác minh khai báo của bản Kaggle**. Chưa có tài liệu xác nhận riêng điều khoản của ban tổ chức VAIPE 2022 cho gói này. |
-| `2_roboflow_prescription/` | Roboflow `prescription-image-vkedm/prescription-image-labelling-xh0np`, trang version 1 `detection` | Trang version 1 ghi **CC BY 4.0**; YAML local ghi **`Private`** | **Đã xác minh khai báo công khai; còn mâu thuẫn với metadata gói local**. Cần người xuất/tải gói xác nhận. |
-| `3_roboflow_report_keywords/` | Roboflow `world-of-ai/report-keywords-detection`, trang dự án và metadata version 1 local | **CC BY 4.0** ở cả trang công khai và YAML local | **Khớp khai báo giữa nguồn và gói local**. Trang version 1 riêng chưa đọc được qua công cụ tra cứu. |
+| `2_roboflow_report_keywords/` | Roboflow `world-of-ai/report-keywords-detection`, trang dự án và metadata version 1 local | **CC BY 4.0** ở cả trang công khai và YAML local | **Khớp khai báo giữa nguồn và gói local**. Trang version 1 riêng chưa đọc được qua công cụ tra cứu. |
 
 “Đã xác minh khai báo” nghĩa là đọc được thông tin license của nguồn; không phải đã kiểm toán quyền sở hữu từng ảnh, xác minh bằng checksum toàn bộ gói nguồn, hoặc xác nhận quyền công bố thông tin người bệnh.
 
@@ -29,19 +30,8 @@ Về nguồn ban đầu: [trang tài nguyên VinUni–Illinois Smart Health Cent
 
 **Cách ghi trong báo cáo nhóm:** “Sử dụng phần đơn thuốc từ bản `tommyngx/vaipepill2022` trên Kaggle, version 1; metadata Kaggle khai báo `DbCL-1.0` (Database: Open Database, Contents: Database Contents). Chưa xác minh điều khoản riêng của nguồn VAIPE ban đầu.”
 
-## ② Roboflow đơn thuốc: nguồn công khai đã rõ, YAML còn mâu thuẫn
 
-[Trang version 1 chính xác](https://universe.roboflow.com/prescription-image-vkedm/prescription-image-labelling-xh0np/dataset/1) ghi bên đăng hiển thị **Prescription Image**, tên version `detection`, ngày tạo **08/10/2025**, tổng **9.362 ảnh**, chia **8.427 / 560 / 375**, license **CC BY 4.0**. Ngày tạo, số công bố, resize, grayscale và tăng cường khớp mô tả README xuất local; gói local thực đếm ít hơn nguồn một file train, chưa xác định lý do.
-
-[Trang tổng quan cùng dự án](https://universe.roboflow.com/prescription-image-vkedm/prescription-image-labelling-xh0np) hiển thị 3.597 ảnh và 7 lớp. Đây là số ở màn hình tổng quan, không phải số ảnh xuất của version 1. Không thể chỉ từ hai con số này kết luận đó là hai dự án khác nhau. Bản local version 1 chỉ có một lớp `medicine-names`, như kiểm kê đã ghi.
-
-**Mâu thuẫn chưa giải quyết:** `data/2_roboflow_prescription/data.yaml` ghi `roboflow.license: Private`, mặc dù workspace/project/version trùng đường dẫn công khai. `Private` ở trường metadata không tự mô tả các quyền sao chép, sửa đổi hoặc phân phối. Chưa biết vì sao gói xuất ghi như vậy; không tự kết luận đây là một license khác, lỗi xuất hay quyền truy cập workspace.
-
-**Cách ghi trong báo cáo nhóm:** “Nguồn công khai Roboflow version 1 khai báo CC BY 4.0; gói local ghi `Private` trong YAML, đang cần xác nhận nguồn xuất.” Giữ nguyên YAML làm chứng cứ. Nếu cần đưa ảnh/gói này ra ngoài nhóm, làm rõ mâu thuẫn với người cung cấp trước.
-
-**Thông tin cần người tải/xuất gói bổ sung:** link hoặc bản ghi nguồn xuất cụ thể của gói đang dùng, kèm phần license và lịch sử thay đổi nếu có; xác nhận có fork/đổi lớp hoặc thao tác xuất nào khiến YAML ghi `Private`. Chưa đủ căn cứ để yêu cầu tải lại bộ dữ liệu.
-
-## ③ Report Keywords: nguồn và metadata khớp
+## ② Report Keywords: nguồn và metadata khớp
 
 [Trang công khai dự án](https://universe.roboflow.com/world-of-ai/report-keywords-detection) ghi bên đăng **world of AI**, license **CC BY 4.0**, 57 ảnh ở tổng quan và 5 lớp. YAML local trỏ đúng workspace/project này, version 1 và cùng license. Gói xuất gồm 135 ảnh có tăng cường; không phải 135 ảnh gốc khác nhau.
 
@@ -53,14 +43,14 @@ Trang version 1 riêng không trả nội dung đọc được qua công cụ we
 
 Với các phần được nguồn cấp [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), cần ghi bên tạo/đăng được cung cấp, link dataset, link license và việc đã sửa đổi. Không mô tả tác giả dataset là người bảo trợ hoặc xác nhận kết quả MedTrack. Các quyền về thông tin cá nhân không tự được giải quyết bởi license dữ liệu.
 
-Mẫu ngắn cho bộ ③:
+Mẫu ngắn cho bộ ②:
 
 > Dữ liệu: report keywords detection, world of AI, Roboflow Universe; bản xuất v1 theo metadata local. Nguồn: https://universe.roboflow.com/world-of-ai/report-keywords-detection . License: https://creativecommons.org/licenses/by/4.0/ . MedTrack thực hiện [ghi các phép biến đổi thực sự đã dùng].
 
-Bộ ② ghi cùng loại thông tin nhưng phải kèm ghi chú mâu thuẫn `Private` ở trên. VAIPE ghi tên người đăng Kaggle và cả hai link DbCL/ODbL; không gán người đăng Kaggle là tác giả gốc của toàn bộ ảnh.
+VAIPE ghi tên người đăng Kaggle và cả hai link DbCL/ODbL; không gán người đăng Kaggle là tác giả gốc của toàn bộ ảnh.
 
 ## Bằng chứng và trạng thái công việc
 
 Chứng cứ bổ sung nằm tại `results/primary_dataset_audit/license_evidence/` trên máy Trường: JSON phản hồi API Kaggle, bản sao metadata local và `evidence_index.json`. Thư mục này bị gitignore, không đi kèm repo; các URL nguồn và trường metadata cần đối chiếu đã ghi trong tài liệu này. Với Roboflow, thông tin web được ghi lại dưới dạng ghi nhận có URL; không có bản HTML tải thành công. Phân biệt ghi nhận từ công cụ web với phản hồi HTTP thô.
 
-Tài liệu đã đối chiếu khai báo nguồn và ghi rõ giới hạn. Còn cần người cung cấp bộ ② làm rõ YAML `Private`; nguồn VAIPE ban đầu chưa có xác nhận quyền riêng cho gói 2022. Không xem các trạng thái còn mở là đã được xác nhận chỉ vì README đã hoàn thiện.
+Tài liệu đã đối chiếu khai báo nguồn và ghi rõ giới hạn. Nguồn VAIPE ban đầu chưa có xác nhận quyền riêng cho gói 2022. Không xem các trạng thái còn mở là đã được xác nhận chỉ vì README đã hoàn thiện.

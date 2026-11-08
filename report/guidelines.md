@@ -26,7 +26,7 @@ File trong `latex/` đặt tên theo mục của báo cáo; `main.tex` giữ th�
 | `sections/1_introduction.tex` | 1. Đặt vấn đề | Hiếu | 0,5 |
 | `sections/2_1_datasets.tex` | 2.1 Các bộ dữ liệu | Hiếu | 0,5 |
 | `sections/2_2_split.tex` | 2.2 Chia tập và chống rò rỉ | Hiếu | 0,25 |
-| `sections/2_3_synthetic.tex` | 2.3 Bộ 6 | Thắng | 0,5 |
+| `sections/2_3_synthetic.tex` | 2.3 Bộ 5 | Thắng | 0,5 |
 | `sections/3_0_overview.tex` | 3. Tổng quan pipeline | Hiếu | 0,5 |
 | `sections/3_1_preprocessing.tex` | 3.1 Tiền xử lý và phân loại (phương pháp) | Hiếu | 0,75 |
 | `sections/3_2_cleaning.tex` | 3.2 Làm sạch và tách lớp mực (phương pháp) | Trường | 0,75 |
@@ -55,7 +55,7 @@ Tài liệu tham khảo và hình chia theo phần, cùng người viết với 
 | Tiền xử lý và phân loại | `refs/preprocessing.bib` | `figure/preprocessing/` | Hiếu |
 | Làm sạch và tách lớp mực | `refs/cleaning.bib` | `figure/cleaning/` | Trường |
 | Dựng bảng | `refs/table.bib` | `figure/table/` | Khang |
-| Bóc tách đơn thuốc, bộ 6 | `refs/prescription.bib` | `figure/prescription/` | Thắng |
+| Bóc tách đơn thuốc, bộ 5 | `refs/prescription.bib` | `figure/prescription/` | Thắng |
 
 Đầu mỗi file có dòng `% Viết gì:` ghi nội dung cần có. Chỗ chưa viết đánh dấu `\TODO{...}` (hiện chữ đỏ); **trước khi gửi không còn `\TODO` nào trong file được giao.**
 
@@ -97,7 +97,7 @@ Mẫu có sẵn trong [sections/4_2_preprocessing.tex](latex/sections/4_2_prepro
 | :--- | :--- |
 | `\TODO{...}` | Chữ đỏ đánh dấu chỗ chưa viết |
 | `\chuong{3}` | (Chương 3) |
-| `\bo{6}` | bộ 6 |
+| `\bo{5}` | bộ 5 |
 
 ### 4.4. Thuật ngữ thống nhất
 
@@ -110,7 +110,7 @@ Mẫu có sẵn trong [sections/4_2_preprocessing.tex](latex/sections/4_2_prepro
 | lớp mực | layer mực, kênh mực |
 | khoản thuốc | block thuốc, mục thuốc |
 | phiếu xét nghiệm | phiếu XN, lab report |
-| bộ 6 | dataset 6, synthetic set |
+| bộ 5 | dataset 5, synthetic set |
 
 Quy ước kỹ thuật giống [code/README.md](../code/README.md): bbox `[x, y, w, h]`; mask mực = 255; ảnh màu BGR; 4 góc theo thứ tự TL, TR, BR, BL.
 
@@ -120,7 +120,7 @@ Mỗi người ghi phần của mình vào cuối file 4.x (dạng chú thích `
 
 | Công cụ | Dùng cho việc gì | Phần nào do người tự làm | Cách kiểm tra kết quả của AI |
 | :--- | :--- | :--- | :--- |
-| *Ví dụ: Claude* | *Gợi ý cấu trúc code, sửa lỗi, viết nháp đoạn văn* | *Chọn phương pháp, chạy thí nghiệm, đọc kết quả, phân tích lỗi* | *Unit test, so với ground truth bộ 6, đọc lại từng đoạn văn* |
+| *Ví dụ: Claude* | *Gợi ý cấu trúc code, sửa lỗi, viết nháp đoạn văn* | *Chọn phương pháp, chạy thí nghiệm, đọc kết quả, phân tích lỗi* | *Unit test, so với ground truth bộ 5, đọc lại từng đoạn văn* |
 
 ## 6. Checklist trước khi gửi phần (mỗi người, trước 08/11)
 

@@ -13,10 +13,10 @@ python code/experiments/t2_binarization.py --check-inputs-only --compatibility-e
 Khi thực sự chạy T2 từ T1 lịch sử, thêm cùng `--compatibility-evidence ...` vào lệnh bên dưới và chọn output mới. ZIP gốc được giữ nguyên; script đối chiếu config, selection, nguồn/split/seed/hệ tọa độ, hash tham chiếu đã đo, các phụ thuộc code sinh bóng và phiên bản thư viện. Manifest thay đổi được ghi lại riêng nếu các bằng chứng liên quan đều khớp. Thay đổi ảnh chuẩn, nhãn, code liên quan hoặc thiếu bằng chứng sẽ dừng. Không sửa config lịch sử để ghi hash mới.
 
 ```powershell
-python code/experiments/t2_binarization.py --data-dir data/6_synthetic --t1-selection results/t1_v2/selection.json --compatibility-evidence results/t1_t2_repro_audit/t1_t2_v2_handoff.zip --output-dir results/t2_v2_repeat
+python code/experiments/t2_binarization.py --data-dir data/5_synthetic --t1-selection results/t1_v2/selection.json --compatibility-evidence results/t1_t2_repro_audit/t1_t2_v2_handoff.zip --output-dir results/t2_v2_repeat
 ```
 
-Dùng `manifest_v2.json` tại `data/6_synthetic/`. Gói v2 có 70 mẫu `single_shadow` (60 train, 10 val), **không có mẫu bóng đơn test**. Vì vậy phép đo mới sinh **chỉ bóng** từ ảnh sạch v2 cho cả ba split; không trộn snapshot cũ hay mẫu tổ hợp v14.
+Dùng `manifest_v2.json` tại `data/5_synthetic/`. Gói v2 có 70 mẫu `single_shadow` (60 train, 10 val), **không có mẫu bóng đơn test**. Vì vậy phép đo mới sinh **chỉ bóng** từ ảnh sạch v2 cho cả ba split; không trộn snapshot cũ hay mẫu tổ hợp v14.
 
 Giữ 100 nguồn và split 60/10/30. Sắp ID nguồn trong từng split rồi luân phiên planar/silhouette và mức 1/2/3 (darkness 0,2/0,45/0,7). Seed từng nguồn lấy 8 byte đầu SHA-256 của `42:<source_id>:derived_shadow_v2`, little-endian. Gọi `synthetic.degrade.shadow` trên BGR sạch rồi chuyển xám; giữ kích thước và H đơn vị. V00 chỉ dùng tra đường dẫn ảnh sạch, không dùng ảnh hỏng/H của v00; metadata gốc ở trường `provenance` trong `samples.json`.
 
@@ -35,7 +35,7 @@ Lưu `samples.json`, `config.json`, checksum nguồn và checksum pixel xám đ�
 python code/experiments/t2_binarization.py --data-dir data/6_synthetic_v1_old/6_synthetic --t1-selection results/t1/selection.json --output-dir results/t2
 ```
 
-Từ `code/`, dùng `python experiments/t2_binarization.py` và thêm `../` vào đường dẫn dữ liệu/kết quả tương ứng. Mặc định dữ liệu lấy từ `common.paths.DATASETS[6]`. Script từ chối ghi đè kết quả cũ; dùng output-dir mới nếu chạy lại có chủ đích.
+Từ `code/`, dùng `python experiments/t2_binarization.py` và thêm `../` vào đường dẫn dữ liệu/kết quả tương ứng. Mặc định dữ liệu lấy từ `common.paths.DATASETS[5]`. Script từ chối ghi đè kết quả cũ; dùng output-dir mới nếu chạy lại có chủ đích.
 
 ## Phạm vi và nguồn tham chiếu
 
