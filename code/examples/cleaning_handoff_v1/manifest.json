@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "purpose": "Minimal integration fixture, not clinical/benchmark data",
+  "samples": [
+    {
+      "doc_type": "lab_report",
+      "preprocess_json": "code/examples/cleaning_handoff_v1/handoff_lab_report_001/preprocess.json",
+      "cleaning_json": "code/examples/cleaning_handoff_v1/handoff_lab_report_001/cleaning_result.json",
+      "reader_crop_bboxes": {
+        "example_row": [
+          45,
+          315,
+          710,
+          45
+        ]
+      },
+      "reader_crop_files": {
+        "example_row": "code/examples/cleaning_handoff_v1/handoff_lab_report_001/ocr_crop_example.png"
+      },
+      "provenance": "Generated flat fixture, not Hiếu's preprocessing/classification output; identity H is deliberate. doc_type and confidence are assigned for this fixture, not model predictions."
+    },
+    {
+      "doc_type": "prescription",
+      "preprocess_json": "code/examples/cleaning_handoff_v1/handoff_prescription_001/preprocess.json",
+      "cleaning_json": "code/examples/cleaning_handoff_v1/handoff_prescription_001/cleaning_result.json",
+      "reader_crop_bboxes": {
+        "example_row": [
+          45,
+          320,
+          710,
+          45
+        ]
+      },
+      "reader_crop_files": {
+        "example_row": "code/examples/cleaning_handoff_v1/handoff_prescription_001/ocr_crop_example.png"
+      },
+      "provenance": "Generated flat fixture, not Hiếu's preprocessing/classification output; identity H is deliberate. doc_type and confidence are assigned for this fixture, not model predictions."
+    }
+  ],
+  "sha256": {
+    "code/examples/cleaning_handoff_v1/handoff_lab_report_001/binary.png": "342bd87766ecd00dc5a837608b6276ed5d990d791a09ec32ea46a67aa44954e1",
+    "code/examples/cleaning_handoff_v1/handoff_lab_report_001/clean_gray.png": "7466dc6eeca9e7684712eed66a5bcc9ccd0ffc7ca88cb90cddc56e3b59fcc867",
+    "code/examples/cleaning_handoff_v1/handoff_lab_report_001/cleaning_result.json": "6293318bd6fa6e903364b101744a38e14d653991dfd5cd9fc144a17943f0d5c0",
+    "code/examples/cleaning_handoff_v1/handoff_lab_report_001/ocr_crop_example.png": "cbb607f186f734b614da39cf9c51a9ee1f4edd2b498d7761ae7f1b7ab0478597",
+    "code/examples/cleaning_handoff_v1/handoff_lab_report_001/preprocess.json": "5364f70d3e37552cbe96570e4ffbdfed672161b8156454379e2896db9a56818f",
+    "code/examples/cleaning_handoff_v1/handoff_lab_report_001/preview.png": "b1d0027fb1d4466c0b5be8cee92a9ef9746fe9d8402948a1fe27db70e1b49462",
+    "code/examples/cleaning_handoff_v1/handoff_lab_report_001/rectified.png": "680eb60f8a887e1d6c80bb139161f588e84a9005aa12ac410d7fc3ee57447130",
+    "code/examples/cleaning_handoff_v1/handoff_prescription_001/binary.png": "12a6bb719e54ccc9aa2f47eed45e97ca1e09fb365530d6ffc36b78e7d7114edf",
+    "code/examples/cleaning_handoff_v1/handoff_prescription_001/clean_gray.png": "71b1915023b8d9a7e21d0eebf95992d99c1b0542dafe5d661b01a4591878cbf8",
+    "code/examples/cleaning_handoff_v1/handoff_prescription_001/cleaning_result.json": "2ac183a6815e4b51a47f89bacf3774a80bfb7dfb398a040549965ceb214c50ad",
+    "code/examples/cleaning_handoff_v1/handoff_prescription_001/ocr_crop_example.png": "45fed442f846d62c65d0727e29742216938fb16cba22a9b2e9d27203d86fd795",
+    "code/examples/cleaning_handoff_v1/handoff_prescription_001/preprocess.json": "8c9d0512d277543317e2a41760056ed2242a11440077bdcceb2393537a5102d0",
+    "code/examples/cleaning_handoff_v1/handoff_prescription_001/preview.png": "b76f2caeadd78da69f06c00c3da60c32a126c1f0e74623e8a3307319f04f06f3",
+    "code/examples/cleaning_handoff_v1/handoff_prescription_001/rectified.png": "dfb33ba5abbfc9834d71a942464b6b013e6ef30be946ad95e04225e5f81ca4ba",
+    "code/examples/cleaning_handoff_v1/read_sample.py": "60c5379db87fbc8a7aa95dc40e355fd258fd884d931956578f9bb44c6ab060ef",
+    "code/examples/cleaning_handoff_v1/README.md": "104861fb50004c987212973563cfcb3d7fe3cef00f34c7466a6dcb56834161ba"
+  },
+  "sha256_text_newlines": "lf"
+}

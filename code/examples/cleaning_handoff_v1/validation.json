@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "sample_count": 2,
+  "samples": [
+    {
+      "image_id": "handoff_lab_report_001",
+      "shape_hw": [
+        1100,
+        800
+      ],
+      "json_roundtrip": "pass",
+      "images_and_polarity": "pass",
+      "declared_params": "pass",
+      "recomputed_outputs": "pass",
+      "reader_crop": "pass"
+    },
+    {
+      "image_id": "handoff_prescription_001",
+      "shape_hw": [
+        1100,
+        800
+      ],
+      "json_roundtrip": "pass",
+      "images_and_polarity": "pass",
+      "declared_params": "pass",
+      "recomputed_outputs": "pass",
+      "reader_crop": "pass"
+    }
+  ],
+  "scope": "Contract/assets/crop smoke test only; downstream extractors and OCR not executed",
+  "automated_tests": {
+    "passed": 46,
+    "skipped": 6,
+    "note": "Shared contract tests, cleaning subset and handoff tests; skips are unimplemented cleaning methods/masks."
+  }
+}

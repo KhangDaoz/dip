@@ -1,0 +1,114 @@
+% Báo cáo đồ án Xử lý ảnh — nhóm MedTrack
+% Biên dịch: latexmk   (cấu hình trong .latexmkrc: XeLaTeX + biber, kết quả ở build/main.pdf)
+% File này giữ thứ tự các mục; nội dung nằm trong sections/, appendix/, refs/ (phân công viết: ../guidelines.md).
+\documentclass[12pt,a4paper]{article}
+
+% ---------- Ngôn ngữ, phông chữ ----------
+\usepackage{fontspec}
+\usepackage[vietnamese]{babel}
+% TeX Gyre Termes: tương đương Times, đủ dấu tiếng Việt, có sẵn trong MiKTeX / TeX Live (gọi theo tên file để chạy được trên mọi máy)
+\setmainfont{texgyretermes}[Extension=.otf, UprightFont=*-regular, BoldFont=*-bold,
+  ItalicFont=*-italic, BoldItalicFont=*-bolditalic]
+
+% ---------- Trang ----------
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{setspace}\setstretch{1.15}
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{1.2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1ex}{0.4ex}
+
+% ---------- Hình, bảng, toán ----------
+\usepackage{graphicx}\graphicspath{{figure/}}
+\usepackage{booktabs,tabularx,multirow,makecell}
+\usepackage{caption,subcaption}
+\captionsetup{font=small,labelfont=bf}
+\captionsetup[table]{position=top}
+\usepackage{float}
+\usepackage{amsmath,amssymb}
+\usepackage{siunitx}\sisetup{output-decimal-marker={,},group-separator={.}}
+\usepackage{enumitem}\setlist{nosep,leftmargin=*}
+\usepackage{xcolor}
+
+% ---------- Tài liệu tham khảo (IEEE) ----------
+\usepackage{csquotes}
+\usepackage[style=ieee,backend=biber,language=english]{biblatex}   % biblatex chưa hỗ trợ tiếng Việt; nguồn trích đều tiếng Anh
+\addbibresource{refs/common.bib}
+\addbibresource{refs/preprocessing.bib}
+\addbibresource{refs/cleaning.bib}
+\addbibresource{refs/table.bib}
+\addbibresource{refs/prescription.bib}
+
+\usepackage[hidelinks]{hyperref}
+
+% ---------- Lệnh dùng chung ----------
+\newcommand{\TODO}[1]{\textcolor{red}{[TODO: #1]}}   % chỗ cần viết; phải hết trước khi nộp
+\newcommand{\chuong}[1]{(Chương~#1)}                  % ghi chương học phần: \chuong{3}
+\newcommand{\bo}[1]{bộ~#1}                            % tên bộ dữ liệu: \bo{6}
+
+\begin{document}
+
+\input{sections/0_title}
+
+% ===================== BẢN CHÍNH (≤ 10 trang) =====================
+\section{Đặt vấn đề}\label{sec:intro}
+\input{sections/1_introduction}
+
+\section{Dữ liệu}\label{sec:data}
+\subsection{Các bộ dữ liệu}\label{sec:datasets}
+\input{sections/2_1_datasets}
+\subsection{Chia tập và chống rò rỉ}\label{sec:split}
+\input{sections/2_2_split}
+\subsection{Bộ 6 --- benchmark tổng hợp}\label{sec:synthetic}
+\input{sections/2_3_synthetic}
+
+\section{Phương pháp}\label{sec:method}
+\input{sections/3_0_overview}
+\subsection{Tiền xử lý và phân loại tài liệu}\label{sec:m-pre}
+\input{sections/3_1_preprocessing}
+\subsection{Làm sạch ảnh và tách lớp mực}\label{sec:m-clean}
+\input{sections/3_2_cleaning}
+\subsection{Dựng bảng phiếu xét nghiệm}\label{sec:m-table}
+\input{sections/3_3_table}
+\subsection{Bóc tách đơn thuốc}\label{sec:m-pres}
+\input{sections/3_4_prescription}
+
+\section{Thực nghiệm}\label{sec:exp}
+\subsection{Thiết lập và độ đo}\label{sec:setup}
+\input{sections/4_1_setup}
+\subsection{Tiền xử lý và phân loại}\label{sec:e-pre}
+\input{sections/4_2_preprocessing}
+\subsection{Làm sạch và tách lớp mực}\label{sec:e-clean}
+\input{sections/4_3_cleaning}
+\subsection{Dựng bảng}\label{sec:e-table}
+\input{sections/4_4_table}
+\subsection{Bóc tách đơn thuốc}\label{sec:e-pres}
+\input{sections/4_5_prescription}
+\subsection{Ablation toàn pipeline}\label{sec:ablation}
+\input{sections/4_6_ablation}
+\subsection{Thời gian chạy}\label{sec:runtime}
+\input{sections/4_7_runtime}
+
+\section{Thảo luận}\label{sec:discussion}
+\input{sections/5_discussion}
+
+\section{Phân công}\label{sec:contrib}
+\input{sections/6_contribution}
+
+\section{Khai báo sử dụng AI}\label{sec:ai}
+\input{sections/7_ai_declaration}
+
+\printbibliography[heading=bibintoc,title={Tài liệu tham khảo}]
+
+% ===================== PHỤ LỤC =====================
+\clearpage
+\appendix
+\section{Tiền xử lý và phân loại}\label{app:preprocessing}
+\input{appendix/A_preprocessing}
+\section{Làm sạch và tách lớp mực}\label{app:cleaning}
+\input{appendix/B_cleaning}
+\section{Dựng bảng}\label{app:table}
+\input{appendix/C_table}
+\section{Bóc tách đơn thuốc và bộ 6}\label{app:prescription}
+\input{appendix/D_prescription}
+
+\end{document}

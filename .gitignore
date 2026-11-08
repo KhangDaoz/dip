@@ -1,0 +1,24 @@
+/frontend
+
+# Dữ liệu & kết quả — không commit (chia sẻ qua Drive)
+# Chỉ chia sẻ hai tài liệu ở gốc data; bỏ qua mọi dataset và file khác.
+# Khớp cả tên cũ Data/ để tránh thêm nhầm dataset từ máy chưa đổi tên.
+/[dD]ata/*
+!/data/README.md
+!/data/SOURCES_AND_LICENSES.md
+/results/
+/out/
+*.zip
+
+# Python & môi trường ảo
+.venv/
+venv/
+env/
+.env
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+.agents/

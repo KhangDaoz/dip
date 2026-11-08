@@ -1,0 +1,14 @@
+# Thư viện lõi dùng chung — chạy được trên Python 3.10 → 3.13
+numpy>=1.26
+opencv-python>=4.10
+scikit-image>=0.24
+scikit-learn>=1.5
+scipy>=1.13
+pandas>=2.2
+pyarrow>=17          # đọc parquet (scripts/fetch_rvl_cdip.py)
+matplotlib>=3.9
+pillow>=10.2.0
+imagehash>=4.3
+pyyaml>=6.0
+tqdm>=4.66
+pytest>=8.0

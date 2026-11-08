@@ -1,0 +1,54 @@
+# Pipeline tiền xử lý, phân loại và bóc tách cấu trúc tài liệu y tế từ ảnh chụp điện thoại
+
+## 1. Đặt vấn đề
+Bối cảnh số hóa hồ sơ y tế giấy; khó khăn của ảnh chụp điện thoại (méo, nghiêng, mờ, lóa, bóng, dấu đè chữ, bảng không kẻ); đầu vào, đầu ra của bài toán; đóng góp của nhóm.
+
+## 2. Dữ liệu
+### 2.1. Các bộ dữ liệu
+Bộ 1–5: nguồn, số ảnh gốc, loại nhãn, mục đích sử dụng.
+### 2.2. Chia tập và chống rò rỉ
+Chia theo ảnh gốc, gom bản tăng cường của Roboflow; tham số chọn trên val, báo cáo trên test.
+### 2.3. Bộ 6 — benchmark tổng hợp
+Cách sinh từ ảnh sạch, các loại và mức hỏng, ground truth đi kèm, mức độ giống ảnh thật.
+
+## 3. Phương pháp
+### 3.0. Tổng quan pipeline
+Sơ đồ 4 bước, dữ liệu chuyển giữa các bước, chương học phần áp dụng.
+### 3.1. Tiền xử lý và phân loại tài liệu
+Đo chất lượng (mờ, lóa), tìm 4 góc, nắn phối cảnh, chỉnh nghiêng, tăng tương phản, khử lóa; phân loại 3 lớp.
+### 3.2. Làm sạch ảnh và tách lớp mực
+Khử bóng, nhị phân hóa, tách mực màu và xóa dấu / chữ ký, giữ chữ đỏ cảnh báo.
+### 3.3. Dựng bảng phiếu xét nghiệm
+Gom cụm từ thành dòng, tìm cột, ghép ô, phát hiện cờ bất thường.
+### 3.4. Bóc tách đơn thuốc
+Khoanh vùng bảng thuốc, tách dòng, gom thành từng khoản thuốc, tách trường.
+
+## 4. Thực nghiệm
+### 4.1. Thiết lập và độ đo
+Môi trường chạy, độ đo dùng chung (PSNR, SSIM, F-measure, IoU, CER).
+### 4.2. Tiền xử lý và phân loại
+So sánh các phương án tìm góc, chỉnh nghiêng, khử lóa; sai số nắn theo mức méo; kết quả phân loại.
+### 4.3. Làm sạch và tách lớp mực
+So sánh các cách nhị phân hóa; độ bền theo mức hỏng; ràng buộc giữ chữ đỏ.
+### 4.4. Dựng bảng
+Độ chính xác gán từ vào dòng, cột; độ bền theo góc nghiêng.
+### 4.5. Bóc tách đơn thuốc
+Độ chính xác tách khoản thuốc; độ bền theo mức hỏng; lợi ích cho OCR.
+### 4.6. Ablation toàn pipeline
+Tắt lần lượt từng bước, đo ảnh hưởng lên kết quả cuối.
+### 4.7. Thời gian chạy
+Thời gian mỗi bước và toàn pipeline.
+
+## 5. Thảo luận
+Điểm mạnh, hạn chế, ca thất bại điển hình, hướng phát triển.
+
+## 6. Phân công
+Phần việc và mức đóng góp của từng thành viên.
+
+## 7. Khai báo sử dụng AI
+Công cụ đã dùng, dùng cho việc gì, cách kiểm tra kết quả.
+
+## Tài liệu tham khảo
+
+## Phụ lục
+Bảng tham số đầy đủ, đường cong theo tham số, ảnh ví dụ bổ sung.

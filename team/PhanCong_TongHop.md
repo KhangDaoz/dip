@@ -1,0 +1,170 @@
+# TỔNG HỢP PIPELINE, DỮ LIỆU & PHÂN CÔNG — MEDTRACK AI
+
+> **Nhóm:** Hiếu (nhóm trưởng), Trường, Khang, Thắng  
+> **Áp dụng cho:** Đồ án Xử lý ảnh số (DIP, hạn 11/11/2026) · Bài tập lớn Học máy (ML) · Ứng dụng di động MedTrack AI (Mobile App, dùng cho cuộc thi NEXUS 2026)  
+> **Chi tiết từng môn:** [DeTai_XuLyAnh_ChiTiet.md](../dip/docs/DeTai_XuLyAnh_ChiTiet.md) · [KeHoach_BTL_MachineLearning.md](../ml/docs/KeHoach_BTL_MachineLearning.md) · [Bản nháp NEXUS](../nexus/docs/nopbai_draft_vi.md)  
+> **Kế hoạch chi tiết từng người:** [Hiếu](KeHoach_Hieu.md) · [Trường](KeHoach_Truong.md) · [Khang](KeHoach_Khang.md) · [Thắng](KeHoach_Thang.md)
+
+Nguyên tắc chia việc: mỗi người sở hữu **trọn một mắt xích** của pipeline ở cả 3 lớp. Phương pháp xử lý ảnh (DIP) là baseline dựa trên luật và là nguồn đặc trưng cho mô hình học máy (ML); đầu ra của cả hai nuôi trực tiếp một tính năng trên ứng dụng (Mobile App).
+
+---
+
+## 1. PIPELINE
+
+```mermaid
+flowchart TD
+    IN["📷 Ảnh tài liệu bất kỳ người dùng tải lên<br>(đơn thuốc, phiếu XN, giấy khám, hóa đơn, ảnh không liên quan...)<br>Ảnh chụp hoặc ảnh xuất từ phần mềm; có thể nghiêng, mờ, lóa, bóng đổ"]
+
+    subgraph S1 ["① THU NHẬN & PHÂN LOẠI — Hiếu"]
+        A1["IQA: đo mờ (Laplacian), đo lóa (kênh V – HSV)"]
+        A2["Nắn phối cảnh 4 điểm + Deskew + CLAHE<br>(bỏ qua nếu ảnh đã phẳng)"]
+        A3{"Phân loại 3 lớp<br>Đơn thuốc / Phiếu xét nghiệm / Tài liệu khác"}
+    end
+
+    X["⛔ Tài liệu khác hoặc độ tin cậy thấp<br>Dừng pipeline · lưu làm tệp đính kèm<br>Báo người dùng: chưa hỗ trợ đọc tự động"]
+
+    subgraph S2 ["② LÀM SẠCH & TÁCH LỚP MỰC — Trường"]
+        B1["Khử bóng đổ (ước lượng nền)"]
+        B2["Tách lớp mực HSV: chữ in / chữ đỏ / viết tay / con dấu"]
+        B3["Xóa dấu & chữ ký (Inpainting) + Nhị phân hóa Sauvola"]
+    end
+
+    subgraph S3 ["③ PHIẾU XÉT NGHIỆM — Khang"]
+        C1["Dựng bảng<br>• Bảng không kẻ: gom cụm từ thành dòng/cột bằng Projection + Dilation<br>• Bảng có kẻ: Closing ngang/dọc lấy lưới"]
+        C2["Phân loại vai trò từng cụm từ (ML)<br>tên chỉ số · kết quả · đơn vị · khoảng tham chiếu<br>→ ghép thành từng dòng chỉ số"]
+        C3["Gắn cờ bất thường bằng luật<br>So kết quả với khoảng tham chiếu; thêm chữ đỏ / ↑↓ / H/L nếu có"]
+    end
+
+    subgraph S4 ["④ ĐƠN THUỐC — Thắng"]
+        D1["Khoanh vùng bảng thuốc, tách từng khoản thuốc<br>(Projection + Dilation)"]
+        D2["Phân loại dòng: tên thuốc / hàm lượng / cách dùng / hành chính"]
+    end
+
+    OCR["OCR theo từng vùng<br>VietOCR (tiếng Việt) · bộ OCR tiếng Anh (dữ liệu Ấn Độ)<br>+ Chuẩn hóa: QĐ 1227, LOINC, UCUM (Anh_Xa.json)"]
+
+    subgraph APP ["📱 MEDTRACK APP"]
+        V["Màn hình xác nhận — Trường"]
+        L["Biểu đồ & cảnh báo xét nghiệm — Khang"]
+        R["Lịch nhắc thuốc — Thắng"]
+    end
+
+    IN --> A1 --> A2 --> A3
+    A3 -->|"Đơn thuốc / Phiếu XN<br>ảnh phẳng + loại tài liệu + ma trận H"| B1 --> B2 --> B3
+    A3 -->|Khác| X
+    B3 -->|Phiếu xét nghiệm| C1 --> C2 --> C3
+    B3 -->|Đơn thuốc| D1 --> D2
+    C3 --> OCR
+    D2 --> OCR
+    OCR -->|"JSON chờ xác nhận"| V
+    V -->|đã xác nhận| L
+    V -->|đã xác nhận| R
+    V -.->|"người dùng sửa → nhãn mới để train lại"| B2
+```
+
+### 1.1. Đầu vào và đầu ra của từng mắt xích
+
+Đây là **hợp đồng dữ liệu** giữa các thành viên, cần chốt trong Đợt 1 (29/10–01/11). Sau khi chốt, mỗi người có thể làm song song bằng dữ liệu giả lập mà không phải chờ người trước.
+
+| Mắt xích | Người | Nhận vào | Trả ra |
+| :--- | :--- | :--- | :--- |
+| **① Thu nhận & Phân loại** | Hiếu | Ảnh gốc, **mọi loại tài liệu** | Ảnh đã nắn phẳng; ma trận homography `H`; nhãn `prescription` / `lab_report` / `other` kèm độ tin cậy; điểm mờ, điểm lóa. **Chỉ `prescription` và `lab_report` có độ tin cậy vượt ngưỡng mới được chuyển sang ②** |
+| **② Làm sạch & Tách lớp mực** | Trường | Ảnh phẳng + loại tài liệu | Ảnh nhị phân sạch; mask từng lớp mực; danh sách thành phần liên thông kèm nhãn |
+| **③ Phiếu xét nghiệm** | Khang | Ảnh sạch + mask | JSON các dòng chỉ số: bbox, tên, giá trị, đơn vị, khoảng tham chiếu, cờ `HIGH` / `LOW` / `NORMAL` |
+| **④ Đơn thuốc** | Thắng | Ảnh sạch + mask | JSON các khoản thuốc: bbox, tên thuốc, hàm lượng, liều sáng/trưa/chiều/tối, số ngày |
+| **Mobile App** | Cả nhóm | JSON từ ③ ④ | Dữ liệu đã xác nhận → biểu đồ, lịch nhắc; chỉnh sửa của người dùng → nhãn huấn luyện |
+
+---
+
+## 2. DỮ LIỆU
+
+### 2.1. Các nguồn dữ liệu
+
+| # | Bộ dữ liệu | Loại tài liệu | Nguồn gốc & dạng ảnh | Nhãn có sẵn | Quy mô |
+| :---: | :--- | :--- | :--- | :--- | :---: |
+| **1** | [VAIPE Pill 2022](https://www.kaggle.com/datasets/tommyngx/vaipepill2022) (Kaggle) | Đơn thuốc | Việt Nam, tiếng Việt; ảnh chụp. **Chỉ dùng phần ảnh đơn thuốc**, bỏ ảnh viên thuốc | *Cần kiểm tra:* có file nhãn kèm ảnh đơn không; nhãn theo vùng hay theo từng dòng chữ (tên thuốc, cách dùng...) | *cần xác nhận* |
+| **2** | [Prescription Image Labelling](https://universe.roboflow.com/prescription-image-vkedm/prescription-image-labelling-xh0np) (Roboflow) | Đơn thuốc | Ấn Độ, tiếng Anh (Practo); **ảnh xuất từ phần mềm**, sạch, không nghiêng, không dấu, không viết tay | Bounding box theo **vùng**: `medicine-names` (cả bảng thuốc, **chưa tách từng khoản**), `doctor_information`, `patient_information`, `Diagnosis` | *cần xác nhận* |
+| **3** | [Report Keywords Detection](https://universe.roboflow.com/world-of-ai/report-keywords-detection) (Roboflow) | Phiếu xét nghiệm | Ấn Độ, tiếng Anh; **ảnh chụp** phiếu máu (CBC), có nghiêng, có ảnh chụp màn hình; bảng **không kẻ lưới**; không thấy chữ đỏ hay cờ H/L | Bounding box theo **từng cụm từ**: `Report Type`, `parameter`, kết quả, đơn vị, khoảng tham chiếu *(xác nhận tên nhãn chính xác)* | *cần xác nhận* |
+| **4** | **Tài liệu khác** | Lớp `other` | Tập con bộ tài liệu công khai **RVL-CDIP** (form, invoice, letter, scientific report...) | Nhãn lớp tài liệu | *cần bổ sung* |
+| **5** | **Ảnh nhóm tự chụp** | Cả 3 lớp | Đơn thuốc, phiếu xét nghiệm Việt Nam; giấy khám, hóa đơn, giấy tờ hành chính. Che thông tin cá nhân, có sự đồng ý | Nhóm tự gán | Mục tiêu ≥ 50 ảnh |
+| **6** | **Benchmark tổng hợp** *(Thắng sinh)* | Đơn thuốc | Sinh từ ảnh sạch của bộ 2: nghiêng, phối cảnh, mờ, bóng đổ, lóa flash, dấu đỏ giả, mỗi loại nhiều mức | **Ground truth chính xác tuyệt đối:** ảnh sạch gốc, ma trận biến dạng, bounding box đã biến đổi, mức độ hỏng | Vài trăm ảnh, không phải vẽ tay |
+
+> Bộ 6 là nguồn ground truth chính cho các độ đo DIP (PSNR, SSIM, F-measure, sai số nắn, IoU) và cho đường cong "độ đo theo mức độ hỏng". Bộ 5 **không dùng để huấn luyện**. Nó là **tập test độc lập** của cả nhóm, và là bằng chứng duy nhất cho thấy hệ thống chạy được trên tài liệu Việt Nam thật (cần cho cuộc thi NEXUS).
+
+### 2.2. Ai dùng bộ nào
+
+| | **Hiếu** | **Trường** | **Khang** | **Thắng** |
+| :--- | :--- | :--- | :--- | :--- |
+| **Bộ dùng để train** | 1 + 2 (đơn thuốc), 3 (phiếu XN), 4 (khác) | 1 (chính: có dấu, viết tay), 3 | 3 | 1 + 2 |
+| **Bộ dùng để test** | Tập test của 1–4 (chia theo cụm ảnh gần trùng) + **bộ 5** + **bộ 6** (sai số nắn) | Tập test của 1, 3 + **bộ 5** + **bộ 6** (F-measure) | Tập test của 3 (chia theo phiếu) + **bộ 5** (phiếu VN) | Tập test của 1, 2 (chia theo mẫu đơn) + **bộ 5** + **bộ 6** (IoU) |
+| **Ground truth có sẵn** | Nhãn lớp suy ra từ nguồn; ma trận biến dạng của bộ 6 | Ảnh sạch của bộ 6 làm ảnh nhị phân chuẩn | **Vai trò từng cụm từ** của bộ 3 (dùng trực tiếp làm nhãn ML) | Vùng bảng thuốc (bộ 2); bounding box đã biến đổi của bộ 6 |
+| **Phải tự gán thêm** | Nhãn lớp cho bộ 5 | Nhãn 4 lớp mực: luật HSV gán sơ bộ, sửa tay tập test; Active Learning chọn mẫu cần sửa | OCR từng cụm từ để lấy chữ làm đặc trưng | Bounding box **từng khoản thuốc** trên ~30 ảnh; viết bộ sinh bộ 6 |
+
+### 2.3. Đặc điểm dữ liệu cần lưu ý
+
+1. **Học thuộc nguồn (Hiếu).** Đơn thuốc bộ 2 là ảnh xuất từ phần mềm, phiếu xét nghiệm bộ 3 là ảnh chụp, tài liệu khác từ RVL-CDIP là ảnh scan đen trắng. Mô hình có thể học "kiểu ảnh của từng nguồn" thay vì loại tài liệu. Bắt buộc báo cáo kết quả trên **bộ 5** và thí nghiệm train trên bộ 1, test trên bộ 2.
+2. **Bảng không kẻ lưới (Khang).** Cách tách lưới bằng closing ngang/dọc không chạy được trên bộ 3. Phương pháp chính là gom cụm từ thành dòng và cột bằng projection profile và dilation thích nghi; cách tách theo đường kẻ dùng cho phiếu Việt Nam có kẻ lưới trong bộ 5.
+3. **Không có cờ màu (Khang).** Bộ 3 không có chữ đỏ hay H/L. Vì vậy phần ML của Khang là **phân loại vai trò từng cụm từ** (nhãn có sẵn); cờ bất thường là **luật so sánh số** chạy sau ML. Không dùng nhãn bình thường / bất thường làm bài toán ML, vì nhãn đó suy ra trực tiếp từ đặc trưng (một câu `if` là giải xong).
+4. **Thiếu dấu và chữ viết tay (Trường).** Bộ 2 và bộ 3 gần như không có con dấu, chữ ký hay chữ đỏ. Dữ liệu cho bài toán tách lớp mực chủ yếu đến từ **bộ 1** và bộ 5.
+5. **Chưa có nhãn từng khoản thuốc (Thắng).** Bộ 2 chỉ khoanh cả bảng thuốc. Ground truth từng khoản phải tự vẽ trên một tập con (đủ để tính IoU), trừ khi bộ 1 có sẵn.
+6. **Hai ngôn ngữ.** Bộ 1 và bộ 5 là tiếng Việt, bộ 2 và bộ 3 là tiếng Anh. OCR và từ khóa đặc trưng (TF-IDF) phải xử lý cả hai ngôn ngữ; bài dự thi phải nói rõ phần xét nghiệm chủ yếu được kiểm chứng trên dữ liệu tiếng Anh.
+
+### 2.4. Quy tắc dùng dữ liệu
+
+- **Kho dữ liệu chung (Bắt buộc):** Toàn bộ dataset của nhóm được lưu trữ và chia sẻ chính thức tại [Google Drive Folder MedTrack Dataset](https://drive.google.com/drive/folders/1PtO0ret01AW0mF504ayRFE7GoE2Ez4_G?usp=drive_link). **Mọi thành viên bắt buộc tải dữ liệu từ link Drive này về và đưa vào thư mục `data/` ở gốc repo**, không tải riêng lẻ từ các nguồn khác để tránh lệch phiên bản dữ liệu.
+- **Trường** giữ bộ dữ liệu gốc và một cách chia Train/Val/Test **70/15/15 cố định** (cùng seed, chia theo ảnh) cho cả nhóm. Không ai tự chia lại.
+- Mọi bước chuẩn hóa, chọn đặc trưng, PCA chỉ fit trên tập Train (chống rò rỉ dữ liệu).
+- Ảnh trùng hoặc gần trùng giữa các tập phải loại trước khi chia.
+- Ghi lại license của từng bộ trong `data/README.md`; ảnh tự chụp phải che họ tên, ngày sinh, mã bệnh nhân, số điện thoại.
+
+### 2.5. Việc cần làm ngay về dữ liệu
+
+| Việc | Người | Hạn |
+| :--- | :--- | :--- |
+| Tải 3 bộ, ghi số ảnh, danh sách nhãn, license vào `data/README.md`; tạo split chung | Trường | 01/11 |
+| Kiểm tra bộ 1 có ảnh đơn thuốc và file nhãn kèm theo không, nhãn theo vùng hay theo dòng | Thắng | 31/10 |
+| Xác nhận tên nhãn chính xác của bộ 3; viết script OCR từng cụm từ và ghép cụm thành dòng | Khang | 01/11 |
+| Viết bộ sinh **bộ 6** (benchmark tổng hợp) và sinh bản đầu tiên cho cả nhóm dùng | Thắng | 02/11 |
+| Lấy tập con RVL-CDIP cho lớp `other` | Hiếu | 01/11 |
+| Thu bộ 5: mỗi người chụp ≥ 15 ảnh (đơn thuốc, phiếu xét nghiệm, giấy tờ khác), che thông tin cá nhân | Cả nhóm | 03/11 |
+
+---
+
+## 3. PHÂN CÔNG CHI TIẾT
+
+| | **Hiếu** | **Trường** | **Khang** | **Thắng** |
+| :--- | :--- | :--- | :--- | :--- |
+| **ML**<br>*(Học máy)* | **Bài toán 1: Phân loại biểu mẫu 3 lớp**<br>• Lớp: đơn thuốc, phiếu xét nghiệm, tài liệu khác<br>• Dữ liệu: bộ 1, 2, 3, 4; test thêm trên bộ 5<br>• Nhãn: có sẵn theo nguồn<br>• Đặc trưng: HOG, LBP, mật độ bố cục 3×3, tỉ lệ đường kẻ<br>• 5 mô hình bài giảng; điểm cộng: fine-tune ResNet-18<br>• Ngưỡng từ chối cho tài liệu chưa gặp (open-set) + **calibration** (biểu đồ độ tin cậy)<br>• Kiểm định McNemar / bootstrap khi so HOG + SVM với ResNet-18<br>• Chia fold theo cụm ảnh gần trùng (không theo nguồn: phiếu XN chỉ có 1 nguồn)<br>• Source probe trong lớp đơn thuốc (bộ 1 vs bộ 2); đổi nguồn: train đơn bộ 1 → test đơn bộ 2; kết quả chính trên bộ 5<br>• Tài liệu lạ mang dáng y tế (giấy ra viện, siêu âm) báo cáo riêng<br>📝 **Thêm:** ghép báo cáo & slide ML | **Bài toán 2: Phân loại thành phần liên thông**<br>• 4 lớp: chữ in, viết tay, con dấu, khác (đường kẻ + nhiễu)<br>• Dữ liệu: chủ yếu bộ 1, thêm bộ 3<br>• Nhãn: luật HSV gán sơ bộ; **chỉ sửa tay tập test** (~30 ảnh)<br>• Đặc trưng: hình dạng, màu HSV, độ dày nét<br>• 5 mô hình bài giảng (XGBoost để tham khảo)<br>• ⭐ **Điểm cộng: Active Learning** — mô phỏng vòng người dùng sửa nhãn; đường cong "số nhãn gán tay → F1" khi chọn mẫu ngẫu nhiên so với chọn mẫu mô hình kém tự tin nhất<br>• Phân tích lỗi: con dấu mờ, chữ ký mực đen bị nhầm thành chữ in | **Bài toán 3: Phân loại vai trò từng cụm từ trên phiếu xét nghiệm**<br>• 5 lớp: loại phiếu, tên chỉ số, kết quả, đơn vị, khoảng tham chiếu<br>• Dữ liệu: bộ 3; nhãn **có sẵn** (dạng box cụm từ)<br>• Đặc trưng: vị trí tương đối trong dòng và trang, kích thước box, tỉ lệ chữ số / chữ cái / ký hiệu (`-`, `/`, `^`), chữ OCR (TF-IDF n-gram ký tự)<br>• 5 mô hình bài giảng; `GroupKFold` theo phiếu<br>• Điểm cộng: YOLOv8 nhận vai trò cụm từ trực tiếp từ ảnh — so "đặc trưng thủ công + mô hình cổ điển" với "học đầu-cuối"<br>• Cờ bất thường: **luật** so sánh số, chạy sau ML<br>• Phân tích lỗi: đơn vị bị nhầm thành kết quả, khoảng tham chiếu bị tách đôi | **Bài toán 4: Phân loại dòng trên đơn thuốc**<br>• 5 lớp: thuốc, chẩn đoán, thông tin bệnh nhân, thông tin bác sĩ, khác<br>• Dữ liệu: bộ 2 (+ bộ 1 nếu có nhãn)<br>• Nhãn: **tự sinh** — dòng nằm trong vùng nhãn nào của bộ 2 thì mang nhãn vùng đó<br>• Đặc trưng: vị trí, chữ số, từ khóa (Việt + Anh), TF-IDF n-gram ký tự<br>• 5 mô hình bài giảng; `GroupKFold` theo mẫu đơn, báo cáo riêng kết quả **cùng mẫu** và **khác mẫu**<br>• Điểm cộng: YOLOv8 phát hiện 4 vùng (nhãn sẵn của bộ 2)<br>• Phân tích lỗi: mô hình học trên đơn Ấn Độ chạy trên đơn Việt Nam (bộ 1, bộ 5) |
+| **DIP**<br>*(Xử lý ảnh)* | **Tiền xử lý & Phân loại** *(Chương 2, 3, 8)*<br>• Đo mờ (phương sai Laplacian), đo lóa (kênh V – HSV)<br>• Tìm 4 góc giấy, nắn phối cảnh, xuất ma trận `H`; bỏ qua khi ảnh đã phẳng<br>• So sánh 3 cách chỉnh nghiêng: Hough, Radon, projection<br>• CLAHE; phân loại 3 lớp HOG + k-NN (dùng lại đặc trưng ML), chặn tài liệu khác<br>• Đường cong sai số nắn theo góc nghiêng 0°→30° trên bộ 6<br>• Bảng tham số & lý do chọn (ngưỡng mờ, ngưỡng lóa, tham số CLAHE)<br>📦 `src/preprocessing/`, `src/classification/`<br>📏 Sai số góc (px), PSNR, SSIM, Macro-F1 | **Làm sạch & Tách lớp mực** *(Chương 3, 4, 5, 7)*<br>• Khử bóng đổ bằng ước lượng nền (Median / Closing kích thước lớn)<br>• Tách mực HSV: dấu đỏ, bút xanh, chữ in đen; Inpainting, giữ chữ đỏ cảnh báo<br>• So sánh 4 cách nhị phân hóa: Otsu, Niblack, Sauvola, Wolf<br>• Đường cong F-measure theo mức bóng đổ / dấu trên bộ 6<br>• Bảng tham số & lý do chọn (cửa sổ và hệ số k của Sauvola, ngưỡng HSV)<br>📦 `src/cleaning/`<br>📏 F-measure, PSNR, CER trước/sau<br>📝 **Thêm:** ghép báo cáo & slide DIP; **ablation toàn pipeline** (tắt từng bước, đo CER cuối); gom video demo, đóng gói `.zip` | **Dựng bảng phiếu xét nghiệm** *(Chương 5, 7)*<br>• Nhị phân hóa, Dilation ngang gom cụm từ thành dòng; Projection Profile dọc tìm cột<br>• Ghép dòng × cột thành ô; chịu được ảnh nghiêng nhẹ và chụp màn hình<br>• So sánh 3 cách: gom theo khoảng cách cố định, Connected Components + XY-cut, Projection + Dilation thích nghi<br>• Bảng tham số & lý do chọn (kích thước SE theo chiều cao chữ)<br>• Mở rộng nếu kịp: bảng có kẻ (Closing ngang/dọc), cờ chữ đỏ HSV trên phiếu Việt Nam<br>📦 `src/table_extraction/`<br>📏 IoU dòng/ô so với nhãn cụm từ của bộ 3, CER | **Bóc tách đơn thuốc & Benchmark tổng hợp** *(Chương 2, 4, 7)*<br>• Khoanh vùng bảng thuốc; Projection ngang tách dòng, Dilation gom thành từng khoản<br>• Vẽ ground truth từng khoản trên ~30 ảnh<br>• Đối chứng: OCR cả trang vs OCR từng khoản<br>• ⭐ **Bộ sinh bộ 6:** từ ảnh sạch bộ 2 sinh nghiêng, phối cảnh, mờ, bóng, lóa, dấu đỏ theo nhiều mức; lưu ảnh sạch, ma trận biến dạng, box đã biến đổi cho cả nhóm<br>• Đường cong IoU / CER theo mức độ hỏng<br>📦 `src/prescription_segmentation/`, `src/synthetic/`<br>📏 IoU khoản thuốc, CER |
+| **Mobile App**<br>*(MedTrack AI)* | **Module `01-core`: Chụp tài liệu & Khung ứng dụng** (18 màn hình)<br>• Onboarding, trang chủ & lịch<br>• Camera có khung căn giấy, xem trước, báo mờ/lóa, chờ xử lý<br>• Kết quả phân loại, chọn lại loại tài liệu, AI không chắc; tài liệu khác lưu làm tệp đính kèm<br>• Danh sách & chi tiết hồ sơ, dòng thời gian, biểu đồ tổng quát, cá nhân, trạng thái trống<br>🔧 Backend nhận ảnh (FastAPI) + hàng đợi gọi pipeline | **Module `05-family` + Xác nhận dữ liệu** (12 màn hình)<br>• Hồ sơ gia đình: danh sách, chuyển hồ sơ, tạo hồ sơ, chờ đồng ý, trang đồng ý cho bố mẹ, mời, chấp nhận, phân quyền, nhật ký truy cập, quyền khẩn cấp<br>• Màn hình xác nhận chung: dữ liệu bóc tách & đã lưu<br>🔧 **Component xác nhận dùng chung** (ảnh cắt + khoanh vùng + nút Đúng / Sửa / Không rõ) cho các màn hình xác nhận của Khang và Thắng; ghi nhật ký chỉnh sửa → nhãn train lại | **Module `03-lab-test`: Xét nghiệm** (11 màn hình)<br>• Tổng quan, danh sách phiếu<br>• Xác nhận phiếu (2 màn hình) và phiếu gốc khoanh vùng — dùng component của Trường<br>• Chi tiết phiếu dạng thanh, 3 kiểu biểu đồ xu hướng, chi tiết một chỉ số, chế độ chữ to<br>🔧 Chuẩn hóa tên chỉ số theo `Anh_Xa.json` (LOINC, UCUM) | **Module `02-medication`: Nhắc thuốc** (19 màn hình)<br>• Trang hôm nay (4 trạng thái của cùng một màn hình)<br>• Tên trên đơn khác hồ sơ, xác nhận từng dòng thuốc — dùng component của Trường<br>• Chọn kiểu dùng, đặt giờ, người nhận thông báo, thêm thủ công, thuốc cố định & khi cần, cảnh báo khoảng cách liều<br>• Đối chiếu đơn mới, lịch sử tuân thủ, báo bỏ liều cho người thân, cài đặt nhắc, nhắc hết thuốc<br>🔧 Dịch vụ thông báo; chuẩn hóa tên thuốc theo QĐ 1227 |
+
+> **Phần ML:** mỗi người tự quản lý dữ liệu, tự chia Train/Val/Test và tự tính độ đo cho bài toán của mình bằng `scikit-learn` / `ultralytics`. Cả 4 bài toán đều có nhãn sẵn hoặc tự sinh; chỉ Bài toán 2 phải sửa tay tập test.
+>
+> **Quy tắc đánh giá chung cho cả 4 bài toán ML** (mỗi người tự áp dụng cho bài của mình): chia dữ liệu bằng `GroupKFold` theo cụm ảnh gần trùng (Bài toán 1), ảnh (Bài toán 2), phiếu (Bài toán 3), mẫu đơn (Bài toán 4) để ảnh cùng mẫu không nằm ở cả train và test — **không** chia theo nguồn dữ liệu vì phiếu xét nghiệm chỉ có một nguồn; ảnh hưởng của nguồn đo riêng bằng thí nghiệm cross-source; nested cross-validation khi chọn siêu tham số; learning curve và validation curve để phân tích bias/variance; khoảng tin cậy bootstrap 95% hoặc kiểm định McNemar khi kết luận mô hình A tốt hơn B; phân loại lỗi thành nhóm và báo cáo tỉ lệ % từng nhóm; seed cố định, một lệnh chạy lại toàn bộ bảng kết quả.
+
+### 3.1. Màn hình Mobile App theo module
+
+Màn hình chia **theo module của thiết kế Figma** ([Mobile App Design](https://www.figma.com/design/XukWWukgjTcv21swJcYaCy/Mobile-App-Design), danh mục ở [`pdlc/04-design/ux-ui/assets/README.md`](https://github.com/hicastaw/MedTrack/blob/main/pdlc/04-design/ux-ui/assets/README.md) trên nhánh `main`); mỗi module khớp với phần việc của người phụ trách trong pipeline. Số màn hình được phép chênh lệch. Trên repo hiện mới có ảnh PNG của `01-core` (3 màn hình onboarding) và `02-medication` (19 màn hình); các màn hình còn lại chỉ có trong Figma.
+
+| Người | Module | Mã màn hình | Số màn hình |
+| :--- | :--- | :--- | :---: |
+| **Hiếu** | `01-core` (trừ `07`, `07b`, `12`, `13`) | `01`, `01b`, `01c`, `02`, `02b`, `03`, `04`, `04b`, `05`, `06`, `06b`, `08`, `09`, `10`, `11`, `14`, `15`, `16` | 18 |
+| **Trường** | `05-family` + màn hình xác nhận chung của `01-core` | `f01` → `f10`, `07`, `07b` | 12 + component xác nhận dùng chung |
+| **Khang** | `03-lab-test` | `l01` → `l11` | 11 |
+| **Thắng** | `02-medication` | `m01` → `m19` | 19 (`m01`–`m04` là 4 trạng thái của cùng một màn hình) |
+| *Để sau* | `04-chatbot` + trợ lý AI của `01-core` | `c01` → `c08`, `12`, `13` | 10 — thuộc nhóm "để sau" trong [tổng quan dự án](../pdlc/01-ideation/project-overview.md), không nằm trong MVP |
+
+> Các màn hình xác nhận nằm trong module của Khang (`l02`, `l03`, `l10`) và Thắng (`m05`, `m06`) do Khang và Thắng làm, nhưng dùng chung **component xác nhận** của Trường. Ba người cần thống nhất định dạng JSON đổ vào component này trong Đợt 1.
+
+### 3.2. Kiểm tra cân bằng
+
+Thang điểm ước lượng độ nặng: 1 = nhẹ, 2 = vừa, 3 = nặng.
+
+| | Hiếu | Trường | Khang | Thắng |
+| :--- | :---: | :---: | :---: | :---: |
+| **ML** | 2<br>*Bài toán 1 + calibration (1,5) + ghép báo cáo ML (0,5)* | 2<br>*Bài toán 2 + Active Learning; chỉ sửa tay tập test* | 2<br>*Bài toán 3: nhãn có sẵn, cần OCR từng cụm từ* | 2<br>*Bài toán 4: nhãn tự sinh, đánh giá theo mẫu đơn* |
+| **DIP** | 2,5<br>*Tiền xử lý + so sánh chỉnh nghiêng + sai số nắn (2) + phân loại dùng lại đặc trưng ML (0,5)*<br>*+ nhóm trưởng: khung, ghép báo cáo / slide / video, đóng gói, nộp* | 2,5<br>*Làm sạch + so sánh 4 cách nhị phân hóa (2) + ablation toàn pipeline (0,5)* | 2,5<br>*Dựng bảng không kẻ + so sánh 3 cách* | 2,5<br>*Bóc tách đơn + ground truth (1,5) + bộ sinh benchmark tổng hợp (1)* |
+| **Mobile App** *(được chênh)* | 18 màn hình + backend nhận ảnh | 12 màn hình + component xác nhận | 11 màn hình (biểu đồ phức tạp) | 19 màn hình + dịch vụ thông báo |
+| **Thu bộ 5** | ≥ 15 ảnh | ≥ 15 ảnh | ≥ 15 ảnh | ≥ 15 ảnh |
+| **Báo cáo** | Tự viết Phương pháp, Kết quả, Phân tích lỗi của phần mình ở cả 2 môn | ← | ← | ← |
+
+> Điểm là ước lượng ban đầu. Sau Đợt 1 (01/11), cả nhóm xem lại tiến độ thực tế; ai chậm do phần việc khó hơn dự kiến (dễ xảy ra nhất: dựng bảng không kẻ của Khang, sửa nhãn của Trường) thì chuyển bớt phần "mở rộng nếu kịp".

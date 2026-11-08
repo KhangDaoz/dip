@@ -1,0 +1,7 @@
+# Bộ OCR (Khang). Nên dùng Python 3.11: PaddleOCR / VietOCR có thể chưa có bản cho 3.13.
+# Tesseract 5 phải cài riêng: https://github.com/UB-Mannheim/tesseract/wiki (Windows), nhớ thêm gói ngôn ngữ vie.
+-r requirements.txt
+pytesseract>=0.3.10
+paddlepaddle>=2.6
+paddleocr>=2.8
+vietocr>=0.3.13

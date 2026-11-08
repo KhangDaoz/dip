@@ -1,0 +1,50 @@
+{
+  "image_id": "handoff_lab_report_001",
+  "rectified_path": "code/examples/cleaning_handoff_v1/handoff_lab_report_001/rectified.png",
+  "homography": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "corners_src": [
+    [
+      0,
+      0
+    ],
+    [
+      799,
+      0
+    ],
+    [
+      799,
+      1099
+    ],
+    [
+      0,
+      1099
+    ]
+  ],
+  "corner_method": "full_image",
+  "skew_deg": 0.0,
+  "doc_type": "lab_report",
+  "doc_confidence": 1.0,
+  "quality": {
+    "blur_var": 390.6421403026135,
+    "glare_ratio": 0.0068775790921595595,
+    "is_blurry": false,
+    "has_glare": false,
+    "glare_removed": false
+  }
+}

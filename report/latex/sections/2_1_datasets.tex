@@ -1,0 +1,20 @@
+% ===== ≈ 0,5 trang =====
+% Viết gì: bảng bộ 1–5: nguồn, số ảnh GỐC (không đếm bản tăng cường), loại nhãn, dùng cho bước nào; license.
+\begin{table}[H]
+\centering
+\caption{Các bộ dữ liệu sử dụng.}\label{tab:datasets}
+\small
+\begin{tabularx}{\linewidth}{clrX}
+\toprule
+Bộ & Nguồn & Ảnh gốc & Dùng cho \\
+\midrule
+1 & VAIPE (đơn thuốc Việt Nam) & \num{1345} & Nguồn ảnh sạch của \bo{6}; lớp đơn thuốc \\
+2 & Roboflow Prescription Image Labelling & \num{3744} & Ảnh chụp thật: tìm góc, khoanh vùng bảng thuốc \\
+3 & Roboflow Report Keywords Detection & 57 & Phiếu xét nghiệm: dựng bảng \\
+4 & RVL-CDIP (tập con) & \num{1000} & Lớp ``tài liệu khác'' \\
+5 & Nhóm tự chụp & \TODO{số} & Kiểm chứng trên ảnh thật Việt Nam \\
+6 & Tổng hợp từ \bo{1} & \num{1000} & Đo định lượng mọi bước \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\TODO{nhận xét ngắn --- bộ 2, 3 bị ép về 640×640; license lấy từ data/README.md}
