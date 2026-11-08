@@ -1,8 +1,0 @@
-# Phần ML (sau 11/11): ResNet-18, YOLOv8, Grad-CAM, SHAP
--r requirements.txt
-torch>=2.4
-torchvision>=0.19
-ultralytics>=8.3
-grad-cam>=1.5
-shap>=0.46
-xgboost>=2.1

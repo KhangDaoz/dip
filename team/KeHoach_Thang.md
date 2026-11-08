@@ -1,13 +1,12 @@
 # KẾ HOẠCH CHI TIẾT — THẮNG
 
-> **Phần phụ trách:** Mắt xích ④ của pipeline — Đơn thuốc: bóc tách khoản thuốc, phân loại dòng  
+> **Phần phụ trách:** Mắt xích ④ của pipeline — Đơn thuốc: bóc tách khoản thuốc  
 > **Việc thêm:** **Bộ sinh benchmark tổng hợp (bộ 6)** cho cả nhóm  
-> **Áp dụng cho:** Đồ án Xử lý ảnh (DIP, hạn **11/11/2026**) · Bài tập lớn Học máy (ML) · Mobile App MedTrack (module `02-medication`)  
-> **Tài liệu liên quan:** [PhanCong_TongHop.md](PhanCong_TongHop.md) · [DeTai_XuLyAnh_ChiTiet.md](../dip/docs/DeTai_XuLyAnh_ChiTiet.md) · [KeHoach_BTL_MachineLearning.md](../ml/docs/KeHoach_BTL_MachineLearning.md)
+> **Áp dụng cho:** Đồ án Xử lý ảnh (DIP, hạn **11/11/2026**)  
+> **Tài liệu liên quan:** [PhanCong_TongHop.md](PhanCong_TongHop.md) · [DeTai_XuLyAnh_ChiTiet.md](../docs/DeTai_XuLyAnh_ChiTiet.md)
 
 | Điểm yếu hiện tại | Cách khắc phục trong kế hoạch này |
 | :--- | :--- |
-| ML: nhãn tự sinh theo vùng, đơn Practo cùng mẫu → điểm gần 100% khi test cùng mẫu, dễ bị coi là bài dễ | Biến thành câu chuyện **"mô hình học thuộc bố cục"**: đo khoảng cách cùng mẫu / khác mẫu, **ablation chỉ bố cục vs chỉ chữ**, đề xuất cách thu hẹp khoảng cách |
 | DIP: tách khoản thuốc bằng projection là kỹ thuật đơn giản | Đánh giá theo **mức độ hỏng** trên bộ 6, so sánh nhiều cách, đo hiệu quả thật lên OCR từng trường |
 | Cả nhóm thiếu ground truth | **Bộ 6** là đóng góp lớn nhất của Thắng: ground truth chính xác cho mọi module |
 
@@ -19,13 +18,13 @@
 flowchart LR
     T["Từ Trường<br>ảnh sạch + nhị phân"] --> R["Khoanh vùng bảng thuốc"]
     R --> L["Tách dòng<br>Projection ngang"]
-    L --> ML["Phân loại dòng (ML)<br>thuốc · chẩn đoán · bệnh nhân · bác sĩ · khác"]
+    L --> ML["Phân loại dòng<br>(ML, ngoài phạm vi DIP)<br>thuốc · chẩn đoán · bệnh nhân · bác sĩ · khác"]
     ML --> G["Gom dòng thuốc thành từng khoản<br>Dilation + số thứ tự / thụt lề"]
     G --> P["Tách trường bằng luật<br>tên thuốc · hàm lượng · liều · số ngày"]
-    P --> A["→ JSON cho app"]
+    P --> A["→ JSON đầu ra"]
 ```
 
-**Hợp đồng dữ liệu gửi cho app:**
+**Hợp đồng dữ liệu đầu ra** (`PrescriptionResult` trong `code/src/common/contracts.py`):
 
 ```json
 {
@@ -82,7 +81,7 @@ flowchart LR
 | Bộ | Vai trò | Việc cần làm |
 | :--- | :--- | :--- |
 | **1** VAIPE (đơn VN, ảnh chụp) | Kiểm chứng trên đơn Việt Nam; **có thể có nhãn dòng** | **31/10:** kiểm tra có ảnh đơn + file nhãn không, nhãn theo vùng hay theo dòng; báo cả nhóm |
-| **2** Prescription Image Labelling (Practo) | Dữ liệu chính ML; nguồn ảnh sạch cho bộ 6 | Không cần gán nhãn (nhãn vùng có sẵn) |
+| **2** Prescription Image Labelling (Practo) | Nguồn ảnh sạch cho bộ 6; khoanh vùng bảng thuốc (S4) | Không cần gán nhãn (nhãn vùng có sẵn) |
 | **5** Ảnh tự chụp | Đơn thuốc VN để test khác mẫu | Chụp ≥ 15 ảnh đơn nhiều viện; gán nhãn dòng cho ~10 đơn |
 | **6** | Ground truth cho DIP | Thắng sinh |
 | Ground truth từng khoản thuốc | DIP | Vẽ tay ~30 ảnh (15 bộ 2 + 15 bộ 1); trên bộ 6, box khoản thuốc tự biến đổi theo `H` |
@@ -139,69 +138,7 @@ code/tests/test_synthetic.py, test_prescription.py
 
 ---
 
-## 5. MÔN ML — BÀI TOÁN 4: PHÂN LOẠI DÒNG TRÊN ĐƠN THUỐC
-
-### 5.1. Bài toán
-
-* **Đơn vị mẫu:** mỗi dòng văn bản trên toàn trang đơn.
-* **Lớp:** `medicine`, `diagnosis`, `patient_info`, `doctor_info`, `other`.
-* **Nhãn tự sinh:** dòng nằm trong vùng nhãn nào của bộ 2 thì mang nhãn vùng đó (giao > 50% diện tích dòng).
-* **Câu hỏi nghiên cứu (xương sống khi trình bày):**
-  1. Mô hình học **bố cục của mẫu đơn** hay học **nội dung dòng**?
-  2. Khoảng cách hiệu năng cùng mẫu → khác mẫu là bao nhiêu, và làm thế nào để thu hẹp?
-
-### 5.2. Đặc trưng — chia 2 nhóm để làm ablation
-
-| Nhóm | Chi tiết |
-| :--- | :--- |
-| **Bố cục** | Vị trí x, y tuyệt đối; vị trí tương đối (thứ tự dòng, khoảng cách tới dòng trên / dưới); chiều rộng; thụt lề; cỡ chữ ước lượng |
-| **Nội dung** | Tỉ lệ chữ số; có đơn vị thuốc (`mg`, `ml`, `tablet`, `viên`, `ống`); từ khóa liều (`daily`, `after food`, `sáng`, `tối`, `uống`); từ khóa hành chính (`Dr.`, `MBBS`, `years`, `tuổi`, `BS`); TF-IDF n-gram ký tự |
-
-### 5.3. Mô hình và đánh giá
-
-| Hạng mục | Cách làm |
-| :--- | :--- |
-| Mô hình | $k$-NN, Naive Bayes, Logistic Regression, Random Forest, SVM |
-| **Chia dữ liệu** | `GroupKFold` với group = **mẫu đơn** (phòng khám / bác sĩ / layout); xác định mẫu bằng phân cụm ảnh thu nhỏ hoặc theo tên bác sĩ trong vùng `doctor_information` |
-| Hai chế độ đánh giá | **Cùng mẫu** (chia ngẫu nhiên theo ảnh) vs **khác mẫu** (`GroupKFold` theo mẫu) + **bộ 1, bộ 5** (đơn Việt Nam) |
-| Chọn siêu tham số | Nested CV |
-| Kiểm định | Bootstrap 95% theo ảnh; McNemar giữa các cấu hình đặc trưng |
-
-### 5.4. Phần nâng cao — biến điểm yếu thành phát hiện
-
-**(a) Ablation bố cục vs nội dung:** huấn luyện 3 cấu hình — chỉ bố cục · chỉ nội dung · cả hai — đánh giá cả cùng mẫu và khác mẫu. Kỳ vọng: chỉ bố cục rất cao khi cùng mẫu nhưng sập khi khác mẫu.
-
-**(b) Thu hẹp khoảng cách:** bỏ vị trí tuyệt đối, chỉ giữ vị trí tương đối; chuẩn hóa từ khóa song ngữ Việt – Anh; báo cáo khoảng cách cùng mẫu → khác mẫu **trước và sau**.
-
-**(c) Điểm cộng YOLOv8:** phát hiện 4 vùng (`medicine-names`, `Diagnosis`, `patient_information`, `doctor_information`) trên bộ 2; đo mAP; chạy thử trên đơn Việt Nam để xem khả năng tổng quát.
-
-### 5.5. Phân tích lỗi
-
-Nhóm lỗi: dòng chẩn đoán nhầm thành thuốc · thông tin bác sĩ và bệnh nhân nhầm nhau · dòng thuốc nhiều dòng bị tách · lỗi do OCR tiếng Việt. Mỗi nhóm: tỉ lệ %, ví dụ, SHAP.
-
-### 5.6. Kết quả cần có trong báo cáo ML (phần Thắng)
-
-Bảng 5 mô hình × 2 chế độ (cùng mẫu / khác mẫu) · **Bảng ablation bố cục / nội dung** · Bảng trước / sau thu hẹp khoảng cách · Kết quả trên đơn Việt Nam · YOLOv8 mAP · Phân loại lỗi.
-
----
-
-## 6. MOBILE APP — `02-medication`
-
-> **Ưu tiên thấp đến sau 11/11.**
-
-| Nhóm | Màn hình |
-| :--- | :--- |
-| Hôm nay | `m01`–`m04`: liều sắp tới, bỏ lỡ, đã uống đủ, chưa có thuốc (4 trạng thái của một màn hình) |
-| Xác nhận đơn | `m05` tên trên đơn khác hồ sơ (dùng `patient`), `m06` xác nhận từng dòng thuốc kèm ảnh cắt — dùng **component xác nhận của Trường** |
-| Lịch nhắc | `m07` kiểu dùng · `m08` giờ & thời gian (sinh từ `dose`, `days`) · `m09` người nhận · `m10` thêm thủ công · `m12` thuốc cố định · `m13` thuốc khi cần · `m14` cảnh báo khoảng cách liều |
-| Thông báo & theo dõi | `m11` màn hình khóa · `m15` đối chiếu đơn mới · `m16` lịch sử tuân thủ · `m17` báo bỏ liều cho người thân · `m18` cài đặt nhắc · `m19` nhắc hết thuốc |
-| Thành phần chung | Dịch vụ thông báo (nhắc thuốc, báo người thân, lời mời gia đình); chuẩn hóa tên thuốc theo QĐ 1227 |
-
----
-
-## 7. LỊCH LÀM VIỆC
-
-### 7.1. Đến hạn DIP (11/11)
+## 5. LỊCH LÀM VIỆC (ĐẾN HẠN 11/11)
 
 | Ngày | Việc | Kết quả kiểm tra được |
 | :--- | :--- | :--- |
@@ -215,45 +152,30 @@ Bảng 5 mô hình × 2 chế độ (cùng mẫu / khác mẫu) · **Bảng abla
 | **08/11** | S6; viết phần Thắng (1,5–2 trang), 2–3 slide, đoạn demo 30 giây, README module → gửi Hiếu | Đã gửi |
 | **09–11/11** | Tập trình bày, hỏi đáp thử | Nộp |
 
-### 7.2. Môn ML
-
-| Tuần | Việc |
-| :--- | :--- |
-| **1** | Tách dòng + OCR toàn bộ bộ 2; sinh nhãn dòng theo vùng; xác định mẫu đơn để làm group |
-| **2** | 5 mô hình × 2 chế độ đánh giá; nested CV; ablation bố cục / nội dung |
-| **3** | Thu hẹp khoảng cách; YOLOv8; chạy trên đơn Việt Nam |
-| **4** | Phân tích lỗi; viết phần mình gửi Hiếu ghép |
-
----
-
-## 8. RỦI RO & PHƯƠNG ÁN
+## 6. RỦI RO & PHƯƠNG ÁN
 
 | Rủi ro | Phương án |
 | :--- | :--- |
 | Bộ 6 trễ → cả nhóm trễ | Ưu tiên tuyệt đối v1 (02/11), chỉ 4 loại hỏng; v2 làm sau |
-| Bộ 2 quá ít mẫu đơn khác nhau → `GroupKFold` không đủ nhóm | Dùng bộ 1 + bộ 5 làm tập "khác mẫu" duy nhất; nêu rõ hạn chế |
 | Dấu / lóa tổng hợp không giống thật | Kiểm chứng ở mục 2.3; kết luận chính dựa trên ảnh thật |
-| Khoanh vùng bảng thuốc sai trên đơn Việt Nam | Dùng nhãn vùng YOLOv8 làm dự phòng; báo cáo cả hai |
+| Khoanh vùng bảng thuốc sai trên đơn Việt Nam | Dùng phương án lấy cả trang (mục 4.1) làm dự phòng; báo cáo cả hai |
 | Không kịp S5 | Giữ ít nhất 10 đơn Việt Nam cho S1 |
 
-**Thứ tự cắt khi thiếu thời gian:** S6 → S4 → bút xanh trong bộ 6 → YOLOv8. **Không cắt:** bộ 6 v1, S1, S2, S3, ablation bố cục / nội dung.
+**Thứ tự cắt khi thiếu thời gian:** S6 → S4 → bút xanh trong bộ 6. **Không cắt:** bộ 6 v1, S1, S2, S3.
 
 ---
 
-## 9. CHUẨN BỊ HỎI ĐÁP
+## 7. CHUẨN BỊ HỎI ĐÁP
 
 | Câu hỏi | Hướng trả lời |
 | :--- | :--- |
 | Ảnh tổng hợp có thực tế không? | Bộ 6 dùng để so sánh phương pháp với ground truth chính xác; kết luận kiểm chứng lại trên ảnh thật; có kiểm tra thống kê và thử phân biệt bằng mắt (2.3) |
 | Vì sao chia biến thể theo ảnh gốc? | Biến thể cùng ảnh gốc gần như giống nhau; chia lẫn làm kết quả ảo |
-| Nhãn dòng tự sinh có đáng tin? | Nhãn vùng của bộ 2 do người gán; dòng gán theo diện tích giao > 50%; kiểm tra tay 20 ảnh |
-| Điểm cùng mẫu gần 100% có ý nghĩa gì? | Chính là phát hiện: mô hình học bố cục; ablation và khác mẫu chứng minh; cách thu hẹp ở 5.4 |
 | Vì sao tách khoản thuốc trước khi OCR? | OCR cả trang lẫn tên thuốc và liều giữa các khoản; S3 đo độ chính xác từng trường tăng bao nhiêu |
 
 ---
 
-## 10. CHECKLIST CUỐI
+## 8. CHECKLIST CUỐI
 
 **DIP:** bộ 6 v1 (02/11), v2 (04/11) có README · module `prescription_segmentation/` có unit test · S1, S2, S3 có số liệu · đường cong S2 · bảng tham số · phần báo cáo, slide, demo gửi Hiếu trước 08/11  
-**ML:** 5 mô hình × 2 chế độ · ablation bố cục / nội dung · trước / sau thu hẹp khoảng cách · đơn Việt Nam · YOLOv8 · phân loại lỗi · gửi phần mình cho Hiếu  
 **Chung:** ≥ 15 ảnh bộ 5 (đơn VN) đã che thông tin, gán nhãn dòng ~10 đơn · báo nhóm về bộ 1 ngày 31/10 · JSON hợp đồng đã chốt · trả lời được câu hỏi về phần của 3 bạn còn lại

@@ -2,18 +2,16 @@
 
 > **Vai trò:** Nhóm trưởng  
 > **Phần phụ trách:** Mắt xích ① của pipeline — Thu nhận ảnh, Tiền xử lý & Phân loại tài liệu  
-> **Việc nhóm trưởng:** khung báo cáo, ghép báo cáo / slide / video, đóng gói `.zip` và nộp bài ở cả 2 môn — xem mục 5  
-> **Áp dụng cho:** Đồ án Xử lý ảnh (DIP, hạn **11/11/2026**) · Bài tập lớn Học máy (ML) · Mobile App MedTrack (module `01-core`)  
-> **Tài liệu liên quan:** [PhanCong_TongHop.md](PhanCong_TongHop.md) · [DeTai_XuLyAnh_ChiTiet.md](../dip/docs/DeTai_XuLyAnh_ChiTiet.md) · [KeHoach_BTL_MachineLearning.md](../ml/docs/KeHoach_BTL_MachineLearning.md)
+> **Việc nhóm trưởng:** khung báo cáo, ghép báo cáo / slide / video, đóng gói `.zip` và nộp bài — xem mục 4  
+> **Áp dụng cho:** Đồ án Xử lý ảnh (DIP, hạn **11/11/2026**)  
+> **Tài liệu liên quan:** [PhanCong_TongHop.md](PhanCong_TongHop.md) · [DeTai_XuLyAnh_ChiTiet.md](../docs/DeTai_XuLyAnh_ChiTiet.md)
 
-Mục tiêu của tài liệu: đưa phần của Hiếu từ mức "chắc ăn nhưng ít điểm mới" lên **mức tối đa** ở cả hai môn, bằng cách bổ sung các phần còn thiếu sau:
+Mục tiêu của tài liệu: đưa phần của Hiếu từ mức "chắc ăn nhưng ít điểm mới" lên **mức tối đa**, bằng cách bổ sung các phần còn thiếu sau:
 
 | Điểm yếu hiện tại | Cách khắc phục trong kế hoạch này |
 | :--- | :--- |
 | DIP: nắn phối cảnh, deskew, CLAHE là kỹ thuật quen thuộc, có sẵn trong notebook thực hành | Đánh giá như một **bài toán đo lường** trên bộ 6 (ground truth chính xác), so sánh nhiều phương pháp, có **phương án dự phòng** khi không tìm được 4 góc, thêm **khử lóa**, và **so sánh với app scan thương mại** |
 | DIP: IQA (đo mờ, đo lóa) chỉ là ngưỡng đặt tay | Đánh giá IQA như **bộ phát hiện** có ROC/AUC; chọn ngưỡng bằng dữ liệu, không đặt tay |
-| ML: nhãn có sẵn theo nguồn nên bài toán dễ, dễ bị nghi học thuộc nguồn | **Chứng minh và khắc phục** học thuộc nguồn (source probe, chuẩn hóa ảnh, Grad-CAM), đánh giá tài liệu lạ (open-set) bằng AUROC, calibration, kiểm định thống kê |
-| ML: ghép báo cáo dễ làm qua loa | Quy trình ghép có khung, mốc thời gian và checklist |
 
 ---
 
@@ -65,7 +63,7 @@ Kiểm tra bằng test: `code/tests/test_preprocessing.py` (`test_preprocess_hom
 | **1** VAIPE (đơn thuốc VN, **ảnh phẳng, sạch**) | Lớp `prescription`; **nguồn ảnh sạch phù hợp nhất cho bộ 6** (giữ đúng tỉ lệ, độ phân giải cao) | Không cần gán nhãn |
 | **2** Roboflow Prescription (đơn Ấn Độ – Practo, **ảnh chụp thật**, nhiều đơn viết tay) | Lớp `prescription`; **ảnh chụp thật để thử nắn phẳng, chỉnh nghiêng** (D4, D6) | Không cần gán nhãn; gom 3 bản tăng cường của cùng ảnh gốc |
 | **3** Roboflow Report Keywords (phiếu CBC, ảnh chụp) | Lớp `lab_report`; ảnh chụp thật nghiêng | Không cần gán nhãn; gom 3 bản tăng cường của cùng ảnh gốc |
-| **4** Tài liệu khác | Lớp `other` | ✅ **Đã lấy (31/10)** bằng `code/scripts/fetch_rvl_cdip.py`: tập con RVL-CDIP gồm các lớp `form`, `invoice`, `letter`, `memo`, `email`, `news article`, `scientific report`, `questionnaire` — mỗi lớp 100 ảnh (50/25/25), tổng 800 ảnh; thêm `openset/` 200 ảnh lớp `budget`, `resume` **không dùng khi train** (mục 4.5c). Ghi chú license: RVL-CDIP chỉ dùng cho nghiên cứu |
+| **4** Tài liệu khác | Lớp `other` | ✅ **Đã lấy (31/10)** bằng `code/scripts/fetch_rvl_cdip.py`: tập con RVL-CDIP gồm các lớp `form`, `invoice`, `letter`, `memo`, `email`, `news article`, `scientific report`, `questionnaire` — mỗi lớp 100 ảnh (50/25/25), tổng 800 ảnh; thêm `openset/` 200 ảnh lớp `budget`, `resume` **không dùng khi chọn tham số** (mục 3.5). Ghi chú license: RVL-CDIP chỉ dùng cho nghiên cứu |
 | **5** Ảnh tự chụp | **Tập test độc lập** cho cả nắn phẳng và phân loại | Chụp ≥ 15 ảnh: đơn thuốc, phiếu XN, giấy khám, hóa đơn, CCCD đã che; gán nhãn lớp; **thêm 10 ảnh "loại lạ"** (giấy ra viện, kết quả siêu âm, biên lai) để test open-set |
 | **6** Benchmark tổng hợp (Thắng sinh) | Ground truth cho sai số nắn, PSNR/SSIM, phát hiện mờ/lóa | ✅ Đã chốt với Thắng (31/10) — xem checklist nghiệm thu bên dưới |
 
@@ -104,7 +102,7 @@ Hệ quả cho phần Hiếu:
 * **Vai trò bộ 1 / bộ 2 đảo so với kế hoạch ban đầu:** bộ 1 là ảnh phẳng (nguồn sạch cho bộ 6), bộ 2 mới là ảnh chụp thật (thử nắn phẳng).
 * **Bộ 2, bộ 3 đã mất tỉ lệ khung gốc** (ép 640×640) → đo được góc / tìm 4 góc trên ảnh thật, nhưng tỉ lệ khung ảnh sau nắn không có ý nghĩa; sai số nắn định lượng chỉ đo trên bộ 6.
 * **Mất cân bằng nặng:** `lab_report` chỉ 57 ảnh gốc so với ~5.000 ảnh `prescription` → cần thêm phiếu XN từ bộ 5 (ưu tiên khi chụp) và có thể nguồn khác; báo cáo Balanced Accuracy / Macro-F1, undersample `prescription` khi train.
-* **Nguy cơ học thuộc nguồn rất cao:** kích thước 640×640, ảnh xám hóa, nhiễu muối tiêu do tăng cường Roboflow đủ để đoán nguồn → bắt buộc chuẩn hóa ảnh (mục 4.5b) và chạy source probe.
+* **Nguy cơ học thuộc nguồn rất cao:** kích thước 640×640, ảnh xám hóa, nhiễu muối tiêu do tăng cường Roboflow đủ để đoán nguồn → bắt buộc chuẩn hóa ảnh (mục 3.5) và kiểm chứng trên bộ 5.
 * **Bản tăng cường Roboflow:** các file cùng phần tên trước `.rf.` là một ảnh gốc → luôn nằm cùng một group khi chia fold.
 
 ---
@@ -123,7 +121,7 @@ Hệ quả cho phần Hiếu:
 | **Nắn phối cảnh** | `getPerspectiveTransform` + `warpPerspective` với nội suy bicubic; xuất ma trận `H` | Nội suy bilinear | kích thước đích theo độ dài cạnh lớn nhất |
 | **Chỉnh nghiêng** | Projection Profile: xoay thử, chọn góc cho phương sai profile ngang lớn nhất | Hough lines (góc trung vị), Radon transform | dải ±15°, bước 0,25° |
 | **CLAHE** | CLAHE trên kênh L của Lab | Cân bằng histogram toàn cục | `clipLimit = 2.0`, `tileGridSize = 8×8` |
-| **Phân loại** | HOG + $k$-NN, ngưỡng từ chối theo khoảng cách | Histogram màu + $k$-NN | xem mục 4.2 |
+| **Phân loại** | HOG + $k$-NN, ngưỡng từ chối theo khoảng cách | Histogram màu + $k$-NN | xem mục 3.5 |
 
 ### 3.2. Thí nghiệm và độ đo
 
@@ -175,20 +173,9 @@ code/tests/
 └── test_preprocessing.py           # kiểm tra trên 5 ảnh mẫu: tìm được góc, H khả nghịch, ảnh ra đúng kích thước
 ```
 
----
+### 3.5. Đặc trưng và chuẩn hóa ảnh cho phân loại (D10)
 
-## 4. MÔN ML — BÀI TOÁN 1: PHÂN LOẠI BIỂU MẪU 3 LỚP
-
-### 4.1. Bài toán
-
-* **Đầu vào:** ảnh cả trang (đã qua tiền xử lý).
-* **Đầu ra:** `prescription` / `lab_report` / `other` + xác suất; **từ chối** khi xác suất cao nhất < ngưỡng.
-* **Câu hỏi nghiên cứu chính** (dùng làm "xương sống" khi trình bày):
-  1. Đặc trưng thủ công + mô hình cổ điển có cạnh tranh được với CNN trên dữ liệu ít không?
-  2. Mô hình đang học **loại tài liệu** hay học **kiểu ảnh của nguồn dữ liệu**? Khắc phục thế nào?
-  3. Mô hình có biết **"không biết"** khi gặp loại giấy chưa từng thấy không?
-
-### 4.2. Đặc trưng
+Đặc trưng trích trong `classification/features.py`, dùng cho HOG + $k$-NN và phương án đối chứng Histogram màu + $k$-NN:
 
 | Nhóm | Chi tiết | Số chiều (ước lượng) |
 | :--- | :--- | :---: |
@@ -198,75 +185,15 @@ code/tests/
 | **Đường kẻ** | Tỉ lệ pixel đường kẻ ngang / dọc (opening với SE 1×40 và 40×1) | 2 |
 | **Khối văn bản** | Số dòng (projection), độ rộng dòng trung bình, tỉ lệ vùng trắng | ~5 |
 
-**Ablation đặc trưng:** chạy với từng nhóm riêng và bỏ từng nhóm → biết nhóm nào đóng góp nhiều nhất.
+Để bộ phân loại không học "kiểu ảnh của từng nguồn" thay vì loại tài liệu:
 
-### 4.3. Mô hình
-
-| Nhóm | Mô hình | Siêu tham số tìm bằng nested CV |
-| :--- | :--- | :--- |
-| Bài giảng | $k$-NN | $k$ ∈ {1, 3, 5, 7, 11}, khoảng cách Euclid / Manhattan / cosine, trọng số uniform / distance |
-| Bài giảng | Naive Bayes | Gaussian NB (`var_smoothing`) |
-| Bài giảng | Logistic / Softmax Regression | $C$ ∈ {0,01 … 100}, L1 / L2, `class_weight` |
-| Bài giảng | Random Forest | `n_estimators`, `max_depth`, `max_features`, `class_weight` |
-| Bài giảng | SVM | Linear và RBF; $C$, $\gamma$ |
-| Điểm cộng | **ResNet-18** fine-tune | Learning rate, số epoch, augmentation; early stopping |
-
-### 4.4. Đánh giá chặt chẽ
-
-| Hạng mục | Cách làm |
-| :--- | :--- |
-| **Chia dữ liệu** | `StratifiedGroupKFold` 5 fold, **group = cụm ảnh gần trùng** (gom bằng perceptual hash: cùng tờ giấy chụp nhiều lần, cùng mẫu đơn của một bác sĩ; **3 bản tăng cường Roboflow của cùng ảnh gốc** — cùng phần tên trước `.rf.` — luôn chung group) để ảnh gần giống nhau không rơi vào cả train và test. **Không** dùng nguồn dữ liệu làm group: phiếu xét nghiệm chỉ có một nguồn (bộ 3), group theo nguồn sẽ làm có fold train không còn phiếu xét nghiệm nào. Ảnh hưởng của nguồn được đo riêng bằng thí nghiệm cross-source và bộ 5 (mục 4.5) |
-| **ResNet-18 trong nested CV** | Không tìm siêu tham số trong vòng trong (quá tốn); dùng bộ siêu tham số cố định chọn trên 1 tập validation, chỉ chạy vòng ngoài 5 fold để so sánh công bằng với 5 mô hình bài giảng |
-| **Chọn siêu tham số** | Nested CV: vòng trong 3 fold chọn tham số, vòng ngoài 5 fold ước lượng hiệu năng |
-| **Mất cân bằng lớp** | So sánh: không xử lý · `class_weight="balanced"` · undersampling; báo cáo Balanced Accuracy, Macro-F1 |
-| **Độ đo** | Accuracy, Balanced Accuracy, Macro-F1, ROC-AUC từng lớp, Confusion Matrix chuẩn hóa |
-| **Learning curve** | Macro-F1 theo số ảnh train (10% → 100%) cho SVM, RF, ResNet-18 — trả lời câu hỏi nghiên cứu 1 |
-| **Kiểm định** | Khoảng tin cậy bootstrap 95% cho Macro-F1; **McNemar** khi so mô hình tốt nhất bài giảng với ResNet-18 |
-| **Thời gian** | Thời gian huấn luyện và dự đoán (ms/ảnh) |
-
-### 4.5. Ba phần nâng cao — khắc phục điểm yếu "học thuộc nguồn"
-
-**(a) Chứng minh có học thuộc nguồn hay không**
-* **Source probe trong cùng một lớp:** chỉ lấy đơn thuốc, huấn luyện mô hình đoán **đơn đến từ bộ 1 hay bộ 2**. Nếu đoán nguồn dễ (Accuracy gần 100%) thì đặc trưng mang "dấu vân tay" của nguồn → nguy cơ shortcut cao. *(Không probe trên cả 4 bộ: bộ 3 chỉ có phiếu XN, bộ 4 chỉ có tài liệu khác, nên đoán nguồn khi đó trùng với đoán lớp, không chứng minh được gì.)*
-* **Cross-source:** huấn luyện bộ phân loại 3 lớp với đơn thuốc **chỉ từ bộ 1** (phiếu XN từ bộ 3, khác từ bộ 4) → kiểm tra trên đơn thuốc **bộ 2**: báo cáo Recall lớp `prescription`. Làm ngược lại (train bộ 2 → test bộ 1).
-* **Test trên bộ 5** (ảnh tự chụp, không thuộc nguồn nào lúc train): con số chính đưa vào kết luận.
-* **Grad-CAM** trên ResNet-18 và **SHAP / feature importance** trên RF: mô hình nhìn vào bố cục, bảng, hay nhìn vào viền ảnh, màu nền?
-
-**(b) Khắc phục**
 * **Chuẩn hóa ảnh trước khi trích đặc trưng:** ảnh xám, CLAHE, nhị phân hóa, cắt bỏ viền, resize cố định, nén lại JPEG cùng chất lượng, lọc trung vị để xóa nhiễu muối tiêu do tăng cường Roboflow → xóa bớt "dấu vân tay" của từng nguồn (bộ 2, 3 đều 640×640, bộ 1 giữ tỉ lệ gốc).
-* **Augmentation cho ResNet:** xoay nhẹ, mờ, thay đổi độ sáng, nhiễu JPEG.
-* Báo cáo **trước và sau khắc phục** trên bộ 5 và cross-source → đây là phát hiện có giá trị nhất của Bài toán 1.
-
-**(c) Tài liệu lạ (open-set) và calibration**
-* Bộ "loại lạ" gồm 2 phần, **báo cáo riêng**:
-  * **Loại lạ mang dáng y tế** — 10 ảnh tự chụp (giấy ra viện, kết quả siêu âm, biên lai viện phí): đây là **phép thử chính**, vì chúng dễ bị nhận nhầm thành đơn thuốc hoặc phiếu XN.
-  * **Loại lạ không y tế** — 1–2 lớp RVL-CDIP **không dùng khi train**: dễ, vì cùng phong cách với lớp `other` đã học; chỉ làm đối chứng.
-* Kết quả mong muốn với loại lạ: được xếp vào `other` **hoặc** bị từ chối — cả hai đều đúng; sai khi lọt vào `prescription` / `lab_report` với độ tin cậy cao.
-* Điểm "lạ": 1 − xác suất cao nhất (softmax / `predict_proba`); khoảng cách tới láng giềng gần nhất ($k$-NN).
-* Độ đo: **AUROC** phát hiện tài liệu lạ, **FPR@95%TPR**, tỉ lệ loại lạ mang dáng y tế lọt vào pipeline.
-* **Calibration:** biểu đồ độ tin cậy, **ECE**, Brier score; hiệu chỉnh bằng Platt scaling (SVM) và temperature scaling (ResNet-18) → chọn ngưỡng từ chối trên xác suất đã hiệu chỉnh.
-
-### 4.6. Phân tích lỗi
-
-* Gom các ca sai thành nhóm, báo cáo tỉ lệ %: phiếu XN không kẻ bảng bị nhầm thành đơn · đơn có bảng thuốc bị nhầm thành phiếu XN · ảnh mờ / lóa · ảnh chụp màn hình · tài liệu "khác" có bảng (hóa đơn).
-* Mỗi nhóm: 3 ảnh ví dụ + Grad-CAM + lý do; đề xuất sửa nhóm nào trước.
-* Vị trí ca sai so với biên quyết định của SVM (khoảng cách tới siêu phẳng).
-
-### 4.7. Kết quả cần có trong báo cáo ML (phần Hiếu)
-
-1. Bảng 5 mô hình + ResNet-18: Macro-F1 ± khoảng tin cậy, Balanced Accuracy, thời gian.
-2. Bảng ablation nhóm đặc trưng.
-3. Learning curve.
-4. Bảng cross-source và bộ 5, **trước / sau** khắc phục shortcut + kết quả source probe.
-5. Grad-CAM (4–6 ảnh).
-6. Biểu đồ độ tin cậy + AUROC open-set.
-7. Bảng phân loại lỗi.
+* Kết quả chính của D10 báo cáo trên **bộ 5** (ảnh tự chụp, không thuộc nguồn nào lúc chọn tham số).
+* Tài liệu lạ: 10 ảnh tự chụp mang dáng y tế (giấy ra viện, kết quả siêu âm, biên lai) và `openset/` của bộ 4 (lớp RVL-CDIP **không dùng khi chọn tham số**) — báo cáo riêng tỉ lệ bị xếp vào `other` hoặc bị từ chối bằng ngưỡng khoảng cách.
 
 ---
 
-## 5. VIỆC NHÓM TRƯỞNG: KHUNG, GHÉP, ĐÓNG GÓI, NỘP
-
-### 5.1. DIP (hạn 11/11)
+## 4. VIỆC NHÓM TRƯỞNG: KHUNG, GHÉP, ĐÓNG GÓI, NỘP
 
 | Mốc | Việc |
 | :--- | :--- |
@@ -276,36 +203,9 @@ code/tests/
 | **10/11** | Đóng gói `LopXX_NhomYY_TenDeTai.zip`: `code/`, `requirements.txt`, `samples/` (5–10 ảnh), `README.md`, báo cáo PDF, slide `.pptx` + `.pdf`, video; kiểm tra chạy được trên máy sạch |
 | **11/11** | Nộp qua email `uyenvnb@ptit.edu.vn`, tiêu đề trùng tên file |
 
-### 5.2. ML: ghép báo cáo & slide
-
-| Mốc | Việc |
-| :--- | :--- |
-| **Tuần 1** | Gửi cả nhóm **khung báo cáo** (Word / LaTeX): cấu trúc mục, quy ước đặt tên hình `Hinh_<bài toán>_<số>`, bảng mẫu, kiểu trích dẫn IEEE, mẫu "khai báo sử dụng AI" |
-| **Tuần 2** | Viết phần chung: Đặt vấn đề, tổng quan pipeline 4 bài toán, mô tả 3 bộ dữ liệu, quy trình đánh giá chung |
-| **Cuối tuần 3** | Nhận phần của 3 bạn; kiểm tra đủ: bảng chỉ số, Confusion Matrix, learning curve, phân tích lỗi; trả lại nếu thiếu |
-| **Tuần 4** | Bảng so sánh tổng 4 bài toán × 6 mô hình; Kết luận; ghép slide 12–15 trang (mỗi bạn 2–3 slide); tập trình bày 2 lần có bấm giờ |
-
-**Checklist trước khi nộp:** đủ 4 phần · thuật ngữ thống nhất · hình / bảng đánh số liên tục, có nguồn · tài liệu tham khảo đúng IEEE · khai báo AI · phân công · số liệu khớp giữa báo cáo và slide.
-
 ---
 
-## 6. MOBILE APP — MODULE `01-core`
-
-> **Ưu tiên thấp đến sau 11/11.** App không tính điểm cho 2 môn; vòng 2 NEXUS kéo đến 07/12 nên làm sau vẫn kịp.
-
-| Nhóm | Màn hình | Gắn với phần DIP / ML |
-| :--- | :--- | :--- |
-| Chụp & xử lý | `03` chụp tài liệu (khung căn giấy) · `04` xem trước · `04b` báo ảnh mờ · `05` đang xử lý · `06` kết quả phân loại · `06b` chọn lại loại hồ sơ · `16` AI không chắc | Dùng trực tiếp `quality`, `corners`, ngưỡng từ chối |
-| Khung ứng dụng | `01`, `01b`, `01c` onboarding · `02` trang chủ · `02b` lịch trống · `08` danh sách hồ sơ · `09` chi tiết hồ sơ · `10` dòng thời gian · `11` biểu đồ tổng quát · `14` cá nhân · `15` trạng thái trống | — |
-| Backend | `POST /documents` nhận ảnh → lưu → trả `job_id`; worker gọi `preprocess()` + phân loại; `GET /documents/{id}` trả kết quả theo hợp đồng dữ liệu | Chạy chính code của mục 3.4 |
-
-**Điểm cộng cho NEXUS:** chạy **đo mờ và tìm góc ngay trên điện thoại** khi đang ngắm camera (khung xanh khi đủ nét và thấy đủ 4 góc) → giảm ảnh xấu gửi lên server.
-
----
-
-## 7. LỊCH LÀM VIỆC
-
-### 7.1. Đến hạn DIP (11/11)
+## 5. LỊCH LÀM VIỆC (ĐẾN HẠN 11/11)
 
 | Ngày | Việc | Kết quả kiểm tra được |
 | :--- | :--- | :--- |
@@ -318,41 +218,30 @@ code/tests/
 | **06/11** | D1 **phần lóa**, D5 khử lóa (cần mask lóa của v2); D3 đường cong | Đường ROC lóa, bảng D5, đường cong D3 |
 | **07/11** | D6 CER (dùng bộ OCR của Khang), D8 ablation, D9 thời gian; bảng tham số 3.3 | Đủ hình / bảng cho báo cáo |
 | **08/11** | Viết phần Hiếu trong báo cáo DIP (1,5–2 trang), 2–3 slide, đoạn demo 30 giây, README module; nhận phần của 3 bạn | Đủ 4 phần trước tối 08/11 |
-| **09/11** | Ghép báo cáo, slide, video (mục 5.1); D7 so sánh app thương mại nếu kịp → phụ lục | Bản ghép gửi nhóm duyệt |
+| **09/11** | Ghép báo cáo, slide, video (mục 4); D7 so sánh app thương mại nếu kịp → phụ lục | Bản ghép gửi nhóm duyệt |
 | **10/11** | Đóng gói `.zip`, chạy thử trên máy sạch; tập trình bày, sửa theo góp ý | File `.zip` |
 | **11/11** | **Nộp đồ án DIP** qua email | Đã nộp |
 
 **Phụ thuộc vào bạn khác:** bộ 6 v1 (Thắng, 02/11) và v2 có mask lóa (04/11) · bộ OCR `src/ocr/` (Khang, 01/11) cho D6, D7 · ảnh VAIPE (Thắng kiểm tra 31/10).
 
-### 7.2. Môn ML (sau 11/11 tập trung toàn lực)
-
-> ⚠️ **Hạn nộp môn ML chưa rõ** (không có trong `ml/references/requirements/require.md`) — hỏi thầy Đức ngay. Nếu hạn trước cuối tháng 11, phải dồn tuần 1–2 vào song song với DIP.
-
-| Tuần | Việc |
-| :--- | :--- |
-| **1** (song song DIP) | Gửi khung báo cáo ML; trích đặc trưng (dùng lại `features.py`); loại ảnh trùng; tạo fold `StratifiedGroupKFold` |
-| **2** | 5 mô hình + nested CV; ablation đặc trưng; learning curve; xử lý mất cân bằng |
-| **3** | ResNet-18; source probe, cross-source, khắc phục shortcut; Grad-CAM; open-set + calibration; McNemar / bootstrap |
-| **4** | Phân tích lỗi; ghép báo cáo & slide; tập trình bày |
-
 ---
 
-## 8. RỦI RO & PHƯƠNG ÁN DỰ PHÒNG
+## 6. RỦI RO & PHƯƠNG ÁN DỰ PHÒNG
 
 | Rủi ro | Dấu hiệu | Phương án |
 | :--- | :--- | :--- |
 | Bộ 6 của Thắng trễ | Đến 03/11 chưa có | Tự sinh bản đơn giản (chỉ phối cảnh + mờ) bằng `warpPerspective` + `GaussianBlur` trên 50 ảnh bộ 1 (ảnh phẳng, sạch) |
 | Thiếu phiếu xét nghiệm | Bộ 3 chỉ 57 ảnh gốc | Ưu tiên phiếu XN khi chụp bộ 5 (nhờ cả nhóm); tìm thêm nguồn phiếu XN công khai; báo cáo theo Macro-F1, Balanced Accuracy |
 | Không tìm được 4 góc trên ảnh chụp màn hình / giấy sát mép | Tỉ lệ thành công D2 < 70% | Dùng toàn ảnh làm vùng tài liệu, chỉ chỉnh nghiêng; ghi rõ là hạn chế |
-| Phân loại đạt ~100% nhưng sập trên bộ 5 | Khoảng cách > 15 điểm | Đây chính là phát hiện shortcut — trình bày ở 4.5, không giấu |
+| Phân loại đạt ~100% nhưng sập trên bộ 5 | Khoảng cách > 15 điểm | Đây chính là phát hiện "học thuộc nguồn" — trình bày cùng D10 (mục 3.5), không giấu |
 | Thiếu ảnh "loại lạ" | < 10 ảnh | Dùng thêm 2 lớp RVL-CDIP không có trong train |
 | Không kịp D7 | Đến 08/11 chưa làm | Bỏ D7 (là phần cộng thêm), giữ D1–D6 |
 
-**Thứ tự cắt khi thiếu thời gian (cắt từ dưới lên):** D7 → D5 → D9 → Grad-CAM → calibration. **Không cắt:** D2, D3, D6, D10, cross-source, bộ 5.
+**Thứ tự cắt khi thiếu thời gian (cắt từ dưới lên):** D7 → D5 → D9. **Không cắt:** D2, D3, D6, D10, bộ 5.
 
 ---
 
-## 9. CHUẨN BỊ HỎI ĐÁP
+## 7. CHUẨN BỊ HỎI ĐÁP
 
 | Câu hỏi dễ gặp | Hướng trả lời |
 | :--- | :--- |
@@ -362,13 +251,12 @@ code/tests/
 | Vì sao chỉnh nghiêng sau khi đã nắn phối cảnh? | Nắn phối cảnh dựa trên mép giấy; khi mép giấy không song song với dòng chữ (giấy in lệch) vẫn còn góc nghiêng nhỏ |
 | Vì sao CLAHE thay vì cân bằng histogram toàn cục? | Ảnh chụp có ánh sáng không đều; CLAHE cân bằng theo từng ô và giới hạn khuếch đại nhiễu |
 | Bộ 6 là ảnh tổng hợp, có thực tế không? | Bộ 6 cho ground truth chính xác để so sánh phương pháp; kết luận được kiểm chứng lại trên ảnh chụp thật (bộ 2, bộ 3, bộ 5) và so với app thương mại (D7) |
-| Mô hình có học thuộc nguồn không? | Trình bày source probe, cross-source, bộ 5 và kết quả sau khắc phục (mục 4.5) |
-| Vì sao không dùng luôn CNN? | Learning curve cho thấy với dữ liệu ít, đặc trưng thủ công + SVM cạnh tranh được; CNN cần nhiều dữ liệu và kém giải thích hơn; McNemar cho biết khác biệt có ý nghĩa hay không |
-| Gặp giấy chưa từng thấy thì sao? | Ngưỡng từ chối trên xác suất đã hiệu chỉnh; AUROC open-set trên bộ "loại lạ" |
+| Bộ phân loại có học thuộc nguồn không? | Chuẩn hóa ảnh trước khi trích đặc trưng (mục 3.5); con số chính báo cáo trên bộ 5 |
+| Gặp giấy chưa từng thấy thì sao? | Ngưỡng từ chối theo khoảng cách $k$-NN; đo tỉ lệ tài liệu lạ lọt vào pipeline (D10, mục 3.5) |
 
 ---
 
-## 10. CHECKLIST CUỐI
+## 8. CHECKLIST CUỐI
 
 **DIP**
 - [ ] Module `preprocessing/`, `classification/` có unit test, chạy được từ một lệnh
@@ -376,14 +264,6 @@ code/tests/
 - [ ] Đường cong sai số nắn theo góc nghiêng (D3)
 - [ ] Bảng tham số & lý do chọn
 - [ ] Phần báo cáo 1,5–2 trang, 2–3 slide, đoạn demo 30 giây, README module
-
-**ML**
-- [ ] 5 mô hình + ResNet-18, nested CV, khoảng tin cậy
-- [ ] Ablation đặc trưng, learning curve
-- [ ] Source probe, cross-source, bộ 5 trước / sau khắc phục
-- [ ] Grad-CAM, open-set AUROC, calibration
-- [ ] Bảng phân loại lỗi
-- [ ] Báo cáo & slide ML đã ghép, có khai báo AI
 
 **Chung**
 - [ ] 25 ảnh bộ 5 (15 thường + 10 loại lạ) đã che thông tin cá nhân

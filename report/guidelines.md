@@ -1,7 +1,7 @@
 # HƯỚNG DẪN VIẾT BÁO CÁO DIP
 
-> **Hạn gửi phần của mỗi người:** commit lên nhánh `dip` trước tối **08/11** · **Hiếu ghép:** 09/11 · **Đóng gói:** 10/11 · **Nộp:** 11/11  
-> **Yêu cầu của thầy** ([DoAn_XuLyAnh.md](../references/requirements/DoAn_XuLyAnh.md), slide 8): báo cáo **4–10 trang**, `.pdf`, gồm bài toán, dữ liệu, phương pháp, kết quả, thảo luận, phân công, khai báo sử dụng AI. Ghi rõ chương học phần đã dùng; mỗi bước ghi tham số và lý do chọn; có phương pháp đối chứng và độ đo định lượng.  
+> **Hạn gửi phần của mỗi người:** commit lên nhánh `main` trước tối **08/11** · **Hiếu ghép:** 09/11 · **Đóng gói:** 10/11 · **Nộp:** 11/11  
+> **Yêu cầu của thầy** ([DoAn_XuLyAnh.md](../docs/references/requirements/DoAn_XuLyAnh.md), slide 8): báo cáo **4–10 trang**, `.pdf`, gồm bài toán, dữ liệu, phương pháp, kết quả, thảo luận, phân công, khai báo sử dụng AI. Ghi rõ chương học phần đã dùng; mỗi bước ghi tham số và lý do chọn; có phương pháp đối chứng và độ đo định lượng.  
 > **Dàn ý:** [outline.md](outline.md)
 
 ## 1. Biên dịch
@@ -9,7 +9,7 @@
 Cần MiKTeX hoặc TeX Live (có sẵn XeLaTeX, biber, latexmk, phông TeX Gyre Termes).
 
 ```bash
-cd dip/report/latex
+cd report/latex
 latexmk            # XeLaTeX + biber, kết quả: build/main.pdf
 latexmk -c         # xóa file trung gian
 ```
@@ -68,7 +68,7 @@ Bản chính tổng cộng **≤ 10 trang**, phụ lục không giới hạn. M�
 | Phương pháp (3.x, ≈ 0,75 trang) | Các bước và lý do chọn; chương học phần (`\chuong{3}`); phương pháp đối chứng; bảng tham số rút gọn |
 | Kết quả (4.x, ≈ 1 trang) | 1 bảng chính so sánh các phương án; 1 hình chính (đường cong theo mức hỏng); 2–3 câu nhận xét có số liệu; 1–2 ca lỗi kèm ảnh và nguyên nhân |
 | Phụ lục | Bảng tham số đầy đủ (tên, giá trị chọn, khoảng đã thử, lý do), đường cong theo tham số, các thí nghiệm phụ |
-| Gửi kèm (ngoài LaTeX) | 2–3 slide vào `dip/slides/`, đoạn demo 30 giây, README module trong `code/` |
+| Gửi kèm (ngoài LaTeX) | 2–3 slide vào `slides/`, đoạn demo 30 giây, README module trong `code/` |
 
 ## 4. Quy ước
 
@@ -112,7 +112,7 @@ Mẫu có sẵn trong [sections/4_2_preprocessing.tex](latex/sections/4_2_prepro
 | phiếu xét nghiệm | phiếu XN, lab report |
 | bộ 6 | dataset 6, synthetic set |
 
-Quy ước kỹ thuật giống [code/README.md](../../code/README.md): bbox `[x, y, w, h]`; mask mực = 255; ảnh màu BGR; 4 góc theo thứ tự TL, TR, BR, BL.
+Quy ước kỹ thuật giống [code/README.md](../code/README.md): bbox `[x, y, w, h]`; mask mực = 255; ảnh màu BGR; 4 góc theo thứ tự TL, TR, BR, BL.
 
 ## 5. Khai báo sử dụng AI
 

@@ -1,6 +1,6 @@
 # Code — Pipeline xử lý ảnh MedTrack
 
-Khung code chung cho đồ án Xử lý ảnh (DIP) và bài tập lớn Học máy (ML). **Mỗi người chỉ sửa module của mình.** Riêng `common/` và hợp đồng dữ liệu, ai muốn đổi thì phải báo cả nhóm.
+Khung code chung cho đồ án Xử lý ảnh (DIP). **Mỗi người chỉ sửa module của mình.** Riêng `common/` và hợp đồng dữ liệu, ai muốn đổi thì phải báo cả nhóm.
 
 ```
 ① Hiếu ──PreprocessResult──► ② Trường ──CleaningResult──► ③ Khang  (phiếu XN)  ──LabReportResult──► app
@@ -29,7 +29,7 @@ pytest                    # phải XANH: test của hàm chưa viết sẽ hiệ
 | Module | Người | File | Thí nghiệm | Test |
 | :--- | :--- | :--- | :--- | :--- |
 | `preprocessing/` | Hiếu | `quality`, `glare`, `corners`, `rectify`, `deskew`, `enhance`, `pipeline` | D1–D9 | `test_preprocessing.py` |
-| `classification/` | Hiếu | `features`, `classify` | D10, ML Bài toán 1 | `test_classification.py` |
+| `classification/` | Hiếu | `features`, `classify` | D10 | `test_classification.py` |
 | `cleaning/` | Trường | `background`, `ink`, `inpaint`, `binarize`, `components`, `pipeline` | T1–T8 | `test_cleaning.py` |
 | `ocr/` *(dùng chung)* | Khang | `engines` (cần viết), `metrics` (**đã có** `cer`, `wer`, `corpus_cer`) | — | `test_ocr_metrics.py` |
 | `table_extraction/` | Khang | `geometry`, `rows`, `columns`, `cells`, `flags`, `pipeline` | K1–K7 | `test_table.py` |
@@ -93,7 +93,6 @@ Thí nghiệm: copy file mẫu của mình trong `experiments/` (`d1_`, `t1_`, `
 | :--- | :--- | :--- |
 | `requirements.txt` | Ngay | OpenCV, scikit-image, scikit-learn, pandas, matplotlib, imagehash, pytest |
 | `requirements-ocr.txt` | Khi làm OCR (Khang trước 01/11, sau đó cả nhóm) | Tesseract 5 phải **cài riêng** ([bản Windows](https://github.com/UB-Mannheim/tesseract/wiki)), chọn thêm gói ngôn ngữ `vie`. PaddleOCR / VietOCR có thể chưa hỗ trợ Python 3.13 → dùng venv Python 3.11 |
-| `requirements-ml.txt` | Phần ML (sau 11/11) | torch, ultralytics (YOLOv8), grad-cam, shap. Train YOLO nên dùng Colab GPU |
 
 ## 7. Dữ liệu và kết quả (không commit)
 

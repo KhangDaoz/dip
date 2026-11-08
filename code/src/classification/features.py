@@ -1,4 +1,4 @@
-"""Đặc trưng thủ công cho phân loại tài liệu (KeHoach_Hieu.md mục 4.2). Đầu vào: ảnh xám đã tiền xử lý."""
+"""Đặc trưng thủ công cho phân loại tài liệu (KeHoach_Hieu.md mục 3.5). Đầu vào: ảnh xám đã tiền xử lý."""
 import numpy as np
 
 

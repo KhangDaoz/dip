@@ -1,17 +1,14 @@
 # KẾ HOẠCH CHI TIẾT — TRƯỜNG
 
 > **Phần phụ trách:** Mắt xích ② của pipeline — Làm sạch ảnh & Tách lớp mực  
-> **Áp dụng cho:** Đồ án Xử lý ảnh (DIP, hạn **11/11/2026**) · Bài tập lớn Học máy (ML) · Mobile App MedTrack (module `05-family` + component xác nhận)  
+> **Áp dụng cho:** Đồ án Xử lý ảnh (DIP, hạn **11/11/2026**)  
 > **Việc thêm:** ablation toàn pipeline (T8).  
-> **Tài liệu liên quan:** [PhanCong_TongHop.md](PhanCong_TongHop.md) · [DeTai_XuLyAnh_ChiTiet.md](../dip/docs/DeTai_XuLyAnh_ChiTiet.md) · [KeHoach_BTL_MachineLearning.md](../ml/docs/KeHoach_BTL_MachineLearning.md)
+> **Tài liệu liên quan:** [PhanCong_TongHop.md](PhanCong_TongHop.md) · [DeTai_XuLyAnh_ChiTiet.md](../docs/DeTai_XuLyAnh_ChiTiet.md)
 
 | Điểm yếu hiện tại | Cách khắc phục trong kế hoạch này |
 | :--- | :--- |
 | DIP: so sánh nhị phân hóa là dạng bài kinh điển (kiểu DIBCO) | Đo theo **từng loại và mức độ hỏng** trên bộ 6; thêm **ràng buộc an toàn y tế**: không được xóa chữ đỏ cảnh báo trên phiếu xét nghiệm, có độ đo riêng |
 | DIP: thiếu ảnh có dấu đỏ, chữ viết tay thật | Bộ 6 dán dấu / nét bút có kiểm soát (ground truth chính xác) + kiểm chứng trên ảnh thật của bộ 1 và bộ 5 |
-| ML: nhãn sinh từ luật nên mô hình có thể chỉ bắt chước luật | Tập test sửa tay hoàn toàn; thí nghiệm **nhãn nhiễu**: huấn luyện trên nhãn luật vs nhãn đã sửa |
-| ML: rò rỉ dữ liệu vì nhiều thành phần liên thông cùng một ảnh | Chia dữ liệu **theo ảnh** (`GroupKFold`, group = ảnh) |
-| ML: điểm cộng dễ bị coi là phụ | Active Learning làm thành thí nghiệm có lặp lại nhiều seed, có khoảng tin cậy, gắn với vòng sửa nhãn của sản phẩm |
 
 ---
 
@@ -26,7 +23,7 @@ flowchart LR
     R -->|Phiếu XN| K["Giữ chữ đỏ cảnh báo<br>chỉ xóa vùng đỏ dạng con dấu"]
     I --> B["Nhị phân hóa<br>Sauvola + lọc nhiễu"]
     K --> B
-    B --> C["Thành phần liên thông<br>+ phân loại 4 lớp (ML)"]
+    B --> C["Thành phần liên thông<br>+ nhãn 4 lớp (luật màu + hình dạng)"]
     C --> O["→ Khang / Thắng"]
 ```
 
@@ -49,7 +46,7 @@ flowchart LR
 
 | Bộ | Vai trò | Việc cần làm |
 | :--- | :--- | :--- |
-| **1** VAIPE (đơn VN) | Nguồn chữ in; chưa xác nhận đủ ảnh dấu/viết tay trong bản đang dùng | 01/11 đã quét 1.173 ảnh train và xem tổng quan toàn bộ, chưa tuyển được ca dấu/viết tay đáng tin cậy. Chưa có cơ sở lấy ~30 ảnh bộ này làm test ML bốn lớp mực; cần nguồn bổ sung và duyệt nhãn. |
+| **1** VAIPE (đơn VN) | Nguồn chữ in; chưa xác nhận đủ ảnh dấu/viết tay trong bản đang dùng | 01/11 đã quét 1.173 ảnh train và xem tổng quan toàn bộ, chưa tuyển được ca dấu/viết tay đáng tin cậy. Chưa có cơ sở lấy ~30 ảnh bộ này làm test bốn lớp mực; cần nguồn bổ sung và duyệt nhãn. |
 | **3** Phiếu CBC (ảnh chụp) | Ảnh chụp có bóng, nền không đều | Không cần gán nhãn |
 | **5** Ảnh tự chụp | Kiểm chứng thực tế; **phiếu XN Việt Nam có chữ đỏ** để đo ràng buộc an toàn | Chụp ≥ 15 ảnh, ưu tiên đơn có dấu / chữ ký và phiếu có chỉ số in đỏ; khoanh tay vùng chữ đỏ trên các phiếu này |
 | **6** Benchmark tổng hợp (Thắng sinh) | Ground truth: ảnh sạch, **ảnh nhị phân chuẩn**, mask dấu, mask bóng, mức độ hỏng | Gửi Thắng yêu cầu: lưu ảnh nhị phân chuẩn (từ ảnh sạch) và mask dấu / nét bút |
@@ -108,66 +105,7 @@ code/tests/test_cleaning.py
 
 ---
 
-## 4. MÔN ML — BÀI TOÁN 2: PHÂN LOẠI THÀNH PHẦN LIÊN THÔNG
-
-### 4.1. Bài toán
-
-* **Đơn vị mẫu:** mỗi thành phần liên thông trên ảnh nhị phân.
-* **4 lớp:** `printed` (chữ in), `handwritten` (viết tay), `stamp` (con dấu), `other` (đường kẻ + nhiễu).
-* **Câu hỏi nghiên cứu:**
-  1. Mô hình học máy vượt luật HSV / hình thái ở đâu (chữ ký mực đen, dấu mờ)?
-  2. Nhãn sinh từ luật (nhiễu) ảnh hưởng mô hình bao nhiêu?
-  3. Cần bao nhiêu nhãn gán tay để đạt hiệu năng tốt? (Active Learning)
-
-### 4.2. Nhãn
-
-* **Tập train:** luật của module DIP gán sơ bộ (màu + hình dạng).
-* **Tập test:** ~30 ảnh bộ 1 + ảnh bộ 5, **sửa tay toàn bộ** trên Label Studio (hiển thị từng thành phần đã tô màu theo nhãn luật, chỉ click sửa chỗ sai).
-* **Tập "train sạch"** (cho thí nghiệm nhãn nhiễu): sửa tay thêm ~20 ảnh train.
-
-### 4.3. Đặc trưng
-
-| Nhóm | Chi tiết |
-| :--- | :--- |
-| Hình dạng | Diện tích, chiều rộng / cao, tỉ lệ khung, Solidity, Extent, độ tròn, số lỗ (Euler), Hu moments |
-| Nét chữ | Độ dày nét trung bình và độ lệch (Distance Transform), độ cong, số điểm cuối / rẽ nhánh của khung xương |
-| Màu | Trung bình và độ lệch H, S, V; tỉ lệ pixel thuộc mask đỏ / xanh |
-| Kết cấu | HOG 32×32 của thành phần, LBP |
-| Ngữ cảnh | Vị trí tương đối trên trang; chiều cao so với chiều cao chữ trung vị của trang; số thành phần lân cận |
-
-### 4.4. Mô hình và đánh giá
-
-| Hạng mục | Cách làm |
-| :--- | :--- |
-| Mô hình | $k$-NN, Naive Bayes, Logistic Regression, Random Forest, SVM (+ XGBoost để tham khảo) |
-| **Chia dữ liệu** | `GroupKFold` với **group = ảnh** (bắt buộc: các thành phần cùng ảnh rất giống nhau) |
-| Chọn siêu tham số | Nested CV |
-| Mất cân bằng | `printed` chiếm đa số → Macro-F1, Balanced Accuracy, `class_weight`, báo cáo F1 từng lớp |
-| Kiểm định | Bootstrap 95% theo ảnh; McNemar giữa mô hình tốt nhất và luật DIP |
-| Learning curve | Macro-F1 theo số ảnh train |
-
-### 4.5. Thí nghiệm nâng cao
-
-**(a) Nhãn nhiễu** — huấn luyện cùng mô hình trên (1) nhãn luật, (2) nhãn đã sửa tay; đánh giá trên cùng tập test sửa tay. Báo cáo: mô hình học từ nhãn luật **có vượt được chính luật** không (hiện tượng "học từ nhãn nhiễu nhưng tổng quát tốt hơn").
-
-**(b) Active Learning — điểm cộng ngoài bài giảng**
-* Mô phỏng vòng sửa nhãn của MedTrack: bắt đầu với 2% dữ liệu có nhãn sạch; mỗi vòng chọn 1 lô (ví dụ 200 thành phần) để "người dùng" gán nhãn (lấy nhãn sạch), huấn luyện lại.
-* Chiến lược chọn mẫu: **ngẫu nhiên** · **least confidence** · **margin** · **entropy**.
-* Lặp 5 seed, vẽ đường cong **số nhãn → Macro-F1** có dải tin cậy.
-* Kết luận: cần bao nhiêu % nhãn để đạt 95% hiệu năng khi có nhãn đầy đủ; liên hệ trực tiếp với màn hình xác nhận trên app.
-
-### 4.6. Phân tích lỗi
-
-* Nhóm lỗi: chữ ký mực đen ↔ chữ in · dấu mờ ↔ chữ in đỏ · chữ dính nhau ↔ đường kẻ · nét viết tay đứt đoạn ↔ nhiễu.
-* Mỗi nhóm: tỉ lệ %, 3 ví dụ, giải thích bằng SHAP (đặc trưng nào đẩy sai).
-
-### 4.7. Kết quả cần có trong báo cáo ML (phần Trường)
-
-Bảng 5 mô hình vs luật DIP (Macro-F1 ± CI, F1 từng lớp) · Confusion Matrix · Bảng nhãn nhiễu · **Đường cong Active Learning** · Bảng phân loại lỗi + SHAP.
-
----
-
-## 5. VIỆC THÊM: ABLATION TOÀN PIPELINE
+## 4. VIỆC THÊM: ABLATION TOÀN PIPELINE
 
 | Mốc | Việc |
 | :--- | :--- |
@@ -177,22 +115,7 @@ Bảng 5 mô hình vs luật DIP (Macro-F1 ± CI, F1 từng lớp) · Confusion 
 
 ---
 
-## 6. MOBILE APP — `05-family` + COMPONENT XÁC NHẬN
-
-> **Ưu tiên thấp đến sau 11/11.**
-
-| Nhóm | Màn hình / thành phần |
-| :--- | :--- |
-| Hồ sơ gia đình | `f01` danh sách · `f02` chuyển hồ sơ · `f03` tạo hồ sơ · `f04` chờ đồng ý · `f05` trang đồng ý cho bố mẹ (web) · `f06` mời · `f07` chấp nhận · `f08` phân quyền · `f09` nhật ký truy cập · `f10` quyền khẩn cấp |
-| Xác nhận chung | `07` dữ liệu bóc tách · `07b` đã lưu |
-| **Component dùng chung** | Ảnh cắt đúng vùng + khoanh vùng + nút Đúng / Sửa / Không rõ; dùng trong `m05`, `m06` (Thắng), `l02`, `l03`, `l10` (Khang); ghi nhật ký chỉnh sửa → xuất nhãn train lại (nối với Active Learning) |
-| Backend | Đăng nhập, quyền truy cập theo hồ sơ, che thông tin cá nhân trước khi tải lên |
-
----
-
-## 7. LỊCH LÀM VIỆC
-
-### 7.1. Đến hạn DIP (11/11)
+## 5. LỊCH LÀM VIỆC (ĐẾN HẠN 11/11)
 
 | Ngày | Việc | Kết quả kiểm tra được |
 | :--- | :--- | :--- |
@@ -206,45 +129,29 @@ Bảng 5 mô hình vs luật DIP (Macro-F1 ± CI, F1 từng lớp) · Confusion 
 | **08/11** | Viết phần Trường trong báo cáo DIP (1,5–2 trang), 2–3 slide, đoạn demo 30 giây, README module → gửi Hiếu ghép | Kết quả cần có: phần báo cáo, slide, demo và README module được gửi cho Hiếu. |
 | **09–11/11** | Tập trình bày, hỏi đáp thử | Nộp |
 
-### 7.2. Môn ML
-
-| Tuần | Việc |
-| :--- | :--- |
-| **1** | Trích thành phần liên thông + đặc trưng (dùng lại `components.py`); sinh nhãn luật; Label Studio; sửa tay tập test |
-| **2** | 5 mô hình, `GroupKFold` theo ảnh, nested CV, learning curve; thí nghiệm nhãn nhiễu |
-| **3** | Active Learning 4 chiến lược × 5 seed; SHAP |
-| **4** | Phân tích lỗi; viết phần mình gửi Hiếu ghép |
-
----
-
-## 8. RỦI RO & PHƯƠNG ÁN
+## 6. RỦI RO & PHƯƠNG ÁN
 
 | Rủi ro | Phương án |
 | :--- | :--- |
 | Bộ 1 có quá ít dấu / viết tay | Dùng bộ 6 (dấu dán tổng hợp) làm chính, bộ 1 + bộ 5 để kiểm chứng; ghi rõ hạn chế |
-| Sửa tay tập test quá lâu | Giảm còn 20 ảnh; Label Studio hiển thị nhãn luật sẵn, chỉ sửa chỗ sai |
 | Inpainting làm mất chữ in bị dấu đè | Đo CER trong vùng dấu (T4); nếu xấu hơn không xóa → chỉ làm mờ dấu (giảm S) thay vì inpaint |
 | Không đủ phiếu VN có chữ đỏ cho T5 | Nhờ cả nhóm chụp thêm; tối thiểu 5 phiếu |
 
-**Thứ tự cắt khi thiếu thời gian:** T7 → T6 → nhãn nhiễu → XGBoost. **Không cắt:** T2, T3, T5, T8, Active Learning.
+**Thứ tự cắt khi thiếu thời gian:** T7 → T6. **Không cắt:** T2, T3, T5, T8.
 
 ---
 
-## 9. CHUẨN BỊ HỎI ĐÁP
+## 7. CHUẨN BỊ HỎI ĐÁP
 
 | Câu hỏi | Hướng trả lời |
 | :--- | :--- |
 | Vì sao Sauvola tốt hơn Otsu? | Otsu một ngưỡng cho cả ảnh, hỏng khi ánh sáng không đều; Sauvola ngưỡng cục bộ theo trung bình và độ lệch chuẩn cửa sổ. Số liệu ở T2, T3 |
 | Khử bóng bằng chia nền hoạt động thế nào? | Ảnh = phản xạ × chiếu sáng; nền ước lượng bằng lọc kích thước lớn hơn nét chữ ≈ chiếu sáng; chia ra còn phản xạ |
 | Làm sao không xóa nhầm chữ đỏ cảnh báo? | Phân biệt theo hình dạng (dấu lớn, tròn, có vành) và theo loại tài liệu; đo Recall chữ đỏ ở T5 |
-| Vì sao chia dữ liệu theo ảnh? | Thành phần cùng ảnh cùng font, cùng ánh sáng; chia ngẫu nhiên làm điểm số ảo cao |
-| Nhãn từ luật thì mô hình chỉ bắt chước luật? | Tập test sửa tay hoàn toàn; thí nghiệm nhãn nhiễu cho thấy mô hình có vượt luật hay không |
-| Active Learning có ích gì cho sản phẩm? | Màn hình xác nhận chỉ cần hỏi người dùng những mẫu mô hình kém tự tin nhất → ít công sửa hơn |
 
 ---
 
-## 10. CHECKLIST CUỐI
+## 8. CHECKLIST CUỐI
 
 **DIP:** module `cleaning/` có unit test · T1–T5, T8 có số liệu · đường cong T3 · bảng tham số · ràng buộc an toàn chữ đỏ · bảng ablation T8 · phần báo cáo, slide, demo gửi Hiếu trước 08/11  
-**ML:** 5 mô hình vs luật, `GroupKFold` theo ảnh · nhãn nhiễu · Active Learning 5 seed có dải tin cậy · SHAP · phân loại lỗi · gửi phần mình cho Hiếu  
 **Chung:** ≥ 15 ảnh bộ 5 đã che thông tin · JSON hợp đồng đã chốt · trả lời được câu hỏi về phần của 3 bạn còn lại

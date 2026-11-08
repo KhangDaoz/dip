@@ -7,7 +7,7 @@ License RVL-CDIP: chỉ dùng cho nghiên cứu (ảnh gốc thuộc IIT-CDIP / 
 Kết quả (cùng cấu trúc với bộ 1–3):
     data/4_other_rvl_cdip/
     ├── train/images/   valid/images/   test/images/   ← 8 lớp TRAIN_CLASSES, nhãn doc_type = other
-    ├── openset/images/                                ← OPENSET_CLASSES, KHÔNG dùng khi train (mục 4.5c)
+    ├── openset/images/                                ← OPENSET_CLASSES, KHÔNG dùng khi train (KeHoach_Hieu.md mục 3.5)
     ├── labels.csv                                     ← file, split, rvl_class, doc_type
     └── README.md
 
@@ -38,7 +38,7 @@ LABEL_NAMES = ["letter", "form", "email", "handwritten", "advertisement", "scien
 # KeHoach_Hieu.md mục 2: các lớp giống "giấy tờ" người dùng hay chụp nhầm
 TRAIN_CLASSES = ["form", "invoice", "letter", "memo", "email", "news article", "scientific report",
                  "questionnaire"]
-# Mục 4.5c: loại lạ không y tế, chỉ dùng để đánh giá open-set
+# KeHoach_Hieu.md mục 3.5: loại lạ không y tế, chỉ dùng để đánh giá open-set
 OPENSET_CLASSES = ["budget", "resume"]
 
 
@@ -91,19 +91,19 @@ def write_readme(out_dir: Path, labels: pd.DataFrame) -> None:
     lines.append(f"| **Tổng** | {total} |")
     (out_dir / "README.md").write_text(f"""# Bộ 4 — Tài liệu khác (RVL-CDIP)
 
-Lớp `other` cho phân loại 3 lớp (DIP D10, ML Bài toán 1). Sinh bằng `code/scripts/fetch_rvl_cdip.py`.
+Lớp `other` cho phân loại 3 lớp (DIP D10). Sinh bằng `code/scripts/fetch_rvl_cdip.py`.
 
 * **Nguồn:** HuggingFace [`{REPO}`](https://huggingface.co/datasets/{REPO}), tập con 100 ảnh / lớp của
   RVL-CDIP (Harley, Ufkes, Derpanis — ICDAR 2015). Giữ nguyên cách chia train / validation / test của nguồn.
 * **License:** RVL-CDIP chỉ dùng cho **nghiên cứu**; ảnh gốc từ IIT-CDIP / Legacy Tobacco Documents Library.
 * **Ảnh:** xám, PNG, độ phân giải gốc của RVL-CDIP (cạnh dài ~1000 px, ảnh scan).
-* **`openset/`:** lớp {", ".join(OPENSET_CLASSES)} — **không dùng khi train**, chỉ để đánh giá tài liệu lạ (KeHoach_Hieu.md mục 4.5c).
+* **`openset/`:** lớp {", ".join(OPENSET_CLASSES)} — **không dùng khi train**, chỉ để đánh giá tài liệu lạ (KeHoach_Hieu.md mục 3.5).
 * **`labels.csv`:** `file`, `split`, `rvl_class`, `doc_type`.
 
 {chr(10).join(lines)}
 
 **Lưu ý shortcut:** ảnh RVL-CDIP là ảnh scan xám, độ phân giải thấp — khác hẳn bộ 1 (ảnh phẳng màu) và bộ 2, 3
-(ảnh chụp 640×640). Bắt buộc chuẩn hóa ảnh trước khi trích đặc trưng (mục 4.5b).
+(ảnh chụp 640×640). Bắt buộc chuẩn hóa ảnh trước khi trích đặc trưng (KeHoach_Hieu.md mục 3.5).
 """, encoding="utf-8")
 
 
