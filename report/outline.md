@@ -14,14 +14,19 @@ Cách sinh từ ảnh sạch, các loại và mức hỏng, ground truth đi kè
 ## 3. Phương pháp
 ### 3.0. Tổng quan pipeline
 Sơ đồ 4 bước, dữ liệu chuyển giữa các bước, chương học phần áp dụng.
+*Ghi chú:* phải có bước **Hậu xử lý** theo khung pipeline Slide 7 (Dữ liệu → Tiền xử lý → Xử lý chính → Hậu xử lý → Đánh giá); bảng chương học phần ↔ kỹ thuật thêm cột Hậu xử lý.
 ### 3.1. Tiền xử lý và phân loại tài liệu
 Đo chất lượng (mờ, lóa), tìm 4 góc, nắn phối cảnh, chỉnh nghiêng, tăng tương phản, khử lóa; phân loại 3 lớp.
+*Ghi chú:* phải viết 1–2 câu về bước hậu xử lý.
 ### 3.2. Làm sạch ảnh và tách lớp mực
 Khử bóng, nhị phân hóa, tách mực màu và xóa dấu / chữ ký, giữ chữ đỏ cảnh báo.
+*Ghi chú:* phải viết 1–2 câu về bước hậu xử lý.
 ### 3.3. Dựng bảng phiếu xét nghiệm
 Gom cụm từ thành dòng, tìm cột, ghép ô, phát hiện cờ bất thường.
+*Ghi chú:* phải viết 1–2 câu về bước hậu xử lý.
 ### 3.4. Bóc tách đơn thuốc
 Khoanh vùng bảng thuốc, tách dòng, gom thành từng khoản thuốc, tách trường.
+*Ghi chú:* phải viết 1–2 câu về bước hậu xử lý.
 
 ## 4. Thực nghiệm
 ### 4.1. Thiết lập và độ đo
