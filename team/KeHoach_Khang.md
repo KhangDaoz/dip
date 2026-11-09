@@ -8,7 +8,7 @@
 | Điểm yếu / rủi ro hiện tại | Cách khắc phục trong kế hoạch này |
 | :--- | :--- |
 | DIP: dựng bảng **không kẻ lưới** là bài khó nhất đề tài, dễ không xong | Chia nhỏ thành dòng → cột → ô, mỗi tầng có độ đo riêng; ước lượng tham số theo **chiều cao chữ của từng ảnh** thay vì cố định; có phương án dự phòng |
-| DIP: chưa có ground truth cấu trúc bảng | Suy ra dòng / cột chuẩn từ **nhãn cụm từ (ô kết quả) có sẵn** của bộ 3 — không phải vẽ tay |
+| DIP: chưa có ground truth cấu trúc bảng | Suy ra dòng / cột chuẩn từ **nhãn cụm từ (ô kết quả) có sẵn** của bộ 2 — không phải vẽ tay |
 | OCR chưa ai phụ trách | Khang dựng `src/ocr/` trước 01/11, cả nhóm dùng |
 
 ---
@@ -47,12 +47,12 @@ flowchart LR
 
 | Bộ | Vai trò | Việc cần làm |
 | :--- | :--- | :--- |
-| **3** Report Keywords (phiếu CBC, ảnh chụp, bảng không kẻ) | Dữ liệu chính cho DIP; **nhãn vai trò từng cụm từ** có sẵn | **31/10:** xác nhận tên nhãn chính xác và số ảnh; viết script suy ra dòng / cột chuẩn từ nhãn (gom box cụm từ theo tọa độ y, x) |
-| **5** Ảnh tự chụp | Phiếu xét nghiệm Việt Nam (có bảng kẻ, chữ đỏ, H/L) để kiểm chứng | Bản local hiện có **48 ảnh lab** trong bộ 5; Khang review/ẩn danh các ảnh được giao, gán box + role cho ~10 phiếu, chép transcript thủ công cho crop dùng đánh giá OCR |
+| **2** Report Keywords (phiếu CBC, ảnh chụp, bảng không kẻ) | Dữ liệu chính cho DIP; **nhãn vai trò từng cụm từ** có sẵn. **Chỉ xử lý trên 57 ảnh gốc** (train 39 / valid 11 / test 7) ở `data/2_roboflow_report_keywords/`; 78 bản tăng cường ở `2_roboflow_report_keywords_augmented/` không dùng cho thí nghiệm | **31/10:** xác nhận tên nhãn chính xác và số ảnh; viết script suy ra dòng / cột chuẩn từ nhãn (gom box cụm từ theo tọa độ y, x) |
+| **4** Ảnh tự chụp | Phiếu xét nghiệm Việt Nam (có bảng kẻ, chữ đỏ, H/L) để kiểm chứng | Bản local hiện có **48 ảnh lab** trong bộ 4; Khang review/ẩn danh các ảnh được giao, gán box + role cho ~10 phiếu, chép transcript thủ công cho crop dùng đánh giá OCR |
 
-Bộ 5 hiện chia theo thư mục loại tài liệu nhưng **chưa review nội dung, chưa gán nhãn chi tiết và chưa chia split**. Trạng thái ẩn danh chưa được xác nhận; cần duyệt/che thông tin cá nhân trước khi dùng benchmark. Theo phân công ban đầu, bộ 5 là tập kiểm thử độc lập, không dùng train/tinh chỉnh; sau khi review và gán nhãn, nhóm chốt danh sách test theo task, không tách ảnh cùng tài liệu sang nhiều tập. Không tự đưa bộ 5 vào train/valid nếu nhóm chưa thống nhất đổi quy định.
+Bộ 4 hiện chia theo thư mục loại tài liệu nhưng **chưa review nội dung, chưa gán nhãn chi tiết và chưa chia split**. Trạng thái ẩn danh chưa được xác nhận; cần duyệt/che thông tin cá nhân trước khi dùng benchmark. Theo phân công ban đầu, bộ 4 là tập kiểm thử độc lập, không dùng train/tinh chỉnh; sau khi review và gán nhãn, nhóm chốt danh sách test theo task, không tách ảnh cùng tài liệu sang nhiều tập. Không tự đưa bộ 4 vào train/valid nếu nhóm chưa thống nhất đổi quy định.
 
-**Ground truth cấu trúc bảng suy ra từ bộ 3:** dòng chuẩn = nhóm các box cụm từ có tâm y gần nhau (khoảng cách < 0,5 chiều cao box trung vị); cột chuẩn = theo nhãn vai trò (cột tên chỉ số, kết quả, đơn vị, khoảng). Kiểm tra bằng mắt 20 ảnh để chắc cách suy ra đúng.
+**Ground truth cấu trúc bảng suy ra từ bộ 2:** dòng chuẩn = nhóm các box cụm từ có tâm y gần nhau (khoảng cách < 0,5 chiều cao box trung vị); cột chuẩn = theo nhãn vai trò (cột tên chỉ số, kết quả, đơn vị, khoảng). Kiểm tra bằng mắt 20 ảnh để chắc cách suy ra đúng.
 
 ---
 
@@ -60,8 +60,8 @@ Bộ 5 hiện chia theo thư mục loại tài liệu nhưng **chưa review nộ
 
 | Hạng mục | Chi tiết |
 | :--- | :--- |
-| Tiếng Anh (bộ 2, bộ 3) | Tesseract 5 (`--psm 7` cho từng cụm từ / dòng) và PaddleOCR; chọn bộ tốt hơn theo CER trên 50 cụm từ của bộ 3 |
-| Tiếng Việt (bộ 1, bộ 5) | VietOCR (mô hình `vgg_transformer`) cho từng dòng |
+| Tiếng Anh (bộ 2) | Tesseract 5 (`--psm 7` cho từng cụm từ / dòng) và PaddleOCR; chọn bộ tốt hơn theo CER trên 50 cụm từ của bộ 2 |
+| Tiếng Việt (bộ 1, bộ 4) | VietOCR (mô hình `vgg_transformer`) cho từng dòng |
 | Giao diện | `ocr_word(img_crop, lang)`, `ocr_line(img_crop, lang)` → `(text, confidence)`; cache kết quả theo hash ảnh |
 | Đánh giá | Hàm `cer(pred, gt)`, `wer(pred, gt)` dùng thư viện `jiwer`, cả nhóm dùng chung |
 | Hạn | **01/11** — Hiếu, Trường, Thắng cần để đo CER |
@@ -86,19 +86,19 @@ Bộ 5 hiện chia theo thư mục loại tài liệu nhưng **chưa review nộ
 
 | # | Thí nghiệm | Dữ liệu | Độ đo | Hình / bảng |
 | :---: | :--- | :--- | :--- | :--- |
-| **K1** | Gom dòng: Projection + Dilation vs gom tâm y cố định | Bộ 3 | **Độ chính xác gán cụm từ vào dòng**, IoU dòng | Bảng |
-| **K2** | Tìm cột: 3 phương án (Projection, XY-cut, khoảng cách cố định) | Bộ 3 | Độ chính xác gán cụm từ vào cột; **F1 quan hệ kề** (cặp ô cùng dòng / cùng cột, kiểu ICDAR table structure) | **Bảng chính** của phần Khang |
-| **K3** | Độ bền theo độ nghiêng | Bộ 3 xoay thêm 0°→5° | Độ chính xác gán dòng theo góc | Đường cong |
-| **K4** | Tham số tự thích nghi vs cố định | Bộ 3 (ảnh có độ phân giải khác nhau) | Độ chính xác gán dòng / cột | Bảng — chứng minh lợi ích của việc ước lượng theo chiều cao chữ |
-| **K5** | OCR theo ô cụm từ vs OCR cả trang | Bộ 3 (+ bộ 5) | CER, tỉ lệ dòng chỉ số đọc đúng đủ 4 trường | Bảng |
-| **K6** | Kiểm chứng trên phiếu Việt Nam | Bộ 5 | Như K1, K2 | Bảng nhỏ + ví dụ |
-| **K7** | Thời gian chạy | Bộ 3 | ms/ảnh | Bảng nhỏ |
+| **K1** | Gom dòng: Projection + Dilation vs gom tâm y cố định | Bộ 2 (57 ảnh gốc) | **Độ chính xác gán cụm từ vào dòng**, IoU dòng | Bảng |
+| **K2** | Tìm cột: 3 phương án (Projection, XY-cut, khoảng cách cố định) | Bộ 2 (57 ảnh gốc) | Độ chính xác gán cụm từ vào cột; **F1 quan hệ kề** (cặp ô cùng dòng / cùng cột, kiểu ICDAR table structure) | **Bảng chính** của phần Khang |
+| **K3** | Độ bền theo độ nghiêng | Bộ 2 (ảnh gốc) xoay thêm 0°→5° | Độ chính xác gán dòng theo góc | Đường cong |
+| **K4** | Tham số tự thích nghi vs cố định | Bộ 2 (ảnh gốc, kích thước chữ khác nhau) | Độ chính xác gán dòng / cột | Bảng — chứng minh lợi ích của việc ước lượng theo chiều cao chữ |
+| **K5** | OCR theo ô cụm từ vs OCR cả trang | Bộ 2 (+ bộ 4) | CER, tỉ lệ dòng chỉ số đọc đúng đủ 4 trường | Bảng |
+| **K6** | Kiểm chứng trên phiếu Việt Nam | Bộ 4 | Như K1, K2 | Bảng nhỏ + ví dụ |
+| **K7** | Thời gian chạy | Bộ 2 | ms/ảnh | Bảng nhỏ |
 
 ### 4.3. Bảng tham số & lý do chọn
 
 | Tham số | Khoảng thử | Chọn bằng |
 | :--- | :--- | :--- |
-| Hệ số SE tách cụm từ (× chiều cao chữ) | 0,3–0,8 | Tỉ lệ tách đúng cụm từ so với box nhãn bộ 3 |
+| Hệ số SE tách cụm từ (× chiều cao chữ) | 0,3–0,8 | Tỉ lệ tách đúng cụm từ so với box nhãn bộ 2 |
 | Hệ số SE gom dòng | 2–5 | K1 |
 | Độ rộng dải trắng tách cột; % dòng phải xuyên qua | 0,5–2 × chiều cao chữ; 40–80% | K2 |
 | Ngưỡng gán cụm từ vào ô (IoU) | 0,3–0,7 | K2 |
@@ -126,10 +126,10 @@ code/tests/test_table.py
 
 | Ngày | Việc | Kết quả kiểm tra được |
 | :--- | :--- | :--- |
-| **30–31/10** | ✅ Tải bộ 3, xác nhận tên nhãn. 🔄 Thử nghiệm script suy dòng/cột trên 20 ảnh; chờ ảnh sạch từ Hiếu và Trường trước khi chốt ground truth. 🔄 Hợp đồng JSON ② → ③ đang chờ Trường phản hồi. | Đã thống kê 135 ảnh, 5 nhãn, 8.198 box; script sinh 397 dòng ứng viên, chưa nghiệm thu. Chi tiết cập nhật 31/10 ở mục 9. |
+| **30–31/10** | ✅ Tải bộ 2 (khi đó là bộ 3), xác nhận tên nhãn. 🔄 Thử nghiệm script suy dòng/cột trên 20 ảnh; chờ ảnh sạch từ Hiếu và Trường trước khi chốt ground truth. 🔄 Hợp đồng JSON ② → ③ đang chờ Trường phản hồi. | Đã thống kê bản xuất 135 ảnh (gồm bản tăng cường; từ 08/11 chỉ dùng 57 ảnh gốc), 5 nhãn, 8.198 box; script sinh 397 dòng ứng viên, chưa nghiệm thu. Chi tiết cập nhật 31/10 ở mục 9. |
 | **01/11** | ✅ Hoàn thành bộ OCR dùng chung (`src/ocr/engines.py`), `flags.py`, và nghiệm thu handoff fixture ② → ③ | `engines.py` bọc 3 engine (Tesseract/Paddle/VietOCR) với lazy load & cache model; test nhận diện crop mẫu conf=0.91, test tiếng Việt CER=0.0, WER=0.0. `flags.py` đạt 14/14 test. Nghiệm thu mẫu `handoff_lab_report_001` của Trường đạt PASS 100%. |
 | **02/11** | `geometry.py`, `rows.py` → K1 | ✅ Bản đầu K1 + bảng benchmark pilot (mục 9.5) |
-| **03/11** | Tiếp tục K2/K4; rà bộ 5 và chốt cách lưu nhãn cho khoảng 10 phiếu lab | Bản local hiện có 48 ảnh lab; privacy review, annotation và split còn chờ |
+| **03/11** | Tiếp tục K2/K4; rà bộ 4 và chốt cách lưu nhãn cho khoảng 10 phiếu lab | Bản local hiện có 48 ảnh lab; privacy review, annotation và split còn chờ |
 | **03–04/11** | `columns.py` 3 phương án, `cells.py` → K2, K4 | **Bảng K2** |
 | **05/11** | **Mốc tích hợp** đầu-cuối; `flags.py` | Pipeline chạy trên 5 ảnh |
 | **06/11** | K3 độ nghiêng, K5 OCR theo ô | Đường cong + bảng |
@@ -141,7 +141,7 @@ code/tests/test_table.py
 
 | Rủi ro | Phương án |
 | :--- | :--- |
-| Bộ 3 ít ảnh hoặc nhãn không đúng như dự đoán | Báo nhóm ngay 31/10; dùng nhãn hiện có và gán thêm vai trò cụm từ cho ~30 ảnh |
+| Bộ 2 ít ảnh (57 ảnh gốc) hoặc nhãn không đúng như dự đoán | Báo nhóm ngay 31/10; dùng nhãn hiện có và gán thêm vai trò cụm từ cho ~30 ảnh |
 | Tìm cột thất bại trên phiếu nhiều cột / chữ lệch | Dùng phương án dự phòng: gán cột theo vai trò ML dự đoán (cột = nhóm cụm từ cùng vai trò, cùng dải x) |
 | OCR tiếng Anh kém trên ảnh chụp màn hình | Thử tiền xử lý thêm (phóng to ×2, Sauvola của Trường); báo cáo CER theo loại ảnh |
 | Không kịp phần mở rộng bảng có kẻ | Bỏ — không ảnh hưởng phần chính |
@@ -156,7 +156,7 @@ code/tests/test_table.py
 | :--- | :--- |
 | Bảng không có đường kẻ thì tìm cột thế nào? | Dải trắng dọc xuyên qua đa số dòng chính là ranh giới cột; Projection Profile dọc tìm các dải đó |
 | Vì sao kích thước SE theo chiều cao chữ? | Ảnh có độ phân giải khác nhau; SE cố định đúng với ảnh này sẽ sai với ảnh khác — K4 chứng minh |
-| Ground truth cấu trúc bảng lấy đâu? | Suy ra từ nhãn vai trò cụm từ có sẵn của bộ 3, đã kiểm tra bằng mắt 20 ảnh |
+| Ground truth cấu trúc bảng lấy đâu? | Suy ra từ nhãn vai trò cụm từ có sẵn của bộ 2 (57 ảnh gốc, không dùng bản tăng cường), đã kiểm tra bằng mắt 20 ảnh |
 | Vì sao không dùng ML để đoán bất thường? | Bất thường suy ra trực tiếp từ kết quả và khoảng tham chiếu — một phép so sánh là đủ; ML được dùng đúng chỗ khó hơn là nhận vai trò từng cụm từ |
 | Vì sao chia theo phiếu? | Cụm từ cùng phiếu cùng font và bố cục; chia ngẫu nhiên làm điểm số ảo cao |
 
@@ -165,19 +165,21 @@ code/tests/test_table.py
 ## 8. CHECKLIST CUỐI
 
 **DIP:** `src/ocr/` gửi cả nhóm trước 01/11 · module `table_extraction/` có unit test · K1, K2, K4, K5 có số liệu · bảng tham số · phần báo cáo, slide, demo gửi Hiếu trước 08/11  
-**Chung:** ≥ 15 ảnh lab bộ 5 được review/ẩn danh · gán box/role và transcript thủ công cho khoảng 10 phiếu · dùng bộ 5 làm kiểm thử độc lập theo quy định ban đầu · JSON hợp đồng đã chốt · trả lời được câu hỏi về phần của 3 bạn còn lại
+**Chung:** ≥ 15 ảnh lab bộ 4 được review/ẩn danh · gán box/role và transcript thủ công cho khoảng 10 phiếu · dùng bộ 4 làm kiểm thử độc lập theo quy định ban đầu · JSON hợp đồng đã chốt · trả lời được câu hỏi về phần của 3 bạn còn lại
 
 ---
 
 ## 9. CẬP NHẬT TIẾN ĐỘ — 31/10/2026
 
-### 9.1. Bộ 3 — xác nhận tên nhãn ✅
+### 9.1. Bộ 2 (Report Keywords) — xác nhận tên nhãn ✅
 
-Đã kiểm tra dataset `data/3_roboflow_report_keywords/`: 135 ảnh (train 117, validation 11, test 7), 8.198 box thuộc 5 class. Ánh xạ role: `Report Type` → `report_type` (113 box), `parameter` → `parameter` (2.170), `reference value` → `range` (1.751), `unit` → `unit` (2.011), `value` → `result` (2.153). Có một file nhãn validation rỗng; cần xác nhận đó là ảnh negative có chủ ý hay annotation thiếu.
+> **Cập nhật 08/11:** bộ này đổi số từ bộ 3 thành **bộ 2** (bỏ bộ Roboflow đơn thuốc cũ) và chỉ giữ **57 ảnh gốc** ở `data/2_roboflow_report_keywords/` (train 39, valid 11, test 7); 78 bản tăng cường của train chuyển sang `data/2_roboflow_report_keywords_augmented/` (vai trò từng file trong `split_manifest.csv`). Mọi thí nghiệm K1–K7 chạy trên 57 ảnh gốc. Số liệu 31/10 dưới đây là của bản xuất cũ, giữ làm lịch sử.
+
+Đã kiểm tra bản xuất `data/3_roboflow_report_keywords/` (tên cũ): 135 ảnh (train 117, validation 11, test 7), 8.198 box thuộc 5 class. Ánh xạ role: `Report Type` → `report_type` (113 box), `parameter` → `parameter` (2.170), `reference value` → `range` (1.751), `unit` → `unit` (2.011), `value` → `result` (2.153). Có một file nhãn validation rỗng; cần xác nhận đó là ảnh negative có chủ ý hay annotation thiếu.
 
 ### 9.2. Sinh ground truth — pilot ảnh dễ đã review ✅
 
-Thí nghiệm đầu [k0_dataset3_ground_truth.py](../code/experiments/k0_dataset3_ground_truth.py) chọn 20 nhóm ảnh train ngẫu nhiên và sinh 397 dòng ứng viên. Bộ này vẫn hữu ích để khảo sát lỗi, nhưng **không dùng làm GT chính thức**: ảnh nghiêng, box dài/nhiều dòng, bảng nhiều cột và grouping theo tâm y gây nhập nhằng.
+Thí nghiệm đầu [k0_dataset2_ground_truth.py](../code/experiments/k0_dataset2_ground_truth.py) chọn 20 nhóm ảnh train ngẫu nhiên và sinh 397 dòng ứng viên. Bộ này vẫn hữu ích để khảo sát lỗi, nhưng **không dùng làm GT chính thức**: ảnh nghiêng, box dài/nhiều dòng, bảng nhiều cột và grouping theo tâm y gây nhập nhằng.
 
 Pilot mới ưu tiên phiếu phẳng, sắc nét, bảng ít nhập nhằng. Sau khi xem overlay, loại mẫu `COMPLETE-HAEMOGRAM...`: box ghi chú “Reticulocyte production index” kéo qua nhiều dòng, không phù hợp làm mẫu dễ. Giữ **4 ảnh train thuộc 4 nhóm nguồn riêng**, tất cả `corner_method=full_image`, `skew_deg=0`, `H=identity`; tổng 275 box annotation nguồn (272 box thuộc các dòng bảng; 3 box report type được tách riêng) và 68 dòng ứng viên. Các hàng tiêu đề mục trong hai ảnh chụp/số hóa được đánh dấu `section_header`, không gộp vào metric hàng xét nghiệm. Danh sách:
 
@@ -200,9 +202,9 @@ Lưu ý triển khai trong checkout hiện tại: `preprocessing.preprocess()` c
 {
   "image_id": "lab_example_001",
   "source": {
-    "dataset": "3_roboflow_report_keywords",
+    "dataset": "2_roboflow_report_keywords",
     "split": "train",
-    "image_path": "data/3_roboflow_report_keywords/train/images/example.jpg",
+    "image_path": "data/2_roboflow_report_keywords/train/images/example.jpg",
     "image_size_px": [640, 640]
   },
   "processing": {
@@ -265,8 +267,8 @@ Box trong ví dụ dùng tọa độ pixel `[x1, y1, x2, y2]`; nếu ảnh khôn
    * Hoàn thành wrapper Tesseract, PaddleOCR và VietOCR cho `ocr_word`/`ocr_line`; `ocr_page` hỗ trợ Tesseract/PaddleOCR. VietOCR là recognizer theo dòng, nên `ocr_page(..., engine="vietocr")` báo không hỗ trợ tách trang độc lập.
    * Lazy import và cache instance model/predictor PaddleOCR, VietOCR để không nạp lại model mỗi lần gọi. Không cache kết quả OCR theo crop; giao diện các hàm OCR giữ nguyên như skeleton.
    * Chạy thử thực tế với Tesseract 5 trên crop chỉ số xét nghiệm đạt confidence 0.91; test tiếng Việt có dấu (`lang="vie"`) đạt $\text{CER} = 0.0$ và $\text{WER} = 0.0$ qua `code/src/ocr/metrics.py`.
-   * Benchmark Tesseract 5.5.4 và PaddleOCR 2.10.0 trên 50 crop có transcript người dùng xác nhận (`data/dataset3_50/`, 15 phiếu; 13 parameter, 13 value, 12 unit, 12 reference value), dùng `ocr_line`/Tesseract PSM 7, ảnh xám gốc, không resize/tăng cường. Corpus: **Tesseract CER 0.2543, WER 0.7011; PaddleOCR CER 0.3839, WER 0.8276**. Tesseract tốt hơn về CER/WER trên tập này; median latency PaddleOCR thấp hơn (6.4 ms so với 108.7 ms). Mỗi engine được warm-up một lượt, không tính vào độ trễ 50 crop. CER theo vùng cho thấy cả hai yếu ở `value` và `unit`; không suy rộng kết quả sang tiếng Việt hoặc mọi loại phiếu.
-   * Script tái lập: `code/experiments/k0_ocr_benchmark.py`; hướng dẫn ở `code/experiments/README.md`. CSV từng mẫu và JSON tổng hợp nằm ở `results/ocr_benchmark_dataset3_50_line/` (local, bị gitignore).
+   * Benchmark Tesseract 5.5.4 và PaddleOCR 2.10.0 trên 50 crop có transcript người dùng xác nhận (`data/dataset2_50/`, 15 phiếu; 13 parameter, 13 value, 12 unit, 12 reference value), dùng `ocr_line`/Tesseract PSM 7, ảnh xám gốc, không resize/tăng cường. Corpus: **Tesseract CER 0.2543, WER 0.7011; PaddleOCR CER 0.3839, WER 0.8276**. Tesseract tốt hơn về CER/WER trên tập này; median latency PaddleOCR thấp hơn (6.4 ms so với 108.7 ms). Mỗi engine được warm-up một lượt, không tính vào độ trễ 50 crop. CER theo vùng cho thấy cả hai yếu ở `value` và `unit`; không suy rộng kết quả sang tiếng Việt hoặc mọi loại phiếu.
+   * Script tái lập: `code/experiments/k0_ocr_benchmark.py`; hướng dẫn ở `code/experiments/README.md`. CSV từng mẫu và JSON tổng hợp nằm ở `results/ocr_benchmark_dataset2_50_line/` (local, bị gitignore).
 2. **Bộ luật phân tích số liệu & cờ bất thường (`code/src/table_extraction/flags.py`):**
    * `parse_number`: Bóc tách số thực, số dấu phẩy kiểu Việt (`14,9`), số khoa học (`1.2e3`), xử lý nhãn định tính (`abc`, `âm tính` $\rightarrow$ `None`).
    * `parse_range`: Bóc tách khoảng 2 đầu (`13.5 - 17.5`, `~`, `đến`) và khoảng 1 đầu (`< 5`, `> 40`).
@@ -277,7 +279,7 @@ Box trong ví dụ dùng tọa độ pixel `[x1, y1, x2, y2]`; nếu ảnh khôn
    * Điều chỉnh `pillow>=10.2.0` trong `code/requirements.txt` đảm bảo tương thích 100% với VietOCR. Chạy toàn bộ pytest xanh.
    * Kiểm chứng test hiện tại: **19 passed, 2 skipped** ở `test_ocr_metrics.py` và `test_table.py`; hai test `char_height` và `rows_fixed` được skip do phần trích xuất bảng chưa triển khai. Fixture handoff đọc được, nhưng chỉ kiểm tra hợp đồng/ảnh crop, không chạy OCR.
 
-### 9.5. K1 — gom dòng trên pilot Bộ 3 (02/11/2026) ✅
+### 9.5. K1 — gom dòng trên pilot Bộ 2 (02/11/2026) ✅
 
 Đã triển khai `char_height()` và `words_from_binary()` trong `code/src/table_extraction/geometry.py`, hai cách gom dòng `rows_projection()` / `rows_fixed()` trong `rows.py`, và thí nghiệm tái lập `code/experiments/k1_rows.py`. Chạy trên 4 ảnh train đã review, tổng 68 dòng GT và 272 box role trong bảng (3 box `Report Type` nằm ngoài bảng). Để cô lập K1, benchmark đưa các box phrase đã gán nhãn vào hai thuật toán gom dòng; chưa đo lỗi phát hiện cụm từ, OCR hay pipeline đầu-cuối.
 
@@ -288,16 +290,16 @@ Box trong ví dụ dùng tọa độ pixel `[x1, y1, x2, y2]`; nếu ảnh khôn
 | Fixed y, `y_tol=0.7` | 1.000 | 1.000 | 1.000 | 1.000 |
 | Horizontal projection | 1.000 | 1.000 | 1.000 | 1.000 |
 
-Kết quả từng ảnh, tổng hợp, hình và cấu hình nằm local trong `results/k1/` (bị Git ignore); chạy lại bằng `cd code && python experiments/k1_rows.py`. **Giới hạn:** pilot chỉ gồm ảnh phẳng, rõ; các dòng ban đầu được đề xuất bằng tâm y rồi người dùng review, nên điểm fixed-y không phải so sánh độc lập và không đại diện ảnh nghiêng/khó. Cần bộ GT độc lập hoặc ảnh khó hơn trước khi kết luận ưu thế phương pháp; `words_from_binary()` cũng chưa được tính điểm phát hiện cụm từ trong benchmark này.
+Kết quả từng ảnh, tổng hợp, hình và cấu hình nằm local trong `results/k1/` (bị Git ignore); chạy lại bằng `cd code && python experiments/k1_rows.py`. **Ghi chú 08/11:** cả 4 nhóm nguồn của pilot đều có ảnh đại diện trong 57 ảnh gốc của bộ 2 (số box khớp: 113, 12, 69, 81); khi chạy lại K1 phải trỏ tới bản trong `data/2_roboflow_report_keywords/`, không dùng bản tăng cường. **Giới hạn:** pilot chỉ gồm ảnh phẳng, rõ; các dòng ban đầu được đề xuất bằng tâm y rồi người dùng review, nên điểm fixed-y không phải so sánh độc lập và không đại diện ảnh nghiêng/khó. Cần bộ GT độc lập hoặc ảnh khó hơn trước khi kết luận ưu thế phương pháp; `words_from_binary()` cũng chưa được tính điểm phát hiện cụm từ trong benchmark này.
 
-### 9.6. Bộ 5 — ảnh phiếu xét nghiệm tự chụp (03/11/2026)
+### 9.6. Bộ 4 — ảnh phiếu xét nghiệm tự chụp (03/11/2026)
 
-Bản bộ 5 ở `data/5_self_captured/` hiện có **83 ảnh**: 48 phiếu xét nghiệm, 18 đơn thuốc và 17 tài liệu khác; tên ảnh dùng ID liên tục theo loại, dạng `sc_lab_report_NNN` (lab), `sc_prescription_NNN` và `sc_other_NNN`. Bản hiện tại đã được tải lên Drive cùng `manifest.csv`. Manifest chưa có người đóng góp, nhóm ảnh cùng tài liệu hay split. Ảnh chưa được Khang review nội dung hoặc gán nhãn chi tiết; trạng thái ẩn danh còn cần xác nhận.
+Bản bộ 4 ở `data/4_self_captured/` hiện có **83 ảnh**: 48 phiếu xét nghiệm, 18 đơn thuốc và 17 tài liệu khác; tên ảnh dùng ID liên tục theo loại, dạng `sc_lab_report_NNN` (lab), `sc_prescription_NNN` và `sc_other_NNN`. Bản hiện tại đã được tải lên Drive cùng `manifest.csv`. Manifest chưa có người đóng góp, nhóm ảnh cùng tài liệu hay split. Ảnh chưa được Khang review nội dung hoặc gán nhãn chi tiết; trạng thái ẩn danh còn cần xác nhận.
 
 **Việc Khang còn làm:**
 - Review các phiếu lab được giao, kiểm tra/che thông tin cá nhân trước khi đưa vào đánh giá; ghi contributor và `document_group_id` vào manifest để nhận diện ảnh chụp cùng tài liệu.
 - Chọn khoảng 10 phiếu đa dạng để gán bbox và role `report_type`, `parameter`, `result`, `unit`, `range`; chép `text_gt` độc lập cho crop dùng tính CER/WER, không lấy OCR làm ground truth.
 - Lưu annotation riêng, liên kết bằng `image_id`; không sửa ảnh nguồn hoặc ghi đè manifest.
-- Chưa chia bộ 5 thành train/valid/test. Theo quy định ban đầu, giữ bộ 5 làm test độc lập; sau review và gán nhãn, chốt danh sách test theo task và đảm bảo ảnh cùng một tài liệu không rơi vào các tập khác nhau.
+- Chưa chia bộ 4 thành train/valid/test. Theo quy định ban đầu, giữ bộ 4 làm test độc lập; sau review và gán nhãn, chốt danh sách test theo task và đảm bảo ảnh cùng một tài liệu không rơi vào các tập khác nhau.
 
 Lưu ý: 48 ảnh lab đáp ứng ngưỡng số lượng 15 ảnh trong kế hoạch, nhưng **chưa thể tính là hoàn tất yêu cầu** cho đến khi Khang review/ẩn danh ảnh mình phụ trách và hoàn thiện nhãn test. Cả nhóm dùng bản đã tải lên Drive khi bắt đầu gán nhãn.

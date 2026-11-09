@@ -4,7 +4,7 @@ Ngày 04/11/2026. **Chỉ đã kiểm kê dữ liệu, chưa có benchmark T4.**
 Code kiểm kê: `code/experiments/t4_marks.py`; test hợp đồng:
 `code/tests/test_t4_marks.py`. Bằng chứng: `results/t4/step1_inventory.json`,
 `step1_samples.csv`, `step1_ocr_pool.csv`, `step1_tests.xml`.
-Không dùng bộ ⑤, không sửa dữ liệu gốc hoặc code/kết quả T1–T3.
+Không dùng bộ ④, không sửa dữ liệu gốc hoặc code/kết quả T1–T3.
 
 ## 1. Dữ liệu đã kiểm tra thực tế
 
@@ -192,7 +192,7 @@ Không coi nhiều dòng cùng nguồn hoặc v11/v12 cùng nguồn là các tà
   Cần người đọc duyệt hoặc bằng chứng duyệt nguồn đủ tin cậy; không tự nâng trạng thái.
 - Không có detector nét bút đen độc lập. Không gán việc phát hiện bút đen là đã đạt.
 - Ứng viên vành dấu chưa là full-stamp detector; bảo vệ chữ đỏ thật cần T5,
-  không có trong synthetic stamp này. Không mở lại bộ ⑤.
+  không có trong synthetic stamp này. Không mở lại bộ ④.
 - Bộ 1 đã sàng lọc trước nhưng chưa có mẫu dấu/viết tay dương tin cậy; không
   bịa kết quả ảnh thật. V11/v12 đủ cho phần synthetic, kết luận có phạm vi.
 
@@ -417,7 +417,7 @@ không fail/skip. JS của trang duyệt qua kiểm tra cú pháp Node; chưa tu
 
 Engine/model và cơ chế crop đã sẵn sàng trên Windows hiện tại. **Còn chờ bản
 transcript người dùng duyệt**, quyết định loại/giữ box khó trước khi tính CER.
-Không thiếu mask mới, không cần tải bộ⑤. Có thể làm phiên5 IoU/ảnh xóa độc lập;
+Không thiếu mask mới, không cần tải bộ④. Có thể làm phiên5 IoU/ảnh xóa độc lập;
 phiên6 CER vẫn chặn nếu transcript chưa được xác nhận. Chưa tick toàn bộ T4.
 
 ```powershell
@@ -452,7 +452,7 @@ không tạo completion thành công. Output đã có bị từ chối, giữ l�
 - Đối chứng xóa: 30 clean ×hai detector chính ×bốn phương án =240 hàng riêng;
   đo thay đổi pixel và lỗi gray so với chính clean, không trộn với ROI GT dương.
 - Kiểm input/mask bất biến, output uint8/kích thước, ngoài mask giống bit-for-bit
-  ở mọi lần gọi, bao gồm no-op và đối chứng. Không OCR/CER, không dùng bộ ⑤.
+  ở mọi lần gọi, bao gồm no-op và đối chứng. Không OCR/CER, không dùng bộ ④.
 - Ảnh minh họa: source đầu theo thứ tự ID ở mỗi ô kind/mức/màu (bảy ô), chọn
   crop native quanh pixel GT giao chữ ở box che nhiều nhất, fallback GT nếu rỗng.
   Overlay detection và crop bốn phương án cùng tọa độ, không chọn theo điểm.

@@ -7,8 +7,8 @@
 
 | Điểm yếu hiện tại | Cách khắc phục trong kế hoạch này |
 | :--- | :--- |
-| DIP: so sánh nhị phân hóa là dạng bài kinh điển (kiểu DIBCO) | Đo theo **từng loại và mức độ hỏng** trên bộ 6; thêm **ràng buộc an toàn y tế**: không được xóa chữ đỏ cảnh báo trên phiếu xét nghiệm, có độ đo riêng |
-| DIP: thiếu ảnh có dấu đỏ, chữ viết tay thật | Bộ 6 dán dấu / nét bút có kiểm soát (ground truth chính xác) + kiểm chứng trên ảnh thật của bộ 1 và bộ 5 |
+| DIP: so sánh nhị phân hóa là dạng bài kinh điển (kiểu DIBCO) | Đo theo **từng loại và mức độ hỏng** trên bộ 5; thêm **ràng buộc an toàn y tế**: không được xóa chữ đỏ cảnh báo trên phiếu xét nghiệm, có độ đo riêng |
+| DIP: thiếu ảnh có dấu đỏ, chữ viết tay thật | Bộ 5 dán dấu / nét bút có kiểm soát (ground truth chính xác) + kiểm chứng trên ảnh thật của bộ 1 và bộ 4 |
 
 ---
 
@@ -70,20 +70,20 @@ flowchart LR
 
 | # | Thí nghiệm | Dữ liệu | Độ đo | Hình / bảng |
 | :---: | :--- | :--- | :--- | :--- |
-| **T1** | Khử bóng: không khử vs Median vs Closing + Median | Bộ 6 (3 mức bóng) | PSNR, SSIM so với ảnh sạch | Bảng + ảnh trước / sau |
-| **T2** | **5 cách nhị phân hóa** × có / không khử bóng | Bộ 6 | **F-measure, pseudo F-measure, PSNR, DRD** (chuẩn DIBCO) | Bảng chính của phần Trường |
-| **T3** | Nhị phân hóa theo mức độ hỏng | Bộ 6 | F-measure theo mức bóng, mức mờ, mức dấu | **Đường cong** — hình chính |
-| **T4** | Phát hiện & xóa dấu / chữ ký | Bộ 6 (có mask dấu) + bộ 1 | IoU mask dấu; CER trong vùng bị dấu che, trước / sau inpainting | Bảng + ảnh |
-| **T5** | **Ràng buộc an toàn:** giữ chữ đỏ cảnh báo trên phiếu XN | Bộ 5 (phiếu VN có chữ đỏ) | **Recall chữ đỏ được giữ** (mục tiêu 100%), số ca xóa nhầm | Bảng nhỏ + ví dụ |
-| **T6** | Hiệu quả lên OCR | Bộ 6 + bộ 1 + bộ 3 | CER ảnh chưa làm sạch vs đã làm sạch | Bảng |
-| **T7** | Thời gian chạy | Bộ 6 | ms/ảnh từng bước | Bảng nhỏ |
-| **T8** | **Ablation toàn pipeline** *(việc thêm)* | Bộ 6 + bộ 5 | CER cuối khi tắt lần lượt từng bước của **cả nhóm** | Bảng ablation của báo cáo |
+| **T1** | Khử bóng: không khử vs Median vs Closing + Median | Bộ 5 (3 mức bóng) | PSNR, SSIM so với ảnh sạch | Bảng + ảnh trước / sau |
+| **T2** | **5 cách nhị phân hóa** × có / không khử bóng | Bộ 5 | **F-measure, pseudo F-measure, PSNR, DRD** (chuẩn DIBCO) | Bảng chính của phần Trường |
+| **T3** | Nhị phân hóa theo mức độ hỏng | Bộ 5 | F-measure theo mức bóng, mức mờ, mức dấu | **Đường cong** — hình chính |
+| **T4** | Phát hiện & xóa dấu / chữ ký | Bộ 5 (có mask dấu) + bộ 1 | IoU mask dấu; CER trong vùng bị dấu che, trước / sau inpainting | Bảng + ảnh |
+| **T5** | **Ràng buộc an toàn:** giữ chữ đỏ cảnh báo trên phiếu XN | Bộ 4 (phiếu VN có chữ đỏ) | **Recall chữ đỏ được giữ** (mục tiêu 100%), số ca xóa nhầm | Bảng nhỏ + ví dụ |
+| **T6** | Hiệu quả lên OCR | Bộ 5 + bộ 1 + bộ 2 | CER ảnh chưa làm sạch vs đã làm sạch | Bảng |
+| **T7** | Thời gian chạy | Bộ 5 | ms/ảnh từng bước | Bảng nhỏ |
+| **T8** | **Ablation toàn pipeline** *(việc thêm)* | Bộ 5 + bộ 4 | CER cuối khi tắt lần lượt từng bước của **cả nhóm** | Bảng ablation của báo cáo |
 
 ### 3.3. Bảng tham số & lý do chọn
 
 | Tham số | Khoảng thử | Chọn bằng |
 | :--- | :--- | :--- |
-| Kích thước kernel ước lượng nền | 15 → 81 px | PSNR cao nhất trên tập validation bộ 6 (T1) |
+| Kích thước kernel ước lượng nền | 15 → 81 px | PSNR cao nhất trên tập validation bộ 5 (T1) |
 | Ngưỡng H, S cho mực đỏ / xanh | H ± 5°, S 40–120 | IoU mask dấu lớn nhất (T4) |
 | Ngưỡng độ tròn / diện tích phân biệt dấu với chữ đỏ | 0,4–0,8; 1–10% trang | Recall chữ đỏ = 100% với IoU dấu cao nhất (T4, T5) |
 | Cửa sổ và k của Sauvola | 15–61; 0,1–0,5 | F-measure cao nhất (T2) |
@@ -119,11 +119,11 @@ code/tests/test_cleaning.py
 
 | Ngày | Việc | Kết quả kiểm tra được |
 | :--- | :--- | :--- |
-| **30–31/10** | Lọc ảnh bộ 1 có dấu / viết tay; chụp bộ 5; gửi Thắng yêu cầu bộ 6; chốt JSON với Hiếu, Khang, Thắng | ✅ Đã sàng lọc 1.173 ảnh train bộ 1, chưa có ca dấu/viết tay dương tính đáng tin cậy. Đã chốt yêu cầu bộ 6 và JSON với Hiếu, Thắng, Khang; Khang đã nghiệm thu fixture CleaningResult theo tiến độ chung. Bộ 5 vẫn theo hạn chung 03/11, chưa đánh dấu đã chụp đủ. |
+| **30–31/10** | Lọc ảnh bộ 1 có dấu / viết tay; chụp bộ 4; gửi Thắng yêu cầu bộ 5; chốt JSON với Hiếu, Khang, Thắng | ✅ Đã sàng lọc 1.173 ảnh train bộ 1, chưa có ca dấu/viết tay dương tính đáng tin cậy. Đã chốt yêu cầu bộ 5 và JSON với Hiếu, Thắng, Khang; Khang đã nghiệm thu fixture CleaningResult theo tiến độ chung. Bộ 4 vẫn theo hạn chung 03/11, chưa đánh dấu đã chụp đủ. |
 | **01/11** | `background.py`, `binarize.py` (5 cách) chạy trên 10 ảnh | ✅ Có Median, Closing, Closing + Median và đủ 5 cách nhị phân hóa; đã kiểm tra 200 đầu ra trên 10 ảnh phát triển. |
 | **02/11** | `ink.py`, phân biệt dấu / chữ đỏ, `inpaint.py` | ✅ Hoàn thành code cơ bản: mask đỏ/xanh/đen; ứng viên vành dấu kín tròn/elip, giữ phần đỏ chưa chắc chắn; đủ Telea/NS/tô trắng. Nhóm test làm sạch và hợp đồng thuộc đợt chia sẻ code: **433 passed, không skip/fail**; không bao gồm test metric/script T1/T2. Đã xem 10 ảnh tách mực và 42 đầu ra inpainting/14 ca, xác nhận pixel ngoài mask không đổi. Bằng chứng ảnh lưu local trong `results/ink_black_fix/`, `results/stamp_step3_v1/`, `results/inpaint_acceptance_v2/` (không đi kèm repo). Chưa nghiệm thu chất lượng T4/T5/OCR, mask xóa toàn bộ dấu hoặc tích hợp; chữ rất nhạt còn có thể mất nét, logo giống vành dấu có thể bị nhận nhầm, inpainting có thể mất chữ trong mask. |
-| **03/11** | Có bộ 6 → T1, T2 | ✅ **Hoàn thành, sẵn sàng bàn giao.** Đã chạy và kiểm chứng T1–T2 v2: `results/t1_v2/`, `results/t2_v2/`. Giữ 100 nguồn, split 60/10/30; sinh bóng đơn từ clean v2 vì mẫu bóng đơn có sẵn không phủ test. T1 chọn Closing 81 trên val; T2 chọn Closing 81 → Otsu. Test T1 PSNR 49,810762 dB/SSIM 0,999489; T2 F1 0,998123 theo tham chiếu Otsu tự sinh, chưa suy ra OCR. Sau sửa lóa `fed83ebc`, tính lại 120 + 300 dòng test khớp; giữ nguyên số liệu/config/selection lịch sử. Gói bàn giao v2.1 tại `results/t1_t2_repro_audit/t1_t2_v2_1_handoff.zip` đã kiểm CRC/SHA-256 và chạy từ bản giải nén: 173 test liên quan, kiểm chứng 420 dòng đạt. Đọc `HANDOFF_V2_1.md` cùng thư mục; không cần snapshot v1 hoặc img_test để chạy lại. |
-| **04/11** | T3 đường cong, T4 dấu; khoanh vùng chữ đỏ bộ 5 → T5 | **T3: ✅ đã nghiệm thu** trong phạm vi biến thể đơn hỏng có kiểm soát từ bộ 6 v2. Đủ 6.600 dòng, 220 ô × cùng 30 nguồn test; 10 cấu hình T2 và Closing81 giữ nguyên. Có bảng, PNG/PDF và ví dụ val tại `results/t3/`; 234 test liên quan đạt. Tái chạy 660 dòng trên 3 nguồn định trước khớp SHA ảnh/dự đoán và điểm (atol 1e-12); chưa tái chạy toàn bộ 6.600 dòng. F1 dùng Otsu tự sinh, không suy ra OCR. Dấu tăng cả kích thước/độ đậm, dùng template dẫn xuất. **T4: ✅ nghiệm thu phạm vi phép đo bộ6 v2**: 30 dấu/16 xanh/14 đen (đen chỉ GT chẩn đoán); CER thật trên15 val/47 test người dùng duyệt, giữ config/crop/ref, tổng lỗi/tổng ký tự. 401 test liên quan đạt; replay5 val+7 test crop,105 variant rows/72 gọi OCR thật khớp, không rerun toàn bộ. Ứng viên dấu rỗng24/30; GT không là detector/upper bound, inpaint có thể mất chữ. Kết luận/bằng chứng: `results/t4/acceptance_v1/README.md`. **T5 chưa nghiệm thu**; bộ 5 tiếp tục chờ nhóm, không suy ra an toàn chữ đỏ hoặc tích hợp. |
+| **03/11** | Có bộ 5 → T1, T2 | ✅ **Hoàn thành, sẵn sàng bàn giao.** Đã chạy và kiểm chứng T1–T2 v2: `results/t1_v2/`, `results/t2_v2/`. Giữ 100 nguồn, split 60/10/30; sinh bóng đơn từ clean v2 vì mẫu bóng đơn có sẵn không phủ test. T1 chọn Closing 81 trên val; T2 chọn Closing 81 → Otsu. Test T1 PSNR 49,810762 dB/SSIM 0,999489; T2 F1 0,998123 theo tham chiếu Otsu tự sinh, chưa suy ra OCR. Sau sửa lóa `fed83ebc`, tính lại 120 + 300 dòng test khớp; giữ nguyên số liệu/config/selection lịch sử. Gói bàn giao v2.1 tại `results/t1_t2_repro_audit/t1_t2_v2_1_handoff.zip` đã kiểm CRC/SHA-256 và chạy từ bản giải nén: 173 test liên quan, kiểm chứng 420 dòng đạt. Đọc `HANDOFF_V2_1.md` cùng thư mục; không cần snapshot v1 hoặc img_test để chạy lại. |
+| **04/11** | T3 đường cong, T4 dấu; khoanh vùng chữ đỏ bộ 4 → T5 | **T3: ✅ đã nghiệm thu** trong phạm vi biến thể đơn hỏng có kiểm soát từ bộ 5 v2. Đủ 6.600 dòng, 220 ô × cùng 30 nguồn test; 10 cấu hình T2 và Closing81 giữ nguyên. Có bảng, PNG/PDF và ví dụ val tại `results/t3/`; 234 test liên quan đạt. Tái chạy 660 dòng trên 3 nguồn định trước khớp SHA ảnh/dự đoán và điểm (atol 1e-12); chưa tái chạy toàn bộ 6.600 dòng. F1 dùng Otsu tự sinh, không suy ra OCR. Dấu tăng cả kích thước/độ đậm, dùng template dẫn xuất. **T4: ✅ nghiệm thu phạm vi phép đo bộ5 v2**: 30 dấu/16 xanh/14 đen (đen chỉ GT chẩn đoán); CER thật trên15 val/47 test người dùng duyệt, giữ config/crop/ref, tổng lỗi/tổng ký tự. 401 test liên quan đạt; replay5 val+7 test crop,105 variant rows/72 gọi OCR thật khớp, không rerun toàn bộ. Ứng viên dấu rỗng24/30; GT không là detector/upper bound, inpaint có thể mất chữ. Kết luận/bằng chứng: `results/t4/acceptance_v1/README.md`. **T5 chưa nghiệm thu**; bộ 4 tiếp tục chờ nhóm, không suy ra an toàn chữ đỏ hoặc tích hợp. |
 | **05/11** | **Mốc tích hợp** đầu-cuối; chạy thử T8 | Pipeline chạy trên 5 ảnh |
 | **06–07/11** | T6, T7; bảng tham số 3.3; T8 chính thức | Đủ số liệu |
 | **08/11** | Viết phần Trường trong báo cáo DIP (1,5–2 trang), 2–3 slide, đoạn demo 30 giây, README module → gửi Hiếu ghép | Kết quả cần có: phần báo cáo, slide, demo và README module được gửi cho Hiếu. |
@@ -133,7 +133,7 @@ code/tests/test_cleaning.py
 
 | Rủi ro | Phương án |
 | :--- | :--- |
-| Bộ 1 có quá ít dấu / viết tay | Dùng bộ 6 (dấu dán tổng hợp) làm chính, bộ 1 + bộ 5 để kiểm chứng; ghi rõ hạn chế |
+| Bộ 1 có quá ít dấu / viết tay | Dùng bộ 5 (dấu dán tổng hợp) làm chính, bộ 1 + bộ 4 để kiểm chứng; ghi rõ hạn chế |
 | Inpainting làm mất chữ in bị dấu đè | Đo CER trong vùng dấu (T4); nếu xấu hơn không xóa → chỉ làm mờ dấu (giảm S) thay vì inpaint |
 | Không đủ phiếu VN có chữ đỏ cho T5 | Nhờ cả nhóm chụp thêm; tối thiểu 5 phiếu |
 
@@ -154,4 +154,4 @@ code/tests/test_cleaning.py
 ## 8. CHECKLIST CUỐI
 
 **DIP:** module `cleaning/` có unit test · T1–T5, T8 có số liệu · đường cong T3 · bảng tham số · ràng buộc an toàn chữ đỏ · bảng ablation T8 · phần báo cáo, slide, demo gửi Hiếu trước 08/11  
-**Chung:** ≥ 15 ảnh bộ 5 đã che thông tin · JSON hợp đồng đã chốt · trả lời được câu hỏi về phần của 3 bạn còn lại
+**Chung:** ≥ 15 ảnh bộ 4 đã che thông tin · JSON hợp đồng đã chốt · trả lời được câu hỏi về phần của 3 bạn còn lại

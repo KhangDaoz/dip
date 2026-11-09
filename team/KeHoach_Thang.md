@@ -1,14 +1,14 @@
 # KẾ HOẠCH CHI TIẾT — THẮNG
 
 > **Phần phụ trách:** Mắt xích ④ của pipeline — Đơn thuốc: bóc tách khoản thuốc  
-> **Việc thêm:** **Bộ sinh benchmark tổng hợp (bộ 6)** cho cả nhóm  
+> **Việc thêm:** **Bộ sinh benchmark tổng hợp (bộ 5)** cho cả nhóm  
 > **Áp dụng cho:** Đồ án Xử lý ảnh (DIP, hạn **11/11/2026**)  
 > **Tài liệu liên quan:** [PhanCong_TongHop.md](PhanCong_TongHop.md) · [DeTai_XuLyAnh_ChiTiet.md](../docs/DeTai_XuLyAnh_ChiTiet.md)
 
 | Điểm yếu hiện tại | Cách khắc phục trong kế hoạch này |
 | :--- | :--- |
-| DIP: tách khoản thuốc bằng projection là kỹ thuật đơn giản | Đánh giá theo **mức độ hỏng** trên bộ 6, so sánh nhiều cách, đo hiệu quả thật lên OCR từng trường |
-| Cả nhóm thiếu ground truth | **Bộ 6** là đóng góp lớn nhất của Thắng: ground truth chính xác cho mọi module |
+| DIP: tách khoản thuốc bằng projection là kỹ thuật đơn giản | Đánh giá theo **mức độ hỏng** trên bộ 5, so sánh nhiều cách, đo hiệu quả thật lên OCR từng trường |
+| Cả nhóm thiếu ground truth | **Bộ 5** là đóng góp lớn nhất của Thắng: ground truth chính xác cho mọi module |
 
 ---
 
@@ -29,20 +29,20 @@ flowchart LR
 ```json
 {
   "image_id": "rx_000123",
-  "patient": {"bbox": [24, 280, 420, 50], "text": "Soumya Ranganathan, 37 years"},
-  "diagnosis": {"bbox": [24, 350, 170, 55], "text": "Affective disorder"},
+  "patient": {"bbox": [24, 280, 420, 50], "text": "Nguyễn Văn A, 37 tuổi"},
+  "diagnosis": {"bbox": [24, 350, 170, 55], "text": "Viêm họng cấp"},
   "items": [
-    {"bbox": [24, 480, 380, 90], "name": "Vinlep 150 Tablet", "strength": "150 mg",
-     "dose": {"morning": 0, "noon": 0, "evening": 1}, "days": 90, "note": "after food", "confidence": 0.88}
+    {"bbox": [24, 480, 380, 90], "name": "Amoxicillin 500mg", "strength": "500 mg",
+     "dose": {"morning": 1, "noon": 0, "evening": 1}, "days": 7, "note": "sau ăn", "confidence": 0.88}
   ]
 }
 ```
 
 ---
 
-## 2. VIỆC THÊM: BỘ SINH BENCHMARK TỔNG HỢP (BỘ 6)
+## 2. VIỆC THÊM: BỘ SINH BENCHMARK TỔNG HỢP (BỘ 5)
 
-**Ý tưởng:** ảnh đơn thuốc của bộ 2 xuất từ phần mềm nên hoàn toàn sạch. Làm hỏng có kiểm soát → mọi ground truth đều biết chính xác.
+**Ý tưởng:** ảnh đơn thuốc của bộ 1 (VAIPE) là ảnh phẳng, sạch, giữ tỉ lệ gốc. Làm hỏng có kiểm soát → mọi ground truth đều biết chính xác.
 
 ### 2.1. Đặc tả
 
@@ -69,10 +69,10 @@ flowchart LR
 | **v1** | **02/11** | Phối cảnh, nghiêng, mờ, bóng đổ + ảnh sạch, `H`, box, ảnh nhị phân chuẩn |
 | **v2** | **04/11** | Thêm lóa (mask lóa), dấu đỏ (mask dấu), bút xanh, nén & nhiễu |
 
-### 2.3. Kiểm chứng bộ 6 có "giống thật"
+### 2.3. Kiểm chứng bộ 5 có "giống thật"
 
-* So sánh thống kê ảnh bộ 6 và ảnh chụp thật (bộ 1, bộ 3): phân bố phương sai Laplacian, độ sáng, độ tương phản.
-* 20 ảnh bộ 6 trộn với 20 ảnh thật, 2 bạn trong nhóm đoán ảnh nào là tổng hợp → nêu trong phần hạn chế.
+* So sánh thống kê ảnh bộ 5 và ảnh chụp thật (bộ 2, bộ 4): phân bố phương sai Laplacian, độ sáng, độ tương phản.
+* 20 ảnh bộ 5 trộn với 20 ảnh thật, 2 bạn trong nhóm đoán ảnh nào là tổng hợp → nêu trong phần hạn chế.
 
 ---
 
@@ -80,11 +80,12 @@ flowchart LR
 
 | Bộ | Vai trò | Việc cần làm |
 | :--- | :--- | :--- |
-| **1** VAIPE (đơn VN, ảnh chụp) | Kiểm chứng trên đơn Việt Nam; **có thể có nhãn dòng** | **31/10:** kiểm tra có ảnh đơn + file nhãn không, nhãn theo vùng hay theo dòng; báo cả nhóm |
-| **2** Prescription Image Labelling (Practo) | Nguồn ảnh sạch cho bộ 6; khoanh vùng bảng thuốc (S4) | Không cần gán nhãn (nhãn vùng có sẵn) |
-| **5** Ảnh tự chụp | Đơn thuốc VN để test khác mẫu | Chụp ≥ 15 ảnh đơn nhiều viện; gán nhãn dòng cho ~10 đơn |
-| **6** | Ground truth cho DIP | Thắng sinh |
-| Ground truth từng khoản thuốc | DIP | Vẽ tay ~30 ảnh (15 bộ 2 + 15 bộ 1); trên bộ 6, box khoản thuốc tự biến đổi theo `H` |
+| **1** VAIPE (đơn VN, ảnh phẳng) | Dữ liệu đơn thuốc chính; nguồn ảnh sạch cho bộ 5; **có nhãn dòng** `drugname`/`usage`/`quantity`/`diagnose`/`date`/`other` | **31/10:** kiểm tra có ảnh đơn + file nhãn không, nhãn theo vùng hay theo dòng; báo cả nhóm |
+| **4** Ảnh tự chụp | Đơn thuốc VN để test khác mẫu | Chụp ≥ 15 ảnh đơn nhiều viện; gán nhãn dòng cho ~10 đơn |
+| **5** Benchmark tổng hợp | Ground truth cho DIP | Thắng sinh |
+| Ground truth từng khoản thuốc | DIP | Vẽ tay ~30 ảnh bộ 1 (gom từ nhãn dòng rồi sửa tay); trên bộ 5, box khoản thuốc tự biến đổi theo `H` |
+
+> **Cập nhật 08/11:** bỏ bộ Roboflow đơn thuốc Ấn Độ (Practo, bộ 2 cũ). Phần đơn thuốc chỉ dùng bộ 1 (VAIPE), bộ 4 (ảnh tự chụp) và bộ 5 (tổng hợp).
 
 ---
 
@@ -104,11 +105,11 @@ flowchart LR
 | # | Thí nghiệm | Dữ liệu | Độ đo | Hình / bảng |
 | :---: | :--- | :--- | :--- | :--- |
 | **S1** | Tách khoản thuốc: 3 phương án gom | ~30 ảnh vẽ tay | **F1 khoản thuốc** (khớp khi IoU > 0,5), IoU trung bình | Bảng chính |
-| **S2** | Độ bền theo mức hỏng | Bộ 6 | F1 / IoU khoản thuốc theo góc nghiêng, mức mờ, mức bóng | **Đường cong** — hình chính |
-| **S3** | OCR cả trang vs từng dòng vs từng khoản | ~30 ảnh vẽ tay + bộ 6 | CER; **độ chính xác từng trường** (tên thuốc, hàm lượng, liều) | Bảng — chứng minh lợi ích thực tế |
-| **S4** | Khoanh vùng bảng thuốc | Bộ 2 (nhãn `medicine-names`) | IoU vùng | Bảng nhỏ |
-| **S5** | Kiểm chứng đơn Việt Nam | Bộ 1 + bộ 5 | Như S1, S3 | Bảng nhỏ + ví dụ |
-| **S6** | Thời gian chạy; kiểm chứng bộ 6 giống thật (2.3) | Bộ 6, bộ 1, bộ 3 | ms/ảnh; thống kê so sánh | Phụ lục |
+| **S2** | Độ bền theo mức hỏng | Bộ 5 | F1 / IoU khoản thuốc theo góc nghiêng, mức mờ, mức bóng | **Đường cong** — hình chính |
+| **S3** | OCR cả trang vs từng dòng vs từng khoản | ~30 ảnh vẽ tay + bộ 5 | CER; **độ chính xác từng trường** (tên thuốc, hàm lượng, liều) | Bảng — chứng minh lợi ích thực tế |
+| **S4** | Khoanh vùng bảng thuốc | Bộ 1 (vùng chuẩn = khung bao các box `drugname`/`usage`/`quantity`) | IoU vùng | Bảng nhỏ |
+| **S5** | Kiểm chứng đơn Việt Nam | Bộ 1 + bộ 4 | Như S1, S3 | Bảng nhỏ + ví dụ |
+| **S6** | Thời gian chạy; kiểm chứng bộ 5 giống thật (2.3) | Bộ 5, bộ 2, bộ 4 | ms/ảnh; thống kê so sánh | Phụ lục |
 
 ### 4.3. Bảng tham số & lý do chọn
 
@@ -122,9 +123,9 @@ flowchart LR
 ### 4.4. Cấu trúc code
 
 ```
-code/src/synthetic/          # bộ 6, cả nhóm dùng
+code/src/synthetic/          # bộ 5, cả nhóm dùng
 ├── degrade.py    # perspective(), rotate(), blur(), shadow(), glare(), stamp(), pen(), jpeg_noise()
-├── generate.py   # sinh bộ 6 theo config.yaml, lưu ảnh + GT + JSON mức độ
+├── generate.py   # sinh bộ 5 theo config.yaml, lưu ảnh + GT + JSON mức độ
 └── config.yaml
 code/src/prescription_segmentation/
 ├── region.py     # find_medicine_region()
@@ -142,11 +143,11 @@ code/tests/test_synthetic.py, test_prescription.py
 
 | Ngày | Việc | Kết quả kiểm tra được |
 | :--- | :--- | :--- |
-| **30–31/10** | Tải bộ 2; **kiểm tra bộ 1 (VAIPE) và báo nhóm**; chụp bộ 5; chốt JSON với Trường; thu yêu cầu bộ 6 từ Hiếu, Trường | Báo cáo nhanh về bộ 1; danh sách yêu cầu |
+| **30–31/10** | **Kiểm tra bộ 1 (VAIPE) và báo nhóm**; chụp bộ 4; chốt JSON với Trường; thu yêu cầu bộ 5 từ Hiếu, Trường | Báo cáo nhanh về bộ 1; danh sách yêu cầu |
 | **01/11** | `degrade.py`: phối cảnh, nghiêng, mờ, bóng | Ảnh mẫu từng loại hỏng |
-| **02/11** | **Bộ 6 v1** gửi cả nhóm | Thư mục bộ 6 + README |
+| **02/11** | **Bộ 5 v1** gửi cả nhóm | Thư mục bộ 5 + README |
 | **03/11** | `region.py`, `lines.py`, `items.py`; vẽ GT ~30 ảnh | Unit test xanh |
-| **04/11** | **Bộ 6 v2** (lóa, dấu, bút, nhiễu); S1 | Bảng S1 |
+| **04/11** | **Bộ 5 v2** (lóa, dấu, bút, nhiễu); S1 | Bảng S1 |
 | **05/11** | **Mốc tích hợp** đầu-cuối; `fields.py` | Pipeline chạy trên 5 ảnh |
 | **06–07/11** | S2 đường cong, S3 OCR từng trường, S4, S5; bảng tham số 4.3 | Đủ số liệu |
 | **08/11** | S6; viết phần Thắng (1,5–2 trang), 2–3 slide, đoạn demo 30 giây, README module → gửi Hiếu | Đã gửi |
@@ -156,12 +157,12 @@ code/tests/test_synthetic.py, test_prescription.py
 
 | Rủi ro | Phương án |
 | :--- | :--- |
-| Bộ 6 trễ → cả nhóm trễ | Ưu tiên tuyệt đối v1 (02/11), chỉ 4 loại hỏng; v2 làm sau |
+| Bộ 5 trễ → cả nhóm trễ | Ưu tiên tuyệt đối v1 (02/11), chỉ 4 loại hỏng; v2 làm sau |
 | Dấu / lóa tổng hợp không giống thật | Kiểm chứng ở mục 2.3; kết luận chính dựa trên ảnh thật |
 | Khoanh vùng bảng thuốc sai trên đơn Việt Nam | Dùng phương án lấy cả trang (mục 4.1) làm dự phòng; báo cáo cả hai |
 | Không kịp S5 | Giữ ít nhất 10 đơn Việt Nam cho S1 |
 
-**Thứ tự cắt khi thiếu thời gian:** S6 → S4 → bút xanh trong bộ 6. **Không cắt:** bộ 6 v1, S1, S2, S3.
+**Thứ tự cắt khi thiếu thời gian:** S6 → S4 → bút xanh trong bộ 5. **Không cắt:** bộ 5 v1, S1, S2, S3.
 
 ---
 
@@ -169,7 +170,7 @@ code/tests/test_synthetic.py, test_prescription.py
 
 | Câu hỏi | Hướng trả lời |
 | :--- | :--- |
-| Ảnh tổng hợp có thực tế không? | Bộ 6 dùng để so sánh phương pháp với ground truth chính xác; kết luận kiểm chứng lại trên ảnh thật; có kiểm tra thống kê và thử phân biệt bằng mắt (2.3) |
+| Ảnh tổng hợp có thực tế không? | Bộ 5 dùng để so sánh phương pháp với ground truth chính xác; kết luận kiểm chứng lại trên ảnh thật; có kiểm tra thống kê và thử phân biệt bằng mắt (2.3) |
 | Vì sao chia biến thể theo ảnh gốc? | Biến thể cùng ảnh gốc gần như giống nhau; chia lẫn làm kết quả ảo |
 | Vì sao tách khoản thuốc trước khi OCR? | OCR cả trang lẫn tên thuốc và liều giữa các khoản; S3 đo độ chính xác từng trường tăng bao nhiêu |
 
@@ -177,5 +178,5 @@ code/tests/test_synthetic.py, test_prescription.py
 
 ## 8. CHECKLIST CUỐI
 
-**DIP:** bộ 6 v1 (02/11), v2 (04/11) có README · module `prescription_segmentation/` có unit test · S1, S2, S3 có số liệu · đường cong S2 · bảng tham số · phần báo cáo, slide, demo gửi Hiếu trước 08/11  
-**Chung:** ≥ 15 ảnh bộ 5 (đơn VN) đã che thông tin, gán nhãn dòng ~10 đơn · báo nhóm về bộ 1 ngày 31/10 · JSON hợp đồng đã chốt · trả lời được câu hỏi về phần của 3 bạn còn lại
+**DIP:** bộ 5 v1 (02/11), v2 (04/11) có README · module `prescription_segmentation/` có unit test · S1, S2, S3 có số liệu · đường cong S2 · bảng tham số · phần báo cáo, slide, demo gửi Hiếu trước 08/11  
+**Chung:** ≥ 15 ảnh bộ 4 (đơn VN) đã che thông tin, gán nhãn dòng ~10 đơn · báo nhóm về bộ 1 ngày 31/10 · JSON hợp đồng đã chốt · trả lời được câu hỏi về phần của 3 bạn còn lại

@@ -38,11 +38,11 @@ mục 81/251 và lệnh cũ phía dưới là lịch sử giao thức full-cohor
 định hiện hành nữa. Chưa chạy OCR/CER cho cohort nhỏ.
 
 Ngày 04/11/2026. **Chỉ chuẩn bị code/test; chưa có CER dữ liệu thật.**
-Không sửa giao thức/code/số liệu đã khóa trong phiên 5. Không dùng bộ ⑤.
+Không sửa giao thức/code/số liệu đã khóa trong phiên 5. Không dùng bộ ④.
 
 ## Điều kiện trước khi chạy
 
-1. Bộ ⑥, phiên 4 và phiên 5 còn đúng hash. Kiểm cả artifact pilot val để dùng
+1. Bộ ⑤, phiên 4 và phiên 5 còn đúng hash. Kiểm cả artifact pilot val để dùng
    mask/output đã đo, không sinh detector mới hay đổi radius sau test.
 2. OCR thật Tesseract portable 5.5.3.20260724; model fast vie+eng, PSM7/OEM3,
    cùng binary/model/DLL SHA, wrapper SHA và pytesseract version như phiên 4.

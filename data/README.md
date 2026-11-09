@@ -74,7 +74,7 @@ Số liệu lớp khớp thống kê của Khang. Các bbox là vùng từ/cụm
 - Gồm **50 crop** lấy từ split `valid` và `test` của bộ ②, bao phủ 15 phiếu nguồn và 4 role: `parameter` (13), `value` (13), `unit` (12), `reference value` (12).
 - Manifest chứa transcript `text_gt` đã được người dùng xác nhận và thông tin truy vết đến nhãn/crop nguồn. Crop không resize hay tăng cường.
 - Đây là tập đánh giá OCR cố định, không dùng để huấn luyện; không sửa lại split nguồn.
-- Chạy benchmark bằng `python experiments/k0_ocr_benchmark.py --dataset ../data/dataset2_50` từ thư mục `code/`. Script và định dạng kết quả xem [code/experiments/README.md](../code/experiments/README.md). Output nằm dưới `results/ocr_benchmark_dataset3_50/` và không commit.
+- Chạy benchmark bằng `python experiments/k0_ocr_benchmark.py --dataset ../data/dataset2_50` từ thư mục `code/`. Script và định dạng kết quả xem [code/experiments/README.md](../code/experiments/README.md). Output nằm dưới `results/ocr_benchmark_dataset2_50/` và không commit.
 
 ### Quy ước nhãn và giới hạn kiểm tra
 

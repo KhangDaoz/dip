@@ -7,7 +7,7 @@ Cờ:
     loa          quality.has_glare
     con_nhieu    tỉ lệ điểm nhiễu xung trên ảnh kết quả > NOISE_RATIO_MIN
 
-Chạy (từ code/):  python scripts/review_preprocess.py --sets 3 2 --per-set 0 150
+Chạy (từ code/):  python scripts/review_preprocess.py --sets 2 --per-set 0
     per-set 0 = lấy mọi file; N = N ảnh gốc ngẫu nhiên (mỗi ảnh gốc 1 bản tăng cường ngẫu nhiên)
 Kết quả: results/<--out>/summary.csv, sheet_XX.jpg (trang ảnh thu nhỏ, ảnh có cờ xếp trước), panels/<ảnh>.jpg
 """

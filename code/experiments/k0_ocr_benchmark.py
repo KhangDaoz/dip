@@ -1,4 +1,4 @@
-"""Compare OCR engines on the human-confirmed Dataset 3 phrase crops.
+"""Compare OCR engines on the human-confirmed Dataset 2 phrase crops.
 
 Run from ``code/`` with the OCR extras installed:
     python experiments/k0_ocr_benchmark.py
@@ -119,7 +119,7 @@ def run_benchmark(dataset_dir: Path, engines: list[str], out_dir: Path,
         writer.writerows(rows)
     payload = {
         "dataset": str(dataset_dir.relative_to(REPO_DIR)) if dataset_dir.is_relative_to(REPO_DIR) else str(dataset_dir),
-        "dataset_description": "Dataset 3 phrase crops; 50 human-confirmed transcripts, 15 source documents",
+        "dataset_description": "Dataset 2 phrase crops; 50 human-confirmed transcripts, 15 source documents",
         "normalization": "Unicode NFC, collapse whitespace, preserve case and punctuation",
         "crop_preprocessing": "original crops, grayscale decode only; no resize/enhancement",
         "ocr_mode": "ocr_line; Tesseract PSM 7, PaddleOCR line recognition",
@@ -148,7 +148,7 @@ def run_benchmark(dataset_dir: Path, engines: list[str], out_dir: Path,
 def main() -> None:
     parser = argparse.ArgumentParser(description="Benchmark Tesseract/Paddle trên 50 crop đã duyệt")
     parser.add_argument("--dataset", type=Path, default=REPO_DIR / "data/dataset2_50")
-    parser.add_argument("--out", type=Path, default=RESULTS_DIR / "ocr_benchmark_dataset3_50")
+    parser.add_argument("--out", type=Path, default=RESULTS_DIR / "ocr_benchmark_dataset2_50")
     parser.add_argument("--engines", nargs="+", choices=("tesseract", "paddle"),
                         default=("tesseract", "paddle"))
     parser.add_argument("--lang", default="eng", help="Ngôn ngữ Tesseract; Paddle chuẩn hóa eng thành en")

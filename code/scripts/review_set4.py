@@ -2,7 +2,7 @@
 
 Chỉ đọc data/4_self_captured/, không sửa ảnh hay manifest.csv (theo README của bộ 4).
 Chạy (từ code/):  python scripts/review_set4.py
-Kết quả: results/set5_review/<loại>_XX.jpg, near_duplicates.csv, labels_doc_type_draft.csv (bản nháp để Hiếu sửa)
+Kết quả: results/set4_review/<loại>_XX.jpg, near_duplicates.csv, labels_doc_type_draft.csv (bản nháp để Hiếu sửa)
 """
 import cv2
 import imagehash
@@ -31,7 +31,7 @@ def cell(img, text):
 
 
 def main():
-    out = results_dir("set5_review")
+    out = results_dir("set4_review")
     m = pd.read_csv(ROOT / "manifest.csv")
     hashes = {}
     for cat, g in m.groupby("category"):

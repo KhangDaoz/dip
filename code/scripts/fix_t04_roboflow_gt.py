@@ -3,6 +3,8 @@
 Tọa độ [x0, y0, x1, y1] theo ảnh gốc 640×640, đọc trên ảnh có lưới tọa độ rồi kiểm lại bằng overlay.
 Bản cũ do AI sinh được giữ ở t04_gt_30_images.v1_ai.json; chạy lại script luôn đọc từ bản cũ nên kết quả tất định.
 Chạy (từ thư mục code/): python scripts/fix_t04_roboflow_gt.py
+
+Không còn dùng từ 08/11: bộ Roboflow đơn thuốc Ấn Độ đã bỏ, S1 chỉ đánh giá trên ảnh VAIPE. Giữ lại để tái lập lịch sử.
 """
 import shutil
 

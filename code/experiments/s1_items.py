@@ -1,7 +1,8 @@
 """S1 — Tách khoản thuốc: phương pháp đề xuất (Dilation + quy tắc) vs các phương án gom
 Người làm: Thắng. Kế hoạch: team/KeHoach_Thang.md (mục 4.2, bảng tham số 4.3).
 
-Dữ liệu: ground truth khoản thuốc results/t04/t04_gt_30_images.json (15 VAIPE + 15 Roboflow, bỏ ảnh `exclude_from_eval`).
+Dữ liệu: ground truth khoản thuốc results/t04/t04_gt_30_images.json, chỉ dùng 15 ảnh VAIPE (bộ 1), bỏ ảnh `exclude_from_eval`.
+15 ảnh Roboflow đơn thuốc Ấn Độ trong file GT bị bỏ qua: bộ này đã loại khỏi dữ liệu nhóm từ 08/11.
 Bản đầu: cắt theo vùng thuốc GT (lỗi khoanh vùng đo riêng ở S4), nhị phân Otsu trên ảnh xám gốc.
 Chọn tham số trên ảnh split `valid`, báo kết quả trên ảnh còn lại (`test`, `test_labeled`).
 Độ đo: F1 khoản thuốc (khớp khi IoU > 0.5, theo KeHoach_Thang mục 4.2), IoU trung bình của các cặp khớp
@@ -87,7 +88,7 @@ def load_data(config: dict):
     """Đọc ground truth khoản thuốc; trả về list mẫu (ảnh nhị phân vùng thuốc + bbox khoản theo tọa độ vùng)."""
     data = []
     for e in load_json(RESULTS_DIR / config["gt"]):
-        if e.get("exclude_from_eval"):
+        if e.get("exclude_from_eval") or "vaipe" not in e["origin_dataset"]:
             continue
         x, y, w, h = e["medicine_region_bbox"]
         gray = read_image(REPO_DIR / e["image_path"], gray=True)[y:y + h, x:x + w]

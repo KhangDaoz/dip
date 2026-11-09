@@ -21,7 +21,7 @@ CONFIG = {
     "methods": ["projection", "fixed"],
     "y_tol": [0.3, 0.5, 0.7],
     "ground_truth": "results/khang_gt_pilot/candidate_ground_truth.json",
-    "input_boxes": "reviewed Dataset 3 role boxes (isolates row grouping from OCR/detection)",
+    "input_boxes": "reviewed Dataset 2 role boxes (isolates row grouping from OCR/detection)",
     "metrics": ["pairwise_precision", "pairwise_recall", "pairwise_f1", "exact_row_accuracy"],
 }
 

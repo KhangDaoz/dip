@@ -54,7 +54,7 @@ def main():
                fontsize=9,frameon=False,columnspacing=1.2)
     key.text(.02,.12,'none: no shadow correction\nt1: Closing81 (frozen)\n30 paired sources per point\nAuto-Otsu reference; not OCR\nSample SD in summary.csv; no confidence bands',
              fontsize=9,transform=key.transAxes,va='bottom')
-    fig.suptitle('T3: frozen T2 recipes on controlled variants of dataset 6 test sources')
+    fig.suptitle('T3: frozen T2 recipes on controlled variants of dataset 5 test sources')
     fig.tight_layout(rect=(0,0,1,.96))
     for ext in ('png','pdf'):
         shutil.copy2(root/f'figure.{ext}',root/f'figure_initial.{ext}')

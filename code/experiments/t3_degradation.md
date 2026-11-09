@@ -7,7 +7,7 @@ CSV và hash. Xem `results/t3/README.md`, `completion.json` và
 `step4_acceptance_final.json`. Đã nghiệm thu phạm vi đo: 234 test liên quan đạt,
 replay 660 dòng qua 3 nguồn định trước khớp ảnh/điểm; không phải replay toàn bộ.
 Giữ nguyên số liệu/runner/config đã khóa. Ca Gaussian mạnh có thể F1=0; không
-đổi recipe theo test. OCR, T4/T5 và bộ ⑤ không thuộc kết luận nghiệm thu này.
+đổi recipe theo test. OCR, T4/T5 và bộ ④ không thuộc kết luận nghiệm thu này.
 
 Đã triển khai preflight và chạy thử TRAIN. Lượt 3 bổ sung chế độ test chính thức
 theo mục 8; kết quả chạy phải đọc completion.json, không suy từ việc có code.
@@ -22,7 +22,7 @@ ngẫu nhiên ở lượt 2 trước khi được phép chạy test chính thứ
 
 Code hỗ trợ: `t3_degradation.py`; test: `code/tests/test_t3_degradation.py`.
 Bằng chứng local: `results/t3/step1_audit.json`, `results/t3/step1_tests.xml`.
-Không dùng bộ ⑤, không thay dữ liệu gốc, không nối pipeline.
+Không dùng bộ ④, không thay dữ liệu gốc, không nối pipeline.
 
 ## 1. Dữ liệu đã kiểm tra thực tế
 
@@ -155,7 +155,7 @@ phân biệt rõ bằng chứng lượt 1/sanity và kết quả chính thức. 
 ## 6. Giới hạn bắt buộc trong kết luận
 
 clean_binary là Otsu tự sinh, chưa phải GT thủ công; F1 có thiên lệch thuận Otsu.
-Không suy ra CER/WER/OCR hay hiệu quả trên phiếu màu/chữ đỏ bộ ⑤. Đây là
+Không suy ra CER/WER/OCR hay hiệu quả trên phiếu màu/chữ đỏ bộ ④. Đây là
 biến thể kiểm soát từ nguồn bộ ⑤, không phải benchmark toàn bộ 1.500 ảnh hỏng.
 Nguồn test đã dùng T1/T2, không phải test độc lập mới. Các mức trên cùng nguồn
 phụ thuộc nhau. Đường cong dấu không chứng minh T4 hoặc T5 đã đạt.

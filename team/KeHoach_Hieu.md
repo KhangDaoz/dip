@@ -10,7 +10,7 @@ Mục tiêu của tài liệu: đưa phần của Hiếu từ mức "chắc ăn 
 
 | Điểm yếu hiện tại | Cách khắc phục trong kế hoạch này |
 | :--- | :--- |
-| DIP: nắn phối cảnh, deskew, CLAHE là kỹ thuật quen thuộc, có sẵn trong notebook thực hành | Đánh giá như một **bài toán đo lường** trên bộ 6 (ground truth chính xác), so sánh nhiều phương pháp, có **phương án dự phòng** khi không tìm được 4 góc, thêm **khử lóa**, và **so sánh với app scan thương mại** |
+| DIP: nắn phối cảnh, deskew, CLAHE là kỹ thuật quen thuộc, có sẵn trong notebook thực hành | Đánh giá như một **bài toán đo lường** trên bộ 5 (ground truth chính xác), so sánh nhiều phương pháp, có **phương án dự phòng** khi không tìm được 4 góc, thêm **khử lóa**, và **so sánh với app scan thương mại** |
 | DIP: IQA (đo mờ, đo lóa) chỉ là ngưỡng đặt tay | Đánh giá IQA như **bộ phát hiện** có ROC/AUC; chọn ngưỡng bằng dữ liệu, không đặt tay |
 
 ---
@@ -60,14 +60,13 @@ Kiểm tra bằng test: `code/tests/test_preprocessing.py` (`test_preprocess_hom
 
 | Bộ | Vai trò với Hiếu | Việc cần làm |
 | :--- | :--- | :--- |
-| **1** VAIPE (đơn thuốc VN, **ảnh phẳng, sạch**) | Lớp `prescription`; **nguồn ảnh sạch phù hợp nhất cho bộ 6** (giữ đúng tỉ lệ, độ phân giải cao) | Không cần gán nhãn |
-| **2** Roboflow Prescription (đơn Ấn Độ – Practo, **ảnh chụp thật**, nhiều đơn viết tay) | Lớp `prescription`; **ảnh chụp thật để thử nắn phẳng, chỉnh nghiêng** (D4, D6) | Không cần gán nhãn; gom 3 bản tăng cường của cùng ảnh gốc |
-| **3** Roboflow Report Keywords (phiếu CBC, ảnh chụp) | Lớp `lab_report`; ảnh chụp thật nghiêng | Không cần gán nhãn; gom 3 bản tăng cường của cùng ảnh gốc |
-| **4** Tài liệu khác | Lớp `other` | ✅ **Đã lấy (31/10)** bằng `code/scripts/fetch_rvl_cdip.py`: tập con RVL-CDIP gồm các lớp `form`, `invoice`, `letter`, `memo`, `email`, `news article`, `scientific report`, `questionnaire` — mỗi lớp 100 ảnh (50/25/25), tổng 800 ảnh; thêm `openset/` 200 ảnh lớp `budget`, `resume` **không dùng khi chọn tham số** (mục 3.5). Ghi chú license: RVL-CDIP chỉ dùng cho nghiên cứu |
-| **5** Ảnh tự chụp | **Tập test độc lập** cho cả nắn phẳng và phân loại | Chụp ≥ 15 ảnh: đơn thuốc, phiếu XN, giấy khám, hóa đơn, CCCD đã che; gán nhãn lớp; **thêm 10 ảnh "loại lạ"** (giấy ra viện, kết quả siêu âm, biên lai) để test open-set |
-| **6** Benchmark tổng hợp (Thắng sinh) | Ground truth cho sai số nắn, PSNR/SSIM, phát hiện mờ/lóa | ✅ Đã chốt với Thắng (31/10) — xem checklist nghiệm thu bên dưới |
+| **1** VAIPE (đơn thuốc VN, **ảnh phẳng, sạch**) | Lớp `prescription`; **nguồn ảnh sạch của bộ 5** (giữ đúng tỉ lệ, độ phân giải cao) | Không cần gán nhãn |
+| **2** Roboflow Report Keywords (phiếu CBC, ảnh chụp) | Lớp `lab_report`; ảnh chụp thật nghiêng | Không cần gán nhãn; **chỉ dùng 57 ảnh gốc** ở `data/2_roboflow_report_keywords/`, bản tăng cường để riêng |
+| **3** Tài liệu khác | Lớp `other` | ✅ **Đã lấy (31/10)** bằng `code/scripts/fetch_rvl_cdip.py`: tập con RVL-CDIP gồm các lớp `form`, `invoice`, `letter`, `memo`, `email`, `news article`, `scientific report`, `questionnaire` — mỗi lớp 100 ảnh (50/25/25), tổng 800 ảnh; thêm `openset/` 200 ảnh lớp `budget`, `resume` **không dùng khi chọn tham số** (mục 3.5). Ghi chú license: RVL-CDIP chỉ dùng cho nghiên cứu |
+| **4** Ảnh tự chụp | **Tập test độc lập** cho cả nắn phẳng và phân loại | Chụp ≥ 15 ảnh: đơn thuốc, phiếu XN, giấy khám, hóa đơn, CCCD đã che; gán nhãn lớp; **thêm 10 ảnh "loại lạ"** (giấy ra viện, kết quả siêu âm, biên lai) để test open-set |
+| **5** Benchmark tổng hợp (Thắng sinh) | Ground truth cho sai số nắn, PSNR/SSIM, phát hiện mờ/lóa | ✅ Đã chốt với Thắng (31/10) — xem checklist nghiệm thu bên dưới |
 
-**Checklist nghiệm thu bộ 6** (Thắng xác nhận 31/10; Thắng giữ manifest + checklist giao nhận; v1 **02/11**, v2 thêm lóa + mask lóa **04/11**):
+**Checklist nghiệm thu bộ 5** (Thắng xác nhận 31/10; Thắng giữ manifest + checklist giao nhận; v1 **02/11**, v2 thêm lóa + mask lóa **04/11**):
 
 1. `gt.json` mỗi ảnh: mức độ **mọi** loại hỏng (kể cả 0); `H` ảnh sạch → ảnh hỏng (gộp phối cảnh + xoay); 4 góc giấy trên ảnh hỏng (TL, TR, BR, BL). *H khác chiều với H của tiền xử lý — không sao, chấm bằng 4 góc.*
 2. Mẫu âm sinh **độc lập**: ~30% ảnh `blur = 0`, ~30% ảnh `glare = 0`; có cả ảnh không mờ nhưng lóa và ngược lại; **val và test đều có mẫu âm lẫn dương**.
@@ -89,21 +88,20 @@ Kiểm tra bằng test: `code/tests/test_preprocessing.py` (`test_preprocess_hom
 
 **Lưu ý khi chạy D2, D3:** 290 mẫu chỉ xoay (không phối cảnh) có góc giấy **nằm ngoài khung** (giữ kích thước nên xoay làm mất góc) → loại khỏi D2, D3; chỉ dùng cho D4. Mẫu chỉ mờ / chỉ bóng có 4 góc trùng khung ảnh → kết quả đúng là `full_image`. Cấu trúc thư mục từ 02/11: `<split>/images|labels|clean|clean_binary|shadow_mask|page_mask/<sample_id>`.
 
-**Thực tế dữ liệu đã tải** (kiểm tra 31/10, bộ 1–3 lấy từ Drive chung của nhóm — xem `code/README.md` mục 7):
+**Thực tế dữ liệu đã tải** (kiểm tra 31/10, bộ 1–2 lấy từ Drive chung của nhóm — xem `code/README.md` mục 7; cập nhật 08/11: bỏ bộ Roboflow đơn thuốc Ấn Độ, Report Keywords chỉ giữ ảnh gốc):
 
 | Bộ | File train / valid / test | **Ảnh gốc thật** | Kích thước | Nhãn |
 | :--- | :--- | :---: | :--- | :--- |
 | 1 | 1.173 / 0 / 172 | 1.345 | Giữ tỉ lệ gốc (760×1070, 1150×1600, …) | JSON từng dòng chữ (`text`, `label`, `box`); tập test không có nhãn |
-| 2 | 8.426 / 560 / 375 | 3.744 (train = 2.809 ảnh × 3 bản tăng cường Roboflow) | **Toàn bộ bị ép về 640×640** | YOLO, chỉ 1 lớp `medicine-names` |
-| 3 | 117 / 11 / 7 | **57** (train = 39 ảnh × 3 bản tăng cường) | **Toàn bộ bị ép về 640×640** | YOLO 5 lớp: Report Type, parameter, reference value, unit, value |
+| 2 | 39 / 11 / 7 | **57** (bản tăng cường của train để riêng ở `2_roboflow_report_keywords_augmented/`, không dùng) | **Toàn bộ bị ép về 640×640** | YOLO 5 lớp: Report Type, parameter, reference value, unit, value |
 
 Hệ quả cho phần Hiếu:
 
-* **Vai trò bộ 1 / bộ 2 đảo so với kế hoạch ban đầu:** bộ 1 là ảnh phẳng (nguồn sạch cho bộ 6), bộ 2 mới là ảnh chụp thật (thử nắn phẳng).
-* **Bộ 2, bộ 3 đã mất tỉ lệ khung gốc** (ép 640×640) → đo được góc / tìm 4 góc trên ảnh thật, nhưng tỉ lệ khung ảnh sau nắn không có ý nghĩa; sai số nắn định lượng chỉ đo trên bộ 6.
-* **Mất cân bằng nặng:** `lab_report` chỉ 57 ảnh gốc so với ~5.000 ảnh `prescription` → cần thêm phiếu XN từ bộ 5 (ưu tiên khi chụp) và có thể nguồn khác; báo cáo Balanced Accuracy / Macro-F1, undersample `prescription` khi train.
-* **Nguy cơ học thuộc nguồn rất cao:** kích thước 640×640, ảnh xám hóa, nhiễu muối tiêu do tăng cường Roboflow đủ để đoán nguồn → bắt buộc chuẩn hóa ảnh (mục 3.5) và kiểm chứng trên bộ 5.
-* **Bản tăng cường Roboflow:** các file cùng phần tên trước `.rf.` là một ảnh gốc → luôn nằm cùng một group khi chia fold.
+* **Bộ 1 là ảnh phẳng** (nguồn sạch cho bộ 5); ảnh chụp thật để thử nắn phẳng lấy từ bộ 2 và bộ 4.
+* **Bộ 2 đã mất tỉ lệ khung gốc** (ép 640×640) → đo được góc / tìm 4 góc trên ảnh thật, nhưng tỉ lệ khung ảnh sau nắn không có ý nghĩa; sai số nắn định lượng chỉ đo trên bộ 5.
+* **Mất cân bằng nặng:** `lab_report` chỉ 57 ảnh gốc so với ~1.300 ảnh `prescription` → cần thêm phiếu XN từ bộ 4 (ưu tiên khi chụp) và có thể nguồn khác; báo cáo Balanced Accuracy / Macro-F1, undersample `prescription` khi train.
+* **Nguy cơ học thuộc nguồn rất cao:** kích thước 640×640, ảnh xám hóa, nhiễu muối tiêu do tăng cường Roboflow đủ để đoán nguồn → bắt buộc chuẩn hóa ảnh (mục 3.5) và kiểm chứng trên bộ 4.
+* **Bản tăng cường Roboflow:** từ 08/11 không dùng; bộ 2 chỉ còn một ảnh cho mỗi ảnh gốc (phần tên trước `.rf.`).
 
 ---
 
@@ -127,22 +125,22 @@ Hệ quả cho phần Hiếu:
 
 | # | Thí nghiệm | Dữ liệu | Độ đo | Hình / bảng đưa vào báo cáo |
 | :---: | :--- | :--- | :--- | :--- |
-| **D1** | IQA như bộ phát hiện: mờ / không mờ, lóa / không lóa | Bộ 6 (biết mức mờ, mask lóa) | **ROC, AUC**, F1 tại ngưỡng chọn; IoU mask lóa | Đường ROC của Laplacian vs Tenengrad vs FFT |
-| **D2** | Tìm 4 góc: contour vs Hough vs minAreaRect vs **kết hợp có dự phòng** | Bộ 6 | **Tỉ lệ thành công** (sai số < 2% đường chéo), sai số góc trung bình (px và % đường chéo) | Bảng 4 phương án |
-| **D3** | Sai số nắn theo mức độ méo | Bộ 6 | Sai số góc theo góc nghiêng 0°→30° và 3 mức phối cảnh | **Đường cong** — hình chính của phần Hiếu |
-| **D4** | Chỉnh nghiêng: Hough vs Radon vs Projection | Bộ 6, **tập con chỉ xoay** (không phối cảnh, chạy chỉnh nghiêng trực tiếp — nếu nắn phối cảnh trước thì ảnh đã thẳng, không còn góc để đo) + ảnh chụp thật bộ 2, bộ 3 | Sai số góc (độ), thời gian (ms) | Bảng 3 phương án |
-| **D5** | Khử lóa: không khử vs Telea vs Navier–Stokes | Bộ 6 (có ảnh sạch) | PSNR / SSIM **trong vùng lóa**, CER sau OCR | Ảnh trước–sau + bảng |
-| **D6** | Hiệu quả toàn bước tiền xử lý lên OCR | Bộ 6 + bộ 2 + bộ 3 + bộ 5 | **CER** ảnh gốc vs sau tiền xử lý; PSNR / SSIM so với ảnh sạch (bộ 6) | Bảng + đường CER theo mức hỏng |
-| **D7** | **So sánh với app scan thương mại** *(mới)* | 20 ảnh bộ 5 chụp thật | CER sau OCR, tỉ lệ nắn đúng (đánh giá bằng mắt, 2 người chấm), thời gian | Bảng: Pipeline nhóm vs Google Drive Scan / Adobe Scan / CamScanner *(kiểm tra app còn hoạt động trước khi làm; Microsoft Lens đã có thông báo ngừng hỗ trợ)* |
-| **D8** | Ablation phần Hiếu | Bộ 6 | CER khi tắt lần lượt: khử lóa, nắn phối cảnh, chỉnh nghiêng, CLAHE | Bảng ablation |
-| **D9** | Thời gian chạy | Bộ 6 | ms/ảnh từng bước trên CPU | Bảng nhỏ |
-| **D10** | Phân loại 3 lớp (phần DIP) | Bộ 1–5 | Accuracy, Macro-F1, Confusion Matrix; tỉ lệ tài liệu khác lọt vào pipeline | Confusion Matrix |
+| **D1** | IQA như bộ phát hiện: mờ / không mờ, lóa / không lóa | Bộ 5 (biết mức mờ, mask lóa) | **ROC, AUC**, F1 tại ngưỡng chọn; IoU mask lóa | Đường ROC của Laplacian vs Tenengrad vs FFT |
+| **D2** | Tìm 4 góc: contour vs Hough vs minAreaRect vs **kết hợp có dự phòng** | Bộ 5 | **Tỉ lệ thành công** (sai số < 2% đường chéo), sai số góc trung bình (px và % đường chéo) | Bảng 4 phương án |
+| **D3** | Sai số nắn theo mức độ méo | Bộ 5 | Sai số góc theo góc nghiêng 0°→30° và 3 mức phối cảnh | **Đường cong** — hình chính của phần Hiếu |
+| **D4** | Chỉnh nghiêng: Hough vs Radon vs Projection | Bộ 5, **tập con chỉ xoay** (không phối cảnh, chạy chỉnh nghiêng trực tiếp — nếu nắn phối cảnh trước thì ảnh đã thẳng, không còn góc để đo) + ảnh chụp thật bộ 2, bộ 4 | Sai số góc (độ), thời gian (ms) | Bảng 3 phương án |
+| **D5** | Khử lóa: không khử vs Telea vs Navier–Stokes | Bộ 5 (có ảnh sạch) | PSNR / SSIM **trong vùng lóa**, CER sau OCR | Ảnh trước–sau + bảng |
+| **D6** | Hiệu quả toàn bước tiền xử lý lên OCR | Bộ 5 + bộ 2 + bộ 4 | **CER** ảnh gốc vs sau tiền xử lý; PSNR / SSIM so với ảnh sạch (bộ 5) | Bảng + đường CER theo mức hỏng |
+| **D7** | **So sánh với app scan thương mại** *(mới)* | 20 ảnh bộ 4 chụp thật | CER sau OCR, tỉ lệ nắn đúng (đánh giá bằng mắt, 2 người chấm), thời gian | Bảng: Pipeline nhóm vs Google Drive Scan / Adobe Scan / CamScanner *(kiểm tra app còn hoạt động trước khi làm; Microsoft Lens đã có thông báo ngừng hỗ trợ)* |
+| **D8** | Ablation phần Hiếu | Bộ 5 | CER khi tắt lần lượt: khử lóa, nắn phối cảnh, chỉnh nghiêng, CLAHE | Bảng ablation |
+| **D9** | Thời gian chạy | Bộ 5 | ms/ảnh từng bước trên CPU | Bảng nhỏ |
+| **D10** | Phân loại 3 lớp (phần DIP) | Bộ 1–4 | Accuracy, Macro-F1, Confusion Matrix; tỉ lệ tài liệu khác lọt vào pipeline | Confusion Matrix |
 
-> **D7 thực hiện thế nào:** dùng app trên điện thoại chụp lại đúng 20 tờ giấy của bộ 5 trong cùng điều kiện ánh sáng, xuất ảnh, cho qua **cùng một bộ OCR** với ảnh của pipeline nhóm. Ghi rõ trong báo cáo đây là so sánh tham khảo vì app thương mại dùng thuật toán và camera khác.
+> **D7 thực hiện thế nào:** dùng app trên điện thoại chụp lại đúng 20 tờ giấy của bộ 4 trong cùng điều kiện ánh sáng, xuất ảnh, cho qua **cùng một bộ OCR** với ảnh của pipeline nhóm. Ghi rõ trong báo cáo đây là so sánh tham khảo vì app thương mại dùng thuật toán và camera khác.
 
 ### 3.3. Bảng tham số & lý do chọn (yêu cầu của đề)
 
-Mỗi tham số chọn trên **tập validation của bộ 6**, có hình "độ đo theo tham số" trong phụ lục:
+Mỗi tham số chọn trên **tập validation của bộ 5**, có hình "độ đo theo tham số" trong phụ lục:
 
 | Tham số | Khoảng thử | Chọn bằng | Ghi vào báo cáo |
 | :--- | :--- | :--- | :--- |
@@ -187,9 +185,9 @@ code/tests/
 
 Để bộ phân loại không học "kiểu ảnh của từng nguồn" thay vì loại tài liệu:
 
-* **Chuẩn hóa ảnh trước khi trích đặc trưng:** ảnh xám, CLAHE, nhị phân hóa, cắt bỏ viền, resize cố định, nén lại JPEG cùng chất lượng, lọc trung vị để xóa nhiễu muối tiêu do tăng cường Roboflow → xóa bớt "dấu vân tay" của từng nguồn (bộ 2, 3 đều 640×640, bộ 1 giữ tỉ lệ gốc).
-* Kết quả chính của D10 báo cáo trên **bộ 5** (ảnh tự chụp, không thuộc nguồn nào lúc chọn tham số).
-* Tài liệu lạ: 10 ảnh tự chụp mang dáng y tế (giấy ra viện, kết quả siêu âm, biên lai) và `openset/` của bộ 4 (lớp RVL-CDIP **không dùng khi chọn tham số**) — báo cáo riêng tỉ lệ bị xếp vào `other` hoặc bị từ chối bằng ngưỡng khoảng cách.
+* **Chuẩn hóa ảnh trước khi trích đặc trưng:** ảnh xám, CLAHE, nhị phân hóa, cắt bỏ viền, resize cố định, nén lại JPEG cùng chất lượng, lọc trung vị để xóa nhiễu muối tiêu do tăng cường Roboflow → xóa bớt "dấu vân tay" của từng nguồn (bộ 2 640×640, bộ 1 giữ tỉ lệ gốc).
+* Kết quả chính của D10 báo cáo trên **bộ 4** (ảnh tự chụp, không thuộc nguồn nào lúc chọn tham số).
+* Tài liệu lạ: 10 ảnh tự chụp mang dáng y tế (giấy ra viện, kết quả siêu âm, biên lai) và `openset/` của bộ 3 (lớp RVL-CDIP **không dùng khi chọn tham số**) — báo cáo riêng tỉ lệ bị xếp vào `other` hoặc bị từ chối bằng ngưỡng khoảng cách.
 
 ---
 
@@ -197,7 +195,7 @@ code/tests/
 
 | Mốc | Việc |
 | :--- | :--- |
-| **01–02/11** | Gửi khung báo cáo DIP (4–10 trang): Đặt vấn đề → Dữ liệu (gồm bộ 6) → Phương pháp (4 module) → Thực nghiệm → Thảo luận → Phân công & khai báo AI. Mỗi người ~1,5–2 trang, **1 bảng + 1 hình chính**, phần còn lại vào phụ lục |
+| **01–02/11** | Gửi khung báo cáo DIP (4–10 trang): Đặt vấn đề → Dữ liệu (gồm bộ 5) → Phương pháp (4 module) → Thực nghiệm → Thảo luận → Phân công & khai báo AI. Mỗi người ~1,5–2 trang, **1 bảng + 1 hình chính**, phần còn lại vào phụ lục |
 | **08/11** | Nhận phần của Trường (kèm bảng ablation T8), Khang, Thắng; kiểm tra số liệu, hình, bảng tham số; nhận phần nào ghép phần đó |
 | **09/11** | Ghép báo cáo, slide 10–15 trang; dựng video ≤ 3 phút từ đoạn demo 30 giây của mỗi người; gửi cả nhóm duyệt |
 | **10/11** | Đóng gói `LopXX_NhomYY_TenDeTai.zip`: `code/`, `requirements.txt`, `samples/` (5–10 ảnh), `README.md`, báo cáo PDF, slide `.pptx` + `.pdf`, video; kiểm tra chạy được trên máy sạch |
@@ -209,11 +207,11 @@ code/tests/
 
 | Ngày | Việc | Kết quả kiểm tra được |
 | :--- | :--- | :--- |
-| **30–31/10** | Tải bộ 1–3, lấy tập con RVL-CDIP; chụp 15 + 10 ảnh bộ 5; gửi Thắng yêu cầu cho bộ 6; chốt JSON với Trường | Thư mục `data/` có đủ, file JSON mẫu |
+| **30–31/10** | Tải bộ 1–2, lấy tập con RVL-CDIP; chụp 15 + 10 ảnh bộ 4; gửi Thắng yêu cầu cho bộ 5; chốt JSON với Trường | Thư mục `data/` có đủ, file JSON mẫu |
 | **01/11** | `quality.py`, `corners.py` (contour), `rectify.py`, `enhance.py` chạy trên 10 ảnh | 10 ảnh trước/sau |
 | **02/11** | Hough + minAreaRect dự phòng; `deskew.py` 3 cách; `glare.py` | Unit test xanh |
-| **03/11** | Có bộ 6 v1 (Thắng, 02/11) → D1 **phần mờ**, D2, D4 | 3 bảng / hình đầu tiên |
-| **04/11** | Phân loại HOG + k-NN (D10); nhận bộ 6 v2 (có mask lóa) | Confusion Matrix |
+| **03/11** | Có bộ 5 v1 (Thắng, 02/11) → D1 **phần mờ**, D2, D4 | 3 bảng / hình đầu tiên |
+| **04/11** | Phân loại HOG + k-NN (D10); nhận bộ 5 v2 (có mask lóa) | Confusion Matrix |
 | **05/11** | **Mốc tích hợp:** `preprocess()` chạy đầu-cuối cùng module của Trường, Khang, Thắng | Pipeline chạy trên 5 ảnh |
 | **06/11** | D1 **phần lóa**, D5 khử lóa (cần mask lóa của v2); D3 đường cong | Đường ROC lóa, bảng D5, đường cong D3 |
 | **07/11** | D6 CER (dùng bộ OCR của Khang), D8 ablation, D9 thời gian; bảng tham số 3.3 | Đủ hình / bảng cho báo cáo |
@@ -222,7 +220,7 @@ code/tests/
 | **10/11** | Đóng gói `.zip`, chạy thử trên máy sạch; tập trình bày, sửa theo góp ý | File `.zip` |
 | **11/11** | **Nộp đồ án DIP** qua email | Đã nộp |
 
-**Phụ thuộc vào bạn khác:** bộ 6 v1 (Thắng, 02/11) và v2 có mask lóa (04/11) · bộ OCR `src/ocr/` (Khang, 01/11) cho D6, D7 · ảnh VAIPE (Thắng kiểm tra 31/10).
+**Phụ thuộc vào bạn khác:** bộ 5 v1 (Thắng, 02/11) và v2 có mask lóa (04/11) · bộ OCR `src/ocr/` (Khang, 01/11) cho D6, D7 · ảnh VAIPE (Thắng kiểm tra 31/10).
 
 ---
 
@@ -230,14 +228,14 @@ code/tests/
 
 | Rủi ro | Dấu hiệu | Phương án |
 | :--- | :--- | :--- |
-| Bộ 6 của Thắng trễ | Đến 03/11 chưa có | Tự sinh bản đơn giản (chỉ phối cảnh + mờ) bằng `warpPerspective` + `GaussianBlur` trên 50 ảnh bộ 1 (ảnh phẳng, sạch) |
-| Thiếu phiếu xét nghiệm | Bộ 3 chỉ 57 ảnh gốc | Ưu tiên phiếu XN khi chụp bộ 5 (nhờ cả nhóm); tìm thêm nguồn phiếu XN công khai; báo cáo theo Macro-F1, Balanced Accuracy |
+| Bộ 5 của Thắng trễ | Đến 03/11 chưa có | Tự sinh bản đơn giản (chỉ phối cảnh + mờ) bằng `warpPerspective` + `GaussianBlur` trên 50 ảnh bộ 1 (ảnh phẳng, sạch) |
+| Thiếu phiếu xét nghiệm | Bộ 2 chỉ 57 ảnh gốc | Ưu tiên phiếu XN khi chụp bộ 4 (nhờ cả nhóm); tìm thêm nguồn phiếu XN công khai; báo cáo theo Macro-F1, Balanced Accuracy |
 | Không tìm được 4 góc trên ảnh chụp màn hình / giấy sát mép | Tỉ lệ thành công D2 < 70% | Dùng toàn ảnh làm vùng tài liệu, chỉ chỉnh nghiêng; ghi rõ là hạn chế |
-| Phân loại đạt ~100% nhưng sập trên bộ 5 | Khoảng cách > 15 điểm | Đây chính là phát hiện "học thuộc nguồn" — trình bày cùng D10 (mục 3.5), không giấu |
+| Phân loại đạt ~100% nhưng sập trên bộ 4 | Khoảng cách > 15 điểm | Đây chính là phát hiện "học thuộc nguồn" — trình bày cùng D10 (mục 3.5), không giấu |
 | Thiếu ảnh "loại lạ" | < 10 ảnh | Dùng thêm 2 lớp RVL-CDIP không có trong train |
 | Không kịp D7 | Đến 08/11 chưa làm | Bỏ D7 (là phần cộng thêm), giữ D1–D6 |
 
-**Thứ tự cắt khi thiếu thời gian (cắt từ dưới lên):** D7 → D5 → D9. **Không cắt:** D2, D3, D6, D10, bộ 5.
+**Thứ tự cắt khi thiếu thời gian (cắt từ dưới lên):** D7 → D5 → D9. **Không cắt:** D2, D3, D6, D10, bộ 4.
 
 ---
 
@@ -246,12 +244,12 @@ code/tests/
 | Câu hỏi dễ gặp | Hướng trả lời |
 | :--- | :--- |
 | Vì sao dùng phương sai Laplacian để đo mờ? | Laplacian là toán tử đạo hàm bậc 2, nhạy với cạnh; ảnh mờ ít cạnh sắc → phương sai nhỏ. Đã so với Tenengrad và FFT bằng ROC (D1) |
-| Ngưỡng mờ chọn thế nào? | Không đặt tay: chọn điểm tối ưu F1 trên đường ROC của tập validation bộ 6 |
+| Ngưỡng mờ chọn thế nào? | Không đặt tay: chọn điểm tối ưu F1 trên đường ROC của tập validation bộ 5 |
 | Khi không tìm được 4 góc thì sao? | Có 2 lớp dự phòng (Hough, minAreaRect); tỉ lệ thành công từng phương án ở D2 |
 | Vì sao chỉnh nghiêng sau khi đã nắn phối cảnh? | Nắn phối cảnh dựa trên mép giấy; khi mép giấy không song song với dòng chữ (giấy in lệch) vẫn còn góc nghiêng nhỏ |
 | Vì sao CLAHE thay vì cân bằng histogram toàn cục? | Ảnh chụp có ánh sáng không đều; CLAHE cân bằng theo từng ô và giới hạn khuếch đại nhiễu |
-| Bộ 6 là ảnh tổng hợp, có thực tế không? | Bộ 6 cho ground truth chính xác để so sánh phương pháp; kết luận được kiểm chứng lại trên ảnh chụp thật (bộ 2, bộ 3, bộ 5) và so với app thương mại (D7) |
-| Bộ phân loại có học thuộc nguồn không? | Chuẩn hóa ảnh trước khi trích đặc trưng (mục 3.5); con số chính báo cáo trên bộ 5 |
+| Bộ 5 là ảnh tổng hợp, có thực tế không? | Bộ 5 cho ground truth chính xác để so sánh phương pháp; kết luận được kiểm chứng lại trên ảnh chụp thật (bộ 2, bộ 4) và so với app thương mại (D7) |
+| Bộ phân loại có học thuộc nguồn không? | Chuẩn hóa ảnh trước khi trích đặc trưng (mục 3.5); con số chính báo cáo trên bộ 4 |
 | Gặp giấy chưa từng thấy thì sao? | Ngưỡng từ chối theo khoảng cách $k$-NN; đo tỉ lệ tài liệu lạ lọt vào pipeline (D10, mục 3.5) |
 
 ---
@@ -266,6 +264,6 @@ code/tests/
 - [ ] Phần báo cáo 1,5–2 trang, 2–3 slide, đoạn demo 30 giây, README module
 
 **Chung**
-- [ ] 25 ảnh bộ 5 (15 thường + 10 loại lạ) đã che thông tin cá nhân
+- [ ] 25 ảnh bộ 4 (15 thường + 10 loại lạ) đã che thông tin cá nhân
 - [ ] JSON hợp đồng dữ liệu đã chốt với Trường
 - [ ] Trả lời được câu hỏi về phần của 3 bạn còn lại

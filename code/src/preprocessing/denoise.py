@@ -21,7 +21,7 @@ PEPPER_MARGIN = 80        # tiêu: tối hơn MỌI láng giềng > 80 (lớn h�
 CLUSTER_SALT_MARGIN = 40     # cụm nhỏ (≤ 3×3): cực trị 3×3 và sáng / tối hơn mọi điểm vòng 5×5 một biên độ
 CLUSTER_PEPPER_MARGIN = 100  # — bắt các cụm 2–3 điểm dính nhau khi nhiễu dày (mật độ ≥ 5%)
 SWITCHING_PASSES = 3          # D11: nhiễu 10% F-measure nét chữ 0,80 (1 lượt) → 0,88 (3 lượt); ảnh sạch giữ 0,996
-NOISE_RATIO_MIN = 0.0005     # > 0,05% điểm ảnh là nhiễu xung → ảnh có nhiễu, cần khử (ảnh sạch bộ 1, 6: ≤ 0,02%)
+NOISE_RATIO_MIN = 0.0005     # > 0,05% điểm ảnh là nhiễu xung → ảnh có nhiễu, cần khử (ảnh sạch bộ 1, 5: ≤ 0,02%)
 
 
 RING3 = np.array([[1, 1, 1], [1, 0, 1], [1, 1, 1]], np.uint8)

@@ -2,7 +2,7 @@
 
 Lấy ngẫu nhiên (seed cố định) mỗi bộ N ảnh gốc khác nhau (bỏ bản tăng cường .rf. trùng ảnh gốc).
 
-Chạy (từ thư mục code/):  python scripts/preview_preprocess.py --per-set 5 --sets 2 3
+Chạy (từ thư mục code/):  python scripts/preview_preprocess.py --per-set 5 --sets 1 2
 Kết quả: results/<--out>/<bộ>_<ảnh>.jpg + summary.csv
 """
 import argparse

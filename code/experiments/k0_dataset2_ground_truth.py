@@ -1,4 +1,4 @@
-"""Derive phrase-level row/column ground truth from the Roboflow Dataset 3 labels.
+"""Derive phrase-level row/column ground truth from the Roboflow Dataset 2 labels (57 original images).
 
 The source annotations are semantic text spans (for example, a complete test
 parameter phrase), not guaranteed one-box-per-token labels. Rows are inferred
@@ -7,7 +7,7 @@ from y-centres; columns are retained as semantic roles from the source labels.
 Run from ``code/`` after installing the package:
     python experiments/k0_dataset2_ground_truth.py
 
-Outputs go under ``results/khang_dataset3_ground_truth/`` (git-ignored).
+Outputs go under ``results/khang_dataset2_ground_truth/`` (git-ignored).
 """
 from __future__ import annotations
 
@@ -239,7 +239,7 @@ def main() -> None:
     parser.add_argument("--sample-size", type=int, default=20,
                         help="Số nhóm ảnh nguồn duy nhất; 0 = tất cả nhóm trong split")
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--out-dir", type=Path, default=RESULTS_DIR / "khang_dataset3_ground_truth")
+    parser.add_argument("--out-dir", type=Path, default=RESULTS_DIR / "khang_dataset2_ground_truth")
     args = parser.parse_args()
     if args.sample_size < 0:
         parser.error("--sample-size phải >= 0")

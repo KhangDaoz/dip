@@ -53,7 +53,7 @@ Mỗi hàm đã có **tên, tham số mặc định lấy theo kế hoạch, và
 | Tọa độ của ②③④ | Tính trên **ảnh đã nắn** của ①. Chiếu về ảnh gốc bằng `PreprocessResult.to_source()` |
 | 4 góc | Thứ tự trên-trái, trên-phải, dưới-phải, dưới-trái |
 | Đọc / ghi ảnh | Dùng `common.io.read_image` / `write_image`. `cv2.imread` **không đọc được đường dẫn có dấu tiếng Việt** trên Windows |
-| Đường dẫn | Lấy từ `common.paths` (`DATA_DIR`, `DATASETS[1..6]`, `RESULTS_DIR`, `OUT_DIR`), không viết cứng |
+| Đường dẫn | Lấy từ `common.paths` (`DATA_DIR`, `DATASETS[1..5]`, `RESULTS_DIR`, `OUT_DIR`), không viết cứng |
 | Seed | `common.seed.set_seed(42)` ở đầu mọi thí nghiệm |
 | CER / WER | Dùng `ocr.metrics`. Khi báo cáo cả tập, dùng `corpus_cer` (tổng lỗi / tổng ký tự) |
 

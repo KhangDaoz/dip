@@ -98,14 +98,13 @@ flowchart TD
 ## 📊 4. KẾ HOẠCH DỮ LIỆU & THỰC NGHIỆM ĐỐI CHỨNG
 
 ### 4.1. Quy hoạch tập dữ liệu
-Sử dụng **3 bộ dữ liệu chính** cho đơn thuốc và phiếu xét nghiệm, cộng một tập **tài liệu khác** cho lớp `other` của bộ phân loại (vượt tiêu chí $\ge 50$ ảnh của môn học). Quy mô từng bộ cần xác nhận sau khi tải về:
+Sử dụng **2 bộ dữ liệu công khai chính** cho đơn thuốc (bộ 1) và phiếu xét nghiệm (bộ 2), một tập **tài liệu khác** cho lớp `other` của bộ phân loại (bộ 3), ảnh nhóm tự chụp (bộ 4) và benchmark tổng hợp (bộ 5). Đánh số và quy mô theo [data/README.md](../data/README.md) (cập nhật 08/11/2026: bỏ bộ Roboflow đơn thuốc Ấn Độ; bộ phiếu xét nghiệm chỉ dùng ảnh gốc, không dùng bản tăng cường):
 
 | Nhóm tài liệu | Nguồn dữ liệu | Quy mô | Đặc điểm mẫu |
 | :--- | :--- | :---: | :--- |
-| **Đơn thuốc** | [VAIPE Pill 2022](https://www.kaggle.com/datasets/tommyngx/vaipepill2022) (Kaggle) — chỉ dùng phần ảnh đơn thuốc, bỏ ảnh viên thuốc | *cần xác nhận* | Đơn thuốc ngoại trú Việt Nam, chữ in và chữ viết tay. |
-| **Đơn thuốc** | [Prescription Image Labelling](https://universe.roboflow.com/prescription-image-vkedm/prescription-image-labelling-xh0np) (Roboflow) | *cần xác nhận* | Đơn thuốc điện tử Ấn Độ, tiếng Anh, ảnh xuất từ phần mềm (sạch, không nghiêng). Nhãn theo vùng: bảng thuốc, thông tin bác sĩ, thông tin bệnh nhân, chẩn đoán; **chưa tách từng khoản thuốc**. |
-| **Phiếu xét nghiệm** | [Report Keywords Detection](https://universe.roboflow.com/world-of-ai/report-keywords-detection) (Roboflow) | *cần xác nhận* | Ảnh chụp phiếu xét nghiệm máu (CBC) Ấn Độ, tiếng Anh, có nghiêng và chụp màn hình; bảng **không kẻ lưới**. Nhãn theo từng cụm từ: loại phiếu, tên chỉ số, kết quả, đơn vị, khoảng tham chiếu. |
-| **Tài liệu khác** | Tập con RVL-CDIP (form, invoice, letter...) + ảnh nhóm tự chụp (giấy khám, hóa đơn) | *cần bổ sung* | Chỉ dùng cho lớp `other` của bộ phân loại; ảnh tự chụp giữ làm tập test độc lập. |
+| **Đơn thuốc** (bộ 1) | [VAIPE Pill 2022](https://www.kaggle.com/datasets/tommyngx/vaipepill2022) (Kaggle) — chỉ dùng phần ảnh đơn thuốc, bỏ ảnh viên thuốc | 1.345 ảnh (1.173 train có nhãn, 172 test) | Đơn thuốc ngoại trú Việt Nam, chữ in và chữ viết tay. Nhãn theo dòng: `drugname`, `usage`, `quantity`, `diagnose`, `date`, `other`. |
+| **Phiếu xét nghiệm** (bộ 2) | [Report Keywords Detection](https://universe.roboflow.com/world-of-ai/report-keywords-detection) (Roboflow) | **57 ảnh gốc** (39 / 11 / 7); bản tăng cường không dùng | Ảnh chụp phiếu xét nghiệm máu (CBC) Ấn Độ, tiếng Anh, có nghiêng và chụp màn hình; bảng **không kẻ lưới**. Nhãn theo từng cụm từ: loại phiếu, tên chỉ số, kết quả, đơn vị, khoảng tham chiếu. |
+| **Tài liệu khác** (bộ 3, bộ 4) | Tập con RVL-CDIP (form, invoice, letter...) + ảnh nhóm tự chụp (giấy khám, hóa đơn) | 1.000 ảnh RVL-CDIP; 83 ảnh tự chụp (cả 3 lớp) | Chỉ dùng cho lớp `other` của bộ phân loại; ảnh tự chụp giữ làm tập test độc lập. |
 
 ### 4.2. Phương pháp thực nghiệm đối chứng (Baseline vs Proposed)
 
@@ -113,16 +112,16 @@ Mỗi bước so sánh **nhiều phương pháp cổ điển**, không chỉ m�
 
 1. **Nắn chỉnh phối cảnh & Chỉnh nghiêng (Chương 2):**
    * *So sánh:* Ảnh gốc chưa xử lý · Chỉnh nghiêng bằng Hough · Radon · Projection Profile · Nắn phối cảnh 4 điểm + chỉnh nghiêng tốt nhất.
-   * *Đo trên bộ 6:* sai số vị trí 4 góc (pixel) theo góc nghiêng 0°→30° và theo độ méo phối cảnh.
+   * *Đo trên bộ 5:* sai số vị trí 4 góc (pixel) theo góc nghiêng 0°→30° và theo độ méo phối cảnh.
 2. **Phân loại biểu mẫu (Chương 8):**
    * *Baseline:* $k$-NN trên Histogram màu toàn ảnh.
    * *Proposed:* HOG + $k$-NN, chặn tài liệu khác bằng ngưỡng khoảng cách.
 3. **Làm sạch & Nhị phân hóa (Chương 3, 4, 5):**
    * *So sánh:* Otsu toàn cục · Niblack · Sauvola · Wolf; có và không có bước khử bóng đổ + tách lớp mực HSV & Inpainting.
-   * *Đo trên bộ 6:* F-measure theo mức bóng đổ và mức che của dấu đỏ.
+   * *Đo trên bộ 5:* F-measure theo mức bóng đổ và mức che của dấu đỏ.
 4. **Dựng bảng phiếu xét nghiệm (Chương 5, 7):**
    * *So sánh:* gom cụm từ theo khoảng cách cố định · Connected Components + XY-cut · Projection Profile + Dilation thích nghi theo chiều cao chữ.
-   * *Đo trên ảnh thật bộ 3:* IoU dòng / ô so với nhãn cụm từ có sẵn.
+   * *Đo trên ảnh thật bộ 2 (57 ảnh gốc):* IoU dòng / ô so với nhãn cụm từ có sẵn.
 5. **Bóc tách từng khoản thuốc (Chương 7):**
    * *Baseline:* Đưa toàn bộ trang ảnh vào OCR một lần (dễ lẫn tên thuốc và liều dùng giữa các khoản).
    * *Proposed:* Projection ngang tách dòng + Dilation gom từng khoản thuốc độc lập.
@@ -130,17 +129,17 @@ Mỗi bước so sánh **nhiều phương pháp cổ điển**, không chỉ m�
 
 ### 4.3. Bộ độ đo định lượng chuẩn (Evaluation Metrics)
 
-* **Nắn chỉnh hình học:** Sai số vị trí 4 góc tài liệu (pixel) so với ma trận biến dạng thật của bộ 6.
-* **Chất lượng ảnh sau tiền xử lý:** **PSNR** và **SSIM** so với ảnh sạch gốc của bộ 6.
-* **Chất lượng làm sạch & nhị phân hóa:** **F-measure** và **pseudo F-measure** theo chuẩn DIBCO, ảnh nhị phân chuẩn lấy từ ảnh sạch của bộ 6.
+* **Nắn chỉnh hình học:** Sai số vị trí 4 góc tài liệu (pixel) so với ma trận biến dạng thật của bộ 5.
+* **Chất lượng ảnh sau tiền xử lý:** **PSNR** và **SSIM** so với ảnh sạch gốc của bộ 5.
+* **Chất lượng làm sạch & nhị phân hóa:** **F-measure** và **pseudo F-measure** theo chuẩn DIBCO, ảnh nhị phân chuẩn lấy từ ảnh sạch của bộ 5.
 * **Độ chính xác phân loại biểu mẫu:** **Accuracy, Precision, Recall, Macro-F1** và Ma trận nhầm lẫn (**Confusion Matrix**); tỉ lệ tài liệu khác lọt vào pipeline.
-* **Độ chính xác bóc tách cấu trúc:** **IoU** của từng khoản thuốc (bộ 6 và ~30 ảnh vẽ tay) và từng dòng / ô bảng xét nghiệm (nhãn từ của bộ 3).
+* **Độ chính xác bóc tách cấu trúc:** **IoU** của từng khoản thuốc (bộ 5 và ~30 ảnh vẽ tay) và từng dòng / ô bảng xét nghiệm (nhãn cụm từ của bộ 2).
 * **Độ đo ứng dụng OCR thực tế:** **CER** và **WER** của OCR trước và sau pipeline, vẽ thành **đường cong theo mức độ hỏng** (độ mờ, góc nghiêng, mức bóng đổ).
 * **Thời gian chạy:** mili-giây mỗi ảnh cho từng bước và toàn pipeline.
 
-### 4.4. Bộ benchmark tổng hợp (Bộ 6)
+### 4.4. Bộ benchmark tổng hợp (Bộ 5)
 
-Ảnh đơn thuốc của bộ Prescription Image Labelling (Roboflow) là ảnh xuất từ phần mềm, hoàn toàn sạch. Nhóm làm hỏng ảnh có kiểm soát để có **ground truth chính xác tuyệt đối** mà không phải vẽ tay:
+Ảnh đơn thuốc VAIPE (bộ 1) là ảnh phẳng, sạch, giữ tỉ lệ gốc. Nhóm làm hỏng ảnh có kiểm soát để có **ground truth chính xác tuyệt đối** mà không phải vẽ tay:
 
 | Loại hỏng | Cách sinh | Mức độ | Ground truth thu được |
 | :--- | :--- | :--- | :--- |
@@ -150,7 +149,7 @@ Mỗi bước so sánh **nhiều phương pháp cổ điển**, không chỉ m�
 | Lóa flash | Cộng vùng sáng elip vào kênh V | 3 mức | Ảnh sạch, mask vùng lóa |
 | Dấu đỏ, chữ ký | Dán mẫu dấu đỏ / nét bút xanh lên vùng chữ | 3 mức độ che | Ảnh sạch, mask dấu |
 
-Ảnh chụp thật (bộ 3, bộ 1, ảnh tự chụp) dùng để kiểm chứng kết quả trên bộ 6 có đúng với dữ liệu thực.
+Ảnh thật (bộ 1, bộ 2, ảnh tự chụp bộ 4) dùng để kiểm chứng kết quả trên bộ 5 có đúng với dữ liệu thực.
 
 ### 4.5. Bảng tham số & lý do chọn
 
@@ -162,10 +161,10 @@ Theo yêu cầu "mỗi bước ghi rõ tham số và lý do chọn", mỗi modul
 
 | Thành viên | Phân hệ phụ trách | Nhiệm vụ kỹ thuật cụ thể | Sản phẩm bàn giao nghiệm thu |
 | :--- | :--- | :--- | :--- |
-| **Hiếu** | **Giai đoạn 1 & 2: IQA, Nắn chỉnh hình học & Phân loại biểu mẫu + Nhóm trưởng (ghép, đóng gói, nộp báo cáo)** *(Chương 2, 3, 8)* | • Viết module đo độ mờ (Laplace) và độ lóa flash.<br>• Nắn phối cảnh 4 điểm, xuất ma trận homography $H$; so sánh 3 cách chỉnh nghiêng (Hough, Radon, Projection).<br>• CLAHE; phân loại 3 nhóm tài liệu bằng HOG + $k$-NN, chặn tài liệu khác.<br>• Đường cong sai số nắn theo góc nghiêng trên bộ 6; bảng tham số & lý do chọn. | Module `src/preprocessing/` và `src/classification/`; Bảng sai số góc, PSNR/SSIM, Macro-F1 và Confusion Matrix. |
-| **Trường** | **Giai đoạn 3: Làm sạch ảnh & Tách lớp mực** *(Chương 3, 4, 5, 7)* | • Khử bóng đổ bằng ước lượng nền; tách lớp mực HSV, xóa vùng che bằng Inpainting.<br>• So sánh 4 cách nhị phân hóa (Otsu, Niblack, Sauvola, Wolf) trên bộ 6.<br>• Bảng tham số & lý do chọn.<br>• Chạy ablation toàn pipeline. | Module `src/cleaning/`; Bảng F-measure, PSNR, CER trước/sau; Bảng ablation; Báo cáo đồ án PDF. |
-| **Khang** | **Giai đoạn 4A: Dựng bảng Phiếu xét nghiệm** *(Chương 5, 7)* | • Nhị phân hóa, Dilation ngang gom cụm từ thành dòng; Projection Profile dọc tìm cột; ghép dòng × cột thành ô.<br>• So sánh 3 cách dựng bảng trên ảnh thật bộ 3.<br>• Bảng tham số & lý do chọn.<br>• Mở rộng nếu kịp: bảng có kẻ và cờ chữ đỏ HSV trên phiếu Việt Nam. | Module `src/table_extraction/`; File JSON tọa độ ô kèm vai trò; Bảng IoU và CER. |
-| **Thắng** | **Giai đoạn 4B: Bóc tách Đơn thuốc & Benchmark tổng hợp** *(Chương 2, 4, 7)* | • Khoanh vùng bảng thuốc; Projection ngang tách dòng, Dilation gom từng khoản thuốc; vẽ ground truth ~30 ảnh.<br>• Viết bộ sinh **bộ 6** (mục 4.4) cho cả nhóm dùng.<br>• Đường cong IoU / CER theo mức độ hỏng. | Module `src/prescription_segmentation/` và `src/synthetic/`; Bộ 6; Bảng IoU khoản thuốc và CER. |
+| **Hiếu** | **Giai đoạn 1 & 2: IQA, Nắn chỉnh hình học & Phân loại biểu mẫu + Nhóm trưởng (ghép, đóng gói, nộp báo cáo)** *(Chương 2, 3, 8)* | • Viết module đo độ mờ (Laplace) và độ lóa flash.<br>• Nắn phối cảnh 4 điểm, xuất ma trận homography $H$; so sánh 3 cách chỉnh nghiêng (Hough, Radon, Projection).<br>• CLAHE; phân loại 3 nhóm tài liệu bằng HOG + $k$-NN, chặn tài liệu khác.<br>• Đường cong sai số nắn theo góc nghiêng trên bộ 5; bảng tham số & lý do chọn. | Module `src/preprocessing/` và `src/classification/`; Bảng sai số góc, PSNR/SSIM, Macro-F1 và Confusion Matrix. |
+| **Trường** | **Giai đoạn 3: Làm sạch ảnh & Tách lớp mực** *(Chương 3, 4, 5, 7)* | • Khử bóng đổ bằng ước lượng nền; tách lớp mực HSV, xóa vùng che bằng Inpainting.<br>• So sánh 4 cách nhị phân hóa (Otsu, Niblack, Sauvola, Wolf) trên bộ 5.<br>• Bảng tham số & lý do chọn.<br>• Chạy ablation toàn pipeline. | Module `src/cleaning/`; Bảng F-measure, PSNR, CER trước/sau; Bảng ablation; Báo cáo đồ án PDF. |
+| **Khang** | **Giai đoạn 4A: Dựng bảng Phiếu xét nghiệm** *(Chương 5, 7)* | • Nhị phân hóa, Dilation ngang gom cụm từ thành dòng; Projection Profile dọc tìm cột; ghép dòng × cột thành ô.<br>• So sánh 3 cách dựng bảng trên ảnh thật bộ 2 (57 ảnh gốc).<br>• Bảng tham số & lý do chọn.<br>• Mở rộng nếu kịp: bảng có kẻ và cờ chữ đỏ HSV trên phiếu Việt Nam. | Module `src/table_extraction/`; File JSON tọa độ ô kèm vai trò; Bảng IoU và CER. |
+| **Thắng** | **Giai đoạn 4B: Bóc tách Đơn thuốc & Benchmark tổng hợp** *(Chương 2, 4, 7)* | • Khoanh vùng bảng thuốc; Projection ngang tách dòng, Dilation gom từng khoản thuốc; vẽ ground truth ~30 ảnh.<br>• Viết bộ sinh **bộ 5** (mục 4.4) cho cả nhóm dùng.<br>• Đường cong IoU / CER theo mức độ hỏng. | Module `src/prescription_segmentation/` và `src/synthetic/`; Bộ 5; Bảng IoU khoản thuốc và CER. |
 
 ### 5.1. Liên kết với Bài tập lớn Học máy & Sản phẩm MedTrack AI
 
@@ -176,7 +175,7 @@ Mỗi thành viên phụ trách trọn một mắt xích của pipeline ở cả
 | **Hiếu** | IQA, nắn phối cảnh, deskew, CLAHE, phân loại HOG + k-NN; nhóm trưởng: ghép, đóng gói, nộp báo cáo DIP | Phân loại biểu mẫu 3 lớp Đơn thuốc / Phiếu xét nghiệm / Khác (5 mô hình bài giảng vs ResNet-18) | Module `01-core`: chụp tài liệu, phân loại, khung ứng dụng |
 | **Trường** | Khử bóng, tách lớp mực HSV, so sánh 4 cách nhị phân hóa | Phân loại thành phần liên thông: chữ in / viết tay / con dấu / khác; điểm cộng Active Learning | Module `05-family` + component xác nhận dữ liệu dùng chung (Human-in-the-loop) |
 | **Khang** | Dựng bảng không kẻ (Projection + Dilation thích nghi) | Phân loại vai trò từng cụm từ: tên chỉ số / kết quả / đơn vị / khoảng tham chiếu (vs YOLOv8) | Module `03-lab-test`: biểu đồ xu hướng, cảnh báo, chuẩn hóa LOINC/UCUM |
-| **Thắng** | Tách khoản thuốc bằng Projection + Dilation; sinh benchmark tổng hợp (bộ 6) | Phân loại dòng trên đơn: Thuốc / Chẩn đoán / Bệnh nhân / Bác sĩ / Khác, nhãn tự sinh (vs YOLOv8) | Module `02-medication`: lịch nhắc thuốc, báo người thân |
+| **Thắng** | Tách khoản thuốc bằng Projection + Dilation; sinh benchmark tổng hợp (bộ 5) | Phân loại dòng trên đơn: Thuốc / Chẩn đoán / Bệnh nhân / Bác sĩ / Khác, nhãn tự sinh (vs YOLOv8) | Module `02-medication`: lịch nhắc thuốc, báo người thân |
 
 **Hợp đồng dữ liệu giữa các mắt xích** (chốt trong Đợt 1 để làm song song bằng dữ liệu giả lập):
 * Hiếu → Trường: ảnh phẳng, ma trận $H$, nhãn loại tài liệu, điểm chất lượng (độ mờ, độ lóa).
@@ -189,7 +188,7 @@ Mỗi thành viên phụ trách trọn một mắt xích của pipeline ở cả
 
 ```mermaid
 flowchart LR
-    M1["Đợt 1 (29/10 - 01/11)<br><b>Data, Hợp đồng dữ liệu & Bản đầu mỗi module</b><br>Chốt JSON giữa các mắt xích, gán nhãn GT<br>Nắn phối cảnh, Khử bóng, Tách lưới, Tách khoản thuốc"] --> M2["Đợt 2 (02/11 - 05/11)<br><b>Core Algorithms + Bộ 6</b><br>Phân loại k-NN, Tách lớp mực & Sauvola,<br>Dựng bảng, Hoàn thiện bóc tách<br><b>05/11: pipeline chạy đầu-cuối</b>"]
+    M1["Đợt 1 (29/10 - 01/11)<br><b>Data, Hợp đồng dữ liệu & Bản đầu mỗi module</b><br>Chốt JSON giữa các mắt xích, gán nhãn GT<br>Nắn phối cảnh, Khử bóng, Tách lưới, Tách khoản thuốc"] --> M2["Đợt 2 (02/11 - 05/11)<br><b>Core Algorithms + Bộ 5</b><br>Phân loại k-NN, Tách lớp mực & Sauvola,<br>Dựng bảng, Hoàn thiện bóc tách<br><b>05/11: pipeline chạy đầu-cuối</b>"]
     M2 --> M3["Đợt 3 (06/11 - 08/11)<br><b>Tích hợp & Benchmark</b><br>Pipeline khép kín, Đo PSNR, IoU, CER"]
     M3 --> M4["Đợt 4 (09/11 - 11/11)<br><b>Đóng gói bàn giao</b><br>Báo cáo PDF, Slide, Video demo, ZIP"]
 ```

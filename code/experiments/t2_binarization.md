@@ -39,7 +39,7 @@ Từ `code/`, dùng `python experiments/t2_binarization.py` và thêm `../` vào
 
 ## Phạm vi và nguồn tham chiếu
 
-- Bộ ⑥ v1, chỉ biến thể `single_shadow` (v05), cùng phạm vi khử bóng T1. Đây không phải kết quả cho tất cả 10 biến thể v1, ảnh nền màu, OCR hay phần tách lớp mực.
+- Bộ ⑤ v1, chỉ biến thể `single_shadow` (v05), cùng phạm vi khử bóng T1. Đây không phải kết quả cho tất cả 10 biến thể v1, ảnh nền màu, OCR hay phần tách lớp mực.
 - Một mẫu cho mỗi ảnh nguồn; giữ nguyên split 60 train / 10 val / 30 test của Thắng. Sáu nguồn train được chọn định trước theo mức/dạng bóng chỉ để kiểm tra chạy được.
 - Xác nhận ảnh sạch/hỏng cùng kích thước, H đơn vị và không lẫn lỗi hình học/mờ; đối chiếu ID/split với metadata 100 nguồn. Không tự sửa nhãn, resize hoặc nắn ảnh theo kết quả dự đoán.
 - `clean_binary.png` được kiểm tra lại khớp Otsu trên ảnh sạch. Đây là **tham chiếu tự sinh, không phải nhãn thủ công**; phép đo ưu ái các quyết định giống Otsu. Không diễn giải F1 gần 100% là OCR gần 100% hay thuật toán tốt nhất trên mọi tài liệu.

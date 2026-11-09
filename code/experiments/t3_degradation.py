@@ -432,7 +432,7 @@ def plot_curves(summary, output):
     handles, labels = axes.flat[0].get_legend_handles_labels()
     axes.flat[-1].legend(handles,labels,loc='center',frameon=False)
     axes.flat[-1].text(.05,.05,'none: no shadow correction\nt1: Closing81 (frozen)\n30 paired sources per point\nAuto-Otsu reference; not OCR\nSD in summary.csv; no confidence bands',fontsize=9)
-    fig.suptitle('T3: frozen T2 recipes on controlled variants of dataset 6 test sources')
+    fig.suptitle('T3: frozen T2 recipes on controlled variants of dataset 5 test sources')
     fig.tight_layout(rect=(0,0,1,.96))
     fig.savefig(Path(output)/'figure.png',dpi=180)
     fig.savefig(Path(output)/'figure.pdf')

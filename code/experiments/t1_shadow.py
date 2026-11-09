@@ -1,6 +1,6 @@
 """T1: select grayscale shadow removal on val, evaluate frozen recipes on test.
 
-From repo root: python code/experiments/t1_shadow.py --data-dir <dataset6-root>
+From repo root: python code/experiments/t1_shadow.py --data-dir <dataset5-root>
 Only single_shadow samples are compared, without geometry or blur confounds.
 """
 from __future__ import annotations

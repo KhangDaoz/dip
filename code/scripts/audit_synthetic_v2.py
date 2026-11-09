@@ -7,7 +7,7 @@ Kiểm:
 4. Mỗi mức của lóa / dấu / bút / nén có ở cả train, val, test; có mẫu âm và dương cho lóa.
 5. v10, v14: exposure_gain trong EXPOSURE_GAIN_RANGE, clean_exposed = clean × gain; v11–v13 không đổi phơi sáng.
    Ghi thêm độ sáng giấy trong / ngoài vùng lóa (single_glare): trong mask giấy phải lên ít nhất nửa đường tới 255.
-Ghi: data/5_synthetic/checksums_v2.sha256 (file mới của v2), results/bo6_v2_audit/{audit.json, stats.csv, sheet_*.png}.
+Ghi: data/5_synthetic/checksums_v2.sha256 (file mới của v2), results/bo5_v2_audit/{audit.json, stats.csv, sheet_*.png}.
 
 Chạy (từ thư mục code/): python scripts/audit_synthetic_v2.py
 """
@@ -50,7 +50,7 @@ def psnr(a, b) -> float:
 
 
 def main():
-    out = results_dir("bo6_v2_audit")
+    out = results_dir("bo5_v2_audit")
     errors = []
     v1_bad = check_v1()
     if v1_bad:

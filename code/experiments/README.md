@@ -27,7 +27,7 @@ Dataset `data/dataset2_50/` có 50 crop độc lập, transcript `text_gt` đã 
 
 ```bash
 python experiments/k0_ocr_benchmark.py --dataset ../data/dataset2_50 \
-  --out ../results/ocr_benchmark_dataset3_50_line --engines tesseract paddle
+  --out ../results/ocr_benchmark_dataset2_50_line --engines tesseract paddle
 ```
 
 Script từ chối mẫu chưa được người dùng xác nhận, ghi dự đoán từng crop vào `predictions.csv` và tổng hợp CER theo toàn corpus, WER, độ tin cậy, độ trễ và CER theo loại vùng vào `summary.json`. Mặc định dùng `ocr_line` (Tesseract PSM 7); đo riêng một lượt warm-up rồi lấy độ trễ trên 50 mẫu. PaddleOCR/VietOCR cache instance model trong tiến trình; không cache kết quả theo từng crop.
