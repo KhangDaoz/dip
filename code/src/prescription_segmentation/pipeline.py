@@ -1,7 +1,7 @@
-"""Ghép các bước của ④, trả về PrescriptionResult (hợp đồng ④ → app)."""
+"""④ Ghép S-B0–S-B5 theo hợp đồng PrescriptionResult (common/contracts.py)."""
 from common.contracts import CleaningResult, PrescriptionResult
 
 
-def extract_prescription(cleaned: CleaningResult, ocr_engine: str = "tesseract") -> PrescriptionResult:
-    """Đọc ảnh nhị phân của ② → vùng thuốc → dòng → khoản → OCR → trường."""
+def extract_prescription(cleaned: CleaningResult) -> PrescriptionResult:
+    """Ảnh nhị phân đơn thuốc → vùng thuốc → dòng → khoản thuốc kèm bbox (+ trường nếu OCR đọc được)."""
     raise NotImplementedError("extract_prescription")

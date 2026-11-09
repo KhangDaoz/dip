@@ -1,4 +1,4 @@
-"""Mốc tích hợp 05/11: chạy đầu-cuối trên ảnh tổng hợp. Bước nào chưa làm thì báo, không FAIL."""
+"""Mốc tích hợp (KeHoach.md mục 12.4): chạy đầu-cuối trên ảnh tổng hợp. Bước nào chưa làm thì báo, không FAIL."""
 import pytest
 
 from common.io import write_image

@@ -1,4 +1,4 @@
-"""Chạy pipeline đầu-cuối ① → ② → ③ / ④ trên một ảnh hoặc cả thư mục — dùng cho mốc tích hợp 05/11.
+"""Chạy pipeline đầu-cuối ① → ② → ③ / ④ trên một ảnh hoặc cả thư mục — dùng cho mốc tích hợp (KeHoach.md mục 12.4).
 
     python run_pipeline.py samples/                      # mọi ảnh trong samples/
     python run_pipeline.py anh.jpg --doc-type lab_report # ép loại tài liệu khi bộ phân loại chưa xong

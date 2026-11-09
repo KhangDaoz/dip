@@ -1,1 +1,1 @@
-"""③ Dựng bảng phiếu xét nghiệm — phụ trách: Khang. Kế hoạch: team/KeHoach_Khang.md mục 4."""
+"""③ Dựng bảng phiếu xét nghiệm — phụ trách: Khang. Kế hoạch: team/KeHoach.md mục 7 (bước K1–K9)."""

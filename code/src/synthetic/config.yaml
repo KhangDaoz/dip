@@ -1,24 +1,15 @@
-# Cấu hình sinh bộ 5 — KeHoach_Thang.md mục 2.1 & KeHoach_Hieu.md mục 2
+# Cấu hình sinh bộ 5 — team/KeHoach.md mục 8.2
 seed: 42
-n_source_images: 100        # số ảnh sạch lấy từ bộ 1 (VAIPE)
-variants_per_image: 10
-split: {train: 0.6, val: 0.1, test: 0.3}   # chia theo ẢNH GỐC (60 train / 10 val / 30 test)
+source: 1                     # ảnh sạch lấy từ bộ 1 (VAIPE)
+split: {train: 0.6, val: 0.1, test: 0.3}   # chia theo ẢNH GỐC
 
 degradations:
-  perspective: {levels: [0.05, 0.10, 0.20]}         # tỉ lệ dịch góc theo cạnh (Lưới D3: 3 mức × 5 góc)
-  rotate:      {levels: [0, 2, 5, 10, 15, 20, 30], d3_angles: [0, 5, 10, 20, 30], d4_angles: [0, -2, 2, -5, 5, -10, 10, -15, 15]}
-  blur:        {levels: [1, 2, 3, 4], kinds: [gaussian, motion]}
+  perspective: {levels: [0.05, 0.10, 0.20]}          # tỉ lệ dịch góc theo cạnh
+  rotate:      {levels: [0, 2, -2, 5, -5, 10, -10, 15, -15, 20, 30]}
+  gaussian_blur: {levels: [1, 2, 3, 4]}
+  motion_blur:   {levels: [1, 2, 3, 4]}
   shadow:      {levels: [1, 2, 3]}
-  # v2 — tham số từng mức nằm ở degrade.py (GLARE_LEVELS, STAMP_LEVELS, PEN_LEVELS, JPEG_NOISE_LEVELS):
-  glare:       {levels: [1, 2, 3]}                  # elip Gauss trên kênh V: sigma 6/10/15% cạnh ngắn, gain 0.6/1.2/2.0
-  stamp:       {levels: [1, 2, 3]}                  # dấu tròn đỏ: bán kính 8/11/14% cạnh ngắn, độ đậm 0.55/0.75/0.92
-  pen:         {levels: [1, 2]}                     # 1: chữ ký ở vùng trống · 2: 2 chữ ký + 3 nét gạch cắt ngang chữ
-  jpeg_noise:  {levels: [1, 2, 3]}                  # JPEG 90/60/30 + nhiễu Gauss sigma 3/6/10
-
-# v2, chỉ v10 / v14 (có lóa): nhân ảnh với hệ số ngẫu nhiên trước khi thêm lóa — giấy scan 255 → ≈ 204–235 như ảnh chụp
-# (giá trị dùng khi sinh: degrade.EXPOSURE_GAIN_RANGE; test kiểm hai nơi khớp nhau)
-exposure_before_glare: {gain_range: [0.80, 0.92]}
-
-versions:
-  v1: [perspective, rotate, blur, shadow]           # hạn 02/11 — 10 biến thể v00–v09
-  v2: [perspective, rotate, blur, shadow, glare, stamp, pen, jpeg_noise]   # hạn 04/11 — thêm v10–v14, giữ nguyên v1
+  glare:       {levels: [1, 2, 3], exposure_range: [0.80, 0.92]}
+  stamp_pen:   {levels: [1, 2, 3], kinds: [stamp, pen_blue, pen_black]}
+  jpeg:        {levels: [90, 60, 30]}
+  gaussian_noise: {levels: [1, 2, 3]}

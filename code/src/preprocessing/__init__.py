@@ -1,1 +1,1 @@
-"""① Thu nhận ảnh & tiền xử lý — phụ trách: Hiếu. Kế hoạch: team/KeHoach_Hieu.md mục 3."""
+"""① Tiền xử lý — phụ trách: Hiếu. Kế hoạch: team/KeHoach.md mục 5 (bước H1–H9)."""

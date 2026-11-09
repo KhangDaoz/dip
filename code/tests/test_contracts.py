@@ -27,7 +27,7 @@ CLEANING_EXAMPLE = {
     "masks": {"stamp": "out/rx_000123_stamp.png", "handwriting": "out/rx_000123_hw.png",
               "red_text": "out/rx_000123_red.png"},
     "components": [{"bbox": [120, 340, 38, 22], "label": "printed", "confidence": 0.97}],
-    "params": {"background_kernel": 41, "sauvola_window": 31, "sauvola_k": 0.2},
+    "params": {"background_kernel": 81, "binarize": "otsu"},
 }
 
 LAB_EXAMPLE = {

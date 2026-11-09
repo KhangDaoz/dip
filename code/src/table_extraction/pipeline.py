@@ -1,7 +1,7 @@
-"""Ghép các bước của ③, trả về LabReportResult (hợp đồng ③ → app)."""
+"""③ Ghép K1–K7 theo hợp đồng LabReportResult (common/contracts.py)."""
 from common.contracts import CleaningResult, LabReportResult
 
 
-def extract_table(cleaned: CleaningResult, ocr_engine: str = "tesseract") -> LabReportResult:
-    """Đọc ảnh nhị phân của ② → cụm từ → dòng → cột → ô → OCR → vai trò → cờ."""
+def extract_table(cleaned: CleaningResult) -> LabReportResult:
+    """Ảnh nhị phân phiếu xét nghiệm → cụm từ → dòng → cột → ô → dòng chỉ số kèm bbox (+ OCR, cờ)."""
     raise NotImplementedError("extract_table")

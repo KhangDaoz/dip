@@ -11,14 +11,14 @@ Tài liệu này và [SOURCES_AND_LICENSES.md](SOURCES_AND_LICENSES.md) được
 | Thư mục | Ảnh và nhãn hiện có | License và trạng thái đối chiếu |
 |---|---|---|
 | `1_vaipe/` | Train: 1.173 ảnh + 1.173 JSON; test: 172 ảnh, chưa có nhãn; valid chỉ có file giữ chỗ | Kaggle API khai báo `DbCL-1.0`; điều khoản nguồn VAIPE ban đầu chưa xác minh riêng |
-| `2_roboflow_report_keywords/` | 57 ảnh gốc + nhãn TXT: train 39, valid 11, test 7 (78 bản tăng cường ở `2_roboflow_report_keywords_augmented/`); 5 lớp `Report Type`, `parameter`, `reference value`, `unit`, `value` | `CC BY 4.0`, khớp trang dự án và YAML local |
+| `2_roboflow_report_keywords/` | 57 ảnh gốc + nhãn TXT: train 39, valid 11, test 7 (phần ③ không dùng split này mà dùng kiểm định chéo 5-fold trên cả 57 ảnh) (78 bản tăng cường ở `2_roboflow_report_keywords_augmented/`); 5 lớp `Report Type`, `parameter`, `reference value`, `unit`, `value` | `CC BY 4.0`, khớp trang dự án và YAML local |
 | `3_other_rvl_cdip/` | 1.000 ảnh PNG và `labels.csv` | Xem README đi kèm; chưa xác minh độc lập |
 | `4_self_captured/` | 83 ảnh chưa gán nhãn chi tiết: 48 phiếu xét nghiệm, 18 đơn thuốc, 17 tài liệu khác; chia trong `lab_report/`, `prescription/`, `other/`; có `manifest.csv` | Bản hiện tại đã tải lên Drive nhóm; từng thành viên còn phải review ảnh và xác nhận ẩn danh/quyền sử dụng trước khi đánh giá |
-| `5_synthetic/` | 1.000 mẫu: train 600, val 100, test 300; mỗi mẫu có 5 PNG và `gt.json` | Dữ liệu tổng hợp; cần đối chiếu điều kiện sử dụng ảnh nguồn |
+| `5_synthetic/` | 1.500 mẫu (v1: 1.000 mẫu v00–v09; v2 thêm 500 mẫu v10–v14: lóa, dấu, bút, JPEG + nhiễu, tổ hợp), chia theo ảnh gốc 60 / 10 / 30; mỗi mẫu có ảnh, mask và `gt.json` | Dữ liệu tổng hợp; cần đối chiếu điều kiện sử dụng ảnh nguồn |
 
 ## Kiểm kê chi tiết bộ ①–②
 
-Đối chiếu với [phân công nhóm](../team/PhanCong_TongHop.md), [kế hoạch Hiếu](../team/KeHoach_Hieu.md), [kế hoạch Khang](../team/KeHoach_Khang.md) và metadata đi kèm. Dùng các gói từ [Drive chung của nhóm](https://drive.google.com/drive/folders/1PtO0ret01AW0mF504ayRFE7GoE2Ez4_G?usp=drive_link) theo [hướng dẫn repo](../code/README.md) mục 7. Căn cứ và giới hạn đối chiếu nguồn/license ở [SOURCES_AND_LICENSES.md](SOURCES_AND_LICENSES.md).
+Đối chiếu với [kế hoạch toàn nhóm](../team/KeHoach.md) mục 3 và metadata đi kèm. Dùng các gói từ [Drive chung của nhóm](https://drive.google.com/drive/folders/1PtO0ret01AW0mF504ayRFE7GoE2Ez4_G?usp=drive_link) theo [hướng dẫn repo](../code/README.md) mục 7. Căn cứ và giới hạn đối chiếu nguồn/license ở [SOURCES_AND_LICENSES.md](SOURCES_AND_LICENSES.md).
 
 ### ① VAIPE — `1_vaipe/`
 
@@ -74,7 +74,7 @@ Số liệu lớp khớp thống kê của Khang. Các bbox là vùng từ/cụm
 - Gồm **50 crop** lấy từ split `valid` và `test` của bộ ②, bao phủ 15 phiếu nguồn và 4 role: `parameter` (13), `value` (13), `unit` (12), `reference value` (12).
 - Manifest chứa transcript `text_gt` đã được người dùng xác nhận và thông tin truy vết đến nhãn/crop nguồn. Crop không resize hay tăng cường.
 - Đây là tập đánh giá OCR cố định, không dùng để huấn luyện; không sửa lại split nguồn.
-- Chạy benchmark bằng `python experiments/k0_ocr_benchmark.py --dataset ../data/dataset2_50` từ thư mục `code/`. Script và định dạng kết quả xem [code/experiments/README.md](../code/experiments/README.md). Output nằm dưới `results/ocr_benchmark_dataset2_50/` và không commit.
+- Dùng để chọn engine OCR cho bộ 2 (công cụ đo CER, xem `code/src/ocr/`). Script benchmark viết lại theo mẫu [code/experiments/_template.py](../code/experiments/_template.py); output đặt dưới `results/` và không commit.
 
 ### Quy ước nhãn và giới hạn kiểm tra
 
@@ -108,8 +108,8 @@ Cập nhật cấu trúc ngày **03/11/2026**. Bản hiện tại có 83 ảnh: 
 Quy ước dùng bộ 4:
 - Giữ nguyên ảnh nguồn sau khi đã ẩn danh; không resize hay nén lại khi chưa có lý do và ghi nhận rõ.
 - Mỗi người điền `contributor_id`; cùng một tài liệu chụp nhiều lần phải dùng chung `document_group_id`.
-- Chưa gán `split` tại đây. Theo phân công ban đầu, bộ 4 là dữ liệu kiểm thử độc lập, không đưa vào train/tinh chỉnh. Sau khi review và gán nhãn, nhóm cần chốt danh sách test theo từng task, đồng thời tránh tách ảnh cùng tài liệu sang nhiều tập. Nếu muốn dùng bộ 4 cho train/valid, cần thống nhất thay đổi quy định trước.
-- Mỗi người tạo file nhãn riêng theo task, liên kết bằng `image_id`; không ghi đè manifest hoặc ảnh nguồn. Khang phụ trách nhãn dòng/cụm từ cho khoảng 10 phiếu xét nghiệm; các phần khác theo phân công tại `team/`.
+- **Quyết định 09/11:** bộ 4 không gán nhãn chi tiết. Nhãn duy nhất là loại tài liệu theo thư mục (dùng cho D10); các bước khác dùng ảnh bộ 4 làm ảnh trước / sau, kiểm tra định tính ([kế hoạch](../team/KeHoach.md) mục 3.2). Bộ 4 là dữ liệu kiểm thử độc lập, không đưa vào train/tinh chỉnh.
+- Không ghi đè manifest hoặc ảnh nguồn. Việc từng người làm trên bộ 4: [team/TienDo.md](../team/TienDo.md) mục "Bộ 4".
 - `data/` bị Git ignore. Chia sẻ ảnh, manifest và nhãn qua Drive nhóm; tài liệu này là hướng dẫn được theo dõi bằng Git.
 
 ## Nguồn phát triển đang giữ riêng trên máy Trường

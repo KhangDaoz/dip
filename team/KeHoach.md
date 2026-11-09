@@ -2,7 +2,7 @@
 
 > **Phạm vi:** chỉ nội dung môn **Xử lý ảnh số (DIP)**. Không gồm phần Học máy. Phần app chỉ dùng làm giao diện cho video demo (mục 11).
 > **Nhóm:** Hiếu (nhóm trưởng) · Trường · Khang · Thắng. **Hạn nộp:** **11/11/2026**, email `uyenvnb@ptit.edu.vn`.
-> **Căn cứ:** [quy định đồ án](../docs/references/requirements/DoAn_XuLyAnh.pdf) ([bản md](../docs/references/requirements/DoAn_XuLyAnh.md)) · [bài giảng chương 1–8](../docs/references/lectures/) · [notebook thực hành](../docs/references/practices/) · [đề tài đã chốt](../docs/DeTai_XuLyAnh_ChiTiet.md) · [phân công](PhanCong_TongHop.md)
+> **Căn cứ:** [quy định đồ án](../docs/references/requirements/DoAn_XuLyAnh.pdf) ([bản md](../docs/references/requirements/DoAn_XuLyAnh.md)) · [bài giảng chương 1–8](../docs/references/lectures/) · [notebook thực hành](../docs/references/practices/) · [đề tài đã chốt](../docs/DeTai_XuLyAnh_ChiTiet.md) · [tiến độ](TienDo.md)
 > **Phiên bản:** ngày 09/11/2026. Mọi trích dẫn chương / slide đã đối chiếu với nội dung slide gốc.
 
 ---
@@ -133,7 +133,7 @@ flowchart LR
 | 1 | VAIPE đơn thuốc (Việt Nam) | 1.345 ảnh: **1.173 có nhãn**, 172 **không nhãn** | Box từng dòng: `drugname`, `usage`, `quantity`, `diagnose`, `date`, `other` | Thắng; lớp `prescription` (Hiếu); nguồn sạch của bộ 5 |
 | 2 | Report Keywords (phiếu CBC, tiếng Anh) | **57 ảnh gốc** (39 / 11 / 7), ép 640 × 640 | Box từng cụm từ: `Report Type`, `parameter`, `value`, `unit`, `reference value` | Khang; lớp `lab_report` (Hiếu) |
 | 3 | RVL-CDIP tập con | 800 ảnh (8 lớp × 100) + 200 ảnh lớp lạ | Nhãn lớp | Lớp `other` (Hiếu) |
-| 4 | Ảnh nhóm tự chụp | 83 ảnh: 48 phiếu XN, 18 đơn thuốc, 17 khác | Nhóm tự gán | **Chỉ để test**, kiểm chứng trên ảnh thật Việt Nam |
+| 4 | Ảnh nhóm tự chụp | 83 ảnh: 48 phiếu XN, 18 đơn thuốc, 17 khác | **Chỉ có nhãn loại tài liệu** (theo thư mục `lab_report/`, `prescription/`, `other/`); không gán nhãn chi tiết | **Chỉ để test**: đo định lượng duy nhất là D10; các phần khác dùng làm **ảnh trước / sau, kiểm tra định tính** và video demo |
 | 5 | Benchmark tổng hợp (Thắng sinh từ ảnh sạch bộ 1) | 1.500 mẫu, chia theo ảnh gốc 60 / 10 / 30 | Ảnh sạch, ma trận biến dạng, 4 góc, ảnh nhị phân chuẩn, mask bóng / lóa / dấu / bút, mức hỏng | GT chính xác cho cả nhóm |
 
 ### 3.2. Quy tắc chia tập và chống rò rỉ
@@ -146,15 +146,17 @@ flowchart LR
 | Biến thể bộ 5 của cùng ảnh gốc nằm chung một tập | Tránh kết quả ảo |
 | Phương pháp **dựa trên luật** (③, ④) không học gì, nên được lấy ảnh phần "train" của bộ dữ liệu gốc làm tập đánh giá, miễn là tách riêng tập valid | — |
 | Bộ 4 không dùng để chỉnh tham số; ảnh phải che họ tên, ngày sinh, mã bệnh nhân, số điện thoại | — |
+| **Bộ 4 không có nhãn chi tiết** (không kịp gán): chỉ D10 đo định lượng trên bộ 4 (nhãn lấy theo thư mục, soát nhanh 83 ảnh). Mọi phần khác trên bộ 4 là **ảnh trước / sau, kiểm tra định tính**, không báo số liệu | Quyết định nhóm 09/11 |
+| **Bộ 2 cho phần ③ dùng kiểm định chéo 5-fold:** chia 57 ảnh gốc thành 5 phần (chia theo ảnh, seed cố định, không theo split gốc của Roboflow). Mỗi lượt chọn tham số trên 4 phần (~45 ảnh), đo trên phần còn lại (~11 ảnh). Sau 5 lượt, **mỗi ảnh được đánh giá đúng 1 lần bằng tham số chọn không có ảnh đó**, nên tập đánh giá = **57 ảnh** (≥ 50, QĐ · S7). Báo cáo trung bình ± độ lệch chuẩn qua 5 lượt; tham số cuối cho pipeline = bộ tham số được chọn nhiều nhất | **C8 · S41** (5-fold) |
 
 ### 3.3. Tập đánh giá ≥ 50 ảnh của từng người (QĐ · S7)
 
 | Người | Tập chọn tham số | Tập đánh giá | Số ảnh đánh giá | Cách có ground truth |
 | :--- | :--- | :--- | :---: | :--- |
-| Hiếu | Valid bộ 5; valid bộ 1–3 | Test bộ 5 (30 ảnh gốc × biến thể, ~450 mẫu); test bộ 1–3; **bộ 4** cho phân loại | ≥ 450 | Ma trận biến dạng, 4 góc của bộ 5; nhãn lớp theo nguồn |
-| Trường | Valid bộ 5 | Test bộ 5; bộ 4 (phiếu có chữ đỏ) cho kiểm tra an toàn | ≥ 450 | Ảnh nhị phân chuẩn, mask dấu của bộ 5; khoanh tay chữ đỏ bộ 4 |
-| Khang | **11 ảnh valid** bộ 2 | **46 ảnh** còn lại bộ 2 + ~10 phiếu bộ 4 | ≥ 56 | Suy dòng / cột từ box cụm từ có sẵn, **soát bằng mắt** từng ảnh |
-| Thắng | ~15 ảnh VAIPE có nhãn | **≥ 50 ảnh VAIPE có nhãn** khác + test bộ 5 + 18 đơn bộ 4 | ≥ 50 (+ bộ 5) | Gom nhãn dòng `drugname` + các dòng `usage`/`quantity` ngay dưới thành khoản, **soát bằng mắt**; bộ 5 có box biến đổi sẵn |
+| Hiếu | Valid bộ 5; valid bộ 1–3 | Test bộ 5 (30 ảnh gốc × biến thể, ~450 mẫu); test bộ 1–3; **bộ 4** cho phân loại | ≥ 450 | Ma trận biến dạng, 4 góc của bộ 5; nhãn lớp theo nguồn (bộ 4: theo thư mục) |
+| Trường | Valid bộ 5 | Test bộ 5; bộ 4 (phiếu có chữ đỏ): ảnh trước / sau, định tính | ≥ 450 | Ảnh nhị phân chuẩn, mask dấu của bộ 5 |
+| Khang | 4 fold (~45 ảnh) mỗi lượt của 5-fold | **57 ảnh** bộ 2, mỗi ảnh đo 1 lần trên fold giữ lại; bộ 4 chỉ minh họa định tính | 57 | Suy dòng / cột từ box cụm từ có sẵn, **soát bằng mắt** từng ảnh |
+| Thắng | **~150–200 ảnh VAIPE**, GT khoản gom tự động (soát ngẫu nhiên ~10 ảnh để kiểm luật gom) | **≥ 50 ảnh VAIPE** khác, GT gom tự động rồi **soát bằng mắt từng ảnh** + test bộ 5; bộ 4 chỉ minh họa định tính | ≥ 50 (+ bộ 5) | Gom nhãn dòng `drugname` + các dòng `usage`/`quantity` ngay dưới thành khoản; bộ 5 có box biến đổi sẵn. Chọn tham số và đánh giá đều lấy từ 1.173 ảnh `train` có nhãn (172 ảnh `test` không có nhãn), **chia theo cụm ảnh gần trùng (pHash)** để ảnh cùng cụm nằm chung một tập |
 
 ---
 
@@ -307,10 +309,10 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | D1 | Laplacian có phát hiện mờ / lóa tốt hơn đối chứng không? | Bộ 5 | Precision, Recall, F1 (C8 · S49) theo ngưỡng → đường đánh đổi (ROC); IoU mask lóa | Đường đánh đổi 3 phương pháp | ⭐ |
 | D2 | Cách tìm góc nào thành công nhiều nhất? | Bộ 5 (bỏ mẫu mất góc) | Tỉ lệ thành công (sai số < 2 % đường chéo), sai số px | Bảng 4 phương án | ⭐ |
 | **D3** | Sai số nắn tăng thế nào theo góc nghiêng và độ méo? | Test bộ 5 (lưới 5 góc × 3 mức méo) | Sai số 4 góc (px) | **Đường cong — hình chính** | ⭐ |
-| D4 | Chỉnh nghiêng: projection vs Hough vs Radon | Bộ 5 chỉ xoay; bộ 2, bộ 4 | Sai số góc (°), ms | Bảng | ⭐ |
+| D4 | Chỉnh nghiêng: projection vs Hough vs Radon | Bộ 5 chỉ xoay; bộ 2 | Sai số góc (°), ms | Bảng | ⭐ |
 | D5 | Khử lóa có giúp không? | Bộ 5 | PSNR trong vùng lóa (C6 · S39) | Ảnh trước / sau | Phụ |
-| D6 | Tiền xử lý giúp OCR bao nhiêu? CLAHE vs cân bằng toàn cục? | Bộ 5, bộ 2, bộ 4 | CER, PSNR | Bảng | ⭐ |
-| **D10** | Phân loại 3 lớp | Chọn tham số trên bộ 1–3; **kết quả chính trên bộ 4** | Accuracy, Macro-F1, **ma trận nhầm lẫn** (C8 · S48–49); tỉ lệ tài liệu lạ lọt qua | **Ma trận nhầm lẫn — bảng chính** | ⭐ |
+| D6 | Tiền xử lý giúp OCR bao nhiêu? CLAHE vs cân bằng toàn cục? | Test bộ 5 (CER theo text dòng VAIPE); bộ 4: ảnh trước / sau | CER, PSNR | Bảng | ⭐ |
+| **D10** | Phân loại 3 lớp | Chọn tham số trên bộ 1–3; **kết quả chính trên bộ 4** (83 ảnh, nhãn theo thư mục) | Accuracy, Macro-F1, **ma trận nhầm lẫn** (C8 · S48–49); tỉ lệ tài liệu lạ lọt qua | **Ma trận nhầm lẫn — bảng chính** | ⭐ |
 | D9 | Thời gian | Bộ 5 | ms / ảnh | Phụ lục | Phụ |
 
 ### 5.3. Tham số và lý do chọn
@@ -367,9 +369,9 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | **T2** | Cách nhị phân nào tốt nhất? (7 cách × có / không khử bóng) | Bộ 5 | **F-measure** (C8 · S49 ở mức pixel), pseudo-F, PSNR | **Bảng chính** | ⭐ (đã có 5 cách; thêm ISODATA, Tam giác) |
 | **T3** | Kết quả thay đổi theo mức bóng, mờ, dấu ra sao? | Test bộ 5 | F-measure theo mức hỏng | **Đường cong — hình chính** | ⭐ (đã có) |
 | T4 | Phát hiện và xóa dấu / bút | Bộ 5 (mask dấu) | IoU mask; CER vùng bị che trước / sau xóa | Bảng + ảnh | ⭐ (đã có, phạm vi bộ 5) |
-| **T5** | **An toàn:** có giữ đủ chữ đỏ trên phiếu XN không? | ≥ 5 phiếu bộ 4 có chữ đỏ, khoanh tay | **Recall** chữ đỏ được giữ (C8 · S49), mục tiêu 100 % | Bảng nhỏ + ví dụ | ⭐ |
+| **T5** | **An toàn:** có giữ đủ chữ đỏ trên phiếu XN không? | ≥ 5 phiếu bộ 4 có chữ đỏ | **Kiểm tra định tính**: ảnh trước / sau, mask chữ đỏ phủ màu; ghi số phiếu có chữ đỏ bị xóa nhầm (đếm bằng mắt) | Lưới ảnh trước / sau | ⭐ |
 | T6 | Làm sạch giúp OCR bao nhiêu? | Bộ 5, bộ 1, bộ 2 | CER | Bảng | Phụ |
-| T8 | Ablation toàn pipeline (mục 10) | Bộ 5, bộ 4 | CER cuối | Bảng ablation | ⭐ |
+| T8 | Ablation toàn pipeline (mục 10) | Test bộ 5 | CER cuối | Bảng ablation | ⭐ |
 
 ### 6.3. Tham số và lý do chọn
 
@@ -377,7 +379,7 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | :--- | :--- | :--- | :--- |
 | Kích thước SE ước lượng nền | 15–81 px (≈ 3–5 × chiều cao chữ) | PSNR trên valid (T1) | Đã chọn **81** |
 | Ngưỡng H, S mực đỏ / xanh | H ± 5°, S 40–120 | IoU mask dấu (T4) | C4 · S38–39 |
-| Ngưỡng độ tròn $C$ và diện tích dấu | $C$ 0,4–0,8; diện tích 1–10 % trang | Recall chữ đỏ = 100 % với IoU dấu cao nhất (T4, T5) | C8 · S16 |
+| Ngưỡng độ tròn $C$ và diện tích dấu | $C$ 0,4–0,8; diện tích 1–10 % trang | IoU dấu cao nhất (T4), không xóa nhầm chữ đỏ trên ảnh T5 | C8 · S16 |
 | Phương pháp nhị phân | 7 cách | F-measure trên valid (T2) | Đã chọn **Otsu sau Closing 81** |
 | Cửa sổ, k của Sauvola (đối chứng) | 15–61; 0,1–0,5 | F-measure (T2) | — |
 | SE Opening; ngưỡng diện tích nhiễu | 1 × 1 – 3 × 3; 2–30 px | F-measure + CER | C7 · S34 |
@@ -393,7 +395,7 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | :--- | :--- |
 | Vì sao Closing ước lượng được nền? | Trên ảnh xám, Closing = lọc Max rồi Min (C3 · S74, C7 · S35). Nét chữ tối, hẹp hơn SE nên bị giá trị nền sáng lấp |
 | Vì sao chọn Otsu chứ không Sauvola? | Sau khử bóng, lược đồ hai đỉnh rõ, đúng giả thiết của Otsu (C5 · S65–66). Số liệu T2 trên valid |
-| Làm sao không xóa nhầm chữ đỏ? | Dấu có độ tròn $C = 4\pi A/P^2$ cao và diện tích lớn (C8 · S16); chữ đỏ nhỏ và dẹt. Phiếu XN không chạy xóa dấu. T5 đo Recall |
+| Làm sao không xóa nhầm chữ đỏ? | Dấu có độ tròn $C = 4\pi A/P^2$ cao và diện tích lớn (C8 · S16); chữ đỏ nhỏ và dẹt. Phiếu XN không chạy xóa dấu. T5 kiểm tra trên ảnh thật bộ 4 (ảnh trước / sau) |
 | Lấy mask dấu đặc thế nào? | Tách vành (C7 · S40), rồi làm đầy vùng $X_k = (X_{k-1}\oplus B)\cap A^c$ (C7 · S45) |
 
 ---
@@ -415,7 +417,7 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | K5 | Ghép ô | Gán cụm từ vào ô | Giao dòng × cột; cụm từ vào ô có diện tích giao lớn nhất | — | **C5 · S87** (hợp vùng) | — |
 | K6 | **Hậu xử lý** | Bỏ dòng / cột giả | Bỏ dòng cao < $0{,}5h$; gộp cột hẹp hơn $h$ vào cột kề; Opening nhỏ trước projection | — | C7 · S28, S34; QĐ · S7 | Đúng yêu cầu hậu xử lý |
 | K7 | Vai trò cột, cờ | tên / kết quả / đơn vị / khoảng; HIGH / LOW / NORMAL | Luật thứ tự cột + kiểu chữ (số, đơn vị); so kết quả với khoảng | — | Hậu xử lý văn bản (không phải DIP) | Không dùng ML |
-| *K8* | *Mở rộng: bảng có kẻ (bộ 4)* | Lấy lưới kẻ | **Opening** SE $1 \times (W/20)$ và $(H/20) \times 1$ để **giữ** đường kẻ; **Closing** để nối chỗ kẻ đứt | — | **C7 · S6** (fit), **S28**, **S35, S38** | Chỉ đoạn thẳng dài hơn SE mới "fit" nên còn lại sau Opening |
+| *K8* | *Mở rộng: bảng có kẻ (bộ 4, minh họa định tính)* | Lấy lưới kẻ | **Opening** SE $1 \times (W/20)$ và $(H/20) \times 1$ để **giữ** đường kẻ; **Closing** để nối chỗ kẻ đứt | — | **C7 · S6** (fit), **S28**, **S35, S38** | Chỉ đoạn thẳng dài hơn SE mới "fit" nên còn lại sau Opening |
 | *K9* | *Mở rộng: cờ chữ đỏ* | Chỉ số in đỏ | Mask chữ đỏ từ ② giao với ô kết quả | — | C4 · S37–41 | — |
 
 > **Sửa so với kế hoạch cũ:** kế hoạch cũ ghi "Closing ngang / dọc lấy lưới". Theo C7 · S6 và S28, phép **giữ lại** cấu trúc vừa khít SE là **Opening**; Closing chỉ dùng để nối chỗ đứt (C7 · S38).
@@ -425,27 +427,30 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | # | Câu hỏi | Dữ liệu | Độ đo | Hình / bảng | Ưu tiên |
 | :---: | :--- | :--- | :--- | :--- | :---: |
 | K0 | Ground truth dòng / cột | 57 ảnh gốc bộ 2, soát bằng mắt | — | Ảnh overlay trong phụ lục | ⭐ |
-| K1 | Gom dòng: projection vs tâm y cố định | 46 ảnh đánh giá (chọn tham số trên 11 valid) | Độ chính xác gán cụm từ vào dòng; **pairwise F1** (C8 · S49) | Bảng | ⭐ |
-| **K2** | Tìm cột: projection vs XY-cut vs cố định | 46 ảnh đánh giá | Độ chính xác gán cột; **F1 quan hệ kề** (cặp cùng dòng / cùng cột) | **Bảng chính** | ⭐ |
-| K3 | Độ bền theo góc nghiêng còn sót 0→5° | 46 ảnh xoay thêm | Độ chính xác gán dòng | **Đường cong — hình chính** | ⭐ |
-| K4 | SE theo $h$ vs SE cố định | 46 ảnh (nhiều cỡ chữ) | Như K1, K2 | Bảng | ⭐ |
-| K5 | OCR theo ô vs cả trang | 46 ảnh | CER; tỉ lệ dòng đủ 4 trường | Bảng | ⭐ |
-| K6 | Phiếu Việt Nam | ~10 phiếu bộ 4 | Như K1, K2 | Ví dụ | Phụ |
+| K1 | Gom dòng: projection vs tâm y cố định | 57 ảnh, 5-fold (chọn tham số trên 4 fold, đo trên fold còn lại) | Độ chính xác gán cụm từ vào dòng; **pairwise F1** (C8 · S49) | Bảng | ⭐ |
+| **K2** | Tìm cột: projection vs XY-cut vs cố định | 57 ảnh, 5-fold | Độ chính xác gán cột; **F1 quan hệ kề** (cặp cùng dòng / cùng cột) | **Bảng chính** | ⭐ |
+| K3 | Độ bền theo góc nghiêng còn sót 0→5° | 57 ảnh xoay thêm, dùng tham số cuối | Độ chính xác gán dòng | **Đường cong — hình chính** | ⭐ |
+| K4 | SE theo $h$ vs SE cố định | 57 ảnh, 5-fold (nhiều cỡ chữ) | Như K1, K2 | Bảng | ⭐ |
+| K5 | OCR theo ô vs cả trang | 57 ảnh, dùng tham số cuối | CER; tỉ lệ dòng đủ 4 trường | Bảng | ⭐ |
+| K6 | Phiếu Việt Nam | 3–5 phiếu bộ 4 | **Định tính**: ảnh overlay dòng / cột, nhận xét ca đúng / sai | Ví dụ | Phụ |
 
 ### 7.3. Tham số và lý do chọn
 
 | Tham số | Khoảng thử | Chọn bằng |
 | :--- | :--- | :--- |
-| $a$: SE tách cụm từ (× $h$) | 0,3–0,8 | Tỉ lệ tách đúng cụm từ so với box nhãn (valid) |
+| $a$: SE tách cụm từ (× $h$) | 0,3–0,8 | Tỉ lệ tách đúng cụm từ so với box nhãn (trên 4 fold chọn tham số) |
 | SE gom dòng (× $h$); cửa sổ làm trơn $W$ | 2–5; $W \in \{1, 3, 5\}$ | K1 (C5 · S62 khuyến nghị $W$ = 3 hoặc 5) |
 | Ngưỡng thung lũng $T$ (% đỉnh) | 0–20 % | K1 |
 | Độ rộng khe cột $w$ (× $h$); % dòng xuyên qua $p$ | 0,5–2; 40–80 % | K2 |
 | Ngưỡng gán cụm từ vào ô (IoU) | 0,3–0,7 | K2 |
 
+Mọi tham số chọn bằng grid search trên 4 fold, lặp cho cả 5 lượt. Phụ lục ghi bộ tham số chọn được ở từng lượt: nếu 5 lượt chọn giống nhau thì đó là bằng chứng tham số ổn định.
+
 ### 7.4. Lưu ý trung thực
 
 - Pilot cũ chỉ có 4 ảnh, dòng GT được đề xuất bằng tâm y rồi soát lại, nên phương án "tâm y cố định" được lợi (cả hai đạt F1 = 1,00). GT chính thức trên 57 ảnh phải lấy theo **nhãn vai trò + soát tay**, không dùng chính thuật toán đối chứng để đề xuất.
-- Bộ 2 là phiếu Ấn Độ, tiếng Anh, ép 640 × 640. Kết luận chủ yếu kiểm chứng trên dữ liệu này; bộ 4 chỉ là ví dụ minh họa.
+- Bộ 2 là phiếu Ấn Độ, tiếng Anh, ép 640 × 640. Mọi số liệu của ③ đo trên dữ liệu này; bộ 4 không có nhãn chi tiết nên chỉ là ví dụ minh họa định tính.
+- Bộ 2 dùng 5-fold trên 57 ảnh chứ không theo split gốc 39 / 11 / 7 của Roboflow; ghi rõ trong báo cáo mục 2.2. Lý do: 57 ảnh quá ít để vừa có tập chọn tham số đủ đa dạng vừa có ≥ 50 ảnh đánh giá.
 
 ### 7.5. Hỏi đáp
 
@@ -456,6 +461,7 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | XY-cut là gì? | Tách vùng top-down (C5 · S89): cắt đệ quy theo khe trắng ngang rồi dọc đến khi mỗi vùng đồng nhất |
 | Vì sao SE theo chiều cao chữ? | Ảnh khác độ phân giải (C2 · S26); K4 chứng minh SE cố định sai trên chữ to / nhỏ |
 | Lấy đường kẻ bằng phép gì? | Opening với SE đường thẳng: chỉ đoạn kẻ đủ dài mới "fit" SE (C7 · S6, S28) |
+| Bộ 2 chỉ 57 ảnh, chọn tham số và đánh giá thế nào? | Kiểm định chéo 5-fold (C8 · S41): chọn tham số trên 4 phần, đo trên phần còn lại, lặp 5 lần; mỗi ảnh được đánh giá đúng 1 lần bằng tham số chưa thấy nó, nên đánh giá đủ 57 ảnh mà không rò rỉ |
 
 ---
 
@@ -463,7 +469,7 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 
 **Mục tiêu:** tách từng **khoản thuốc** (dòng tên + các dòng liều ngay dưới) để OCR theo khoản; sinh **bộ 5** với ground truth chính xác cho cả nhóm.
 **Chương chính:** **C7** (trục chính), **C5**, C3; bộ 5 dùng C2, C3, C4, C6.
-**Đầu ra:** JSON các khoản thuốc kèm bbox (+ tên, hàm lượng, liều nếu OCR đọc được). Bản chi tiết riêng: [kehoach_thang_dip.md](kehoach_thang_dip.md).
+**Đầu ra:** JSON các khoản thuốc kèm bbox (+ tên, hàm lượng, liều nếu OCR đọc được).
 
 ### 8.1. Các bước tách khoản thuốc
 
@@ -504,22 +510,25 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 
 | # | Câu hỏi | Dữ liệu | Độ đo | Hình / bảng | Ưu tiên |
 | :---: | :--- | :--- | :--- | :--- | :---: |
-| **S1** | Cách gom khoản nào tốt nhất? (6 cách × 2 cách tách dòng) | ≥ 50 ảnh VAIPE đánh giá (chọn tham số trên ~15 ảnh valid) | **F1 khoản** (khớp khi IoU > 0,5; C8 · S49), IoU trung bình | **Bảng chính** | ⭐ |
+| **S1** | Cách gom khoản nào tốt nhất? (6 cách × 2 cách tách dòng) | ≥ 50 ảnh VAIPE đánh giá, GT đã soát (chọn tham số trên ~150–200 ảnh, GT gom tự động) | **F1 khoản** (khớp khi IoU > 0,5; C8 · S49), IoU trung bình | **Bảng chính** | ⭐ |
 | **S2** | Độ bền theo mức hỏng | Test bộ 5 | F1 khoản theo góc, mờ, bóng, JPEG | **Đường cong — hình chính** | ⭐ |
 | **S3** | Tách khoản có giúp OCR không? | Như S1 | CER: cả trang vs từng dòng vs từng khoản | Bảng | ⭐ |
 | S4 | Khoanh vùng thuốc vs cả trang | VAIPE (vùng chuẩn = khung bao box `drugname`/`usage`/`quantity`) | IoU vùng | Bảng nhỏ | Phụ |
-| S5 | Đơn thật | 18 đơn bộ 4 | Như S1 | Ví dụ | Phụ |
+| S5 | Đơn thật | 3–5 đơn bộ 4 | **Định tính**: ảnh khung từng khoản, nhận xét ca đúng / sai | Ví dụ | Phụ |
 | S6 | Thời gian; kiểm chứng bộ 5 | Bộ 5, bộ 4 | ms / ảnh; thống kê mục 8.2 | Phụ lục | Phụ |
+| *S7* | *Đánh giá mở rộng (tùy chọn)* | *Phần còn lại của 1.173 ảnh VAIPE, GT gom tự động chưa soát* | *F1 khoản* | *1 dòng phụ lục, ghi rõ GT chưa soát* | *Phụ* |
 
 ### 8.4. Tham số và lý do chọn
 
 | Tham số | Khoảng thử | Chọn bằng | Ghi chú |
 | :--- | :--- | :--- | :--- |
-| $k$: SE khoanh vùng (× $h$) | 1–4 | S4 trên valid | C7 · S22 |
-| $T$: ngưỡng khe dòng (% đỉnh); $W$ | 0–20 %; 1, 3, 5 | Tỉ lệ tách đúng dòng (valid) | C5 · S62 |
-| $s$: SE dọc gom khoản (× $h$) | **0,1–1,5** | S1 trên valid | Khe trong khoản ~0,15–0,25 $h$ trên VAIPE |
-| `indent_tol` (× $h$) | 0,5–3 | S1 trên valid | — |
-| SE Opening hậu xử lý | tắt, 2 × 2, 3 × 3 | S1 trên valid | C7 · S34 |
+| $k$: SE khoanh vùng (× $h$) | 1–4 | S4 trên tập chọn tham số | C7 · S22 |
+| $T$: ngưỡng khe dòng (% đỉnh); $W$ | 0–20 %; 1, 3, 5 | Tỉ lệ tách đúng dòng (tập chọn tham số) | C5 · S62 |
+| $s$: SE dọc gom khoản (× $h$) | **0,1–1,5** | S1 trên tập chọn tham số | Khe trong khoản ~0,15–0,25 $h$ trên VAIPE |
+| `indent_tol` (× $h$) | 0,5–3 | S1 trên tập chọn tham số | — |
+| SE Opening hậu xử lý | tắt, 2 × 2, 3 × 3 | S1 trên tập chọn tham số | C7 · S34 |
+
+Tập chọn tham số là ~150–200 ảnh VAIPE với GT khoản gom tự động (mục 3.3). Tập lớn giúp phủ nhiều mẫu đơn khác nhau; chỉ tốn thêm thời gian máy, không tốn công soát tay.
 
 ### 8.5. Hỏi đáp
 
@@ -528,8 +537,9 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | Vì sao Dilation **dọc**? | Cần nối khe giữa các dòng trong một khoản mà không nối ngang sang cột khác; SE $1 \times (s\cdot h)$ chỉ giãn theo y (C7 · S5, S19) |
 | Dilation khác Closing thế nào? | Dilation làm khối phình nên bbox to hơn thật (C7 · S24). Closing = Dilation rồi Erosion, lấp khe mà giữ kích thước (C7 · S35, S38). S1 so IoU cả hai |
 | Projection có trong bài không? | Là lược đồ đếm mực theo hàng (C3 · S23), làm trơn theo C5 · S62, tách ngưỡng thung lũng theo C5 · S63 |
-| Bộ 5 có thực tế không? | Dùng để so phương pháp với GT chính xác; kết luận kiểm lại trên VAIPE và bộ 4; có kiểm thống kê và chấm chủ quan (C6 · S38) |
+| Bộ 5 có thực tế không? | Dùng để so phương pháp với GT chính xác; kết luận kiểm lại trên VAIPE và minh họa trên ảnh thật bộ 4; có kiểm thống kê và chấm chủ quan (C6 · S38) |
 | Vì sao chia biến thể theo ảnh gốc? | Biến thể cùng ảnh gốc gần như giống nhau; chia lẫn làm kết quả ảo (C8 · S41: tập kiểm tra phải độc lập) |
+| Chọn tham số trên bao nhiêu ảnh? | ~150–200 ảnh VAIPE, GT khoản gom tự động từ nhãn dòng (có soát ngẫu nhiên). Đánh giá trên ≥ 50 ảnh khác đã soát từng ảnh. Hai tập chia theo cụm ảnh gần trùng nên không rò rỉ (C8 · S41) |
 
 ---
 
@@ -566,7 +576,7 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | − nhị phân hóa (OCR ảnh xám) | ② | Trường |
 | − tách vùng (OCR cả trang) | ③ ④ | Khang, Thắng |
 
-**Dữ liệu:** test bộ 5 + bộ 4. **Độ đo:** CER cuối (tổng lỗi / tổng ký tự). **Kỳ vọng:** mỗi bước bị tắt làm CER tăng, chứng minh từng bước đều có đóng góp (đề tài mục 4.2.6).
+**Dữ liệu:** test bộ 5 (bộ 4 không có transcript nên không đo CER). **Độ đo:** CER cuối (tổng lỗi / tổng ký tự). **Kỳ vọng:** mỗi bước bị tắt làm CER tăng, chứng minh từng bước đều có đóng góp (đề tài mục 4.2.6).
 
 ---
 
@@ -622,10 +632,10 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | 3.0 Tổng quan pipeline | Hiếu | 0,5 | Sơ đồ 1.2; ma trận chương mục 9 |
 | 3.1–3.4 Phương pháp | mỗi người | 0,75 × 4 | Các bước + **chương, slide, công thức chính**; đối chứng; bảng tham số rút gọn |
 | 4.1 Thiết lập, độ đo | Hiếu | 0,25 | Công thức F1, F-measure, PSNR (từ C6 · S39), IoU, CER |
-| 4.2–4.5 Kết quả | mỗi người | 1 × 4 | 1 bảng chính + 1 hình chính + 2–3 câu nhận xét có số + 1–2 ca lỗi kèm ảnh |
+| 4.2–4.5 Kết quả | mỗi người | 1 × 4 | 1 bảng chính + 1 hình chính + 2–3 câu nhận xét có số + 1–2 ca lỗi kèm ảnh (ưu tiên ảnh trước / sau trên bộ 4) |
 | 4.6 Ablation | Trường | 0,25 | Bảng mục 10 |
 | 4.7 Thời gian | Hiếu | 0,25 | ms / ảnh từng bước |
-| 5. Thảo luận | Hiếu | 0,5 | Hạn chế (bộ 5 tổng hợp, bộ 2 tiếng Anh, GT Otsu), hướng phát triển |
+| 5. Thảo luận | Hiếu | 0,5 | Hạn chế (bộ 5 tổng hợp, bộ 2 tiếng Anh, GT Otsu, bộ 4 chỉ có nhãn loại tài liệu nên kết quả trên ảnh thật Việt Nam chủ yếu định tính), hướng phát triển |
 | 6. Phân công | Hiếu | 0,25 | Bảng ai làm gì |
 | 7. Khai báo dùng AI | Hiếu | 0,25 | Công cụ AI đã dùng, dùng vào việc gì |
 | Phụ lục A–D | mỗi người | — | Bảng tham số đầy đủ, đường cong theo tham số, thí nghiệm phụ |
@@ -666,7 +676,7 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 
 | Ngày | Hiếu | Trường | Khang | Thắng |
 | :---: | :--- | :--- | :--- | :--- |
-| **09/11** | Chốt đặc trưng + kNN, D10; D3; chọn 10 ảnh mẫu | Nối các bước ② đầu-cuối; T5; thêm ISODATA, Tam giác vào T2 | GT 57 ảnh (soát); K1, K2 trên 46 ảnh | GT ≥ 50 ảnh VAIPE (soát); S1, S3 |
+| **09/11** | Chốt đặc trưng + kNN, D10; D3; chọn 10 ảnh mẫu | Nối các bước ② đầu-cuối; T5; thêm ISODATA, Tam giác vào T2 | GT 57 ảnh (soát); K1, K2 bằng 5-fold | Chia VAIPE theo cụm pHash; GT tự gom cho ~150–200 ảnh chọn tham số; GT ≥ 50 ảnh đánh giá (soát); S1, S3 |
 | **09/11 tối** | 🎯 **Chạy cả pipeline trên 10 ảnh mẫu** | ← | ← | ← |
 | **10/11 sáng** | Ghép báo cáo, slide | T8 ablation; phần báo cáo + 2 slide | K3, K4, K5; phần báo cáo + 2 slide | S2; phần báo cáo + 2 slide |
 | **10/11 chiều** | Quay đoạn demo của mình; ghép video | Quay đoạn demo | Quay đoạn demo | Quay đoạn demo |
@@ -686,7 +696,7 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 ### 12.6. Checklist tự kiểm (mỗi người đánh dấu phần của mình)
 
 **Chung (cả nhóm)**
-- [ ] Đã đọc mục 0–4, đồng ý cách ghi chương (✅ / ➕ / 📘 / ⚠️)
+- [ ] Đã đọc mục 1–4, đồng ý cách ghi chương (✅ / ➕ / 📘 / ⚠️)
 - [ ] Mỗi bước trong phần của mình có: mục tiêu, phương pháp, đối chứng, **chương + slide + công thức**, tham số kèm lý do
 - [ ] Có bước **hậu xử lý** (trừ Hiếu)
 - [ ] Tập đánh giá ≥ 50 ảnh, tham số chọn trên valid
@@ -699,16 +709,16 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 - [ ] 10 ảnh mẫu; báo cáo ≤ 10 trang; slide; video; `.zip`
 
 **Trường**
-- [ ] T5 có Recall chữ đỏ; T8 có bảng ablation
+- [ ] T5 có lưới ảnh trước / sau chữ đỏ trên bộ 4; T8 có bảng ablation
 - [ ] Nhận dạng dấu dùng độ tròn $C = 4\pi A/P^2$ (C8 · S16) và làm đầy vùng (C7 · S45)
 - [ ] Ghi rõ hạn chế "ảnh chuẩn là Otsu"
 
 **Khang**
 - [ ] GT 57 ảnh đã soát, không dùng thuật toán đối chứng để đề xuất GT
-- [ ] K1, K2, K4, K5 có số liệu trên 46 ảnh
+- [ ] K1, K2, K4 có số liệu 5-fold trên 57 ảnh (trung bình ± độ lệch chuẩn); K5 có số liệu với tham số cuối
 - [ ] Phần bảng có kẻ (nếu làm) dùng **Opening** để lấy đường kẻ
 
 **Thắng**
-- [ ] GT ≥ 50 ảnh VAIPE đã soát
+- [ ] Tập chọn tham số ~150–200 ảnh (GT tự gom) và tập đánh giá ≥ 50 ảnh (GT đã soát) tách theo cụm pHash, không trùng nhau
 - [ ] S1, S2, S3 có số liệu; bảng tham số đã điền
 - [ ] Bộ 5 có phần kiểm chứng "giống thật" (C6 · S38–39)

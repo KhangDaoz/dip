@@ -1,16 +1,19 @@
-"""Tìm cột từ phân bố cụm từ. Thí nghiệm K2. Mọi hàm trả về list khoảng [x_trái, x_phải] của từng cột."""
+"""K4 tìm cột (KeHoach.md mục 7.1). Trả về list khoảng [x_start, x_end] của từng cột."""
+import numpy as np
 
 
-def columns_projection(binary, words: list) -> list:
-    """Projection dọc trên dải dòng của table body. `words` là list bounding box cụm từ."""
+def columns_projection(binary: np.ndarray, rows: list, words: list, h: float,
+                       gap_factor: float = 1.0, min_cross: float = 0.6) -> list:
+    """Phương án chính: Q(x) = Σ_y B(x, y) trên thân bảng; khe cột = dải trắng rộng ≥ gap_factor·h
+    xuyên qua ≥ min_cross số dòng (➕ C3 · S23; C5 · S63)."""
     raise NotImplementedError("columns_projection")
 
 
-def columns_xycut(binary, words: list) -> list:
-    """Phân tách cột bằng Recursive XY-Cut trên các cụm từ."""
+def columns_xycut(binary: np.ndarray, words: list, h: float, min_gap_factor: float = 1.0) -> list:
+    """Đối chứng: XY-cut đệ quy — tách vùng top-down (➕ C5 · S89–90)."""
     raise NotImplementedError("columns_xycut")
 
 
-def columns_fixed(words: list, gap: float = 2.0) -> list:
-    """Gom cột theo phân bố tọa độ x của các cụm từ."""
+def columns_fixed(words: list, gap_px: float = 20.0) -> list:
+    """Đối chứng: gom theo khoảng cách x cố định (pixel)."""
     raise NotImplementedError("columns_fixed")

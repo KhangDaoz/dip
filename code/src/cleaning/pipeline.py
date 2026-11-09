@@ -1,15 +1,15 @@
-"""Ghép các bước của ② thành một hàm, trả về CleaningResult (hợp đồng ② → ③④)."""
+"""② Ghép R1–R9 theo hợp đồng CleaningResult (common/contracts.py)."""
 from pathlib import Path
 
 import numpy as np
 
 from common.contracts import CleaningResult
-from common.paths import OUT_DIR
 
 
-def clean(img: np.ndarray, doc_type: str, image_id: str, out_dir: Path = OUT_DIR) -> CleaningResult:
-    """Nhận ảnh đã nắn của ①: khử bóng → tách mực → xóa dấu (giữ chữ đỏ) → nhị phân hóa → thành phần liên thông.
+def clean(img_bgr: np.ndarray, doc_type: str, image_id: str, out_dir: Path) -> CleaningResult:
+    """Ảnh đã nắn → ảnh xám sạch, ảnh nhị phân, mask (stamp, handwriting, red_text), components có nhãn.
 
-    Lưu ảnh xám sạch, ảnh nhị phân, các mask vào out_dir/<image_id>_*.png.
+    Đơn thuốc: chạy xóa dấu / chữ ký (R6). Phiếu xét nghiệm: KHÔNG xóa, giữ chữ đỏ cảnh báo.
+    Giữ nguyên kích thước và hệ tọa độ ảnh đầu vào.
     """
     raise NotImplementedError("clean")

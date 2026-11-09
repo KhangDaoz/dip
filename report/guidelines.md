@@ -1,8 +1,8 @@
 # HƯỚNG DẪN VIẾT BÁO CÁO DIP
 
-> **Hạn gửi phần của mỗi người:** commit lên nhánh `main` trước tối **08/11** · **Hiếu ghép:** 09/11 · **Đóng gói:** 10/11 · **Nộp:** 11/11  
+> **Hạn gửi phần của mỗi người:** commit lên `main` trước **trưa 10/11** · **Hiếu ghép:** 10/11 · **Đóng gói:** tối 10/11 · **Nộp:** 11/11 (lịch: [kế hoạch toàn nhóm](../team/KeHoach.md) mục 12.4)  
 > **Yêu cầu của thầy** ([DoAn_XuLyAnh.md](../docs/references/requirements/DoAn_XuLyAnh.md), slide 8): báo cáo **4–10 trang**, `.pdf`, gồm bài toán, dữ liệu, phương pháp, kết quả, thảo luận, phân công, khai báo sử dụng AI. Ghi rõ chương học phần đã dùng; mỗi bước ghi tham số và lý do chọn; có phương pháp đối chứng và độ đo định lượng.  
-> **Dàn ý:** [outline.md](outline.md)
+> **Dàn ý:** [outline.md](outline.md) · **Nội dung từng mục, bảng chính / hình chính của mỗi người:** kế hoạch toàn nhóm mục 12.1
 
 ## 1. Biên dịch
 
@@ -65,7 +65,7 @@ Bản chính tổng cộng **≤ 10 trang**, phụ lục không giới hạn. M�
 
 | Mục | Nội dung |
 | :--- | :--- |
-| Phương pháp (3.x, ≈ 0,75 trang) | Các bước và lý do chọn; chương học phần (`\chuong{3}`); phương pháp đối chứng; bảng tham số rút gọn |
+| Phương pháp (3.x, ≈ 0,75 trang) | Các bước và lý do chọn; **chương + slide + công thức chính** (`\chuong{3}`); phương pháp đối chứng; **bước hậu xử lý**; bảng tham số rút gọn. Kỹ thuật ngoài bài giảng ghi nguồn theo ký hiệu ✅ / ➕ / 📘 / ⚠️ (kế hoạch mục 4.8) |
 | Kết quả (4.x, ≈ 1 trang) | 1 bảng chính so sánh các phương án; 1 hình chính (đường cong theo mức hỏng); 2–3 câu nhận xét có số liệu; 1–2 ca lỗi kèm ảnh và nguyên nhân |
 | Phụ lục | Bảng tham số đầy đủ (tên, giá trị chọn, khoảng đã thử, lý do), đường cong theo tham số, các thí nghiệm phụ |
 | Gửi kèm (ngoài LaTeX) | 2–3 slide vào `slides/`, đoạn demo 30 giây, README module trong `code/` |
@@ -122,19 +122,20 @@ Mỗi người ghi phần của mình vào cuối file 4.x (dạng chú thích `
 | :--- | :--- | :--- | :--- |
 | *Ví dụ: Claude* | *Gợi ý cấu trúc code, sửa lỗi, viết nháp đoạn văn* | *Chọn phương pháp, chạy thí nghiệm, đọc kết quả, phân tích lỗi* | *Unit test, so với ground truth bộ 5, đọc lại từng đoạn văn* |
 
-## 6. Checklist trước khi gửi phần (mỗi người, trước 08/11)
+## 6. Checklist trước khi gửi phần (mỗi người, trước trưa 10/11)
 
 - [ ] `latexmk` chạy không lỗi
 - [ ] Không còn `\TODO` trong các file được giao
 - [ ] Có đủ: phương pháp, bảng chính, hình chính, nhận xét có số, ca lỗi, bảng tham số (phụ lục)
 - [ ] Mọi số liệu chạy lại được từ `code/experiments/`; dưới mỗi bảng / hình ghi tên script
+- [ ] Tham số chọn trên valid, số liệu báo trên test; tập đánh giá ≥ 50 ảnh (kế hoạch mục 3.3)
 - [ ] Hình / bảng đúng quy ước tên, nhãn, chú thích
 - [ ] Dùng đúng thuật ngữ ở mục 4.4
 - [ ] Nguồn trích đã có trong file `.bib` của phần mình
 - [ ] Khai báo AI đã ghi
 - [ ] Độ dài phần mình ≤ 2 trang (không tính phụ lục)
 
-## 7. Checklist trước khi nộp (Hiếu, 10/11)
+## 7. Checklist trước khi nộp (Hiếu, tối 10/11)
 
 - [ ] Bản chính ≤ 10 trang, không còn `\TODO`, xuất `build/main.pdf`
 - [ ] Hình / bảng đánh số liên tục, đều được nhắc tới trong văn bản

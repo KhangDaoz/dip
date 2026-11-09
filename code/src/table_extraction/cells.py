@@ -1,6 +1,6 @@
-"""Ghép dòng × cột thành ô."""
+"""K5 ghép ô (KeHoach.md mục 7.1; hợp vùng C5 · S87)."""
 
 
-def assign_words_to_cells(words: list, rows: list, columns: list) -> list:
-    """Trả về bảng 2 chiều: cells[i][j] = list chỉ số cụm từ thuộc dòng i, cột j."""
+def assign_words_to_cells(words: list, rows: list, columns: list, min_iou: float = 0.5) -> list:
+    """Giao dòng × cột; mỗi cụm từ vào ô có diện tích giao lớn nhất. Trả về list dict {"row", "col", "word_ids", "bbox"}."""
     raise NotImplementedError("assign_words_to_cells")

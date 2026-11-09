@@ -1,1 +1,1 @@
-"""② Làm sạch & tách lớp mực — phụ trách: Trường. Kế hoạch: team/KeHoach_Truong.md mục 3."""
+"""② Làm sạch & tách lớp mực — phụ trách: Trường. Kế hoạch: team/KeHoach.md mục 6 (bước R1–R9)."""
