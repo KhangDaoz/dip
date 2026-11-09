@@ -1,4 +1,4 @@
 % ===== ≈ 0,75 trang =====
-% Viết gì: bước R1–R9 (kế hoạch toàn nhóm mục 6.1): ước lượng nền Closing = Max rồi Min (đối chứng trung vị); khử bóng bằng toán tử điểm; tách mực HSV; nhận dấu theo độ tròn C = 4πA/P²; mask dấu đặc bằng tách biên + làm đầy vùng; xóa dấu chỉ cho đơn thuốc; nhị phân Otsu (đối chứng ISODATA, Tam giác, Đối xứng nền, Niblack, Sauvola, Wolf); Opening hậu xử lý; nhãn thành phần bằng luật. Ghi chương + slide, bảng tham số rút gọn (mục 6.3).
+% Viết gì: bước R1–R9 (kế hoạch toàn nhóm mục 6.1): ước lượng nền Closing = Max rồi Min (đối chứng trung vị); khử bóng bằng toán tử điểm; tách mực HSV; nhận dấu theo độ tròn C = 4πA/P²; mask dấu đặc bằng tách biên + làm đầy vùng; xóa dấu chỉ cho đơn thuốc; nhị phân Sauvola, mở rộng cục bộ của ngưỡng toàn cục C5 · S64 (đối chứng chính Otsu C5 · S65–67; thêm ISODATA, Tam giác, Đối xứng nền, Niblack, Wolf; có và không khử bóng); lý do chọn Sauvola: Otsu giả định lược đồ hai đỉnh, hỏng khi bóng còn sót / nền xám; Opening hậu xử lý; nhãn thành phần bằng luật. Ghi chương + slide, bảng tham số rút gọn (mục 6.3).
 % Ghi chú: phải viết 1–2 câu về bước hậu xử lý (theo khung pipeline Slide 7).
 \TODO{chưa viết}

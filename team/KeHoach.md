@@ -64,7 +64,7 @@ flowchart LR
     D -->|đơn / phiếu XN| E
     subgraph P2 ["② Trường · Khôi phục + Ảnh màu + Phân vùng"]
         E["Ước lượng nền (Closing / Max–Min)<br>chia chuẩn hóa"] --> F["Tách mực HSV · nhận dấu (độ tròn)"]
-        F --> G["Xóa dấu (đơn thuốc)"] --> H["Nhị phân Otsu / ISODATA / ...<br>+ Opening lọc nhiễu"]
+        F --> G["Xóa dấu (đơn thuốc)"] --> H["Nhị phân Sauvola<br>(đối chứng Otsu, ISODATA, ...)<br>+ Opening lọc nhiễu"]
     end
     H -->|phiếu XN| K
     H -->|đơn thuốc| T
@@ -154,7 +154,7 @@ flowchart LR
 | Người | Tập chọn tham số | Tập đánh giá | Số ảnh đánh giá | Cách có ground truth |
 | :--- | :--- | :--- | :---: | :--- |
 | Hiếu | Valid bộ 5; valid bộ 1–3 | Test bộ 5 (30 ảnh gốc × biến thể, ~450 mẫu); test bộ 1–3; **bộ 4** cho phân loại | ≥ 450 | Ma trận biến dạng, 4 góc của bộ 5; nhãn lớp theo nguồn (bộ 4: theo thư mục) |
-| Trường | Valid bộ 5 | Test bộ 5; bộ 4 (phiếu có chữ đỏ): ảnh trước / sau, định tính | ≥ 450 | Ảnh nhị phân chuẩn, mask dấu của bộ 5 |
+| Trường | Valid bộ 5; **crop dòng VAIPE thuộc tập chọn tham số của Thắng** (chọn phương pháp nhị phân theo CER) | Test bộ 5; **CER trên ảnh thật**: crop dòng VAIPE thuộc tập đánh giá của Thắng + 50 crop `dataset2_50` (phiếu XN chụp thật); bộ 4 (phiếu có chữ đỏ): ảnh trước / sau, định tính | ≥ 450 (+ ≥ 50 ảnh thật) | Ảnh nhị phân chuẩn bộ 5 (Otsu trên ảnh sạch) + **mask dải viền bỏ qua**; mask dấu bộ 5; chữ chuẩn có sẵn trong nhãn VAIPE và `dataset2_50` |
 | Khang | 4 fold (~45 ảnh) mỗi lượt của 5-fold | **57 ảnh** bộ 2, mỗi ảnh đo 1 lần trên fold giữ lại; bộ 4 chỉ minh họa định tính | 57 | Suy dòng / cột từ box cụm từ có sẵn, **soát bằng mắt** từng ảnh |
 | Thắng | **~150–200 ảnh VAIPE**, GT khoản gom tự động (soát ngẫu nhiên ~10 ảnh để kiểm luật gom) | **≥ 50 ảnh VAIPE** khác, GT gom tự động rồi **soát bằng mắt từng ảnh** + test bộ 5; bộ 4 chỉ minh họa định tính | ≥ 50 (+ bộ 5) | Gom nhãn dòng `drugname` + các dòng `usage`/`quantity` ngay dưới thành khoản; bộ 5 có box biến đổi sẵn. Chọn tham số và đánh giá đều lấy từ 1.173 ảnh `train` có nhãn (172 ảnh `test` không có nhãn), **chia theo cụm ảnh gần trùng (pHash)** để ảnh cùng cụm nằm chung một tập |
 
@@ -210,7 +210,7 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | Phân vùng: dựa vào biên / dựa vào miền | S55–58 | Tiêu chí: cường độ, lược đồ, trung bình, phương sai | Khung lý thuyết cho ③ ④ |
 | **Làm trơn lược đồ** | **S62** | $h_{smooth}(b) = \frac1W \sum_{w=-(W-1)/2}^{(W-1)/2} h_{raw}(b-w)$, $W$ = 3 hoặc 5 | **Làm trơn projection profile** (Khang, Thắng) |
 | Tách ngưỡng tại thung lũng; ngưỡng toàn cục | S63–64 | $g = 1$ nếu $f > T$ | Tách khe dòng / cột (Khang, Thắng) |
-| **Otsu** | S65–67 | $P_1(k) = \sum_{i\le k} p_i$; $m(k) = \sum_{i \le k} i\,p_i$; $m_G = \sum i\,p_i$; $\sigma_B^2(k) = \frac{[m_G P_1(k) - m(k)]^2}{P_1(k)[1-P_1(k)]}$; $k^* = \arg\max \sigma_B^2$ | Nhị phân hóa (Trường); ảnh nhị phân chuẩn bộ 5 (Thắng) |
+| **Otsu** | S65–67 | $P_1(k) = \sum_{i\le k} p_i$; $m(k) = \sum_{i \le k} i\,p_i$; $m_G = \sum i\,p_i$; $\sigma_B^2(k) = \frac{[m_G P_1(k) - m(k)]^2}{P_1(k)[1-P_1(k)]}$; $k^* = \arg\max \sigma_B^2$ | **Đối chứng chính** của nhị phân hóa (Trường); ảnh nhị phân chuẩn bộ 5 (Thắng) |
 | **ISODATA** | S72–73 | $t_{k+1} = \frac{\mu_1(t_k) + \mu_2(t_k)}{2}$, lặp tới $\lvert t_{k+1} - t_k\rvert < \Delta T$ | Đối chứng nhị phân (Trường) |
 | Đối xứng nền | S76 | Đỉnh nền $maxp$, tìm điểm $p\%$ phía đối diện | Đối chứng nhị phân (Trường) |
 | **Tam giác** (Zack) | S78 | Nối đỉnh lược đồ với $b_{min}$; ngưỡng tại $b_0$ có khoảng cách $d$ lớn nhất | Đối chứng nhị phân (Trường) |
@@ -240,7 +240,7 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | **Opening** | S28, S34 | $f \circ s = (f \ominus s) \oplus s$; bỏ mảnh nhỏ, cắt eo hẹp | **Hậu xử lý lọc nhiễu** (Trường, Thắng); giữ đường kẻ (Khang); đặc trưng đường kẻ (Hiếu) |
 | **Closing** | S35, S38 | $f \bullet s = (f \oplus s) \ominus s$; lấp khoảng trống nhỏ | Ước lượng nền (Trường); đối chứng gom khoản (Thắng); nối đường kẻ đứt (Khang) |
 | Ví dụ kết hợp mở rồi đóng | S39 | $(A \circ B) \bullet B$ | Lọc nhiễu hai phía |
-| **Tách biên** | S40 | $\beta(A) = A - (A \ominus B)$ | Lấy vành dấu (Trường) |
+| **Tách biên** | S40 | $\beta(A) = A - (A \ominus B)$ | Lấy vành dấu (Trường); mở rộng thành **dải viền** $(A\oplus B)-(A\ominus B)$ bỏ qua khi chấm bộ 5 (Thắng, Trường) |
 | **Làm đầy vùng** | S43–45 | $X_k = (X_{k-1} \oplus B) \cap A^c$, lặp tới $X_k = X_{k-1}$; kết quả $X_k \cup A$ | **Mask dấu đặc từ vành dấu** (Trường) |
 | Thực hành | TH · C7 | Tự cài Erosion / Dilation, Opening / Closing, tách biên, làm đầy vùng, thành phần liên thông | Mọi người tham khảo |
 
@@ -269,7 +269,7 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | CLAHE | 📘 QĐ · S4 | Hiếu | "Mở rộng của cân bằng lược đồ (C3 · S32–33)" |
 | Projection Profile | ➕ | Hiếu, Khang, Thắng | "Lược đồ đếm pixel theo hàng / cột (C3 · S23), làm trơn (C5 · S62), tách ngưỡng (C5 · S63)" |
 | XY-cut | ➕ | Khang | "Tách vùng đệ quy (C5 · S89–90)" |
-| Niblack, Sauvola, Wolf | ➕ | Trường | "Ngưỡng cục bộ: mở rộng ngưỡng toàn cục (C5 · S64) theo trung bình và độ lệch chuẩn cửa sổ" |
+| **Sauvola** (phương pháp chính); Niblack, Wolf (đối chứng) | ➕ | Trường | "Ngưỡng cục bộ: mở rộng ngưỡng toàn cục (C5 · S64) theo trung bình $m$ và độ lệch chuẩn $s$ của cửa sổ w × w: Sauvola $T(x,y) = m\left[1 + k\left(\frac{s}{R} - 1\right)\right]$, $R = 128$; Niblack $T = m + k\,s$" (Sauvola 2000, Niblack 1986) |
 | Gán nhãn thành phần liên thông | ➕ | Mọi người | "Vùng liên thông $R_i$ (C5 · S84), phát triển vùng (C5 · S85)" |
 | `approxPolyDP`, Hough, Radon | ⚠️ | Hiếu | Đối chứng / dự phòng |
 | Inpainting (Telea, Navier–Stokes) | ⚠️ | Hiếu, Trường | Phương án chính có đối chứng "tô màu nền" (toán tử điểm C3 · S10) |
@@ -357,8 +357,8 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | R4 | Phân biệt dấu / chữ đỏ | Không xóa nhầm chữ đỏ cảnh báo | Với mỗi thành phần liên thông của mask đỏ: diện tích $A$, chu vi $P$, **độ tròn $C = 4\pi A/P^2$**, tỉ số dài / rộng. Dấu = $A$ lớn **và** $C$ cao **và** có vành kín | — | **C5 · S84**; **C8 · S16** | Dấu tròn / elip có $C$ gần 1; chữ đỏ nhỏ, dẹt, $C$ thấp |
 | R5 | Mask dấu đặc | Phủ cả phần chữ nằm trong vành dấu | Vành $\beta(A) = A - (A \ominus B)$; **làm đầy vùng** $X_k = (X_{k-1}\oplus B) \cap A^c$ | Chỉ dùng mask vành | **C7 · S40**; **C7 · S43–45** | Mực dấu bên trong vành mờ, không đủ S; làm đầy vùng lấy toàn bộ diện tích dấu |
 | R6 | Xóa dấu / chữ ký (**chỉ đơn thuốc**) | Chữ in dưới dấu đọc được | Inpainting | **Tô màu nền** (toán tử điểm) · Không xóa | ⚠️; C3 · S10 | Phiếu XN không chạy bước này để giữ chữ đỏ |
-| R7 | Nhị phân hóa | Ảnh mực / nền | **Otsu** sau khử bóng | **ISODATA**, **Tam giác**, **Đối xứng nền**, Niblack, Sauvola, Wolf | **C5 · S65–67**, **S72–78**; ➕ ngưỡng cục bộ | Sau khử bóng nền gần đều, lược đồ hai đỉnh, đúng giả thiết của Otsu (C5 · S66) |
-| R8 | **Hậu xử lý** | Bỏ chấm nhiễu | **Opening** 2 × 2; bỏ thành phần diện tích < ngưỡng | Trung vị 3 × 3 | **C7 · S28, S34**; C3 · S73; QĐ · S7 | Đúng yêu cầu hậu xử lý của thầy |
+| R7 | Nhị phân hóa | Ảnh mực / nền | **Sauvola** sau khử bóng: $T(x,y) = m(x,y)\left[1 + k\left(\frac{s(x,y)}{R} - 1\right)\right]$, cửa sổ w ≈ 2–3 × chiều cao chữ | **Otsu** (đối chứng chính), **ISODATA**, **Tam giác**, **Đối xứng nền**, Niblack, Wolf; mỗi cách chạy **có và không** khử bóng | ➕ ngưỡng cục bộ (mở rộng C5 · S64); đối chứng **C5 · S65–67**, **S72–78** | Otsu giả định lược đồ hai đỉnh, một ngưỡng cho cả ảnh (C5 · S66), nên hỏng khi bóng còn sót, mép giấy tối, hoặc dòng / ô tô nền xám (biến thành khối đen, làm hỏng projection của ③ ④). Sauvola tính ngưỡng theo từng cửa sổ nên chịu được các trường hợp này; khử bóng + Sauvola là **hai lớp bảo vệ** |
+| R8 | **Hậu xử lý** | Bỏ chấm nhiễu (Sauvola dễ để lại lấm tấm ở nền có vân, vùng sau xóa dấu) | **Opening** 2 × 2; bỏ thành phần diện tích < ngưỡng | Trung vị 3 × 3 | **C7 · S28, S34**; C3 · S73; QĐ · S7 | Đúng yêu cầu hậu xử lý của thầy; dọn đúng nhược điểm của Sauvola |
 | R9 | Thành phần + nhãn | Danh sách vùng cho ③ ④ | Gán nhãn liên thông; nhãn bằng **luật**: màu từ R3 + hình dạng từ R4 | — | C5 · S84–85; C4 · S38; C8 · S16 | Không dùng ML |
 
 ### 6.2. Thí nghiệm
@@ -366,8 +366,9 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | # | Câu hỏi | Dữ liệu | Độ đo | Hình / bảng | Ưu tiên |
 | :---: | :--- | :--- | :--- | :--- | :---: |
 | T1 | Ước lượng nền nào tốt nhất? | Bộ 5 (3 mức bóng) | PSNR (C6 · S39), SSIM | Bảng + ảnh trước / sau | ⭐ (đã có: Closing 81, PSNR 49,81 dB) |
-| **T2** | Cách nhị phân nào tốt nhất? (7 cách × có / không khử bóng) | Bộ 5 | **F-measure** (C8 · S49 ở mức pixel), pseudo-F, PSNR | **Bảng chính** | ⭐ (đã có 5 cách; thêm ISODATA, Tam giác) |
-| **T3** | Kết quả thay đổi theo mức bóng, mờ, dấu ra sao? | Test bộ 5 | F-measure theo mức hỏng | **Đường cong — hình chính** | ⭐ (đã có) |
+| **T2** | Cách nhị phân nào tốt nhất? (7 cách × có / không khử bóng; quét w, k của Sauvola trên valid) | Bộ 5 | **F-measure** (C8 · S49 ở mức pixel) **bỏ qua dải viền 1 px**, pseudo-F, PSNR | **Bảng chính** | ⭐ (đã có 5 cách; chấm lại có dải viền; thêm ISODATA, Tam giác) |
+| **T2-CER** | **Tiêu chí chọn phương pháp chính** (chốt trước khi chạy): Sauvola hay Otsu cho CER thấp hơn trên ảnh thật? | Chọn: crop dòng VAIPE tập chọn tham số. Báo cáo: crop dòng VAIPE tập đánh giá + 50 crop `dataset2_50` | CER (tổng lỗi / tổng ký tự) | Bảng nhỏ | ⭐ |
+| **T3** | Kết quả thay đổi theo mức bóng, mờ, dấu ra sao? **Khi nào cần ngưỡng cục bộ?** | Test bộ 5 | F-measure (bỏ qua dải viền) theo mức hỏng, **Sauvola vs Otsu**, có và không khử bóng | **Đường cong — hình chính** | ⭐ (đã có; chấm lại có dải viền) |
 | T4 | Phát hiện và xóa dấu / bút | Bộ 5 (mask dấu) | IoU mask; CER vùng bị che trước / sau xóa | Bảng + ảnh | ⭐ (đã có, phạm vi bộ 5) |
 | **T5** | **An toàn:** có giữ đủ chữ đỏ trên phiếu XN không? | ≥ 5 phiếu bộ 4 có chữ đỏ | **Kiểm tra định tính**: ảnh trước / sau, mask chữ đỏ phủ màu; ghi số phiếu có chữ đỏ bị xóa nhầm (đếm bằng mắt) | Lưới ảnh trước / sau | ⭐ |
 | T6 | Làm sạch giúp OCR bao nhiêu? | Bộ 5, bộ 1, bộ 2 | CER | Bảng | Phụ |
@@ -380,21 +381,25 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | Kích thước SE ước lượng nền | 15–81 px (≈ 3–5 × chiều cao chữ) | PSNR trên valid (T1) | Đã chọn **81** |
 | Ngưỡng H, S mực đỏ / xanh | H ± 5°, S 40–120 | IoU mask dấu (T4) | C4 · S38–39 |
 | Ngưỡng độ tròn $C$ và diện tích dấu | $C$ 0,4–0,8; diện tích 1–10 % trang | IoU dấu cao nhất (T4), không xóa nhầm chữ đỏ trên ảnh T5 | C8 · S16 |
-| Phương pháp nhị phân | 7 cách | F-measure trên valid (T2) | Đã chọn **Otsu sau Closing 81** |
-| Cửa sổ, k của Sauvola (đối chứng) | 15–61; 0,1–0,5 | F-measure (T2) | — |
+| Phương pháp nhị phân | 7 cách | **CER trên crop ảnh thật tập chọn tham số (T2-CER)**; F-measure bộ 5 (T2) để tham khảo | Hướng chốt: **Sauvola sau Closing 81** |
+| Cửa sổ w, hệ số k của **Sauvola (phương pháp chính)** | w 15–61 px (≈ 2–3 × chiều cao chữ); k 0,1–0,5 | F-measure bỏ qua dải viền trên valid bộ 5 (T2) | w nhỏ hơn nét đậm thì thủng ruột chữ; k lớn thì mất mực nhạt |
 | SE Opening; ngưỡng diện tích nhiễu | 1 × 1 – 3 × 3; 2–30 px | F-measure + CER | C7 · S34 |
 
 ### 6.4. Lưu ý trung thực khi viết báo cáo
 
-- Ảnh nhị phân chuẩn của bộ 5 là **Otsu trên ảnh sạch**, nên F-measure có thiên lệch về Otsu. Phải ghi rõ hạn chế này; nếu kịp, đo lại với ảnh chuẩn từ ISODATA để kiểm tra kết luận có đổi không.
-- Kế hoạch cũ ghi Sauvola là phương pháp chính, nhưng số liệu T2 chọn Otsu. Báo cáo theo số liệu. Đây là một kết luận tốt: khử bóng tốt thì ngưỡng toàn cục là đủ.
+- **Đáp án bộ 5 được tạo bằng Otsu trên ảnh sạch**, nên khi chấm, Otsu có lợi ở viền nét chữ. Cách xử lý: **không chấm dải viền 1 px** quanh nét, $(A\oplus B)-(A\ominus B)$ với B = 3 × 3 (mở rộng C7 · S40). Trên ảnh sạch, các phương pháp chỉ khác nhau ở viền, nên phần còn lại có đáp án rõ ràng. Báo kèm hai con số: tỉ lệ pixel bị bỏ qua, và tỉ lệ pixel Otsu / Sauvola bất đồng **ngoài** dải viền trên ảnh sạch (kỳ vọng gần 0 %).
+- **Quyết định cuối dựa trên CER ảnh thật (T2-CER)**, không phụ thuộc đáp án nhị phân nào. Tiêu chí này ghi rõ **trước khi chạy**; không chọn lại sau khi xem kết quả test.
+- Số liệu T2 cũ (chấm bằng đáp án Otsu, chưa bỏ dải viền) cho Otsu nhỉnh hơn sau khử bóng. Khi viết báo cáo: nêu rằng trên ảnh tổng hợp đã khử bóng hai cách **gần ngang nhau**; ưu thế của Sauvola thể hiện ở **bóng nặng / không khử bóng (T3)** và **ảnh thật (T2-CER)**. Nếu số liệu mới vẫn cho Otsu tốt hơn thì báo cáo đúng số liệu: "khử bóng tốt thì ngưỡng toàn cục là đủ, Sauvola chỉ cần ở mức bóng nặng".
+- Ca lỗi minh họa (nên có): 1 ảnh Otsu biến vùng bóng / nền xám thành mảng đen; 1 ảnh Sauvola để lại lấm tấm nhiễu và Opening dọn sạch.
 
 ### 6.5. Hỏi đáp
 
 | Câu hỏi | Trả lời |
 | :--- | :--- |
 | Vì sao Closing ước lượng được nền? | Trên ảnh xám, Closing = lọc Max rồi Min (C3 · S74, C7 · S35). Nét chữ tối, hẹp hơn SE nên bị giá trị nền sáng lấp |
-| Vì sao chọn Otsu chứ không Sauvola? | Sau khử bóng, lược đồ hai đỉnh rõ, đúng giả thiết của Otsu (C5 · S65–66). Số liệu T2 trên valid |
+| Vì sao chọn Sauvola chứ không Otsu? | Otsu là ngưỡng toàn cục tối ưu (C5 · S65–67) nhưng giả định lược đồ hai đỉnh (C5 · S66). Ảnh chụp thật còn bóng sót, mép tối, ô tô nền xám nên lược đồ không còn hai đỉnh rõ. Sauvola tính ngưỡng theo từng cửa sổ từ $m$ và $s$. Bằng chứng: T3 (bóng nặng) và CER ảnh thật (T2-CER) |
+| Sauvola có trong bài giảng không? | Không có slide riêng. Là mở rộng của ngưỡng toàn cục (C5 · S64): thay một ngưỡng T cho cả ảnh bằng ngưỡng riêng cho từng cửa sổ. Otsu, ISODATA, Tam giác trong bài giảng đều có mặt làm đối chứng |
+| Đáp án bộ 5 tạo bằng Otsu thì có thiên vị Otsu không? | Có, ở viền nét chữ. Vì vậy không chấm dải viền 1 px (C7 · S40 mở rộng); ngoài dải viền, Otsu và Sauvola trên ảnh sạch gần như không bất đồng. Quyết định cuối dựa trên CER ảnh thật, không dùng đáp án nhị phân |
 | Làm sao không xóa nhầm chữ đỏ? | Dấu có độ tròn $C = 4\pi A/P^2$ cao và diện tích lớn (C8 · S16); chữ đỏ nhỏ và dẹt. Phiếu XN không chạy xóa dấu. T5 kiểm tra trên ảnh thật bộ 4 (ảnh trước / sau) |
 | Lấy mask dấu đặc thế nào? | Tách vành (C7 · S40), rồi làm đầy vùng $X_k = (X_{k-1}\oplus B)\cap A^c$ (C7 · S45) |
 
@@ -495,7 +500,7 @@ Mọi tham số chọn bằng grid search trên 4 fold, lặp cho cả 5 lượt
 | Dấu đỏ, bút xanh / đen | Vẽ dấu tròn có chữ, đường cong ngẫu nhiên, trộn trong suốt | 3 mức che | Mask dấu / bút | **C4 · S29–31, S38** |
 | Nén JPEG | Chất lượng 30–90 | 3 mức | — | **C4 · S15, S18**; **C6 · S40–54** |
 | Nhiễu Gaussian | $g = f + \eta$ | 3 mức | — | **C3 · S65–66** |
-| Ảnh nhị phân chuẩn | Otsu trên ảnh sạch | — | Ảnh nhị phân | **C5 · S65–67** |
+| Ảnh nhị phân chuẩn | Otsu trên ảnh sạch (ảnh scan, lược đồ hai đỉnh rõ) + **mask dải viền bỏ qua** $(A\oplus B)-(A\ominus B)$, B = 3 × 3 | — | Ảnh nhị phân + mask bỏ qua; tỉ lệ pixel Otsu / Sauvola bất đồng ngoài dải viền | **C5 · S65–67**; mở rộng **C7 · S40** |
 
 **Kiểm chứng bộ 5 "giống thật":**
 
@@ -610,7 +615,7 @@ Tập chọn tham số là ~150–200 ảnh VAIPE với GT khoản gom tự đ�
 | :---: | :--- | :--- | :--- |
 | 0:00–0:15 | Giới thiệu bài toán, pipeline 4 bước (1 khung hình sơ đồ mục 1.2) | — | Hiếu |
 | 0:15–0:45 | Mở app, chụp một **đơn thuốc nghiêng, có bóng**: hiện điểm mờ / lóa, 4 góc, ảnh nắn phẳng, nhãn "Đơn thuốc" | Bộ 4 | Hiếu |
-| 0:45–1:15 | Làm sạch: trước / sau khử bóng, phát hiện dấu đỏ (độ tròn), xóa dấu, ảnh nhị phân | Cùng ảnh | Trường |
+| 0:45–1:15 | Làm sạch: trước / sau khử bóng, phát hiện dấu đỏ (độ tròn), xóa dấu, ảnh nhị phân **Sauvola đặt cạnh Otsu** (Otsu để lại mảng đen ở vùng tối) | Cùng ảnh | Trường |
 | 1:15–1:45 | Đơn thuốc: khung vùng thuốc → dòng → **từng khoản**; danh sách thuốc → lịch nhắc | Cùng ảnh | Thắng |
 | 1:45–2:20 | Chụp **phiếu xét nghiệm**: nắn, làm sạch (giữ chữ đỏ), khung dòng / cột, bảng chỉ số có cờ HIGH / LOW | Bộ 4 hoặc bộ 2 | Khang (+ Trường phần giữ chữ đỏ) |
 | 2:20–2:40 | Ca từ chối: ảnh quá mờ → báo chụp lại; hóa đơn → "tài liệu khác" | Bộ 4 | Hiếu |
@@ -676,7 +681,7 @@ Tập chọn tham số là ~150–200 ảnh VAIPE với GT khoản gom tự đ�
 
 | Ngày | Hiếu | Trường | Khang | Thắng |
 | :---: | :--- | :--- | :--- | :--- |
-| **09/11** | Chốt đặc trưng + kNN, D10; D3; chọn 10 ảnh mẫu | Nối các bước ② đầu-cuối; T5; thêm ISODATA, Tam giác vào T2 | GT 57 ảnh (soát); K1, K2 bằng 5-fold | Chia VAIPE theo cụm pHash; GT tự gom cho ~150–200 ảnh chọn tham số; GT ≥ 50 ảnh đánh giá (soát); S1, S3 |
+| **09/11** | Chốt đặc trưng + kNN, D10; D3; chọn 10 ảnh mẫu | Nối các bước ② đầu-cuối (R7 = Sauvola); quét w, k; chấm lại T2, T3 có dải viền; T2-CER; T5; thêm ISODATA, Tam giác vào T2 | GT 57 ảnh (soát); K1, K2 bằng 5-fold | Chia VAIPE theo cụm pHash; GT tự gom cho ~150–200 ảnh chọn tham số; GT ≥ 50 ảnh đánh giá (soát); S1, S3; **mask dải viền bộ 5 + tỉ lệ bất đồng Otsu / Sauvola** (gửi Trường sớm) |
 | **09/11 tối** | 🎯 **Chạy cả pipeline trên 10 ảnh mẫu** | ← | ← | ← |
 | **10/11 sáng** | Ghép báo cáo, slide | T8 ablation; phần báo cáo + 2 slide | K3, K4, K5; phần báo cáo + 2 slide | S2; phần báo cáo + 2 slide |
 | **10/11 chiều** | Quay đoạn demo của mình; ghép video | Quay đoạn demo | Quay đoạn demo | Quay đoạn demo |
@@ -711,7 +716,9 @@ Tập chọn tham số là ~150–200 ảnh VAIPE với GT khoản gom tự đ�
 **Trường**
 - [ ] T5 có lưới ảnh trước / sau chữ đỏ trên bộ 4; T8 có bảng ablation
 - [ ] Nhận dạng dấu dùng độ tròn $C = 4\pi A/P^2$ (C8 · S16) và làm đầy vùng (C7 · S45)
-- [ ] Ghi rõ hạn chế "ảnh chuẩn là Otsu"
+- [ ] R7 dùng **Sauvola**; w, k chọn trên valid; Otsu và các cách C5 làm đối chứng, có và không khử bóng
+- [ ] T2, T3 chấm **bỏ qua dải viền**; T2-CER có kết quả; ghi rõ tiêu chí chọn trước khi chạy
+- [ ] Ghi rõ hạn chế "đáp án bộ 5 tạo bằng Otsu" và cách đã giảm thiên vị
 
 **Khang**
 - [ ] GT 57 ảnh đã soát, không dùng thuật toán đối chứng để đề xuất GT
@@ -722,3 +729,4 @@ Tập chọn tham số là ~150–200 ảnh VAIPE với GT khoản gom tự đ�
 - [ ] Tập chọn tham số ~150–200 ảnh (GT tự gom) và tập đánh giá ≥ 50 ảnh (GT đã soát) tách theo cụm pHash, không trùng nhau
 - [ ] S1, S2, S3 có số liệu; bảng tham số đã điền
 - [ ] Bộ 5 có phần kiểm chứng "giống thật" (C6 · S38–39)
+- [ ] Bộ 5 có **mask dải viền bỏ qua** và con số tỉ lệ bất đồng Otsu / Sauvola ngoài dải viền, đã gửi Trường

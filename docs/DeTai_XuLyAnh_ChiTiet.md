@@ -67,7 +67,7 @@ Mỗi giai đoạn gồm **tiền xử lý → xử lý chính → hậu xử l�
 | **C2** Cơ bản | Lấy mẫu, nội suy, độ phân giải; nắn phối cảnh (theo gợi ý đề tài) |
 | **C3** Nâng cao chất lượng | Lọc trung vị, Max/Min, lược đồ xám (cơ sở của projection profile), cân bằng lược đồ / CLAHE, toán tử điểm khử bóng |
 | **C4** Hệ màu | HSV: phát hiện lóa, tách mực đỏ / xanh, giữ chữ đỏ cảnh báo |
-| **C5** Biên & phân vùng | Laplacian đo mờ, Canny tìm mép giấy, Otsu và các ngưỡng đối chứng, vùng liên thông, tách / hợp vùng |
+| **C5** Biên & phân vùng | Laplacian đo mờ, Canny tìm mép giấy, Sauvola (mở rộng cục bộ của ngưỡng toàn cục) với Otsu và các ngưỡng trong bài làm đối chứng, vùng liên thông, tách / hợp vùng |
 | **C6** Nén ảnh | Đánh giá chất lượng (RMS → PSNR, thang chủ quan); suy biến JPEG trong bộ 5 |
 | **C7** Hình thái | **Trục chính:** Closing ước lượng nền, Dilation gom chữ thành cụm từ / khoản thuốc, Opening hậu xử lý, làm đầy vùng mask dấu |
 | **C8** Nhận dạng | Đặc trưng HOG / GLCM / lược đồ, $k$-NN, ma trận nhầm lẫn, Precision / Recall / F1 |

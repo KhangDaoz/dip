@@ -12,7 +12,7 @@ Nhóm: Hiếu (nhóm trưởng) · Trường · Khang · Thắng.
 | Giai đoạn | Người | Nội dung | Module |
 | :--- | :--- | :--- | :--- |
 | ① Tiền xử lý & phân loại | Hiếu | Đo mờ (Laplacian) / lóa (HSV), Canny → 4 góc, nắn phối cảnh, chỉnh nghiêng (projection), CLAHE; đặc trưng + $k$-NN 3 lớp | `code/src/preprocessing/` · `code/src/classification/` |
-| ② Làm sạch & tách lớp mực | Trường | Khử bóng (Closing ước lượng nền), tách mực HSV, nhận dấu theo độ tròn, xóa dấu (đơn thuốc), nhị phân Otsu + Opening | `code/src/cleaning/` |
+| ② Làm sạch & tách lớp mực | Trường | Khử bóng (Closing ước lượng nền), tách mực HSV, nhận dấu theo độ tròn, xóa dấu (đơn thuốc), nhị phân Sauvola (đối chứng Otsu) + Opening | `code/src/cleaning/` |
 | ③ Dựng bảng phiếu xét nghiệm | Khang | Bảng không kẻ: Dilation ngang → cụm từ, projection → dòng, projection dọc / XY-cut → cột, ghép ô | `code/src/table_extraction/` |
 | ④ Bóc tách đơn thuốc | Thắng | Dilation khoanh vùng thuốc, projection tách dòng, Dilation dọc gom khoản | `code/src/prescription_segmentation/` |
 | Dùng chung | Khang · Thắng | Bộ OCR (công cụ đo CER) · bộ sinh benchmark tổng hợp (bộ 5) | `code/src/ocr/` · `code/src/synthetic/` |
