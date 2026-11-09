@@ -78,15 +78,36 @@ Giá trị hợp lệ: `doc_type` ∈ {`prescription`, `lab_report`, `other`}; `
 ## 5. Chạy
 
 ```bash
-pytest                                                 # toàn bộ test
-pytest tests/test_table.py -v                          # test một module
-python run_pipeline.py samples/                        # đầu-cuối ① → ② → ③/④
-python run_pipeline.py anh.jpg --doc-type lab_report   # ép loại tài liệu khi bộ phân loại chưa xong
-python experiments/k2_columns.py                       # một thí nghiệm → results/k2/
-python -m synthetic.generate                           # sinh bộ 5 → data/5_synthetic/
+pytest                                                 # toàn bộ test (25 test)
+python run_pipeline.py samples/                        # đầu-cuối ① → ② → ③/④ trên 10 ảnh mẫu
+python run_pipeline.py anh.jpg --doc-type prescription # ép loại tài liệu (bỏ qua bộ phân loại)
+python experiments/s1_items.py                         # một thí nghiệm → results/s1/
 ```
 
-`run_pipeline.py` in trạng thái từng bước của từng ảnh (`ok` / `chưa làm` / `LỖI`), JSON ghi vào `out/`. Thí nghiệm mới: copy [`experiments/_template.py`](experiments/_template.py), xem [experiments/README.md](experiments/README.md).
+**Đầu ra mong đợi của `run_pipeline.py`:** với mỗi ảnh, in trạng thái từng bước (`ok` / `chưa làm` / `LỖI`) và ghi vào `out/`:
+
+| File | Nội dung |
+| :--- | :--- |
+| `<id>_rect.png` | ① ảnh đã nắn phối cảnh + chỉnh nghiêng |
+| `<id>_1_preprocess.json` | ① ma trận H, 4 góc, cách tìm góc, góc nghiêng, điểm mờ / lóa, loại tài liệu + độ tin cậy |
+| `<id>_clean.png`, `<id>_bin.png` | ② ảnh xám đã khử bóng, ảnh nhị phân (Sauvola, mực trắng) |
+| `<id>_stamp.png`, `<id>_hw.png`, `<id>_red.png` | ② mask dấu đỏ, nét bút xanh, chữ đỏ được giữ |
+| `<id>_2_clean.json` | ② đường dẫn ảnh, thành phần liên thông có nhãn, tham số |
+| `<id>_3_result.json` | ③ các dòng chỉ số (bbox, tên, kết quả, cờ) hoặc ④ các khoản thuốc (bbox, tên, liều) |
+| `<id>_overlay.png` | ảnh đã nắn có vẽ khung dòng chỉ số / khoản thuốc (dùng cho demo) |
+
+Bộ phân loại dùng mô hình `models/doc_knn.pkl` (do `experiments/d10_classify.py` tạo). OCR là tùy chọn: thiếu Tesseract thì bbox vẫn đầy đủ, trường chữ để trống.
+
+**Thí nghiệm** (kết quả vào `results/<mã>/`; chạy theo thứ tự vì có phụ thuộc):
+
+| Người | Lệnh (từ `code/`) | Mục KeHoach |
+| :--- | :--- | :--- |
+| Thắng | `s0_gt_vaipe.py` → `s1_items.py` → `s4_region.py` → `s2_robustness.py`; `s6_bo5_check.py` (sinh `ignore_band` cho T2) | 8.3 |
+| Trường | `t1_background.py`; `t2_binarize.py` (sau S6) → `t3_degradation.py`; `t4_stamp.py` | 6.2 |
+| Khang | `k0_gt.py` → `k2_table.py` (K1, K2, K4, 5-fold) | 7.2 |
+| Hiếu | `d1_iqa.py`, `d2_corners.py` (D2 + D3), `d4_deskew.py`, `d10_classify.py` | 5.2 |
+
+Chưa chạy được khi thiếu OCR: S3, T2-CER, D6, K5, T8 (cần Tesseract + gói `vie`).
 
 ## 6. Thư viện thêm
 
@@ -108,8 +129,8 @@ data/
 ├── 2_roboflow_report_keywords/            # bộ 2 — phiếu xét nghiệm, 57 ảnh gốc (39 / 11 / 7)
 ├── 2_roboflow_report_keywords_augmented/  # bản tăng cường của bộ 2, không dùng cho thí nghiệm
 ├── 3_other_rvl_cdip/                      # bộ 3 — lớp "khác"
-├── 4_self_captured/                       # bộ 4 — ảnh tự chụp, CHỈ để test, đã che thông tin cá nhân
+├── 4_self_captured/                       # bộ 4 — ảnh tự chụp, CHỈ để test (chưa xác nhận đã che thông tin cá nhân)
 └── 5_synthetic/                           # bộ 5 — tổng hợp từ ảnh sạch bộ 1
 ```
 
-`code/samples/` chứa 5–10 ảnh mẫu **có commit** (đã che thông tin cá nhân), dùng cho demo và mốc tích hợp.
+`code/samples/` chứa 10 ảnh mẫu **có commit**, dùng cho demo và mốc tích hợp: 2 đơn VAIPE (thông tin cá nhân đã che sẵn từ nguồn), 2 đơn bộ 5 có nghiêng / phối cảnh / bóng / dấu, 4 phiếu xét nghiệm bộ 2 (CC BY 4.0), 2 tài liệu khác RVL-CDIP. Chưa dùng ảnh bộ 4 vì chưa xác nhận đã che thông tin.

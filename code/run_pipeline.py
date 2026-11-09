@@ -10,7 +10,9 @@ import argparse
 from pathlib import Path
 
 from common.contracts import DOC_TYPES
-from common.io import read_image, save_json
+import cv2
+
+from common.io import read_image, save_json, write_image
 from common.paths import OUT_DIR, REPO_DIR
 from cleaning.pipeline import clean
 from prescription_segmentation.pipeline import extract_prescription
@@ -18,6 +20,18 @@ from preprocessing.pipeline import preprocess
 from table_extraction.pipeline import extract_table
 
 IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp"}
+PALETTE = [(0, 0, 220), (0, 150, 0), (200, 80, 0), (160, 0, 160), (0, 140, 200)]
+
+
+def draw_boxes(img, boxes):
+    """Vẽ khung từng dòng chỉ số / khoản thuốc (mỗi khung một màu, đánh số) — ảnh dùng cho demo."""
+    vis = img.copy()
+    t = max(2, img.shape[1] // 400)
+    for i, (x, y, w, h) in enumerate(boxes):
+        c = PALETTE[i % len(PALETTE)]
+        cv2.rectangle(vis, (x, y), (x + w, y + h), c, t)
+        cv2.putText(vis, str(i + 1), (x + 4, y + max(h // 2, 15)), cv2.FONT_HERSHEY_SIMPLEX, 0.6 * t / 2 + 0.3, c, t)
+    return vis
 
 
 def run_one(path: Path, out_dir: Path, doc_type: str = None) -> dict:
@@ -41,11 +55,14 @@ def run_one(path: Path, out_dir: Path, doc_type: str = None) -> dict:
             stage = "③ table"
             result = extract_table(cleaned)
             status[stage] = f"ok ({len(result.rows)} dòng chỉ số)"
+            boxes = [r.bbox for r in result.rows]
         else:
             stage = "④ prescription"
             result = extract_prescription(cleaned)
             status[stage] = f"ok ({len(result.items)} khoản thuốc)"
+            boxes = [it.bbox for it in result.items]
         save_json(out_dir / f"{image_id}_3_result.json", result.to_dict())
+        write_image(out_dir / f"{image_id}_overlay.png", draw_boxes(read_image(REPO_DIR / pre.rectified_path), boxes))
     except NotImplementedError as e:
         status[stage] = f"chưa làm: {e}"
     except Exception as e:  # một ảnh lỗi không chặn các ảnh khác
