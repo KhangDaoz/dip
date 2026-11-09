@@ -3,7 +3,7 @@
 > **Phạm vi:** chỉ nội dung môn **Xử lý ảnh số (DIP)**. Không gồm phần Học máy. Phần app chỉ dùng làm giao diện cho video demo (mục 11).
 > **Nhóm:** Hiếu (nhóm trưởng) · Trường · Khang · Thắng. **Hạn nộp:** **11/11/2026**, email `uyenvnb@ptit.edu.vn`.
 > **Căn cứ:** [quy định đồ án](../docs/references/requirements/DoAn_XuLyAnh.pdf) ([bản md](../docs/references/requirements/DoAn_XuLyAnh.md)) · [bài giảng chương 1–8](../docs/references/lectures/) · [notebook thực hành](../docs/references/practices/) · [đề tài đã chốt](../docs/DeTai_XuLyAnh_ChiTiet.md) · [phân công](PhanCong_TongHop.md)
-> **Phiên bản:** v2, ngày 09/11/2026. Mọi trích dẫn chương / slide đã đối chiếu với nội dung slide gốc. Mục 1 liệt kê những gì đã sửa so với bản v1.
+> **Phiên bản:** ngày 09/11/2026. Mọi trích dẫn chương / slide đã đối chiếu với nội dung slide gốc.
 
 ---
 
@@ -25,7 +25,6 @@
 
 ## MỤC LỤC
 
-0. [Đánh giá bản v1 và những gì đã sửa](#0-đánh-giá-bản-v1-và-những-gì-đã-sửa)
 1. [Bài toán và pipeline](#1-bài-toán-và-pipeline)
 2. [Yêu cầu của thầy và cách nhóm đáp ứng](#2-yêu-cầu-của-thầy-và-cách-nhóm-đáp-ứng)
 3. [Dữ liệu](#3-dữ-liệu)
@@ -38,21 +37,6 @@
 10. [Đánh giá toàn pipeline (ablation)](#10-đánh-giá-toàn-pipeline-ablation)
 11. [Video demo trên app mobile](#11-video-demo-trên-app-mobile)
 12. [Báo cáo, slide, gói nộp, lịch, checklist](#12-báo-cáo-slide-gói-nộp-lịch-checklist)
-
----
-
-## 0. ĐÁNH GIÁ BẢN V1 VÀ NHỮNG GÌ ĐÃ SỬA
-
-| # | Vấn đề ở bản v1 | Sửa trong v2 |
-| :---: | :--- | :--- |
-| 1 | Kết luận "phối cảnh / xoay **không** thuộc Chương 2, đề tài ghi sai" | **Sai.** QĐ · S6 do thầy đưa ra ghi rõ đề tài "Số hóa tài liệu chụp bằng điện thoại: **nắn phối cảnh**, cân bằng sáng, nhị phân hóa" thuộc **chương 2, 3, 5, 7**. Slide C2 không có công thức phối cảnh, nhưng ghi Chương 2 là đúng theo đề bài. Ký hiệu 📘, bổ sung công thức từ Gonzalez & Woods |
-| 2 | Chỉ ghi số slide, chưa có công thức | Mỗi bước có **công thức trích từ slide** (mục 4 và mục 5–8) |
-| 3 | Bỏ sót nhiều slide liên quan trực tiếp | Bổ sung: **bộ lọc Max / Min** (C3 · S74), là cơ sở của Closing trên ảnh xám khi ước lượng nền; **độ tròn $C = 4\pi A/P^2$** (C8 · S16) để nhận dạng dấu; **làm đầy vùng** (C7 · S45) để lấy mask dấu đặc; **Canny ngưỡng kép $T_1 = 2T_2$** (C5 · S47); **so sánh lược đồ $L_1$, giao, $\chi^2$** (C8 · S13); **chuẩn hóa z-score** và **5-fold** (C8 · S40–41); **ISODATA, Tam giác, Đối xứng nền** (C5 · S72–78) |
-| 4 | "C2 · S19 là mô hình chiếu sáng – phản xạ" | S19 chỉ nói về màu do ánh sáng phản xạ. Câu "ảnh tạo ra bằng cách chiếu sáng cảnh và thu năng lượng phản xạ" ở **C2 · S22**. Công thức $f = i \cdot r$ **không có** trong slide, nên ghi ➕ |
-| 5 | Lẫn nội dung code (tên hàm, trạng thái file) | Bỏ toàn bộ. File này chỉ nói **nội dung phương pháp**. Code chốt sau theo file này |
-| 6 | Chưa nối được QĐ (≥ 50 ảnh đánh giá, hậu xử lý, tham số kèm lý do) vào từng phần | Mục 2 có bảng đối chiếu từng yêu cầu. Mỗi mục 5–8 có dòng "Hậu xử lý" và bảng "Tham số – lý do" |
-| 7 | Chưa có kế hoạch video demo | Mục 11: kịch bản 3 phút, app mobile hiển thị từng bước DIP |
-| 8 | Ghi chú CLAHE "không có trong bài giảng" | CLAHE có trong **gợi ý của thầy** (QĐ · S4: "Cân bằng lược đồ, CLAHE (chương 3)") và trong TH · C3. Ghi 📘, đối chứng bằng cân bằng lược đồ toàn cục (C3 · S32–33) |
 
 ---
 
