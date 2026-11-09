@@ -4,13 +4,13 @@ Cập nhật ngày **01/11/2026** từ bản Drive chung đã tải trên máy T
 
 **Cập nhật 08/11/2026:** bỏ bộ Roboflow đơn thuốc (bộ 2 cũ) khỏi dữ liệu nhóm và đánh số lại 1–5: VAIPE ① · Report Keywords ② · RVL-CDIP ③ · tự chụp ④ · tổng hợp ⑤. Bộ ② chỉ giữ 57 ảnh gốc; 78 bản tăng cường của train chuyển sang `2_roboflow_report_keywords_augmented/` (vai trò từng file trong `split_manifest.csv`). Số liệu kiểm kê 01/11 bên dưới giữ nguyên làm lịch sử.
 
-**Các split đã chốt của bộ 1, 2 và 5 được giữ nguyên.** Bộ 4 là ảnh tự chụp mới, hiện chưa có split; xem mục ④ bên dưới. Các bảng mô tả cấu trúc gói dữ liệu, không phải yêu cầu chia lại split của những bộ đã chốt.
+**Bộ 1 đã chia lại ngày 09/11 thành train / valid / test = 70 / 15 / 15 (xem mục ①); split của bộ 2 và 5 giữ nguyên.** Bộ 4 là ảnh tự chụp mới, hiện chưa có split; xem mục ④ bên dưới. Các bảng mô tả cấu trúc gói dữ liệu, không phải yêu cầu chia lại split của những bộ đã chốt.
 
 Tài liệu này và [SOURCES_AND_LICENSES.md](SOURCES_AND_LICENSES.md) được cấu hình để chia sẻ qua Git. Ảnh, nhãn, cấu hình gốc trong các dataset và báo cáo `results/` tiếp tục được bỏ qua.
 
 | Thư mục | Ảnh và nhãn hiện có | License và trạng thái đối chiếu |
 |---|---|---|
-| `1_vaipe/` | Train: 1.173 ảnh + 1.173 JSON; test: 172 ảnh, chưa có nhãn; valid chỉ có file giữ chỗ | Kaggle API khai báo `DbCL-1.0`; điều khoản nguồn VAIPE ban đầu chưa xác minh riêng |
+| `1_vaipe/` | **Chia lại 09/11 (70 / 15 / 15):** train 820, valid 176, test 176 (ảnh + JSON); `test_unlabeled/` 172 ảnh test gốc không nhãn; xóa 1 ảnh trùng (`TRAIN_1172`). Xem mục ① | Kaggle API khai báo `DbCL-1.0`; điều khoản nguồn VAIPE ban đầu chưa xác minh riêng |
 | `2_roboflow_report_keywords/` | 57 ảnh gốc + nhãn TXT: train 39, valid 11, test 7 (phần ③ không dùng split này mà dùng kiểm định chéo 5-fold trên cả 57 ảnh) (78 bản tăng cường ở `2_roboflow_report_keywords_augmented/`); 5 lớp `Report Type`, `parameter`, `reference value`, `unit`, `value` | `CC BY 4.0`, khớp trang dự án và YAML local |
 | `3_other_rvl_cdip/` | 1.000 ảnh PNG và `labels.csv` | Xem README đi kèm; chưa xác minh độc lập |
 | `4_self_captured/` | 83 ảnh chưa gán nhãn chi tiết: 48 phiếu xét nghiệm, 18 đơn thuốc, 17 tài liệu khác; chia trong `lab_report/`, `prescription/`, `other/`; có `manifest.csv` | Bản hiện tại đã tải lên Drive nhóm; từng thành viên còn phải review ảnh và xác nhận ẩn danh/quyền sử dụng trước khi đánh giá |
@@ -25,11 +25,25 @@ Tài liệu này và [SOURCES_AND_LICENSES.md](SOURCES_AND_LICENSES.md) được
 - Nguồn được tài liệu nhóm ghi: [VAIPE Pill 2022 trên Kaggle](https://www.kaggle.com/datasets/tommyngx/vaipepill2022). Bản local chỉ giữ đơn thuốc, không phải toàn bộ kho ảnh viên thuốc. API Kaggle xác nhận dataset `tommyngx/vaipepill2022` hiện có version 1, phát hành 18/07/2022; gói local không kèm mã/checksum để chứng minh trùng toàn bộ gói Kaggle.
 - Ảnh ở `<split>/images/`, nhãn ở `<split>/labels/`. Kích thước thực tế: 760×1070, 770×1420 hoặc 1150×1600; không ép thành 640×640.
 
+**Gói tải gốc** (số liệu kiểm kê 01/11):
+
 | Split | Ảnh | JSON | Vùng nhãn | Ghi chú |
 |---|---:|---:|---:|---|
 | train | 1.173 | 1.173 | 41.208 | Ghép đủ theo tên file |
 | valid | 0 | 0 | 0 | Chỉ có file giữ chỗ; chưa có tập validation riêng |
 | test | 172 | 0 | 0 | Không có đáp án trong gói local |
+
+**Split dùng cho đồ án DIP (chia lại 09/11/2026, chốt, không chia lại):** test gốc không có nhãn nên không đo được số liệu; test cuối lấy từ phần có nhãn.
+
+| Split | Ảnh + JSON | Tỉ lệ | Dùng để |
+|---|---:|---:|---|
+| `train/` | 820 | 70 % | Mẫu cho kNN (lớp `prescription`) |
+| `valid/` | 176 | 15 % | Chọn tham số |
+| `test/` | 176 | 15 % | Đánh giá cuối, chạy 1 lần |
+| `test_unlabeled/` | 172 ảnh, 0 JSON | — | Test gốc: kiểm tra định tính, demo, phân loại (nhãn lớp đã biết) |
+| *(đã xóa)* | 1 | — | `VAIPE_P_TRAIN_1172` trùng byte với `VAIPE_P_TEST_32` (bản còn lại ở `test_unlabeled/`) |
+
+Chia theo nhóm ảnh cùng bệnh nhân / lần khám gần nhau (Jaccard chữ trong nhãn ≥ 0,85; 1.030 nhóm), seed 42; pHash không dùng được vì các trang đơn quá giống nhau. Danh sách `1_vaipe/split_manifest.csv`, chi tiết `1_vaipe/README.md`. Tên file giữ nguyên tên gốc. **Bản trên Drive đã chia sẵn**: tải về là dùng được, không ai chia lại.
 
 JSON là danh sách đối tượng. Cả 41.208 đối tượng đều có `id`, `text`, `label`, `box`; `mapping` có ở 2.844 đối tượng. `box = [xmin, ymin, xmax, ymax]`, tọa độ pixel trên chính ảnh nguồn, chưa qua nắn phối cảnh. Toàn bộ text không rỗng; bbox có diện tích dương và nằm trong ảnh. `mapping` là số nguyên liên kết được nguồn cung cấp; chưa diễn giải thành mã thuốc chuẩn khi không có bảng tra kèm theo.
 
@@ -42,7 +56,7 @@ JSON là danh sách đối tượng. Cả 41.208 đối tượng đều có `id`
 | `date` | 1.173 | Ngày |
 | `other` | 28.703 | Nội dung khác |
 
-**Cảnh báo trùng trong split gốc của gói tải:** SHA-256 xác nhận `train/images/VAIPE_P_TRAIN_1172.png` trùng byte với `test/images/VAIPE_P_TEST_32.png`. Tổng 1.345 file ảnh tương ứng 1.344 nội dung file khác nhau theo SHA-256; chưa kiểm tra trùng gần giống bằng hình ảnh. Đây không phải yêu cầu chia lại: khi đánh giá dùng split chung đã chốt, không dùng nguyên split gốc thay thế.
+**Cảnh báo trùng trong split gốc của gói tải:** SHA-256 xác nhận `train/images/VAIPE_P_TRAIN_1172.png` trùng byte với `test/images/VAIPE_P_TEST_32.png`. Tổng 1.345 file ảnh tương ứng 1.344 nội dung file khác nhau theo SHA-256; chưa kiểm tra trùng gần giống bằng hình ảnh. Ảnh `VAIPE_P_TRAIN_1172` đã bị xóa khi chia lại ngày 09/11 (bản trùng còn lại là `test_unlabeled/VAIPE_P_TEST_32.png`).
 
 **Sàng lọc dấu/viết tay ngày 01/11:** đã quét màu ở độ phân giải gốc và xem ảnh tổng quan đủ 1.173 ảnh train của gói tải, chưa tuyển được ca dương tính đáng tin cậy. Ứng viên xanh duy nhất `VAIPE_P_TRAIN_953.png` đã mở ảnh gốc: màu nằm ở quảng cáo, không phải chữ ký. Chưa duyệt mọi trang ở độ phân giải gốc, nên không kết luận tuyệt đối không có nét viết tay đen/dấu nhạt. Báo cáo: `results/vaipe_ink_screening/selection.json`; không dùng 172 ảnh test để tuyển mẫu phát triển hoặc chia lại split chung.
 

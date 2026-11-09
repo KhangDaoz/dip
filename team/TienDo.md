@@ -20,7 +20,7 @@
 | Hiếu | Đặc trưng + kNN, D10; D3; chọn 10 ảnh mẫu `code/samples/` | 5, 12.4 | ⬜ | |
 | Trường | Nối các bước ② đầu-cuối; T5; thêm ISODATA, Tam giác vào T2 | 6, 12.4 | ⬜ | |
 | Khang | GT 57 ảnh bộ 2 (soát bằng mắt); K1, K2 bằng 5-fold trên 57 ảnh | 7, 12.4 | ⬜ | |
-| Thắng | Chia VAIPE theo cụm pHash; GT tự gom cho ~150–200 ảnh chọn tham số; GT ≥ 50 ảnh đánh giá (soát bằng mắt); S1, S3 | 8, 12.4 | ⬜ | |
+| Thắng | Chia VAIPE 70 / 15 / 15; GT tự gom cho valid + test; GT ≥ 50 ảnh test (soát bằng mắt); S1, S3 | 8, 12.4 | 🔄 | 09/11: đã chia VAIPE train / valid / test = 820 / 176 / 176 theo nhóm ảnh cùng bệnh nhân; test gốc 172 ảnh → `test_unlabeled/`; xóa 1 ảnh trùng. Bản đã chia đưa lên Drive. Còn GT, S1, S3 |
 | Cả nhóm | 🎯 **Tối: chạy cả pipeline trên 10 ảnh mẫu** (`python run_pipeline.py samples/`) | 12.4 | ⬜ | |
 
 ## 10/11 (Thứ ba)

@@ -130,7 +130,7 @@ flowchart LR
 
 | # | Bộ | Quy mô | Nhãn có sẵn | Dùng cho |
 | :---: | :--- | :--- | :--- | :--- |
-| 1 | VAIPE đơn thuốc (Việt Nam) | 1.345 ảnh: **1.173 có nhãn**, 172 **không nhãn** | Box từng dòng: `drugname`, `usage`, `quantity`, `diagnose`, `date`, `other` | Thắng; lớp `prescription` (Hiếu); nguồn sạch của bộ 5 |
+| 1 | VAIPE đơn thuốc (Việt Nam) | 1.345 ảnh. **Chia lại 09/11 (70 / 15 / 15) từ 1.173 ảnh có nhãn:** train 820, valid 176, test 176; `test_unlabeled/` 172 ảnh test gốc không nhãn; 1 ảnh trùng bị loại (xem `data/1_vaipe/README.md`) | Box từng dòng: `drugname`, `usage`, `quantity`, `diagnose`, `date`, `other` | Thắng; lớp `prescription` (Hiếu); nguồn sạch của bộ 5 |
 | 2 | Report Keywords (phiếu CBC, tiếng Anh) | **57 ảnh gốc** (39 / 11 / 7), ép 640 × 640 | Box từng cụm từ: `Report Type`, `parameter`, `value`, `unit`, `reference value` | Khang; lớp `lab_report` (Hiếu) |
 | 3 | RVL-CDIP tập con | 800 ảnh (8 lớp × 100) + 200 ảnh lớp lạ | Nhãn lớp | Lớp `other` (Hiếu) |
 | 4 | Ảnh nhóm tự chụp | 83 ảnh: 48 phiếu XN, 18 đơn thuốc, 17 khác | **Chỉ có nhãn loại tài liệu** (theo thư mục `lab_report/`, `prescription/`, `other/`); không gán nhãn chi tiết | **Chỉ để test**: đo định lượng duy nhất là D10; các phần khác dùng làm **ảnh trước / sau, kiểm tra định tính** và video demo |
@@ -156,7 +156,7 @@ flowchart LR
 | Hiếu | Valid bộ 5; valid bộ 1–3 | Test bộ 5 (30 ảnh gốc × biến thể, ~450 mẫu); test bộ 1–3; **bộ 4** cho phân loại | ≥ 450 | Ma trận biến dạng, 4 góc của bộ 5; nhãn lớp theo nguồn (bộ 4: theo thư mục) |
 | Trường | Valid bộ 5; **crop dòng VAIPE thuộc tập chọn tham số của Thắng** (chọn phương pháp nhị phân theo CER) | Test bộ 5; **CER trên ảnh thật**: crop dòng VAIPE thuộc tập đánh giá của Thắng + 50 crop `dataset2_50` (phiếu XN chụp thật); bộ 4 (phiếu có chữ đỏ): ảnh trước / sau, định tính | ≥ 450 (+ ≥ 50 ảnh thật) | Ảnh nhị phân chuẩn bộ 5 (Otsu trên ảnh sạch) + **mask dải viền bỏ qua**; mask dấu bộ 5; chữ chuẩn có sẵn trong nhãn VAIPE và `dataset2_50` |
 | Khang | 4 fold (~45 ảnh) mỗi lượt của 5-fold | **57 ảnh** bộ 2, mỗi ảnh đo 1 lần trên fold giữ lại; bộ 4 chỉ minh họa định tính | 57 | Suy dòng / cột từ box cụm từ có sẵn, **soát bằng mắt** từng ảnh |
-| Thắng | **~150–200 ảnh VAIPE**, GT khoản gom tự động (soát ngẫu nhiên ~10 ảnh để kiểm luật gom) | **≥ 50 ảnh VAIPE** khác, GT gom tự động rồi **soát bằng mắt từng ảnh** + test bộ 5; bộ 4 chỉ minh họa định tính | ≥ 50 (+ bộ 5) | Gom nhãn dòng `drugname` + các dòng `usage`/`quantity` ngay dưới thành khoản; bộ 5 có box biến đổi sẵn. Chọn tham số và đánh giá đều lấy từ 1.173 ảnh `train` có nhãn (172 ảnh `test` không có nhãn), **chia theo cụm ảnh gần trùng (pHash)** để ảnh cùng cụm nằm chung một tập |
+| Thắng | **`valid/` VAIPE (176 ảnh)**, GT khoản gom tự động (soát ngẫu nhiên ~10 ảnh để kiểm luật gom) | **`test/` VAIPE (176 ảnh)**: kết quả chính trên **≥ 60 ảnh đã soát bằng mắt từng ảnh** (≥ 50 sau khi loại ảnh nhãn lỗi), thêm 1 dòng cho cả 176 ảnh với GT tự động; + test bộ 5; bộ 4 và `test_unlabeled/` chỉ minh họa định tính | ≥ 50 (+ bộ 5) | Gom nhãn dòng `drugname` + các dòng `usage`/`quantity` ngay dưới thành khoản (trên VAIPE, dòng `SL:` và `Uống:` thường nằm cùng một hàng ngay dưới tên thuốc); bộ 5 có box biến đổi sẵn. Split 70 / 15 / 15 chia **theo nhóm ảnh cùng bệnh nhân / lần khám gần nhau** (Jaccard chữ trong nhãn ≥ 0,85), seed 42; bản trên Drive đã chia sẵn, danh sách ở `data/1_vaipe/split_manifest.csv` |
 
 ---
 
@@ -515,13 +515,13 @@ Mọi tham số chọn bằng grid search trên 4 fold, lặp cho cả 5 lượt
 
 | # | Câu hỏi | Dữ liệu | Độ đo | Hình / bảng | Ưu tiên |
 | :---: | :--- | :--- | :--- | :--- | :---: |
-| **S1** | Cách gom khoản nào tốt nhất? (6 cách × 2 cách tách dòng) | ≥ 50 ảnh VAIPE đánh giá, GT đã soát (chọn tham số trên ~150–200 ảnh, GT gom tự động) | **F1 khoản** (khớp khi IoU > 0,5; C8 · S49), IoU trung bình | **Bảng chính** | ⭐ |
+| **S1** | Cách gom khoản nào tốt nhất? (6 cách × 2 cách tách dòng) | ≥ 50 ảnh đã soát trong `test/` VAIPE (chọn tham số trên `valid/` 176 ảnh, GT gom tự động) | **F1 khoản** (khớp khi IoU > 0,5; C8 · S49), IoU trung bình | **Bảng chính** | ⭐ |
 | **S2** | Độ bền theo mức hỏng | Test bộ 5 | F1 khoản theo góc, mờ, bóng, JPEG | **Đường cong — hình chính** | ⭐ |
 | **S3** | Tách khoản có giúp OCR không? | Như S1 | CER: cả trang vs từng dòng vs từng khoản | Bảng | ⭐ |
 | S4 | Khoanh vùng thuốc vs cả trang | VAIPE (vùng chuẩn = khung bao box `drugname`/`usage`/`quantity`) | IoU vùng | Bảng nhỏ | Phụ |
 | S5 | Đơn thật | 3–5 đơn bộ 4 | **Định tính**: ảnh khung từng khoản, nhận xét ca đúng / sai | Ví dụ | Phụ |
 | S6 | Thời gian; kiểm chứng bộ 5 | Bộ 5, bộ 4 | ms / ảnh; thống kê mục 8.2 | Phụ lục | Phụ |
-| *S7* | *Đánh giá mở rộng (tùy chọn)* | *Phần còn lại của 1.173 ảnh VAIPE, GT gom tự động chưa soát* | *F1 khoản* | *1 dòng phụ lục, ghi rõ GT chưa soát* | *Phụ* |
+| *S7* | *Đánh giá mở rộng (tùy chọn)* | *Cả 176 ảnh `test/` VAIPE, GT gom tự động (gồm cả ảnh chưa soát)* | *F1 khoản* | *1 dòng phụ lục, ghi rõ GT chưa soát* | *Phụ* |
 
 ### 8.4. Tham số và lý do chọn
 
@@ -533,7 +533,7 @@ Mọi tham số chọn bằng grid search trên 4 fold, lặp cho cả 5 lượt
 | `indent_tol` (× $h$) | 0,5–3 | S1 trên tập chọn tham số | — |
 | SE Opening hậu xử lý | tắt, 2 × 2, 3 × 3 | S1 trên tập chọn tham số | C7 · S34 |
 
-Tập chọn tham số là ~150–200 ảnh VAIPE với GT khoản gom tự động (mục 3.3). Tập lớn giúp phủ nhiều mẫu đơn khác nhau; chỉ tốn thêm thời gian máy, không tốn công soát tay.
+Tập chọn tham số là `valid/` VAIPE (176 ảnh) với GT khoản gom tự động (mục 3.3). Tập lớn giúp phủ nhiều mẫu đơn khác nhau; chỉ tốn thêm thời gian máy, không tốn công soát tay.
 
 ### 8.5. Hỏi đáp
 
@@ -544,7 +544,7 @@ Tập chọn tham số là ~150–200 ảnh VAIPE với GT khoản gom tự đ�
 | Projection có trong bài không? | Là lược đồ đếm mực theo hàng (C3 · S23), làm trơn theo C5 · S62, tách ngưỡng thung lũng theo C5 · S63 |
 | Bộ 5 có thực tế không? | Dùng để so phương pháp với GT chính xác; kết luận kiểm lại trên VAIPE và minh họa trên ảnh thật bộ 4; có kiểm thống kê và chấm chủ quan (C6 · S38) |
 | Vì sao chia biến thể theo ảnh gốc? | Biến thể cùng ảnh gốc gần như giống nhau; chia lẫn làm kết quả ảo (C8 · S41: tập kiểm tra phải độc lập) |
-| Chọn tham số trên bao nhiêu ảnh? | ~150–200 ảnh VAIPE, GT khoản gom tự động từ nhãn dòng (có soát ngẫu nhiên). Đánh giá trên ≥ 50 ảnh khác đã soát từng ảnh. Hai tập chia theo cụm ảnh gần trùng nên không rò rỉ (C8 · S41) |
+| Chọn tham số trên bao nhiêu ảnh? | 176 ảnh `valid/` VAIPE, GT khoản gom tự động từ nhãn dòng (có soát ngẫu nhiên). Đánh giá trên `test/` (176 ảnh, ≥ 50 ảnh đã soát từng ảnh). Chia 70 / 15 / 15 theo nhóm ảnh cùng bệnh nhân / lần khám gần nhau nên không rò rỉ (C8 · S41) |
 
 ---
 
@@ -681,7 +681,7 @@ Tập chọn tham số là ~150–200 ảnh VAIPE với GT khoản gom tự đ�
 
 | Ngày | Hiếu | Trường | Khang | Thắng |
 | :---: | :--- | :--- | :--- | :--- |
-| **09/11** | Chốt đặc trưng + kNN, D10; D3; chọn 10 ảnh mẫu | Nối các bước ② đầu-cuối (R7 = Sauvola); quét w, k; chấm lại T2, T3 có dải viền; T2-CER; T5; thêm ISODATA, Tam giác vào T2 | GT 57 ảnh (soát); K1, K2 bằng 5-fold | Chia VAIPE theo cụm pHash; GT tự gom cho ~150–200 ảnh chọn tham số; GT ≥ 50 ảnh đánh giá (soát); S1, S3; **mask dải viền bộ 5 + tỉ lệ bất đồng Otsu / Sauvola** (gửi Trường sớm) |
+| **09/11** | Chốt đặc trưng + kNN, D10; D3; chọn 10 ảnh mẫu | Nối các bước ② đầu-cuối (R7 = Sauvola); quét w, k; chấm lại T2, T3 có dải viền; T2-CER; T5; thêm ISODATA, Tam giác vào T2 | GT 57 ảnh (soát); K1, K2 bằng 5-fold ✅ Chia VAIPE 70 / 15 / 15; GT tự gom cho `valid/` + `test/`; soát ≥ 60 ảnh `test/`; S1, S3; **mask dải viền bộ 5 + tỉ lệ bất đồng Otsu / Sauvola** (gửi Trường sớm) |
 | **09/11 tối** | 🎯 **Chạy cả pipeline trên 10 ảnh mẫu** | ← | ← | ← |
 | **10/11 sáng** | Ghép báo cáo, slide | T8 ablation; phần báo cáo + 2 slide | K3, K4, K5; phần báo cáo + 2 slide | S2; phần báo cáo + 2 slide |
 | **10/11 chiều** | Quay đoạn demo của mình; ghép video | Quay đoạn demo | Quay đoạn demo | Quay đoạn demo |
@@ -726,7 +726,8 @@ Tập chọn tham số là ~150–200 ảnh VAIPE với GT khoản gom tự đ�
 - [ ] Phần bảng có kẻ (nếu làm) dùng **Opening** để lấy đường kẻ
 
 **Thắng**
-- [ ] Tập chọn tham số ~150–200 ảnh (GT tự gom) và tập đánh giá ≥ 50 ảnh (GT đã soát) tách theo cụm pHash, không trùng nhau
+- [x] Chia VAIPE train / valid / test = 820 / 176 / 176 theo nhóm ảnh cùng bệnh nhân (`data/1_vaipe/split_manifest.csv`, đã tải lên Drive)
+- [ ] GT khoản tự gom cho `valid/` + `test/`; soát từng ảnh ≥ 60 ảnh `test/` (≥ 50 dùng được)
 - [ ] S1, S2, S3 có số liệu; bảng tham số đã điền
 - [ ] Bộ 5 có phần kiểm chứng "giống thật" (C6 · S38–39)
 - [ ] Bộ 5 có **mask dải viền bỏ qua** và con số tỉ lệ bất đồng Otsu / Sauvola ngoài dải viền, đã gửi Trường

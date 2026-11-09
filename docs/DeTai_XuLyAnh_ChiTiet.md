@@ -79,7 +79,7 @@ Mỗi giai đoạn gồm **tiền xử lý → xử lý chính → hậu xử l�
 ### 4.1. Dữ liệu
 | Bộ | Nguồn | Quy mô | Vai trò |
 | :---: | :--- | :--- | :--- |
-| 1 | VAIPE (đơn thuốc Việt Nam) | 1.345 ảnh (1.173 có nhãn dòng) | Tách khoản thuốc (chọn tham số trên ~150–200 ảnh, đánh giá trên ≥ 50 ảnh đã soát); lớp đơn thuốc; nguồn ảnh sạch của bộ 5 |
+| 1 | VAIPE (đơn thuốc Việt Nam) | 1.345 ảnh; 1.173 có nhãn dòng chia train / valid / test = 820 / 176 / 176, 172 ảnh test gốc không nhãn | Tách khoản thuốc (chọn tham số trên valid 176 ảnh, đánh giá trên test với ≥ 50 ảnh đã soát); lớp đơn thuốc; nguồn ảnh sạch của bộ 5 |
 | 2 | Roboflow Report Keywords (phiếu CBC, tiếng Anh, bảng không kẻ) | **57 ảnh gốc**, không dùng bản tăng cường | Dựng bảng (kiểm định chéo 5-fold trên 57 ảnh); lớp phiếu xét nghiệm |
 | 3 | RVL-CDIP tập con | 1.000 ảnh | Lớp "tài liệu khác" |
 | 4 | Nhóm tự chụp | 83 ảnh (48 phiếu XN, 18 đơn, 17 khác), chỉ có nhãn loại tài liệu | **Chỉ để test**: định lượng cho phân loại 3 lớp; các bước khác kiểm tra định tính bằng ảnh trước / sau |
