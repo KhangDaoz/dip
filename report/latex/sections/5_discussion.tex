@@ -1,3 +1,16 @@
 % ===== ≈ 0,5 trang =====
-% Viết gì: tổng hợp từ phần ca lỗi của 4 người: điểm mạnh, hạn chế (bộ 5 là dữ liệu tổng hợp, bộ 2 là phiếu tiếng Anh ép 640×640, ảnh nhị phân chuẩn là Otsu, bộ 4 chỉ có nhãn loại tài liệu nên kết quả trên ảnh thật Việt Nam chủ yếu định tính), bộ 5 có giống ảnh thật không, hướng phát triển.
-\TODO{chưa viết}
+\textbf{Điểm mạnh.} Các bước hình học và làm sạch rất ổn định: tìm 4 góc thành công 99\% với sai số $\approx1{,}4$~px, chỉnh
+nghiêng bằng projection sai số $0^\circ$, khử bóng bằng Closing đạt \SI{47.9}{dB}. Sauvola không phụ thuộc vào việc khử bóng có
+tốt hay không, trong khi Otsu sụp ở bóng nặng --- xác nhận lý do chọn ngưỡng cục bộ. Tìm cột bằng projection dọc đạt F1
+\num{0.917} trên bảng không kẻ; tách khoản thuốc bằng luật dòng đậm đạt \num{0.973} mà không cần học.
+
+\textbf{Hạn chế.} (1) Phân loại tài liệu không tổng quát sang ảnh chụp thật (\bo{4}: \num{0.39}) vì mỗi lớp đến từ một nguồn
+ảnh khác nhau. (2) Luật dòng đậm nhạy với bóng, mờ, dấu đè (S2) và gắn với mẫu in VAIPE. (3) Gom dòng bằng projection thua gom
+tâm $y$ trên \bo{2} vì ảnh bị ép $640\times640$, dòng sát nhau; \bo{2} là phiếu tiếng Anh nên kết quả trên phiếu Việt Nam chỉ định
+tính. (4) \Bo{5} là dữ liệu tổng hợp từ ảnh scan nên sáng và sạch hơn ảnh thật (độ sáng trung bình 209 so với 169); kết luận
+chính được kiểm lại trên \bo{1}, \bo{2}, \bo{4}. (5) Ảnh nhị phân chuẩn là Otsu; đã khử thiên vị bằng dải viền bỏ qua nhưng vẫn
+là đáp án do thuật toán tạo. (6) Ground truth khoản thuốc và dòng bảng gom tự động từ nhãn, mới soát một phần bằng mắt.
+(7) Các phép đo CER (lợi ích thực tế cho OCR) chưa thực hiện.
+
+\textbf{Hướng phát triển.} Chuẩn hóa độ đậm theo tương phản cục bộ; dùng chiều cao dòng thay cho chiều cao ký tự trên ảnh độ
+phân giải thấp; thêm ảnh chụp thật vào tập train của bộ phân loại; đo CER để chọn phương pháp nhị phân theo ảnh thật.

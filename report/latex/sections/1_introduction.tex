@@ -1,3 +1,20 @@
 % ===== ≈ 0,5 trang =====
-% Viết gì: bối cảnh số hóa hồ sơ y tế giấy; khó khăn của ảnh chụp điện thoại (méo, nghiêng, mờ, lóa, bóng, dấu đè chữ, bảng không kẻ); đầu vào, đầu ra; đóng góp của nhóm (3–4 gạch đầu dòng).
-\TODO{chưa viết}
+Phần lớn hồ sơ y tế ở Việt Nam (đơn thuốc, phiếu xét nghiệm) vẫn là giấy in, người bệnh thường lưu lại bằng cách chụp điện thoại.
+Ảnh chụp kiểu này hỏng theo nhiều cách cùng lúc: méo phối cảnh và nghiêng, rung tay gây mờ, lóa đèn flash, bóng tay đổ lên giấy,
+dấu đỏ và chữ ký đè lên chữ in; phiếu xét nghiệm thường là bảng \emph{không kẻ lưới}. Đọc thẳng ảnh bằng OCR cả trang cho kết quả
+lẫn lộn giữa các khoản thuốc và các dòng chỉ số.
+
+\textbf{Bài toán.} Đầu vào là ảnh chụp đơn thuốc hoặc phiếu xét nghiệm. Đầu ra gồm (1) ảnh phẳng, sạch, nhị phân; (2) nhãn loại
+tài liệu; (3) khung bao từng \emph{khoản thuốc} (đơn thuốc) hoặc từng \emph{dòng chỉ số} (phiếu xét nghiệm) để OCR theo vùng.
+Dự án theo Lựa chọn~2 của đồ án: pipeline nhiều bước, mỗi bước có đối chứng và độ đo định lượng.
+
+\textbf{Đóng góp.}
+\begin{itemize}
+  \item Pipeline 4 bước chỉ dùng kỹ thuật xử lý ảnh cổ điển, phủ 8/8 chương học phần, trục chính là Chương~3, 5, 7 --- khớp gợi ý
+        đề tài ``số hóa tài liệu chụp bằng điện thoại'' của học phần.
+  \item Bộ benchmark tổng hợp \num{1500} mẫu (\bo{5}) với ground truth chính xác cho mọi bước (ma trận biến dạng, ảnh sạch,
+        ảnh nhị phân chuẩn, mask lóa / dấu / bút, khung khoản thuốc).
+  \item Cách tách khoản thuốc không cần học: Dilation dọc kết hợp luật ``dòng đậm'' nhận bằng phép co, đạt F1 \num{0.97} trên vùng thuốc.
+  \item Phép chấm nhị phân hóa khách quan: đáp án tạo bằng Otsu nhưng bỏ dải viền 1~px tính bằng phép hình thái, kèm bằng chứng
+        định lượng rằng mọi khác biệt giữa các phương pháp nằm trong dải này.
+\end{itemize}

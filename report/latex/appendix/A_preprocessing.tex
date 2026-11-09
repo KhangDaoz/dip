@@ -1,3 +1,51 @@
 % ===== phụ lục (không giới hạn trang) =====
-% Viết gì: D1 đường đánh đổi, D4, D5, D6, D9; bảng tham số đầy đủ (kế hoạch mục 5.3); đường cong theo tham số.
-\TODO{chưa viết}
+\textbf{D1 --- đo mờ, đo lóa} (\texttt{d1\_iqa.py}; 160 mẫu test \bo{5} không biến dạng hình học, 15 mẫu mờ).
+\begin{table}[H]
+\centering\small
+\caption{Phát hiện ảnh mờ: ngưỡng chọn F1 lớn nhất trên valid.}\label{tab:D1}
+\begin{tabular}{lrrrr}
+\toprule
+Điểm & Ngưỡng & F1 valid & F1 test & AUC test \\
+\midrule
+$\mathrm{Var}(\nabla^2 f)$ (C5 S28--29) & 448,6 & 0,947 & \textbf{0,857} & \textbf{0,979} \\
+Tenengrad (Sobel, C5 S19) & \num{11427} & 0,878 & 0,828 & 0,954 \\
+Năng lượng tần số cao (C3 S8) & 0,289 & 0,818 & 0,600 & 0,920 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\begin{figure}[H]\centering\includegraphics[width=0.45\linewidth]{preprocessing/D1_roc.png}
+\caption{Đường đánh đổi phát hiện ảnh mờ (test \bo{5}).}\end{figure}
+Lóa: $\tau_V=240$, $\tau_S=60$ chọn theo IoU trên valid; IoU mask lóa trên test theo 3 mức: \num{0.19} / \num{0.66} / \num{0.82}
+(lóa nhẹ khó vì giấy scan vốn đã gần trắng).
+
+\textbf{D4 --- chỉnh nghiêng} (\texttt{d4\_deskew.py}; 90 ảnh chỉ xoay $\pm2,\pm5,\pm10,\pm15^\circ$ $+$ 30 ảnh sạch $0^\circ$).
+\begin{table}[H]
+\centering\small
+\caption{Chỉnh nghiêng: sai số góc tuyệt đối và thời gian (trung vị, CPU).}\label{tab:D4}
+\begin{tabular}{lrrr}
+\toprule
+Phương án & Sai số TB (°) & $\le0{,}5^\circ$ (\%) & Thời gian (ms) \\
+\midrule
+\textbf{Projection} $\arg\max\mathrm{Var}(P_\theta)$ & \textbf{0,000} & 100 & \textbf{79} \\
+Hough & 0,058 & 100 & 90 \\
+Radon & 0,000 & 100 & \num{9560} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Bảng tham số} (KeHoach.md mục 5.3).
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{lllX}
+\toprule
+Tham số & Khoảng thử & Chọn & Lý do \\
+\midrule
+Ngưỡng mờ $\tau_B$ & 20--400+ (mọi giá trị điểm) & 448,6 & F1 lớn nhất trên valid (D1) \\
+$\tau_V$, $\tau_S$ lóa & 220--250; 20--60 & 240; 60 & IoU mask lóa lớn nhất trên valid \\
+Canny $(T_2, T_1)$ & $T_2$ 30--100, $T_1=2T_2$ hoặc $3T_2$ & (30, 60) & Tỉ lệ thành công D2 trên valid; đúng khuyến nghị C5 S47 \\
+Sai số xấp xỉ tứ giác & --- & $0{,}02\times$ chu vi & Giá trị thông dụng; D2 đã đạt 99\% \\
+Bước góc chỉnh nghiêng & thô 1°, tinh 0,25° & 0,25° & Sai số 0° ở 79~ms \\
+$k$ kNN, khoảng cách & $k\in\{1,3,5,7\}$; Euclid, Cosine, $\chi^2$ & theo 5-fold & Macro-F1 5-fold trên train (C8 S41) \\
+\bottomrule
+\end{tabularx}
+\end{table}

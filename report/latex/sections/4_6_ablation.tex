@@ -1,3 +1,6 @@
 % ===== ≈ 0,25 trang =====
-% Viết gì: bảng T8 (kế hoạch toàn nhóm mục 10): CER cuối trên test bộ 5 khi tắt lần lượt: nắn phối cảnh + chỉnh nghiêng; khử nhiễu, CLAHE, khử lóa; khử bóng; tách mực + xóa dấu; nhị phân hóa; tách vùng (OCR cả trang).
-\TODO{chưa viết}
+Ablation đo CER cuối khi tắt lần lượt từng bước (nắn phối cảnh $+$ chỉnh nghiêng; khử bóng; tách mực $+$ xóa dấu; nhị phân hóa;
+tách vùng) cần bộ OCR. Ở mức xử lý ảnh, các thí nghiệm trên đã cho thấy đóng góp riêng của từng bước: khử bóng nâng PSNR từ
+\SI{11.7}{} lên \SI{47.9}{dB} (T1); không khử bóng thì Otsu tụt $0{,}06$ F-measure (T2); khoanh vùng thuốc nâng F1 khoản từ
+\num{0.219} lên \num{0.820} (S4); luật dòng đậm nâng F1 từ \num{0.284} (chỉ Dilation) lên \num{0.973} (S1).
+\TODO{bảng T8: CER cuối khi tắt từng bước --- chạy sau khi cài Tesseract (gói vie)}

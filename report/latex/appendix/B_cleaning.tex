@@ -1,3 +1,51 @@
 % ===== phụ lục (không giới hạn trang) =====
-% Viết gì: T1, T4, T6; bảng tham số đầy đủ (kế hoạch mục 6.3); đường cong theo tham số.
-\TODO{chưa viết}
+\textbf{T1 --- khử bóng} (\texttt{t1\_background.py}; mẫu chỉ có bóng: 10 valid, 15 test; PSNR / SSIM so với ảnh sạch xám).
+\begin{table}[H]
+\centering\small
+\begin{tabular}{lrrr}
+\toprule
+Ước lượng nền & SE / cửa sổ (chọn trên valid) & PSNR test (dB) & SSIM test \\
+\midrule
+Không khử & --- & 11,67 & 0,886 \\
+Trung vị cỡ lớn (C3 S73) & 101 & 35,24 & 0,995 \\
+\textbf{Closing ảnh xám} (C3 S74, C7 S35) & 81 & \textbf{47,91} & \textbf{0,9993} \\
+Closing $+$ trung vị 21 & 81 & 48,10 & 0,9994 \\
+\bottomrule
+\end{tabular}
+\end{table}
+Closing $+$ trung vị nhỉnh $0{,}2$~dB nhưng chậm hơn; giữ Closing 81 (trên valid Closing đơn thuần cao hơn: 52,79 so với 52,64~dB).
+
+\textbf{T4 --- dấu đỏ} (\texttt{t4\_stamp.py}; 40 mẫu có dấu, val $+$ test).
+\begin{table}[H]
+\centering\small
+\begin{tabular}{lrrrr}
+\toprule
+Mức dấu & IoU mask đỏ HSV & IoU nét dấu tìm được & Phủ nét dấu & Tìm được ($\ge80\%$) \\
+\midrule
+1 & 0,534 & 0,534 & 0,950 & 100\% \\
+2 & 0,741 & 0,679 & 0,896 & 92\% \\
+3 & 0,809 & 0,746 & 0,903 & 92\% \\
+\textbf{Tất cả} & 0,690 & 0,650 & 0,917 & 95\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+PSNR trong vùng dấu sau khi xóa: tô màu giấy \SI{13.9}{dB}, Telea \SI{13.5}{dB}, Navier--Stokes \SI{13.4}{dB}, không xóa \SI{13.0}{dB}
+--- ba cách xóa gần nhau; ảnh hưởng thật lên OCR cần đo CER.
+
+\textbf{Bảng tham số} (KeHoach.md mục 6.3).
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{lllX}
+\toprule
+Tham số & Khoảng thử & Chọn & Lý do \\
+\midrule
+SE ước lượng nền & 31, 51, 81, 101 & 81 & PSNR lớn nhất trên valid (T1) \\
+Phương pháp nhị phân & 7 cách & Sauvola & Bền nhất khi không khử bóng (T2, T3); tiêu chí cuối CER ảnh thật (chờ OCR) \\
+Cửa sổ Sauvola ($\times h$) & 1,5--4 & 2,5 & F-measure (bỏ dải viền) lớn nhất trên valid \\
+$k$ Sauvola & 0,1--0,5 & 0,3 & như trên \\
+Opening hậu xử lý & tắt, $2\times2$ & tắt & Opening xóa nét chữ 1--2~px (C7 S14) \\
+Ngưỡng diện tích nhiễu & $(0{,}4h)^2$, $\ge3$~px & theo $h$ & Ngưỡng cố định 10~px xóa sạch chữ ảnh 640~px \\
+Độ tròn dấu; diện tích & 0,6; $\ge0{,}2\%$ trang & --- & Phát hiện 95\% dấu (T4) \\
+\bottomrule
+\end{tabularx}
+\end{table}

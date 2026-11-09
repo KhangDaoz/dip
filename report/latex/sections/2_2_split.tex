@@ -1,3 +1,11 @@
 % ===== ≈ 0,25 trang =====
-% Viết gì: chia theo ảnh gốc (bộ 2 chỉ dùng 57 ảnh gốc, bản tăng cường .rf. để riêng, không dùng); phần ③ dùng kiểm định chéo 5-fold trên 57 ảnh bộ 2 (C8 · S41): chọn tham số trên 4 fold, đo trên fold còn lại, mỗi ảnh đánh giá đúng 1 lần; bộ 1 VAIPE: test gốc không có nhãn nên chia lại 1.173 ảnh có nhãn thành train / valid / test = 820 / 176 / 176 (70/15/15, seed 42) theo nhóm ảnh cùng bệnh nhân (Jaccard chữ trong nhãn ≥ 0,85; pHash không dùng được vì các trang đơn quá giống nhau), bỏ 1 ảnh trùng byte với test gốc; 172 ảnh test gốc chỉ dùng định tính / demo; phần ④ chọn tham số trên valid (GT tự gom), đánh giá trên test (≥ 50 ảnh GT soát tay); bộ 5 chia 60/10/30 ảnh gốc; bộ 4 chỉ để test, chỉ có nhãn loại tài liệu; tham số chọn trên val, báo cáo trên test; bảng tập đánh giá ≥ 50 ảnh mỗi người.
-\TODO{chưa viết}
+Mọi tham số chọn trên tập valid, tập test chỉ chạy một lần ở cuối \chuong{8, S41}.
+\textbf{\Bo{1}:} test gốc (172 ảnh) không có nhãn nên 1.173 ảnh có nhãn được chia lại thành train / valid / test $=$
+820 / 176 / 176 (70/15/15, seed 42). Ảnh cùng bệnh nhân ở các lần khám khác nhau (độ giống chữ trong nhãn, Jaccard $\ge 0{,}85$,
+\num{1030} nhóm) luôn nằm cùng một tập; pHash không dùng được vì các trang đơn quá giống nhau (ngưỡng Hamming 6 đã gom hơn
+\num{1000} ảnh thành một cụm). Một ảnh trùng byte với test gốc bị loại; 172 ảnh test gốc dùng cho minh họa và demo.
+\textbf{\Bo{2}:} 57 ảnh quá ít để vừa chọn tham số vừa có $\ge 50$ ảnh đánh giá, nên dùng kiểm định chéo 5-fold: chọn tham số
+trên 4 phần, đo trên phần còn lại, mỗi ảnh được đánh giá đúng một lần.
+\textbf{\Bo{5}:} chia 60/10/30 theo \emph{ảnh gốc} (mọi biến thể của một ảnh gốc cùng tập).
+\textbf{\Bo{4}:} chỉ để test. Tập đánh giá của mỗi phần: \bo{5} test (450 mẫu) cho tiền xử lý và làm sạch; 55 ảnh \bo{2} cho dựng bảng;
+176 ảnh \bo{1} test cho tách khoản thuốc --- đều $\ge 50$ ảnh theo quy định.

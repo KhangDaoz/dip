@@ -1,3 +1,7 @@
 % ===== ≈ 0,25 trang =====
-% Viết gì: máy, phiên bản Python / OpenCV, seed; độ đo dùng chung: F1 (C8 · S49), F-measure, PSNR (từ C6 · S39), IoU, CER; OCR chỉ là công cụ đo.
-\TODO{chưa viết}
+Python 3.13, OpenCV 5.0, scikit-image 0.26, CPU, seed 42. Độ đo dùng chung:
+Precision $=\frac{TP}{TP+FP}$, Recall $=\frac{TP}{TP+FN}$, F1 $=\frac{2PR}{P+R}$ \chuong{8, S49};
+F-measure nhị phân hóa là F1 ở mức pixel (mực = dương);
+PSNR $=20\log_{10}(255/e_{rms})$ với $e_{rms}=\sqrt{\frac{1}{MN}\sum\sum(\hat f-f)^2}$ \chuong{6, S39};
+IoU hai khung = diện tích giao / diện tích hợp, một khoản thuốc dự đoán là đúng khi IoU $>0{,}5$ với một khoản thật
+(ghép tham lam, mỗi khoản dùng một lần). Code và lệnh chạy lại từng thí nghiệm ở \texttt{code/experiments/}.

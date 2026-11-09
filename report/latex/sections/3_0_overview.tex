@@ -1,9 +1,27 @@
 % ===== ≈ 0,5 trang =====
-% Viết gì: hình sơ đồ 4 bước ①→②→③/④ (kế hoạch toàn nhóm mục 1.2, figure/common/pipeline.pdf); dữ liệu chuyển giữa các bước (contracts.py); ma trận chương mục 9 (8/8 chương, trục chính C3, C5, C7).
-% Ghi chú: phải có bước Hậu xử lý theo khung pipeline Slide 7; bảng chương ↔ kỹ thuật thêm cột Hậu xử lý.
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[width=\linewidth]{common/pipeline.pdf}
-%   \caption{Pipeline 4 bước và dữ liệu chuyển giữa các bước.}\label{fig:pipeline}
-% \end{figure}
-\TODO{chưa viết}
+Pipeline gồm 4 bước nối nhau qua các hợp đồng dữ liệu JSON (\texttt{code/src/common/contracts.py}); tọa độ của (2)(3)(4) đều tính
+trên ảnh đã nắn của (1):
+\textbf{(1)} tiền xử lý và phân loại $\rightarrow$ ảnh đã nắn, ma trận $H$, loại tài liệu;
+\textbf{(2)} làm sạch $\rightarrow$ ảnh xám sạch, ảnh nhị phân, mask dấu / bút / chữ đỏ;
+\textbf{(3)} dựng bảng (phiếu xét nghiệm) hoặc \textbf{(4)} tách khoản thuốc (đơn thuốc) $\rightarrow$ khung từng dòng chỉ số / khoản thuốc.
+Tài liệu loại ``khác'' dừng sau (1). Mỗi bước có bước \emph{hậu xử lý} theo khung pipeline của học phần.
+
+\begin{table}[H]
+\centering
+\caption{Kiến thức học phần dùng trong từng bước ($\bullet$ phương pháp chính, $\circ$ đối chứng / đánh giá / \bo{5}).}\label{tab:chapters}
+\small
+\begin{tabular}{llcccc}
+\toprule
+Chương & Kỹ thuật chính & (1) & (2) & (3) & (4) \\
+\midrule
+C1 & các giai đoạn xử lý ảnh (S27--34) & $\circ$ & $\circ$ & $\circ$ & $\circ$ \\
+C2 & lấy mẫu, độ phân giải, nắn phối cảnh (S23--26) & $\bullet$ & $\circ$ & $\circ$ & $\circ$ \\
+C3 & lược đồ, kéo giãn tương phản, lọc trung vị, Max / Min (S21--33, S47--75) & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ \\
+C4 & HSV: lóa, mực đỏ / xanh (S37--41) & $\bullet$ & $\bullet$ & $\circ$ & $\circ$ \\
+C5 & Laplacian, Canny, Otsu / ISODATA / Tam giác, vùng liên thông, tách / hợp vùng & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ \\
+C6 & đánh giá chất lượng RMS / PSNR, JPEG (S37--54) & $\circ$ & $\circ$ & --- & $\circ$ \\
+C7 & Dilation, Erosion, Opening, Closing, tách biên, làm đầy vùng (S5--45) & $\circ$ & $\bullet$ & $\bullet$ & $\bullet$ \\
+C8 & HOG / GLCM / lược đồ màu, kNN, ma trận nhầm lẫn, F1 (S12--49) & $\bullet$ & $\circ$ & $\circ$ & $\circ$ \\
+\bottomrule
+\end{tabular}
+\end{table}

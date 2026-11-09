@@ -1,3 +1,42 @@
 % ===== ≈ 1 trang =====
-% Viết gì: bảng chính T2 (F-measure bỏ qua dải viền 1 px, pF, PSNR của 7 cách × có / không khử bóng); bảng nhỏ T2-CER (Sauvola vs Otsu trên crop ảnh thật VAIPE + dataset2_50, tiêu chí chọn phương pháp chính); hình chính T3 (F-measure theo mức bóng / mờ / dấu, Sauvola vs Otsu); T5 lưới ảnh trước / sau giữ chữ đỏ trên bộ 4 (định tính); nhận xét; ca lỗi; hạn chế "ảnh chuẩn là Otsu" và cách giảm thiên vị bằng dải viền + CER ảnh thật (kế hoạch mục 6.4). T1, T4, T6 → phụ lục B.
-\TODO{chưa viết}
+\begin{table}[H]
+\centering
+\caption{Nhị phân hóa trên 160 mẫu test \bo{5} không biến dạng hình học (F-measure và pseudo-F chấm \emph{bỏ dải viền 1~px};
+F đầy đủ để đối chiếu thiên lệch của đáp án Otsu).}\label{tab:T2}
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+& \multicolumn{3}{c}{Có khử bóng (Closing 81)} & \multicolumn{3}{c}{Không khử bóng} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Phương pháp & F & pF & F đầy đủ & F & pF & F đầy đủ \\
+\midrule
+\textbf{Sauvola} ($w=2{,}5h$, $k=0{,}3$) & \textbf{0,922} & 0,922 & 0,898 & \textbf{0,922} & 0,922 & 0,900 \\
+Wolf & 0,931 & 0,931 & 0,912 & 0,931 & 0,931 & 0,910 \\
+Otsu & 0,909 & 0,910 & 0,932 & 0,849 & 0,849 & 0,879 \\
+ISODATA & 0,908 & 0,909 & 0,931 & 0,807 & 0,807 & 0,845 \\
+Tam giác & 0,275 & 0,275 & 0,518 & 0,279 & 0,279 & 0,505 \\
+Đối xứng nền & 0,251 & 0,251 & 0,489 & 0,295 & 0,295 & 0,485 \\
+Niblack & 0,152 & 0,152 & 0,354 & 0,126 & 0,126 & 0,322 \\
+\bottomrule
+\end{tabular}
+\\[0.3em]{\footnotesize $w$, $k$ chọn trên valid. Script: \texttt{code/experiments/t2\_binarize.py}}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{cleaning/T3.png}
+\caption{F-measure theo mức hỏng, mỗi đường chỉ gồm mẫu bị đúng một loại hỏng (nét liền: có khử bóng; nét đứt: không).}\label{fig:T3}
+\end{figure}
+
+\textbf{Nhận xét.} (1) Sauvola cho kết quả \emph{như nhau} dù có hay không khử bóng (\num{0.922}), còn Otsu tụt từ \num{0.909}
+xuống \num{0.849}: ở bóng mức 2--3 không khử bóng, Otsu sụp còn F $\approx0{,}04$ (cả vùng tối thành mực) trong khi Sauvola giữ
+$\approx1{,}00$ (Hình~\ref{fig:T3}) --- đúng giả thiết lược đồ hai đỉnh của Otsu bị vi phạm \chuong{5, S66}. Khử bóng
+(Closing 81) và Sauvola là hai lớp bảo vệ độc lập. (2) Với ảnh mờ mức 3, Sauvola \num{0.683} so với Otsu \num{0.428}.
+(3) Cột ``F đầy đủ'' cho thấy nếu không bỏ dải viền thì Otsu được lợi giả ($0{,}932>0{,}898$) vì đáp án do chính Otsu tạo ra.
+(4) Wolf --- biến thể của Sauvola --- nhỉnh hơn $0{,}009$; nhóm giữ Sauvola theo kế hoạch, khác biệt nằm trong sai số của tập
+160 mẫu. (5) Tam giác, Đối xứng nền, Niblack thất bại: nền giấy gần trắng tuyệt đối nên đỉnh nền rất nhọn, các ngưỡng dựa trên
+hình dạng lược đồ đặt sai; Niblack tạo nhiễu dày ở vùng nền trơn (đúng nhược điểm mà Sauvola khắc phục).
+\textbf{Khử bóng (T1):} Closing $81\times81$ đạt PSNR \SI{47.9}{dB}, trung vị cỡ lớn \SI{35.2}{dB}, không khử \SI{11.7}{dB}.
+\textbf{Dấu đỏ (T4):} tìm được 95\% số dấu (phủ $\ge80\%$ nét dấu), IoU nét \num{0.65}.
+\textbf{Ca lỗi:} dấu đỏ mức 3 che chữ làm F của mọi phương pháp $\le0{,}72$ vì vùng dấu bị coi là mực. Chi tiết ở Phụ lục~\ref{app:cleaning}.
+\TODO{T2-CER (Sauvola vs Otsu trên ảnh thật) và T5 (giữ chữ đỏ, bộ 4) --- cần OCR / soát ảnh}

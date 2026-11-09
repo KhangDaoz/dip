@@ -1,4 +1,18 @@
 % ===== ≈ 0,75 trang =====
-% Viết gì: bước R1–R9 (kế hoạch toàn nhóm mục 6.1): ước lượng nền Closing = Max rồi Min (đối chứng trung vị); khử bóng bằng toán tử điểm; tách mực HSV; nhận dấu theo độ tròn C = 4πA/P²; mask dấu đặc bằng tách biên + làm đầy vùng; xóa dấu chỉ cho đơn thuốc; nhị phân Sauvola, mở rộng cục bộ của ngưỡng toàn cục C5 · S64 (đối chứng chính Otsu C5 · S65–67; thêm ISODATA, Tam giác, Đối xứng nền, Niblack, Wolf; có và không khử bóng); lý do chọn Sauvola: Otsu giả định lược đồ hai đỉnh, hỏng khi bóng còn sót / nền xám; Opening hậu xử lý; nhãn thành phần bằng luật. Ghi chương + slide, bảng tham số rút gọn (mục 6.3).
-% Ghi chú: phải viết 1–2 câu về bước hậu xử lý (theo khung pipeline Slide 7).
-\TODO{chưa viết}
+\textbf{Khử bóng (R1--R2b).} Nền $\hat B$ ước lượng bằng Closing ảnh xám SE $81\times81$ --- tương đương lọc Max rồi Min
+\chuong{3, S74; 7, S35}: nét chữ tối, hẹp hơn SE bị nền sáng lấp. Ảnh $\approx$ chiếu sáng $\times$ phản xạ (C2 S22) nên chia
+$I/\hat B\cdot255$ (toán tử điểm, C3 S10) bỏ được bóng~\cite{zhang2007whiteboard}. Kéo giãn tương phản tuyến tính từng đoạn
+\chuong{3, S21} được thử nhưng không cải thiện tách khoản trên valid nên tắt.
+\textbf{Tách lớp mực (R3--R6).} Ngưỡng $H$, $S$ trong HSV tách mực đỏ, xanh, đen \chuong{4, S37--41}. Mỗi thành phần liên thông
+đỏ (C5 S84) là \emph{dấu} nếu to, có vành kín và độ tròn $C=4\pi A/P^2\ge 0{,}6$ \chuong{8, S16}; mask dấu đặc lấy bằng tách biên
+$\beta(A)=A-(A\ominus B)$ và làm đầy vùng $X_k=(X_{k-1}\oplus B)\cap A^c$ \chuong{7, S40--45}. Chỉ đơn thuốc mới xóa dấu và
+nét bút xanh (inpainting~\cite{telea2004inpainting}; đối chứng tô màu giấy); phiếu xét nghiệm giữ nguyên chữ đỏ cảnh báo.
+\textbf{Nhị phân hóa (R7).} Phương pháp chính là Sauvola~\cite{sauvola2000binarization}
+$T(x,y)=m\,[1+k(s/R-1)]$ với $m$, $s$ trung bình và độ lệch chuẩn cửa sổ $w\times w$, $R=128$ --- mở rộng cục bộ của ngưỡng toàn
+cục (C5 S64): Otsu~\cite{otsu1979threshold} giả định lược đồ hai đỉnh \chuong{5, S66} nên hỏng khi bóng còn sót, mép giấy tối,
+ô tô nền xám. Cửa sổ $w\approx2{,}5h$ ($h$ = trung vị chiều cao thành phần liên thông) để không thủng ruột chữ đậm.
+Đối chứng: Otsu, ISODATA, Tam giác~\cite{zack1977triangle}, Đối xứng nền \chuong{5, S65--78}, Niblack~\cite{niblack1986introduction},
+Wolf~\cite{wolf2002text}; mỗi cách chạy có và không khử bóng.
+\textbf{Hậu xử lý (R8--R9).} Bỏ thành phần liên thông có diện tích $<(0{,}4h)^2$ (lọc vùng theo diện tích); Opening $2\times2$
+được thử nhưng tắt vì xóa nét chữ mảnh 1--2~px (C7 S14). Thành phần còn lại gán nhãn chữ in / viết tay / dấu / khác bằng luật màu
+và hình dạng (không dùng học máy).

@@ -1,4 +1,19 @@
 % ===== ≈ 0,75 trang =====
-% Viết gì: bước S-B0–S-B5 (kế hoạch toàn nhóm mục 8.1): chiều cao chữ; Dilation khoanh vùng thuốc; projection ngang tách dòng (đối chứng thành phần liên thông); Dilation dọc + luật gom khoản (đối chứng: mỗi dòng một khoản, khe cố định, số dòng cố định, chỉ Dilation, Closing dọc); tách trường bằng regex (không phải DIP). Ghi chương + slide, bảng tham số rút gọn (mục 8.4).
-% Ghi chú: phải viết 1–2 câu về bước hậu xử lý S-B4 (Opening, bỏ khoản thấp < 0,5h hoặc ít mực).
-\TODO{chưa viết}
+Một \emph{khoản thuốc} = dòng tên thuốc (in đậm, kèm số lượng cùng hàng) $+$ dòng cách dùng ngay dưới. Khe giữa hai dòng trong
+cùng khoản xấp xỉ khe giữa hai khoản, nên chỉ dựa vào khoảng cách là không tách được.
+\textbf{S-B0:} $h$ = trung vị chiều cao thành phần liên thông \chuong{5, S83--84}.
+\textbf{S-B2 --- dòng:} $P(y)=\sum_x B(x,y)$, làm trơn $W=3$, khe dòng $P(y)\le0{,}05\max P$ \chuong{5, S62--64}; bỏ dòng cao
+$<0{,}3h$. Đối chứng: gom thành phần liên thông theo tâm $y$ (C5 S84--85).
+\textbf{Độ đậm của dòng:} tỉ lệ pixel mực còn lại sau phép co SE $3\times3$ --- phép co xóa nét mảnh hơn SE, nét đậm sống sót
+\chuong{7, S9, S14}. Trong vùng thuốc, các dòng được chia đậm / thường bằng ngưỡng Otsu trên chính dãy độ đậm \chuong{5, S65--67},
+chỉ chấp nhận khi nhóm đậm $\ge1{,}15\times$ nhóm thường.
+\textbf{S-B3 --- gom khoản (đề xuất):} mỗi dòng tô thành dải ngang, Dilation dọc SE $1\times(s\cdot h)$, $s=3$
+\chuong{7, S5, S19, S24} gom các dòng gần nhau thành khối; trong khối, mỗi dòng \emph{đậm} mở một khoản mới, dòng thường hợp vào
+khoản trước \chuong{5, S87}. Không có dòng đậm thì dùng luật thụt lề. Đối chứng: (a) mỗi dòng một khoản, (b) khe cố định,
+(c) số dòng cố định, (d) chỉ Dilation dọc, (f) Closing dọc (giữ kích thước khối, C7 S35, S38).
+\textbf{S-B1 --- vùng thuốc:} chuỗi dài nhất các cặp liền nhau ``dòng đậm hơn dòng ngay dưới $\ge1{,}15\times$ $+$ 1 dòng theo sau'',
+hai dòng kế nhau cách $\le3h$ (Dilation dọc SE $3h$); hòa thì chọn chuỗi có dòng đầu rộng hơn (tên thuốc $+$ số lượng trải gần
+hết bề ngang). So sánh độ đậm \emph{cục bộ} từng cặp vì trang có tiêu đề, mã vạch, khung bảng còn đậm hơn tên thuốc.
+\textbf{Hậu xử lý S-B4:} bỏ khoản cao $<0{,}5h$ hoặc ít mực; Opening được thử ($1\times1$ / $2\times2$) và tắt theo kết quả valid.
+\textbf{S-B5:} OCR từng khoản rồi tách tên, hàm lượng, liều bằng biểu thức chính quy (hậu xử lý văn bản).
+Tham số $s$, ngưỡng độ đậm, Opening chọn trên valid VAIPE (S1); $k$ và số dòng theo sau chọn bằng S4.

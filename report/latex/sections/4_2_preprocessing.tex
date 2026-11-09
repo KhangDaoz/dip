@@ -1,28 +1,54 @@
 % ===== ≈ 1 trang =====
-% Viết gì: bảng chính D2 (tỉ lệ tìm góc thành công 4 phương án) + D10 (ma trận nhầm lẫn 3 lớp trên bộ 4); hình chính D3 (sai số góc theo góc nghiêng × mức phối cảnh); 2–3 câu nhận xét có số; 1–2 ca lỗi. D1, D4, D5, D6, D9 → phụ lục A.
-% Mẫu bảng — dùng lại cho mọi bảng trong báo cáo
 \begin{table}[H]
 \centering
-\caption{Tìm 4 góc trên tập test \bo{5}: tỉ lệ thành công (sai số $<2\%$ đường chéo) và sai số trung bình.}\label{tab:D2}
+\caption{Tìm 4 góc trên 210 mẫu có phối cảnh của test \bo{5}: thành công khi sai số trung bình 4 góc $<2\%$ đường chéo.}\label{tab:D2}
 \small
-\begin{tabular}{lrr}
+\begin{tabular}{lrrr}
 \toprule
-Phương án & Thành công (\%) & Sai số góc (px) \\
+Phương án & Tìm được (\%) & Thành công (\%) & Sai số trung vị (px) \\
 \midrule
-Contour & \TODO{} & \TODO{} \\
-Hough & \TODO{} & \TODO{} \\
-minAreaRect & \TODO{} & \TODO{} \\
-\textbf{Kết hợp có dự phòng} & \textbf{\TODO{}} & \textbf{\TODO{}} \\
+Canny $\rightarrow$ đường bao $\rightarrow$ tứ giác & 99,0 & 99,0 & 1,43 \\
+Hough & 87,1 & 84,8 & 3,63 \\
+Hình chữ nhật bao nhỏ nhất & 100 & 59,5 & 26,4 \\
+\textbf{Kết hợp có dự phòng} & \textbf{100} & \textbf{99,0} & \textbf{1,43} \\
 \bottomrule
 \end{tabular}
-\\[0.3em]{\footnotesize Script: \texttt{code/experiments/d2\_corners.py}}
+\\[0.3em]{\footnotesize Ngưỡng Canny chọn trên valid: $(T_2,T_1)=(30,60)$, đúng tỉ lệ $T_1=2T_2$ của C5 S47. Script: \texttt{code/experiments/d2\_corners.py}}
 \end{table}
 
-% Mẫu hình — file đặt ở figure/preprocessing/
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[width=0.8\linewidth]{preprocessing/D3_1.pdf}
-%   \caption{Sai số 4 góc theo góc nghiêng, 3 mức phối cảnh (tập test \bo{5}).}\label{fig:D3_1}
-% \end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\linewidth]{preprocessing/D3_curve.png}
+\caption{Sai số tìm 4 góc theo góc nghiêng và mức phối cảnh (lưới 15 ô, mỗi ô 10 ảnh, test \bo{5}).}\label{fig:D3}
+\end{figure}
 
-\TODO{nhận xét, ca lỗi}
+\textbf{Nhận xét.} Tìm góc bằng Canny $+$ đường bao gần như luôn thành công (99\%) với sai số chỉ $\approx1{,}4$~px; sai số tăng
+nhẹ theo góc nghiêng, lớn nhất ở 30° và phối cảnh 20\% (2,3~px, 8/10 ảnh thành công) vì một góc giấy sát mép ảnh.
+Hình chữ nhật bao nhỏ nhất luôn ``tìm được'' nhưng không mô tả được tứ giác phối cảnh nên chỉ đúng 60\%.
+Chỉnh nghiêng bằng projection sai số $0^\circ$ trên 120 ảnh chỉ xoay (±2 đến ±15°) trong 79~ms; Radon cũng đúng nhưng chậm
+120 lần (9,6~s); Hough lệch $0{,}06^\circ$ (Phụ lục~\ref{app:preprocessing}).
+Đo mờ bằng $\mathrm{Var}(\nabla^2 f)$ đạt AUC \num{0.979}, tốt hơn Tenengrad (\num{0.954}) và năng lượng tần số cao (\num{0.920}).
+\textbf{Ca lỗi.} Ảnh mẫu \texttt{rx\_bo5\_degraded\_01} (nghiêng, phối cảnh, bóng, mờ) được nắn thẳng hoàn toàn, nhưng độ mờ làm
+bước (4) không còn phân biệt được dòng đậm (Mục~\ref{sec:e-pres}).
+
+\begin{table}[H]
+\centering
+\caption{Phân loại 3 lớp bằng kNN có từ chối ($k$, độ đo khoảng cách chọn bằng 5-fold trên 439 ảnh train). Test cùng nguồn:
+\bo{1}, \bo{2}, \bo{3} (218 ảnh); open-set: 100 ảnh lớp RVL-CDIP không có lúc train; \bo{4}: 83 ảnh chụp thật.}\label{tab:D10}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Đặc trưng & Test: Acc / Macro-F1 & Open-set bị chặn & \Bo{4}: Acc / Macro-F1 \\
+\midrule
+Lược đồ màu $8^3$ (đối chứng, C8 S13) & 0,927 / 0,801 & 95\% & 0,494 / 0,349 \\
+HOG $+$ GLCM $+$ bố cục trên ảnh CLAHE & 0,963 / 0,930 & 90\% & 0,301 / 0,251 \\
+\textbf{HOG $+$ bố cục trên ảnh chuẩn hóa} (pipeline) & 0,936 / 0,854 & \textbf{97\%} & 0,386 / 0,292 \\
+\bottomrule
+\end{tabular}
+\\[0.3em]{\footnotesize Script: \texttt{code/experiments/d10\_classify.py}}
+\end{table}
+Trên dữ liệu cùng nguồn, cả ba cách đều $>92\%$ và chặn được 90--97\% tài liệu lạ. Trên ảnh chụp thật \bo{4} mọi cách đều sụp:
+mô hình học ``kiểu ảnh của từng nguồn'' (scan VAIPE, ảnh ép $640\times640$, scan đen trắng RVL) chứ không học bố cục. Chuẩn hóa ảnh
+(khử bóng $+$ nhị phân) nâng HOG từ 0,30 lên 0,39 nhưng chưa đủ: ma trận nhầm lẫn cho thấy cả 18 đơn thuốc và 33/48 phiếu xét
+nghiệm thật bị từ chối thành ``khác'' vì khác xa mọi mẫu train. Đây là hạn chế chính của \bo{1}--\bo{3}; hướng khắc phục là thêm
+ảnh chụp thật vào tập train (không dùng \bo{4} vì là tập test). Trong demo, người dùng chọn loại tài liệu khi bộ phân loại từ chối.

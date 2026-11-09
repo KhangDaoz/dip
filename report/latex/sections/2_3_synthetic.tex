@@ -1,3 +1,32 @@
 % ===== ≈ 0,5 trang =====
-% Viết gì: bảng mục 8.2 kế hoạch toàn nhóm rút gọn: loại hỏng (phối cảnh, xoay, mờ, bóng, lóa, dấu / bút, JPEG, nhiễu), mức, ground truth, chương · slide; 1.500 mẫu chia theo ảnh gốc 60/10/30; kiểm chứng bộ 5 giống ảnh thật (độ nét, lược đồ, thang chủ quan C6 · S38, PSNR C6 · S39).
-\TODO{chưa viết}
+Ảnh đơn thuốc \bo{1} là ảnh phẳng, sạch; làm hỏng có kiểm soát cho ra ground truth chính xác mà không phải vẽ tay
+(\num{1500} mẫu từ 100 ảnh gốc, chia 60/10/30 theo ảnh gốc). Mỗi loại hỏng là một mô hình suy biến trong học phần
+(Bảng~\ref{tab:bo5}).
+
+\begin{table}[H]
+\centering
+\caption{Mô hình suy biến của \bo{5}.}\label{tab:bo5}
+\small
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+Loại hỏng & Mô hình sinh (mức) & Kiến thức \\
+\midrule
+Phối cảnh, xoay & ma trận $H$ $3\times3$ từ 4 góc dịch ngẫu nhiên (5/10/20\% cạnh); xoay 0--30° & C2 (S23--24), \cite{gonzalez2018dip} \\
+Mờ & tích chập nhân Gaussian / đường thẳng $g=\sum w(s,t)f(x{+}s,y{+}t)$ (4 mức) & C3 (S47--53) \\
+Bóng đổ & $I'=I\cdot M$, $M$ mặt nạ chiếu sáng (3 mức) & C2 (S22), C3 (S10--11) \\
+Lóa & giảm phơi sáng, tăng $V$, giảm $S$ trong elip Gaussian (3 mức) & C4 (S39--41) \\
+Dấu đỏ, bút & trộn trong suốt theo Hue đỏ / xanh (3 mức che) & C4 (S29--31, S38) \\
+JPEG, nhiễu & chất lượng 30--90; $g=f+\eta$, $\eta\sim\mathcal N(0,\sigma^2)$ & C6 (S40--54), C3 (S65--66) \\
+Nhị phân chuẩn & Otsu trên ảnh sạch $+$ dải viền bỏ qua $(A\oplus B)-(A\ominus B)$ & C5 (S65--67), C7 (S40) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Đáp án Otsu có thiên vị Otsu không?} Trên 100 ảnh sạch, Otsu và Sauvola khác nhau ở \num{0.99}\% số pixel, trong đó
+\num{99.4}\% nằm trong dải viền 1~px quanh nét chữ (dải này chiếm \num{9.2}\% ảnh); ngoài dải viền chỉ khác \num{0.01}\%.
+Vì vậy mọi phép chấm nhị phân hóa trên \bo{5} \emph{bỏ qua dải viền}: F-measure của Sauvola so với đáp án Otsu tăng từ
+\num{0.912} lên \num{0.997} khi bỏ dải viền, tức phần ``thua'' trước đó chỉ là khác biệt vô nghĩa ở biên dốc khi scan.
+
+\textbf{Bộ 5 có giống ảnh thật?} So với 83 ảnh chụp thật \bo{4}: độ nét trung vị $\mathrm{Var}(\nabla^2 f)$ \num{1184} so với
+\num{1570} \chuong{5, S28--29}; độ tương phản (độ lệch chuẩn mức xám) \num{42.3} so với \num{40.7}; \bo{5} sáng hơn (trung bình
+\num{209} so với \num{169}) vì giấy scan gần trắng tuyệt đối. \TODO{chấm chủ quan thang 1--6 (C6 · S38): 2 bạn chấm 20 ảnh bộ 5 trộn 20 ảnh bộ 4}

@@ -1,3 +1,39 @@
 % ===== phụ lục (không giới hạn trang) =====
-% Viết gì: S4, S5, S7 (tùy chọn: F1 trên phần còn lại của VAIPE, GT chưa soát) (ảnh khung khoản định tính trên bộ 4); thời gian và kiểm chứng bộ 5 (S6); bảng tham số đầy đủ (kế hoạch mục 8.4).
-\TODO{chưa viết}
+\textbf{S0 --- ground truth VAIPE} (\texttt{s0\_gt\_vaipe.py}): valid 176 ảnh / 405 khoản, test 176 ảnh / 443 khoản; ảnh vẽ khung
+để soát bằng mắt ở \texttt{results/s0/review/}.
+\TODO{số ảnh test đã soát bằng mắt (cần $\ge50$) và số ảnh phải sửa / loại}
+
+\textbf{S4 --- khoanh vùng thuốc} (\texttt{s4\_region.py}; $k$ và số dòng theo sau chọn trên valid).
+\begin{table}[H]
+\centering\small
+\begin{tabular}{lrrrr}
+\toprule
+Cách lấy vùng & IoU vùng & Precision & Recall & F1 khoản \\
+\midrule
+\textbf{Tự động} ($k=2$, 1 dòng theo sau) & \textbf{0,725} & 0,821 & 0,819 & \textbf{0,820} \\
+Cả trang (đối chứng) & 0,108 & 0,133 & 0,623 & 0,219 \\
+Vùng ground truth (trần trên) & 1,000 & 0,971 & 0,975 & 0,973 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{S6 --- kiểm chứng \bo{5}} (\texttt{s6\_bo5\_check.py}): xem Mục~\ref{sec:synthetic}. PSNR ảnh hỏng so với ảnh sạch
+(C6 S39), trung bình theo công thức sinh: chỉ JPEG \SI{36.8}{dB}, chỉ mờ \SI{22.7}{dB}, chỉ bóng \SI{11.7}{dB}, kết hợp nhiều loại
+(có biến dạng hình học) $\approx\SI{5}{dB}$.
+
+\textbf{Bảng tham số} (KeHoach.md mục 8.4).
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{lllX}
+\toprule
+Tham số & Khoảng thử & Chọn & Lý do \\
+\midrule
+$s$: SE dọc gom khoản ($\times h$) & 0,5; 1; 1,5; 2; 3; 4 & 3 & $s=2,3,4$ hòa trên valid (F1 0,960) $\rightarrow$ chọn giữa vùng hòa \\
+Ngưỡng đậm (nhóm đậm / thường) & 1,15; 1,25; 1,5; 2 & 1,25 & như trên; mẫu đơn 1150~px chỉ đạt $\approx1{,}3\times$ \\
+Opening trước tách dòng & tắt, $2\times2$ & tắt & F1 valid 0,960 so với 0,926 \\
+$k$: khe dòng tối đa trong vùng ($\times h$) & 1; 1,5; 2; 3; 4 & 2 & F1 khoản trên valid (S4) \\
+Số dòng theo sau mỗi khoản & 1, 2 & 1 & như trên \\
+$T$, $W$ tách dòng & --- & 5\% đỉnh, 3 & C5 S62 khuyến nghị $W=3$ hoặc 5 \\
+\bottomrule
+\end{tabularx}
+\end{table}

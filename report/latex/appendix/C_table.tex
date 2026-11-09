@@ -1,3 +1,35 @@
 % ===== phụ lục (không giới hạn trang) =====
-% Viết gì: K0 ảnh overlay ground truth, K4, K5, K6 (ảnh overlay định tính trên bộ 4); bảng tham số đầy đủ (kế hoạch mục 7.3) kèm tham số chọn ở từng fold.
-\TODO{chưa viết}
+\textbf{K0 --- ground truth} (\texttt{k0\_gt.py}): 55 ảnh có nhãn thân bảng (2 ảnh chỉ có nhãn loại phiếu), \num{3255} cụm từ,
+836 dòng. Ảnh vẽ khung để soát ở \texttt{results/k0/review/}.
+
+\textbf{K4 --- tham số theo chiều cao chữ.} $h$ cố định $=5$~px (trung vị cả bộ).
+\begin{table}[H]
+\centering\small
+\begin{tabular}{llrr}
+\toprule
+Bước & Phương án & $h$ từng ảnh & $h$ cố định \\
+\midrule
+Gom dòng & Projection ngang & 0,583 & 0,603 \\
+Tìm cột & Projection dọc & 0,917 & 0,917 \\
+Tìm cột & XY-cut & 0,801 & 0,801 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Bảng tham số} (KeHoach.md mục 7.3): chọn bằng grid search trên 4 fold, lặp 5 lượt; tham số chọn ở từng fold ghi trong
+\texttt{results/k2/folds.csv}.
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{llX}
+\toprule
+Tham số & Khoảng thử & Chọn bằng \\
+\midrule
+SE gom dòng ($\times h$) & 2, 3, 4, 5 & F1 cặp cùng dòng trên 4 fold \\
+Cửa sổ làm trơn $W$ & 1, 3, 5 & như trên (C5 S62 khuyến nghị 3 hoặc 5) \\
+Ngưỡng thung lũng $T$ (\% đỉnh) & 2, 5, 10 & như trên \\
+Khe tâm $y$ cố định (px) & 3, 5, 8, 10, 15 & như trên \\
+Độ rộng khe cột ($\times h$); \% dòng xuyên qua & 0,5--2; 40--80\% & F1 cặp cùng cột \\
+Khe XY-cut ($\times h$); khe $x$ cố định (px) & 0,5--2; 5--30 & như trên \\
+\bottomrule
+\end{tabularx}
+\end{table}

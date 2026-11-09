@@ -1,4 +1,17 @@
 % ===== ≈ 0,75 trang =====
-% Viết gì: bước K1–K7 (kế hoạch toàn nhóm mục 7.1): chiều cao chữ h = trung vị; Dilation ngang SE theo h → cụm từ; projection ngang → dòng (đối chứng tâm y cố định); projection dọc → cột (đối chứng XY-cut, khoảng cách cố định); ghép ô (hợp vùng); vai trò cột và cờ bằng luật (không phải DIP). Mở rộng nếu làm: Opening lấy đường kẻ. Ghi chương + slide, bảng tham số rút gọn (mục 7.3).
-% Ghi chú: phải viết 1–2 câu về bước hậu xử lý K6 (bỏ dòng thấp < 0,5h, gộp cột hẹp, Opening trước projection).
-\TODO{chưa viết}
+Bảng của \bo{2} \emph{không kẻ lưới}, nên dòng và cột được suy ra từ khoảng trắng.
+\textbf{K1:} $h$ = trung vị chiều cao thành phần liên thông \chuong{5, S84; 3, S73}; mọi kích thước SE và ngưỡng tính theo $h$
+vì ảnh có độ phân giải khác nhau (C2 S26).
+\textbf{K2 --- cụm từ:} Dilation ngang SE $1\times(0{,}5h)$ nối ký tự cùng dòng rồi lấy vùng liên thông --- SE chỉ một hàng nên
+không nối sang dòng trên / dưới \chuong{7, S5, S19, S23}.
+\textbf{K3 --- dòng:} $P(y)=\sum_x B(x,y)$ trên ảnh đã Dilation ngang, làm trơn $h_{smooth}(b)=\frac1W\sum h_{raw}(b-w)$
+\chuong{5, S62}, cắt tại thung lũng $P(y)\le T$ \chuong{5, S63--64} (mở rộng lược đồ C3 S23 sang trục không gian);
+đối chứng: gom tâm $y$ với khe cố định.
+\textbf{K4 --- cột:} với mỗi dòng đánh dấu khoảng $x$ có cụm từ; dải $x$ trống ở $\ge p\%$ số dòng và rộng $\ge w\cdot h$ là ranh
+giới cột (projection dọc trên thân bảng). Đối chứng: XY-cut đệ quy~\cite{nagy1984xycut} --- tách vùng top-down \chuong{5, S89--90}
+--- và gom theo khe $x$ cố định.
+\textbf{K5 --- ô:} mỗi cụm từ vào ô (dòng $\times$ cột) có đoạn chồng lớn nhất; các cụm cùng ô hợp thành một vùng \chuong{5, S87}.
+\textbf{Hậu xử lý K6:} bỏ dòng cao $<0{,}5h$, gộp cột hẹp hơn $h$ vào cột kề.
+\textbf{K7:} vai trò cột (tên chỉ số, kết quả, đơn vị, khoảng) theo thứ tự cột và kiểu chữ OCR, cờ HIGH / LOW / NORMAL bằng so
+sánh số --- là hậu xử lý văn bản, không tính là phương pháp xử lý ảnh. Phiếu có kẻ lưới (\bo{4}) lấy đường kẻ bằng
+Opening SE $1\times W/20$, $H/20\times1$: chỉ đoạn thẳng đủ dài mới ``fit'' SE \chuong{7, S6, S28}.

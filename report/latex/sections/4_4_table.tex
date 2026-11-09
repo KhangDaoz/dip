@@ -1,3 +1,31 @@
 % ===== ≈ 1 trang =====
-% Viết gì: bảng chính K2 (3 cách tìm cột: độ chính xác gán cột, F1 quan hệ kề, trung bình ± độ lệch chuẩn qua 5 fold trên 57 ảnh bộ 2), kèm K1 nếu đủ chỗ; hình chính K3 (độ chính xác gán dòng theo góc nghiêng còn sót 0→5°); nhận xét; ca lỗi; lưu ý trung thực mục 7.4. K0, K4, K5, K6 → phụ lục C.
-\TODO{chưa viết}
+\begin{table}[H]
+\centering
+\caption{Gom dòng (K1) và tìm cột (K2) trên 55 ảnh \bo{2} có nhãn, kiểm định chéo 5-fold (trung bình $\pm$ độ lệch chuẩn qua 5 fold).
+Đầu vào là ảnh nhị phân của bước (2) và khung cụm từ ground truth. Độ đo: F1 trên các cặp cụm từ cùng dòng / cùng cột.}\label{tab:K2}
+\small
+\begin{tabular}{llrrrr}
+\toprule
+Bước & Phương án & F1 & Precision & Recall & Ảnh đúng hoàn toàn \\
+\midrule
+Tìm cột & \textbf{Projection dọc} (đề xuất) & \textbf{0,917 $\pm$ 0,083} & 0,864 & 0,986 & 63,6\% \\
+        & XY-cut đệ quy & 0,801 $\pm$ 0,115 & 0,683 & 0,999 & 56,4\% \\
+        & Khe $x$ cố định & 0,793 $\pm$ 0,111 & 0,670 & 0,999 & 50,9\% \\
+\midrule
+Gom dòng & Projection ngang (đề xuất) & 0,583 $\pm$ 0,125 & 0,466 & 0,868 & 45,5\% \\
+         & Tâm $y$ khe cố định & \textbf{0,692 $\pm$ 0,180} & 0,902 & 0,600 & 47,3\% \\
+\bottomrule
+\end{tabular}
+\\[0.3em]{\footnotesize Script: \texttt{code/experiments/k0\_gt.py}, \texttt{k2\_table.py}}
+\end{table}
+
+\textbf{Nhận xét.} Tìm cột bằng projection dọc trên thân bảng tốt hơn rõ XY-cut và khe cố định (F1 \num{0.917}): khe trắng dọc
+xuyên qua đa số dòng chính là ``đường kẻ ẩn''. XY-cut và khe cố định gần như không bỏ sót (recall $\approx1$) nhưng hay gộp hai
+cột kề nhau (precision thấp). Ngược lại, \emph{gom dòng bằng projection thua gom tâm $y$}: precision chỉ \num{0.47}, tức hay gộp
+hai dòng liền nhau. Nguyên nhân: \bo{2} là ảnh chụp bị ép $640\times640$, dòng chỉ cách nhau vài pixel và hơi nghiêng, nên thung
+lũng giữa hai dòng trên $P(y)$ không xuống đủ thấp sau Dilation ngang và làm trơn. K4 (tham số theo $h$ của từng ảnh so với $h$ cố
+định): với cột không khác biệt (\num{0.917} cả hai), với dòng $h$ cố định nhỉnh hơn (\num{0.603} so với \num{0.583}) vì chiều cao
+chữ ước lượng trên ảnh 640~px chỉ 3--8~px nên kém tin cậy --- giả thuyết ``SE thích nghi tốt hơn'' \emph{không} được xác nhận trên \bo{2}.
+\textbf{Hạn chế.} Ground truth dòng suy từ nhãn cụm từ (chồng nhau theo chiều dọc $\ge50\%$) chưa được soát tay toàn bộ; \bo{2} là
+phiếu tiếng Anh, kết quả trên phiếu Việt Nam (\bo{4}) chỉ là minh họa định tính.
+\TODO{K3 (độ nghiêng còn sót) và K5 (CER theo ô, cần OCR)}

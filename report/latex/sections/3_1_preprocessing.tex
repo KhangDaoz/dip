@@ -1,4 +1,19 @@
 % ===== ≈ 0,75 trang =====
-% Viết gì: bước H1–H11 (kế hoạch toàn nhóm mục 5.1): khử nhiễu trung vị; đo mờ Laplacian (đối chứng Tenengrad, FFT); đo lóa HSV; Canny → 4 góc (dự phòng Hough, minAreaRect); nắn phối cảnh; chỉnh nghiêng projection (đối chứng Hough, Radon); CLAHE (đối chứng cân bằng toàn cục); đặc trưng HOG / GLCM / mật độ mực + kNN (đối chứng lược đồ màu). Ghi chương + slide, bảng tham số rút gọn (mục 5.3).
-% Ghi chú: phải viết 1–2 câu về bước hậu xử lý (theo khung pipeline Slide 7).
-\TODO{chưa viết}
+\textbf{Chuẩn hóa, khử nhiễu.} Ảnh co cạnh dài về \num{1000}~px để dò (nắn vẫn chạy trên ảnh gốc, \chuong{2, S26}); lọc trung vị
+$3\times3$ bỏ nhiễu hạt mà ít làm mờ biên \chuong{3, S73}.
+\textbf{Đo mờ:} $B=\mathrm{Var}(\nabla^2 f)$ với nhân Laplacian 4-lân cận \chuong{5, S28--29} --- ảnh mờ ít biên sắc nên phương sai
+nhỏ; đối chứng Tenengrad (Sobel, C5 S19) và năng lượng tần số cao (C3 S8).
+\textbf{Đo lóa:} mask $\{V>\tau_V\}\cap\{S<\tau_S\}$ trong HSV --- lóa là ánh sáng trắng nên $V$ cao, $S$ thấp \chuong{4, S39--41};
+lóa nhẹ (1--8\% diện tích) được khử bằng inpainting~\cite{telea2004inpainting}.
+\textbf{Tìm 4 góc:} Canny (ngưỡng kép $T_1=2T_2$, \chuong{5, S36--47}) $\rightarrow$ đường bao lớn nhất $\rightarrow$ xấp xỉ tứ giác;
+dự phòng Hough, hình chữ nhật bao nhỏ nhất, rồi cả ảnh.
+\textbf{Nắn phối cảnh:} $H$ $3\times3$ từ 4 cặp góc, ánh xạ ngược với nội suy bicubic (gợi ý đề tài của học phần; C2 S23--24,
+\cite{gonzalez2018dip}).
+\textbf{Chỉnh nghiêng:} $\theta^*=\arg\max_\theta \mathrm{Var}(P_\theta)$ với $P_\theta(y)=\sum_x B_\theta(x,y)$ --- lược đồ đếm mực theo
+hàng (mở rộng C3 S23) có đỉnh / thung lũng rõ nhất khi dòng chữ nằm ngang; đối chứng Hough, Radon. $H$ tổng $=R\cdot H_{persp}$.
+\textbf{Phân loại 3 lớp:} ảnh được \emph{chuẩn hóa} (khử bóng $+$ nhị phân, bỏ màu giấy / độ sáng riêng của từng nguồn), rồi trích
+HOG~\cite{dalal2005hog} $+$ mật độ mực lưới $3\times3$, $6\times6$ $+$ tỉ lệ đường kẻ (Opening SE $1\times40$, $40\times1$, C7 S28)
+$+$ số dòng; kNN trên đặc trưng chuẩn hóa z-score, $k$ lẻ và độ đo khoảng cách chọn bằng 5-fold \chuong{8, S37--41}; khoảng cách
+tới láng giềng gần nhất vượt phân vị 95\% của tập train thì \emph{từ chối} (``khác''). Đối chứng: lược đồ màu $8^3$ bin
+\chuong{8, S13} và HOG $+$ GLCM~\cite{haralick1973textural} trên ảnh CLAHE~\cite{zuiderveld1994clahe}.
+\textbf{Hậu xử lý:} bỏ thành phần lóa nhỏ; bỏ qua góc nghiêng $<0{,}3°$; ảnh tràn khung thì không nắn (\texttt{full\_image}).

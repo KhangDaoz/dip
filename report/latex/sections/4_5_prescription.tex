@@ -1,3 +1,43 @@
 % ===== ≈ 1 trang =====
-% Viết gì: bảng chính S1 (6 cách gom khoản × 2 cách tách dòng: F1 khoản IoU > 0,5, IoU trung bình trên ≥ 50 ảnh VAIPE đã soát GT; tham số chọn trên valid VAIPE 176 ảnh GT tự gom; đánh giá trên test VAIPE); hình chính S2 (F1 theo góc, mờ, bóng, JPEG trên test bộ 5); S3 CER cả trang vs từng dòng vs từng khoản; nhận xét; ca lỗi. S4, S5, S6 → phụ lục D.
-\TODO{chưa viết}
+\begin{table}[H]
+\centering
+\caption{Gom khoản thuốc trên 176 ảnh test VAIPE (443 khoản), cắt theo vùng thuốc ground truth; tham số chọn trên 176 ảnh valid.
+Khoản đúng khi IoU $>0{,}5$.}\label{tab:S1}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Phương án gom khoản (tách dòng bằng projection) & Precision & Recall & F1 & IoU TB \\
+\midrule
+\textbf{Dilation dọc $+$ luật dòng đậm} ($s=3$, ngưỡng đậm 1,25) & \textbf{0,971} & \textbf{0,975} & \textbf{0,973} & 0,813 \\
+(c) số dòng cố định ($n=2$) & 0,968 & 0,971 & 0,970 & 0,814 \\
+(d) chỉ Dilation dọc & 0,214 & 0,422 & 0,284 & 0,603 \\
+(f) Closing dọc & 0,131 & 0,111 & 0,120 & 0,733 \\
+(b) khe cố định & 0,101 & 0,113 & 0,107 & 0,758 \\
+(a) mỗi dòng một khoản & 0,048 & 0,095 & 0,064 & 0,728 \\
+\midrule
+Đề xuất, tách dòng bằng thành phần liên thông & 0,831 & 0,946 & 0,885 & 0,833 \\
+\bottomrule
+\end{tabular}
+\\[0.3em]{\footnotesize Script: \texttt{code/experiments/s0\_gt\_vaipe.py}, \texttt{s1\_items.py}}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{prescription/S2.png}
+\caption{F1 khoản thuốc chạy đầu-cuối (1)$\rightarrow$(2)$\rightarrow$(4) trên test \bo{5}, mỗi đường chỉ gồm mẫu bị đúng một loại hỏng.}\label{fig:S2}
+\end{figure}
+
+\textbf{Nhận xét.} (1) Trên đơn VAIPE, khe giữa hai dòng trong một khoản xấp xỉ khe giữa hai khoản, nên mọi cách chỉ dựa vào
+khoảng cách --- Dilation, Closing, khe cố định --- đều thất bại (F1 $\le0{,}28$). Thêm luật ``dòng đậm mở khoản'' (độ đậm đo bằng
+phép co, C7 S14) đưa F1 lên \num{0.973}. Phương án (c) ``2 dòng mỗi khoản'' đạt gần bằng (\num{0.970}) chỉ vì mọi đơn VAIPE cùng một
+mẫu in; nó không tổng quát cho đơn có khoản 1 hoặc 3 dòng, còn luật dòng đậm không giả định số dòng.
+(2) Tách dòng bằng projection tốt hơn gom thành phần liên thông (\num{0.973} so với \num{0.885}) vì dấu thanh tiếng Việt tạo
+nhiều thành phần nhỏ lệch tâm.
+(3) Khoanh vùng thuốc tự động đạt IoU vùng \num{0.725} và F1 khoản đầu-cuối \num{0.820}, so với \num{0.219} khi lấy cả trang
+(Phụ lục~\ref{app:prescription}).
+(4) Chạy đầu-cuối trên \bo{5} (Hình~\ref{fig:S2}): nghiêng và phối cảnh gần như không ảnh hưởng (F1 0,85--0,99, chỉ giảm còn
+\num{0.69} ở 30°) nhờ bước nắn; F1 chung trên 450 mẫu là \num{0.725}.
+\textbf{Ca lỗi.} Bóng đổ làm F1 tụt từ \num{0.85} xuống \num{0.19}--\num{0.35} dù ảnh nhị phân vẫn đúng (T3): vùng tối sau khử bóng
+có nét chữ mảnh hơn, tỉ lệ ``đậm / thường'' không còn tách được nên vùng thuốc và ranh giới khoản sai; mờ mức 3 (\num{0.48}) và dấu
+đỏ đè lên dòng tên thuốc (\num{0.56}) gây lỗi tương tự. Hướng sửa: chuẩn hóa độ đậm theo độ tương phản cục bộ của từng dòng.
+\TODO{S3: CER OCR cả trang / từng dòng / từng khoản --- cần cài Tesseract}
