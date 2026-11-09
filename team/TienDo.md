@@ -2,7 +2,7 @@
 
 > **Kế hoạch chính:** [KeHoach.md](KeHoach.md). Bảng này chỉ theo dõi trạng thái, nội dung từng việc xem mục được ghi ở cột "Mục".  
 > **Cách cập nhật:** sửa cột **Trạng thái** (⬜ Chưa làm · 🔄 Đang làm · ⛔ Bị chặn · ✅ Xong), ghi đường dẫn kết quả hoặc lý do bị chặn vào **Ghi chú**, rồi commit lên `main`.  
-> **Code:** khung skeleton ở [code/README.md](../code/README.md); mọi hàm còn `NotImplementedError`.
+> **Code:** [code/README.md](../code/README.md). Ngày 10/11 đã viết đủ các module ①–④ (25/25 test qua), chạy các thí nghiệm không cần OCR; kết quả ở `results/<mã>/`, đã điền vào báo cáo `report/latex/`.
 
 ## Hạn chót
 
@@ -17,11 +17,11 @@
 
 | Người | Việc | Mục | Trạng thái | Ghi chú |
 | :--- | :--- | :---: | :---: | :--- |
-| Hiếu | Đặc trưng + kNN, D10; D3; chọn 10 ảnh mẫu `code/samples/` | 5, 12.4 | ⬜ | |
-| Trường | Nối các bước ② đầu-cuối; T5; thêm ISODATA, Tam giác vào T2 | 6, 12.4 | ⬜ | |
-| Khang | GT 57 ảnh bộ 2 (soát bằng mắt); K1, K2 bằng 5-fold trên 57 ảnh | 7, 12.4 | ⬜ | |
-| Thắng | Chia VAIPE 70 / 15 / 15; GT tự gom cho valid + test; GT ≥ 50 ảnh test (soát bằng mắt); S1, S3 | 8, 12.4 | 🔄 | 09/11: đã chia VAIPE train / valid / test = 820 / 176 / 176 theo nhóm ảnh cùng bệnh nhân; test gốc 172 ảnh → `test_unlabeled/`; xóa 1 ảnh trùng. Bản đã chia đưa lên Drive. Còn GT, S1, S3 |
-| Cả nhóm | 🎯 **Tối: chạy cả pipeline trên 10 ảnh mẫu** (`python run_pipeline.py samples/`) | 12.4 | ⬜ | |
+| Hiếu | Đặc trưng + kNN, D10; D3; chọn 10 ảnh mẫu `code/samples/` | 5, 12.4 | ✅ | D1 (AUC Laplacian 0,979), D2 (tìm góc 99 %), D3 (đường cong), D4 (projection sai số 0°), D9 (< 0,7 s/ảnh), D10 (test 0,94; bộ 4 chỉ 0,39 — học thuộc nguồn); 10 ảnh mẫu; mô hình `code/models/doc_knn.pkl`. **Còn:** D5, D6 (cần OCR) |
+| Trường | Nối các bước ② đầu-cuối; T5; thêm ISODATA, Tam giác vào T2 | 6, 12.4 | 🔄 | `clean()` chạy đầu-cuối; T1 (Closing 81: 47,9 dB), T2 7 cách (Sauvola 0,922 bền với bóng, Otsu tụt 0,849 khi không khử bóng), T3 đường cong, T4 (tìm 95 % dấu). **Còn:** T5 (soát chữ đỏ bộ 4), T2-CER, T8 (cần OCR) |
+| Khang | GT 57 ảnh bộ 2 (soát bằng mắt); K1, K2 bằng 5-fold trên 57 ảnh | 7, 12.4 | 🔄 | `extract_table()` chạy; K0 GT tự sinh 55 ảnh (`results/k0/review/` — **cần soát bằng mắt**); K2 cột projection 0,917; K1 dòng projection 0,583 thua tâm y cố định 0,692; K4. **Còn:** soát GT, K3, K5 (cần OCR) |
+| Thắng | Chia VAIPE 70 / 15 / 15; GT tự gom cho valid + test; GT ≥ 50 ảnh test (soát bằng mắt); S1, S3 | 8, 12.4 | 🔄 | Đã chia VAIPE; S0 GT tự gom (`results/s0/review/test/` — **cần soát ≥ 50 ảnh**); S1 F1 0,973; S4 khoanh vùng 0,820; S2 đầu-cuối bộ 5 (0,725, bóng là ca lỗi chính); S6 mask dải viền + 99,4 % bất đồng Otsu/Sauvola nằm trong dải viền. **Còn:** soát GT, S3 (cần OCR) |
+| Cả nhóm | 🎯 **Tối: chạy cả pipeline trên 10 ảnh mẫu** (`python run_pipeline.py samples/`) | 12.4 | ✅ | 10/11: chạy hết 10 ảnh không lỗi; phân loại đúng 7/10; ảnh `out/*_overlay.png` dùng cho demo |
 
 ## 10/11 (Thứ ba)
 
