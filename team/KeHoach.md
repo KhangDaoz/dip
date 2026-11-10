@@ -381,7 +381,7 @@ Bảng dùng chung: kỹ thuật → slide → công thức. Mục 5–8 trích 
 | Kích thước SE ước lượng nền | 15–81 px (≈ 3–5 × chiều cao chữ) | PSNR trên valid (T1) | Đã chọn **81** |
 | Ngưỡng H, S mực đỏ / xanh | H ± 5°, S 40–120 | IoU mask dấu (T4) | C4 · S38–39 |
 | Ngưỡng độ tròn $C$ và diện tích dấu | $C$ 0,4–0,8; diện tích 1–10 % trang | IoU dấu cao nhất (T4), không xóa nhầm chữ đỏ trên ảnh T5 | C8 · S16 |
-| Phương pháp nhị phân | 7 cách | **CER trên crop ảnh thật tập chọn tham số (T2-CER)**; F-measure bộ 5 (T2) để tham khảo | Hướng chốt: **Sauvola sau Closing 81** |
+| Phương pháp nhị phân | 7 cách | **CER trên crop ảnh thật tập chọn tham số (T2-CER)**; F-measure bộ 5 (T2) để tham khảo | *(Kết quả 10/11: theo tiêu chí, Niblack 0,146 < Sauvola 0,160 < Otsu 0,282; nhưng OCR ảnh xám 0,063 tốt hơn mọi ảnh nhị phân → OCR đọc ảnh xám, nhị phân chỉ để tách vùng, giữ **Sauvola** vì Niblack phủ nhiễu nền làm hỏng projection. Báo cáo ghi rõ là điều chỉnh sau khi có số liệu.)* |
 | Cửa sổ w, hệ số k của **Sauvola (phương pháp chính)** | w 15–61 px (≈ 2–3 × chiều cao chữ); k 0,1–0,5 | F-measure bỏ qua dải viền trên valid bộ 5 (T2) | w nhỏ hơn nét đậm thì thủng ruột chữ; k lớn thì mất mực nhạt |
 | SE Opening; ngưỡng diện tích nhiễu | 1 × 1 – 3 × 3; 2–30 px | F-measure + CER | C7 · S34 |
 
@@ -704,31 +704,31 @@ Tập chọn tham số là `valid/` VAIPE (176 ảnh) với GT khoản gom tự 
 **Chung (cả nhóm)**
 - [ ] Đã đọc mục 1–4, đồng ý cách ghi chương (✅ / ➕ / 📘 / ⚠️)
 - [ ] Mỗi bước trong phần của mình có: mục tiêu, phương pháp, đối chứng, **chương + slide + công thức**, tham số kèm lý do
-- [ ] Có bước **hậu xử lý** (trừ Hiếu)
+- [x] Có bước **hậu xử lý** (trừ Hiếu)
 - [ ] Tập đánh giá ≥ 50 ảnh, tham số chọn trên valid
 - [ ] Đã mở PDF bài giảng kiểm lại các slide mình trích
 
 **Hiếu**
-- [ ] D2, D3, D6, D10 có số liệu; ma trận nhầm lẫn trên bộ 4
-- [ ] Ngưỡng Canny đã thử tỉ lệ $T_1 = 2T_2$ theo C5 · S47
-- [ ] CLAHE có đối chứng cân bằng lược đồ toàn cục
+- [x] D2, D3, D6, D10 có số liệu; ma trận nhầm lẫn trên bộ 4
+- [x] Ngưỡng Canny đã thử tỉ lệ $T_1 = 2T_2$ theo C5 · S47
+- [x] CLAHE có đối chứng cân bằng lược đồ toàn cục (D6)
 - [ ] 10 ảnh mẫu; báo cáo ≤ 10 trang; slide; video; `.zip`
 
 **Trường**
-- [ ] T5 có lưới ảnh trước / sau chữ đỏ trên bộ 4; T8 có bảng ablation
-- [ ] Nhận dạng dấu dùng độ tròn $C = 4\pi A/P^2$ (C8 · S16) và làm đầy vùng (C7 · S45)
-- [ ] R7 dùng **Sauvola**; w, k chọn trên valid; Otsu và các cách C5 làm đối chứng, có và không khử bóng
-- [ ] T2, T3 chấm **bỏ qua dải viền**; T2-CER có kết quả; ghi rõ tiêu chí chọn trước khi chạy
-- [ ] Ghi rõ hạn chế "đáp án bộ 5 tạo bằng Otsu" và cách đã giảm thiên vị
+- [x] T5 có lưới ảnh trước / sau chữ đỏ trên bộ 4; T8 có bảng ablation
+- [x] Nhận dạng dấu dùng độ tròn $C = 4\pi A/P^2$ (C8 · S16) và làm đầy vùng (C7 · S45)
+- [x] R7 dùng **Sauvola**; w, k chọn trên valid; Otsu và các cách C5 làm đối chứng, có và không khử bóng
+- [x] T2, T3 chấm **bỏ qua dải viền**; T2-CER có kết quả; ghi rõ tiêu chí chọn trước khi chạy
+- [x] Ghi rõ hạn chế "đáp án bộ 5 tạo bằng Otsu" và cách đã giảm thiên vị
 
 **Khang**
-- [ ] GT 57 ảnh đã soát, không dùng thuật toán đối chứng để đề xuất GT
-- [ ] K1, K2, K4 có số liệu 5-fold trên 57 ảnh (trung bình ± độ lệch chuẩn); K5 có số liệu với tham số cuối
+- [x] GT đã soát (55 ảnh có nhãn thân bảng → giữ **32 ảnh**, dưới mức 50 — đã nêu lý do trong báo cáo mục 2.2), không dùng thuật toán đối chứng để đề xuất GT
+- [x] K1, K2, K4 có số liệu 5-fold trên 32 ảnh (trung bình ± độ lệch chuẩn); K5 có số liệu với tham số cuối
 - [ ] Phần bảng có kẻ (nếu làm) dùng **Opening** để lấy đường kẻ
 
 **Thắng**
 - [x] Chia VAIPE train / valid / test = 820 / 176 / 176 theo nhóm ảnh cùng bệnh nhân (`data/1_vaipe/split_manifest.csv`, đã tải lên Drive)
-- [ ] GT khoản tự gom cho `valid/` + `test/`; soát từng ảnh ≥ 60 ảnh `test/` (≥ 50 dùng được)
-- [ ] S1, S2, S3 có số liệu; bảng tham số đã điền
-- [ ] Bộ 5 có phần kiểm chứng "giống thật" (C6 · S38–39)
-- [ ] Bộ 5 có **mask dải viền bỏ qua** và con số tỉ lệ bất đồng Otsu / Sauvola ngoài dải viền, đã gửi Trường
+- [x] GT khoản tự gom cho `valid/` + `test/`; soát từng ảnh cả 176 ảnh `test/`, duyệt cả 176
+- [x] S1, S2, S3 có số liệu; bảng tham số đã điền
+- [ ] Bộ 5 có phần kiểm chứng "giống thật" (C6 · S38–39) — *có thống kê khách quan (C6 · S39); chấm chủ quan thang 1–6 (S38) chưa làm, báo cáo đã ghi*
+- [x] Bộ 5 có **mask dải viền bỏ qua** và con số tỉ lệ bất đồng Otsu / Sauvola ngoài dải viền, đã gửi Trường

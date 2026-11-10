@@ -1,18 +1,5 @@
-% ===== ≈ 0,25 trang =====
-\begin{table}[H]
-\centering
-\caption{Thời gian chạy trên CPU (trung vị, 10 ảnh mẫu \texttt{code/samples/}, mỗi ảnh 3 lần; chưa gồm OCR).}\label{tab:runtime}
-\small
-\begin{tabular}{lrrrr}
-\toprule
-Loại ảnh & (1) tiền xử lý $+$ phân loại & (2) làm sạch & (3)/(4) cấu trúc & Tổng \\
-\midrule
-Phiếu xét nghiệm ($640\times640$) & 210 ms & 135 ms & 36 ms & 381 ms \\
-Đơn thuốc ($\approx760\times1070$) & 357 ms & 299 ms & 24 ms & 679 ms \\
-Tài liệu khác (dừng sau (1)) & 436 ms & --- & --- & 436 ms \\
-\bottomrule
-\end{tabular}
-\\[0.3em]{\footnotesize Script: \texttt{code/experiments/d9\_runtime.py}}
-\end{table}
-Toàn pipeline dưới 1~giây mỗi ảnh, đủ nhanh để chạy sau khi người dùng chụp ảnh trong app. Bước tốn nhất là làm sạch (Closing
-SE $81\times81$, inpainting) và phân loại (trích HOG); Radon (dùng làm đối chứng chỉnh nghiêng) mất 9,6~s nên không đưa vào pipeline.
+% ===== ≈ 0,1 trang (bảng chi tiết ở Phụ lục A) =====
+Trên CPU, trung vị 10 ảnh mẫu (chưa gồm OCR): phiếu xét nghiệm $640\times640$ \SI{381}{ms}, đơn thuốc \SI{679}{ms}, tài liệu khác
+dừng sau (1) \SI{436}{ms} (Bảng~\ref{tab:runtime}, Phụ lục~\ref{app:preprocessing}) --- dưới 1~giây, đủ nhanh để chạy ngay sau khi
+chụp. Bước tốn nhất là làm sạch (Closing $81\times81$, inpainting) và trích HOG; Radon (đối chứng chỉnh nghiêng) mất 9,6~s nên
+không đưa vào pipeline. OCR Tesseract thêm $\approx$\SI{0.13}{s} mỗi dòng.

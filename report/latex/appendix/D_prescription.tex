@@ -1,7 +1,8 @@
 % ===== phụ lục (không giới hạn trang) =====
 \textbf{S0 --- ground truth VAIPE} (\texttt{s0\_gt\_vaipe.py}): valid 176 ảnh / 405 khoản, test 176 ảnh / 443 khoản; ảnh vẽ khung
-để soát bằng mắt ở \texttt{results/s0/review/}.
-\TODO{số ảnh test đã soát bằng mắt (cần $\ge50$) và số ảnh phải sửa / loại}
+để soát bằng mắt ở \texttt{results/s0/review/}. Thắng soát bằng mắt \emph{toàn bộ 176 ảnh test} (443 khoản) và duyệt cả
+176 ảnh, không phải sửa hay loại ảnh nào (\texttt{results/s0/review\_test.csv}, cột \texttt{ok}); vì vậy S1, S3 báo trên đủ 176
+ảnh đã soát ($\ge50$). Tập valid (chọn tham số) giữ ground truth gom tự động.
 
 \textbf{S4 --- khoanh vùng thuốc} (\texttt{s4\_region.py}; $k$ và số dòng theo sau chọn trên valid).
 \begin{table}[H]
@@ -37,3 +38,12 @@ $T$, $W$ tách dòng & --- & 5\% đỉnh, 3 & C5 S62 khuyến nghị $W=3$ hoặ
 \bottomrule
 \end{tabularx}
 \end{table}
+
+\textbf{S5 --- đơn thật chụp bằng điện thoại} (\texttt{s5\_bo4.py}; 5 đơn \bo{4} chọn ngẫu nhiên, seed 42; định tính, không có
+ground truth). Chỉ 1/5 đơn tách đúng một phần: đơn 010 khoanh đúng vùng thuốc phía trên và tách đúng ranh giới 2 khoản đầu,
+nhưng bỏ sót 2 khoản cuối. Các ca sai theo đúng chuỗi phụ thuộc của pipeline: (a) bước (1) tìm góc sai (Hough chọn cạnh của tờ
+giấy bên dưới) nên ảnh nắn chỉ còn một mảnh trang (đơn 002); (b) không tìm được góc (dùng cả ảnh) và chữ to ($h=33$~px) nên
+vùng thuốc chỉ còn một dòng (016); (c) mẫu in khác VAIPE và dấu đỏ ``Phòng khám VIP'' đè lên vùng thuốc làm luật dòng đậm
+gộp 4 khoản thành 1 (007); (d) giấy cong vênh làm dòng không còn thẳng sau nắn, chỉ giữ được 1/2 khoản (013). Kết luận: luật dòng đậm gắn với mẫu
+in VAIPE; trên ảnh thật cần tham số chọn trên ảnh chụp thật và một luật mở khoản không dựa vào độ đậm (ví dụ số thứ tự ``1)'',
+``2-'' ở đầu dòng).

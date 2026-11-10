@@ -1,6 +1,36 @@
-% ===== ≈ 0,25 trang =====
-Ablation đo CER cuối khi tắt lần lượt từng bước (nắn phối cảnh $+$ chỉnh nghiêng; khử bóng; tách mực $+$ xóa dấu; nhị phân hóa;
-tách vùng) cần bộ OCR. Ở mức xử lý ảnh, các thí nghiệm trên đã cho thấy đóng góp riêng của từng bước: khử bóng nâng PSNR từ
-\SI{11.7}{} lên \SI{47.9}{dB} (T1); không khử bóng thì Otsu tụt $0{,}06$ F-measure (T2); khoanh vùng thuốc nâng F1 khoản từ
-\num{0.219} lên \num{0.820} (S4); luật dòng đậm nâng F1 từ \num{0.284} (chỉ Dilation) lên \num{0.973} (S1).
-\TODO{bảng T8: CER cuối khi tắt từng bước --- chạy sau khi cài Tesseract (gói vie)}
+% ===== ≈ 0,5 trang =====
+\begin{table}[H]
+\centering
+\caption{Ablation trên 450 mẫu test \bo{5}: CER cuối của chữ phần thuốc (OCR từng khoản do (4) tự tìm, Tesseract 5 \texttt{vie})
+khi tắt từng bước. Cột phải: CER trên nhóm mẫu có đúng loại hỏng mà bước đó xử lý.}\label{tab:T8}
+\small
+\begin{tabular}{lrrl}
+\toprule
+Cấu hình & CER $\downarrow$ & F1 từ & CER trên nhóm liên quan (đầy đủ $\rightarrow$ tắt) \\
+\midrule
+\textbf{Đầy đủ} & \textbf{0,374} & \textbf{0,545} & --- \\
+$-$ nắn phối cảnh $+$ chỉnh nghiêng (1) & 0,831 & 0,317 & 230 mẫu nghiêng / phối cảnh: 0,205 $\rightarrow$ 1,143 \\
+$-$ khử lóa (1) & 0,374 & 0,545 & 30 mẫu lóa: 0,313 $\rightarrow$ 0,311 \\
+$-$ tách mực $+$ xóa dấu / bút (2) & 0,394 & 0,530 & dấu: 0,433 $\rightarrow$ 0,539; bút: 0,238 $\rightarrow$ 0,384 \\
+$-$ khử bóng (2) & 0,369 & 0,550 & 15 mẫu bóng: 0,865 $\rightarrow$ 0,702 \\
+OCR ảnh nhị phân thay ảnh xám (2) & 0,437 & 0,353 & --- \\
+$-$ tách vùng: OCR cả trang (3)(4) & 2,501 & 0,326 & recall từ 0,665 nhưng precision 0,216 \\
+Không xử lý gì (OCR ảnh chụp) & 1,952 & 0,284 & --- \\
+\midrule
+$+$ CLAHE trước (2) (D6) & 0,399 & 0,544 & nghiêng 0,182; lóa 0,243; kết hợp nhiều hỏng 1,334 \\
+$+$ cân bằng lược đồ toàn cục (D6) & 1,071 & 0,139 & tệ hơn ở mọi nhóm \\
+\bottomrule
+\end{tabular}
+\\[0.3em]{\footnotesize CER $>1$ khi kết quả có nhiều chữ thừa ngoài phần thuốc. Script: \texttt{t8\_ablation.py}, \texttt{d6\_enhance.py}.}
+\end{table}
+\textbf{Nhận xét.} Ba bước đóng góp rõ nhất là \emph{tách vùng} (bỏ đi thì CER từ 0,37 lên 2,50 vì OCR đọc cả đầu và chân đơn),
+\emph{nắn phối cảnh} (0,21 lên 1,14 trên ảnh nghiêng) và \emph{xóa dấu / bút} (dấu 0,43 lên 0,54, bút 0,24 lên 0,38). Khử lóa
+gần như không đổi CER vì chỉ chạy khi lóa nhẹ và inpainting không lấy lại được chữ dưới lóa (D5, Phụ lục~\ref{app:preprocessing}).
+Khử bóng \emph{không} giúp CER cuối (0,374 so với 0,369): Sauvola và Tesseract đã chịu được bóng (đúng kết quả T2), dù khử bóng
+tăng PSNR (T1). OCR trên ảnh xám sạch tốt hơn trên ảnh nhị phân, khớp T2-CER. \textbf{Ca lỗi lớn nhất:} trên 15 mẫu chỉ có bóng,
+CER đầy đủ là 0,865 nhưng bỏ bước (1) chỉ còn 0,092 --- ảnh scan không có mép giấy nên tìm góc rơi về phương án dự phòng
+``hình chữ nhật bao nhỏ nhất'' bám theo ranh giới bóng, cắt mất một phần trang và xoay sai $\pm16^\circ$. D2 không phát hiện được
+lỗi này vì chỉ chấm trên mẫu có phối cảnh. Hướng sửa: chỉ nhận khung dự phòng khi nó chiếm phần lớn ảnh, ngược lại giữ cả ảnh.
+\textbf{D6:} CLAHE giảm CER trên ảnh hỏng một loại (nghiêng 0,205 xuống 0,182, lóa 0,313 xuống 0,243) nhưng khuếch đại nhiễu ở ảnh
+mờ / kết hợp nên CER chung tăng nhẹ (0,374 lên 0,399); cân bằng toàn cục làm nét chữ dính và nền nổi hạt \chuong{3, S32--33} nên
+hỏng hẳn. Pipeline giữ nguyên, không đưa bước tăng tương phản vào đường OCR.

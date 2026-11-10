@@ -23,7 +23,7 @@ Phương án gom khoản (tách dòng bằng projection) & Precision & Recall & 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth]{prescription/S2.png}
+\includegraphics[width=0.8\linewidth]{prescription/S2.png}
 \caption{F1 khoản thuốc chạy đầu-cuối (1)$\rightarrow$(2)$\rightarrow$(4) trên test \bo{5}, mỗi đường chỉ gồm mẫu bị đúng một loại hỏng.}\label{fig:S2}
 \end{figure}
 
@@ -40,4 +40,11 @@ nhiều thành phần nhỏ lệch tâm.
 \textbf{Ca lỗi.} Bóng đổ làm F1 tụt từ \num{0.85} xuống \num{0.19}--\num{0.35} dù ảnh nhị phân vẫn đúng (T3): vùng tối sau khử bóng
 có nét chữ mảnh hơn, tỉ lệ ``đậm / thường'' không còn tách được nên vùng thuốc và ranh giới khoản sai; mờ mức 3 (\num{0.48}) và dấu
 đỏ đè lên dòng tên thuốc (\num{0.56}) gây lỗi tương tự. Hướng sửa: chuẩn hóa độ đậm theo độ tương phản cục bộ của từng dòng.
-\TODO{S3: CER OCR cả trang / từng dòng / từng khoản --- cần cài Tesseract}
+\textbf{S3 --- tách khoản có giúp OCR?} (\texttt{s3\_ocr.py}; 176 ảnh test đã soát, chữ chuẩn = các dòng trong vùng thuốc, bbox
+do (4) tự tìm, Tesseract 5 \texttt{vie} trên ảnh xám sau (2)). CER toàn tập / F1 từ: OCR cả trang \num{2.815} / \num{0.365} (đọc
+được 87\% số từ nhưng lẫn toàn bộ phần hành chính); OCR một lần vùng thuốc tự động \num{0.215} / \num{0.700}; từng dòng
+\num{0.241} / \num{0.592}; \textbf{từng khoản (pipeline) \num{0.225} / \num{0.658}}; từng dòng ground truth (trần trên)
+\num{0.053} / \num{0.821}. Lợi ích chính đến từ khoanh vùng thuốc (CER giảm hơn 12 lần); OCR theo khoản không thấp hơn OCR cả vùng
+về CER nhưng cho sẵn ranh giới từng thuốc để tách trường. Khoảng cách tới trần trên (0,23 so với 0,05) là lỗi khoanh vùng / tách
+khoản tự động (S4: F1 \num{0.820}). Trên 5 đơn thật chụp bằng điện thoại (S5, định tính) chỉ 1 đơn tách đúng một phần vì luật dòng
+đậm gắn với mẫu in VAIPE (Phụ lục~\ref{app:prescription}).

@@ -2,7 +2,7 @@
 \textbf{Điểm mạnh.} Các bước hình học và làm sạch rất ổn định: tìm 4 góc thành công 99\% với sai số $\approx1{,}4$~px, chỉnh
 nghiêng bằng projection sai số $0^\circ$, khử bóng bằng Closing đạt \SI{47.9}{dB}. Sauvola không phụ thuộc vào việc khử bóng có
 tốt hay không, trong khi Otsu sụp ở bóng nặng --- xác nhận lý do chọn ngưỡng cục bộ. Tìm cột bằng projection dọc đạt F1
-\num{0.963} trên \bo{2}; dựng bảng giảm CER OCR từ \num{0.765} (cả trang) xuống \num{0.470} nhờ giữ thứ tự đọc; tách khoản thuốc bằng luật dòng đậm đạt \num{0.973} mà không cần học.
+\num{0.963} trên \bo{2}; dựng bảng giảm CER OCR từ \num{0.765} (cả trang) xuống \num{0.470} nhờ giữ thứ tự đọc; tách khoản thuốc bằng luật dòng đậm đạt \num{0.973} mà không cần học. Ablation (T8) cho thấy tách vùng, nắn phối cảnh và xóa dấu / bút đều giảm CER cuối; khoanh vùng thuốc giảm CER OCR đơn thuốc hơn 12 lần (S3).
 
 \textbf{Hạn chế.} (1) Phân loại tài liệu không tổng quát sang ảnh chụp thật (\bo{4}: \num{0.39}) vì mỗi lớp đến từ một nguồn
 ảnh khác nhau. (2) Luật dòng đậm nhạy với bóng, mờ, dấu đè (S2) và gắn với mẫu in VAIPE. (3) Dựng bảng trên \bo{2} chỉ đánh giá được
@@ -10,9 +10,9 @@ tốt hay không, trong khi Otsu sụp ở bóng nặng --- xác nhận lý do c
 làm tách cụm từ chỉ đạt F1 \num{0.748} và OCR kể cả với khung hoàn hảo còn CER \num{0.216}; \bo{2} là phiếu tiếng Anh; trên 5 phiếu
 Việt Nam chụp thật (K6, định tính) gom dòng sụp vì đường kẻ cong và nét viết tay. (4) \Bo{5} là dữ liệu tổng hợp từ ảnh scan nên sáng và sạch hơn ảnh thật (độ sáng trung bình 209 so với 169); kết luận
 chính được kiểm lại trên \bo{1}, \bo{2}, \bo{4}. (5) Ảnh nhị phân chuẩn là Otsu; đã khử thiên vị bằng dải viền bỏ qua nhưng vẫn
-là đáp án do thuật toán tạo. (6) Ground truth khoản thuốc gom tự động từ nhãn, mới soát một phần bằng mắt; ground truth bảng đã soát đủ
+là đáp án do thuật toán tạo. (6) Ground truth khoản thuốc gom tự động từ nhãn (176 ảnh test đã soát bằng mắt, valid chưa soát); ground truth bảng đã soát đủ
 nhưng đáp án chữ của \bo{2} do LLM phiên âm.
-(7) CER mới đo cho dựng bảng (K5); các phép đo CER của làm sạch và đơn thuốc (T2-CER, T8, S3) chưa thực hiện.
+(7) Tìm góc dự phòng bám theo ranh giới bóng trên ảnh không có mép giấy, làm CER của mẫu chỉ có bóng tăng từ 0,09 lên 0,87 (T8). (8) Theo tiêu chí chốt trước, T2-CER chọn Niblack chứ không phải Sauvola; nhóm giữ Sauvola cho tách vùng và OCR trên ảnh xám (Mục~\ref{sec:e-clean}).
 
 \textbf{Hướng phát triển.} Chuẩn hóa độ đậm theo tương phản cục bộ; dùng chiều cao dòng thay cho chiều cao ký tự trên ảnh độ
-phân giải thấp; thêm ảnh chụp thật vào tập train của bộ phân loại; đo CER để chọn phương pháp nhị phân theo ảnh thật.
+phân giải thấp; thêm ảnh chụp thật vào tập train của bộ phân loại; chỉ nhận khung tìm góc dự phòng khi nó chiếm phần lớn ảnh; luật mở khoản theo số thứ tự đầu dòng cho đơn ngoài mẫu VAIPE.

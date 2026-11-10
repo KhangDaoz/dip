@@ -33,6 +33,47 @@ Radon & 0,000 & 100 & \num{9560} \\
 \end{tabular}
 \end{table}
 
+\textbf{D5 --- khử lóa} (\texttt{d5\_glare.py}; 30 mẫu test \bo{5} chỉ có lóa, so với ảnh sạch cùng mức phơi sáng).
+\begin{table}[H]
+\centering\small
+\begin{tabular}{lrrr}
+\toprule
+Phương án & PSNR vùng lóa (dB) & PSNR cả ảnh (dB) & F-measure chữ trong vùng lóa \\
+\midrule
+Không khử & 15,10 & 29,13 & \textbf{0,361} \\
+Inpainting Telea, mask H4 & 15,78 & 29,64 & 0,343 \\
+Inpainting Navier--Stokes, mask H4 & \textbf{15,97} & \textbf{29,83} & 0,347 \\
+Telea, mask ground truth & 15,26 & 29,39 & 0,059 \\
+Pipeline (chỉ khử khi lóa 1--8\%) & 15,43 & 29,39 & 0,351 \\
+\bottomrule
+\end{tabular}
+\end{table}
+Inpainting nâng PSNR $0{,}3$--$0{,}9$~dB vì làm vùng cháy sáng gần màu giấy hơn, nhưng \emph{không lấy lại được chữ}: F-measure
+trong vùng lóa không tăng (lóa mức 1 / 2 / 3: 0,57 / 0,31 / 0,20 khi không khử), và với mask đúng toàn vùng thì inpainting xóa
+luôn chữ (F $0{,}06$). Chữ dưới lóa đã mất độ tương phản thì không khôi phục được từ chính ảnh đó; vì vậy pipeline chỉ khử lóa
+nhẹ (37\% số mẫu) và báo ``chụp lại'' khi lóa $>8\%$ --- đây là vai trò thật của bước H4.
+
+\textbf{D10 --- soát nhãn \bo{4}} (\texttt{code/experiments/d10\_bo4\_review.json}): xem ảnh thu nhỏ của cả 83 ảnh, 83/83 nằm đúng
+thư mục loại tài liệu, không phải chuyển ảnh nào. Ba ca biên giữ nguyên nhãn: hai phiếu xét nghiệm chỉ có một dòng kết quả
+(SARS-CoV-2, sinh học phân tử) và một bảng kê chi phí (lớp ``khác'' nhưng có bảng nhiều cột).
+
+\textbf{D9 --- thời gian chạy} (\texttt{d9\_runtime.py}).
+\begin{table}[H]
+\centering
+\caption{Thời gian chạy trên CPU (trung vị, 10 ảnh mẫu \texttt{code/samples/}, mỗi ảnh 3 lần; chưa gồm OCR).}\label{tab:runtime}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Loại ảnh & (1) tiền xử lý $+$ phân loại & (2) làm sạch & (3)/(4) cấu trúc & Tổng \\
+\midrule
+Phiếu xét nghiệm ($640\times640$) & 210 ms & 135 ms & 36 ms & 381 ms \\
+Đơn thuốc ($\approx760\times1070$) & 357 ms & 299 ms & 24 ms & 679 ms \\
+Tài liệu khác (dừng sau (1)) & 436 ms & --- & --- & 436 ms \\
+\bottomrule
+\end{tabular}
+\\[0.3em]{\footnotesize Script: \texttt{code/experiments/d9\_runtime.py}}
+\end{table}
+
 \textbf{Bảng tham số} (KeHoach.md mục 5.3).
 \begin{table}[H]
 \centering\small

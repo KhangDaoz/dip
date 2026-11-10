@@ -102,12 +102,12 @@ Bộ phân loại dùng mô hình `models/doc_knn.pkl` (do `experiments/d10_clas
 
 | Người | Lệnh (từ `code/`) | Mục KeHoach |
 | :--- | :--- | :--- |
-| Thắng | `s0_gt_vaipe.py` → `s1_items.py` → `s4_region.py` → `s2_robustness.py`; `s6_bo5_check.py` (sinh `ignore_band` cho T2) | 8.3 |
-| Trường | `t1_background.py`; `t2_binarize.py` (sau S6) → `t3_degradation.py`; `t4_stamp.py` | 6.2 |
-| Khang | `k0_gt.py` → `k2_table.py` (K1, K2, K4, 5-fold) | 7.2 |
-| Hiếu | `d1_iqa.py`, `d2_corners.py` (D2 + D3), `d4_deskew.py`, `d10_classify.py` | 5.2 |
+| Thắng | `s0_gt_vaipe.py` → `s1_items.py` → `s4_region.py` → `s2_robustness.py`; `s6_bo5_check.py` (sinh `ignore_band` cho T2); `s3_ocr.py` (OCR); `s5_bo4.py` (bộ 4, định tính) | 8.3 |
+| Trường | `t1_background.py`; `t2_binarize.py` (sau S6) → `t3_degradation.py`; `t4_stamp.py`; `t2cer_binarize_ocr.py` (OCR); `t5_red_text.py` (bộ 4, định tính); `t8_ablation.py` (OCR, mục 10) | 6.2 |
+| Khang | `k0_gt.py` → `k2_table.py` (K1, K2, K4, 5-fold) → `k3_skew.py`; `k5_ocr.py` (OCR); `k6_bo4.py` (bộ 4, định tính) | 7.2 |
+| Hiếu | `d1_iqa.py`, `d2_corners.py` (D2 + D3), `d4_deskew.py`, `d5_glare.py`, `d9_runtime.py`, `d10_classify.py`; `d6_enhance.py` (OCR, dùng bộ chạy của T8) | 5.2 |
 
-Chưa chạy được khi thiếu OCR: S3, T2-CER, D6, K5, T8 (cần Tesseract + gói `vie`).
+Các thí nghiệm có OCR (T2-CER, S3, D6, K5, T8) cần Tesseract 5 + gói `vie`, `eng`; hàm dùng chung ở `experiments/_ocr_common.py`. T8 và D6 mất ≈ 20–30 phút mỗi script với 4 tiến trình.
 
 ## 6. Thư viện thêm
 
