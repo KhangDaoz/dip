@@ -1,61 +1,83 @@
-% ===== ≈ 1 trang =====
-32 ảnh \bo{2} đã soát (498 dòng chỉ số), 5-fold; tham số đề xuất được chọn \emph{giống nhau ở cả 5 fold}. Mỗi bước được cô lập:
-gom dòng / tìm cột nhận khung cụm từ ground truth và ảnh nhị phân của (2). Độ đo: F1 trên cặp cụm từ cùng dòng / cùng cột
-(C8 S49); tách cụm từ: F1 khớp khung (IoU $\ge0{,}5$).
+% ===== Mục 4.6 =====
+\subsubsection{Cấu trúc bảng}
+Thí nghiệm K2 đánh giá bước (3) trên 32 ảnh đã soát của \bo{2} (498 dòng chỉ số) bằng kiểm định chéo 5-fold.
+Mỗi bước con được đánh giá riêng: gom dòng và tìm cột nhận khung cụm từ của nhãn chuẩn cùng ảnh nhị phân của bước (2).
+Gom dòng và tìm cột được đo bằng F1 trên các cặp cụm từ cùng dòng hoặc cùng cột \chuong{8, S49}.
+Tách cụm từ được đo bằng F1 khớp khung với ngưỡng IoU~\eqref{eq:iou} ít nhất $0{,}5$.
+Bảng~\ref{tab:K2} trình bày kết quả.
+
 \begin{table}[H]
 \centering
-\caption{Ba bước cấu trúc của (3), 32 ảnh \bo{2} (trung bình $\pm$ độ lệch chuẩn qua 5 fold).}\label{tab:K2}
+\caption{Ba bước con của bước (3) trên 32 ảnh \bo{2}, trung bình $\pm$ độ lệch chuẩn qua 5 fold (thí nghiệm K2).
+Giá trị tốt nhất trong từng bước con được in đậm.}\label{tab:K2}
 \small
 \begin{tabular}{llrrrr}
 \toprule
-Bước & Phương án & F1 & Precision & Recall & Ảnh đúng hết \\
+\textbf{Bước con} & \textbf{Phương án} & \textbf{F1} & \textbf{Precision} & \textbf{Recall} & \makecell[r]{\textbf{Ảnh đúng}\\\textbf{hết (\%)}} \\
 \midrule
-Tìm cột & \textbf{Projection dọc} (đề xuất) & \textbf{0,963 $\pm$ 0,023} & 0,930 & 1,000 & \textbf{87,1\%} \\
-        & XY-cut đệ quy & 0,913 $\pm$ 0,057 & 0,847 & 0,997 & 74,3\% \\
-        & Khe $x$ cố định & 0,893 $\pm$ 0,051 & 0,813 & 0,997 & 65,2\% \\
+Tìm cột & \makecell[l]{Lược đồ chiếu dọc\\(đề xuất)} & \textbf{0,963 $\pm$ 0,023} & \textbf{0,930} & \textbf{1,000} & \textbf{87,1} \\
+        & XY-cut đệ quy & 0,913 $\pm$ 0,057 & 0,847 & 0,997 & 74,3 \\
+        & Khe $x$ cố định & 0,893 $\pm$ 0,051 & 0,813 & 0,997 & 65,2 \\
 \midrule
-Gom dòng & Projection ngang & 0,705 $\pm$ 0,210 & 0,592 & 0,994 & 71,4\% \\
-         & \textbf{Projection + xóa kẻ} (đề xuất) & 0,937 $\pm$ 0,115 & 0,905 & 0,995 & \textbf{80,5\%} \\
-         & Tâm $y$ khe cố định & \textbf{0,990 $\pm$ 0,007} & 1,000 & 0,980 & 64,8\% \\
+Gom dòng & Lược đồ chiếu ngang & 0,705 $\pm$ 0,210 & 0,592 & 0,994 & 71,4 \\
+         & \makecell[l]{Lược đồ chiếu ngang,\\xóa kẻ (đề xuất)} & 0,937 $\pm$ 0,115 & 0,905 & \textbf{0,995} & \textbf{80,5} \\
+         & Tâm $y$, khe cố định & \textbf{0,990 $\pm$ 0,007} & \textbf{1,000} & 0,980 & 64,8 \\
 \midrule
-Cụm từ & Dilation $(0{,}5h)\times(2h)$ & 0,748 $\pm$ 0,092 & 0,726 & 0,776 & --- \\
+Cụm từ & Phép giãn, SE $(0{,}5h)\times(2h)$ & 0,748 $\pm$ 0,092 & 0,726 & 0,776 & --- \\
 \bottomrule
 \end{tabular}
 \end{table}
-\textbf{Nhận xét.} (1) Projection dọc tìm cột tốt nhất: khe trắng dọc xuyên qua đa số dòng là ``đường kẻ ẩn''; XY-cut và khe
-cố định hay gộp hai cột kề. (2) Gom dòng bằng projection ban đầu chỉ \num{0.705}: 2 ảnh sụp thành \emph{một} dòng vì phiếu
-\emph{có} kẻ, kẻ dọc lấp mọi thung lũng của $P(y)$; xóa kẻ bằng Opening SE đường thẳng (C7 S6, S28) nâng lên \num{0.937}. Tâm
-$y$ có F1 cao hơn nhưng ít ảnh đúng hết hơn: sai vặt ở nhiều ảnh, còn projection sai nặng ở ít ảnh. (3) Tách cụm từ chỉ
-\num{0.748}: chữ cao 4--11~px, nét đứt cả theo chiều dọc nên SE cần thêm $0{,}5h$ chiều dọc; Opening $2\times2$ xóa nét 1~px
-(5 fold đều bỏ). (4) K4: tham số theo $h$ từng ảnh không hơn $h$ cố định vì mọi ảnh cùng bị ép $640\times640$ (Phụ lục C).
 
+Lược đồ chiếu dọc cho kết quả tìm cột tốt nhất, với F1 \num{0.963}.
+Khe trắng dọc xuyên qua đa số dòng đóng vai trò một đường kẻ ẩn.
+XY-cut và khe cố định thường gộp hai cột kề nhau, nên Precision chỉ đạt \num{0.847} và \num{0.813}.
+
+Gom dòng bằng lược đồ chiếu ngang ban đầu chỉ đạt F1 \num{0.705}.
+Nguyên nhân là 2 ảnh có kẻ bảng bị gộp thành một dòng duy nhất, vì đường kẻ dọc lấp mọi thung lũng của $P(y)$.
+Xóa đường kẻ bằng phép mở với SE đường thẳng \chuong{7, S6, S28} nâng F1 lên \num{0.937}.
+Gom theo tâm $y$ có F1 cao hơn (\num{0.990}) nhưng tỉ lệ ảnh đúng hết thấp hơn (64,8\% so với 80,5\%).
+Gom theo tâm $y$ sai ít ở nhiều ảnh, còn lược đồ chiếu sai nhiều ở ít ảnh.
+
+Tách cụm từ chỉ đạt F1 \num{0.748}.
+Chữ trong \bo{2} chỉ cao 4--11~px nên nét chữ bị đứt cả theo chiều dọc, và SE cần thêm $0{,}5h$ theo chiều dọc.
+Phép mở $2\times2$ xóa các nét rộng 1~px, nên cả 5 fold đều không chọn phép mở.
+Trong thí nghiệm K4, tham số tính theo $h$ của từng ảnh không tốt hơn $h$ cố định, vì mọi ảnh của \bo{2} đều bị ép về $640\times640$ (Phụ lục~\ref{app:table}).
+
+\subsubsection{Độ nhạy với góc nghiêng}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\linewidth]{table/K3.png}
-\caption{K3 --- gom dòng khi ảnh nghiêng thêm $0$--$5^\circ$ (32 ảnh, xoay $\pm\theta$, tham số cuối).}\label{fig:K3}
+\caption{F1 gom dòng khi ảnh bị xoay thêm $0$--$5^\circ$, trên 32 ảnh \bo{2} với tham số cuối (thí nghiệm K3).}\label{fig:K3}
 \end{figure}
-\textbf{K3.} Không chỉnh nghiêng, cả projection lẫn tâm $y$ sụp từ $1^\circ$ (projection F1 \num{0.33}; không ảnh nào đúng hết từ
-$2{,}5^\circ$): nghiêng $1^\circ$ trên bảng rộng $\approx500$~px lệch $\approx9$~px, lớn hơn khe giữa hai dòng. Chỉnh nghiêng
-của (1) (sai số góc trung vị $0^\circ$) giữ F1 \num{0.87}--\num{0.92} đến $5^\circ$: (3) \emph{phụ thuộc} (1).
 
+Hình~\ref{fig:K3} cho thấy khi không chỉnh nghiêng, cả lược đồ chiếu lẫn gom theo tâm $y$ đều giảm mạnh từ góc $1^\circ$.
+Ở $1^\circ$, F1 của lược đồ chiếu chỉ còn \num{0.33}, và từ $2{,}5^\circ$ không ảnh nào đúng hết.
+Nguyên nhân là nghiêng $1^\circ$ trên bảng rộng khoảng 500~px làm hai đầu dòng lệch nhau khoảng 9~px, lớn hơn khe giữa hai dòng.
+Khi có chỉnh nghiêng của bước (1), với sai số góc trung vị $0^\circ$, F1 giữ ở mức \num{0.87}--\num{0.92} đến góc $5^\circ$.
+Kết quả này cho thấy bước (3) phụ thuộc vào bước (1).
+
+\subsubsection{Ảnh hưởng lên OCR}
 \begin{table}[H]
 \centering
-\caption{K5 --- OCR (Tesseract 5, vùng cắt phóng $\times3$) trên 32 ảnh, \num{16846} ký tự đáp án. CER theo thứ tự đọc;
-F1 từ không phụ thuộc thứ tự.}\label{tab:K5}
+\caption{OCR bằng Tesseract~5 trên vùng cắt phóng 3 lần, 32 ảnh \bo{2}, \num{16846} ký tự nhãn chuẩn (thí nghiệm K5).
+CER tính theo thứ tự đọc, F1 từ không phụ thuộc thứ tự.}\label{tab:K5}
 \small
 \begin{tabular}{lrrr}
 \toprule
-Phương án & CER $\downarrow$ & F1 từ & Kết quả số đúng \\
+\textbf{Phương án} & \textbf{CER} & \textbf{F1 từ} & \textbf{Kết quả số đúng (\%)} \\
 \midrule
-OCR cả vùng bảng (đối chứng) & 0,765 & 0,444 & --- \\
-\textbf{OCR theo ô do (3) tự dựng} & \textbf{0,470} & 0,431 & \textbf{55,8\%} \\
-OCR theo khung ground truth (trần trên) & 0,216 & 0,514 & 65,7\% \\
+OCR cả vùng bảng (đối chứng) & 0,765 & \textbf{0,444} & --- \\
+OCR theo ô do bước (3) dựng (pipeline) & \textbf{0,470} & 0,431 & \textbf{55,8} \\
+OCR theo khung nhãn chuẩn (cận trên) & 0,216 & 0,514 & 65,7 \\
 \bottomrule
 \end{tabular}
-\\[0.3em]{\footnotesize Script: \texttt{code/experiments/k0\_gt.py}, \texttt{k2\_table.py}, \texttt{k3\_skew.py}, \texttt{k5\_ocr.py}.}
 \end{table}
-\textbf{K5.} Dựng bảng giảm CER từ \num{0.765} xuống \num{0.470} nhờ \emph{giữ thứ tự đọc}: OCR cả trang đọc theo cột (mọi
-tên chỉ số rồi mọi kết quả) nên không ghép được tên với kết quả; nhận dạng thuần (F1 từ) của hai cách gần nhau. Với khung hoàn
-hảo CER vẫn \num{0.216} --- nút thắt còn lại là độ phân giải (chữ 4--11~px) và OCR, không phải cấu trúc bảng; dòng đúng cả 4
-trường (mỗi trường CER $\le0{,}2$) chỉ 4,0\% (10,6\% với khung ground truth) vì đơn vị như \texttt{10\textasciicircum3/µL} hầu
-như luôn bị đọc sai. Hạn chế: mục 5 (3).
+
+Bảng~\ref{tab:K5} cho thấy dựng bảng giảm CER từ \num{0.765} xuống \num{0.470}, nhờ giữ đúng thứ tự đọc.
+OCR cả vùng bảng đọc theo cột, tức đọc mọi tên chỉ số rồi mới đến mọi kết quả, nên không ghép được tên với kết quả.
+F1 từ của hai cách gần nhau (\num{0.444} và \num{0.431}), tức chất lượng nhận dạng ký tự tương đương.
+Với khung nhãn chuẩn, CER vẫn là \num{0.216}.
+Như vậy nút thắt còn lại là độ phân giải (chữ cao 4--11~px) và bộ OCR, không phải cấu trúc bảng.
+Tỉ lệ dòng đúng cả 4 trường, với CER mỗi trường không quá $0{,}2$, chỉ đạt 4,0\%, và đạt 10,6\% với khung nhãn chuẩn.
+Nguyên nhân là các đơn vị như \texttt{10\textasciicircum3/µL} hầu như luôn bị đọc sai.
+Các hạn chế của bước này được thảo luận ở Mục~\ref{sec:discussion}.

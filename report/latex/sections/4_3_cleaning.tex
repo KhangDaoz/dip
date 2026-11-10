@@ -1,51 +1,73 @@
-% ===== ≈ 1 trang =====
+% ===== Mục 4.5 =====
+\subsubsection{Nhị phân hóa}
+Bảng~\ref{tab:T2} so sánh bảy phương pháp nhị phân hóa trong thí nghiệm T2, trên 160 mẫu của tập kiểm tra \bo{5} không có biến dạng hình học.
+F-measure (F) và pseudo F-measure (pF) được chấm khi bỏ qua dải viền 1~px.
+Cột ``F đầy đủ'' chấm cả dải viền, dùng để đối chiếu thiên lệch của ảnh nhị phân chuẩn tạo bằng Otsu.
+Tham số $w$ và $k$ của Sauvola được chọn trên tập kiểm định.
+
 \begin{table}[H]
 \centering
-\caption{Nhị phân hóa trên 160 mẫu test \bo{5} không biến dạng hình học (F-measure và pseudo-F chấm \emph{bỏ dải viền 1~px};
-F đầy đủ để đối chiếu thiên lệch của đáp án Otsu).}\label{tab:T2}
+\caption{Nhị phân hóa trên 160 mẫu tập kiểm tra \bo{5}, có và không có khử bóng bằng phép đóng $81\times81$ (thí nghiệm T2).}\label{tab:T2}
 \small
 \begin{tabular}{lrrrrrr}
 \toprule
-& \multicolumn{3}{c}{Có khử bóng (Closing 81)} & \multicolumn{3}{c}{Không khử bóng} \\
+& \multicolumn{3}{c}{\textbf{Có khử bóng}} & \multicolumn{3}{c}{\textbf{Không khử bóng}} \\
 \cmidrule(lr){2-4}\cmidrule(lr){5-7}
-Phương pháp & F & pF & F đầy đủ & F & pF & F đầy đủ \\
+\textbf{Phương pháp} & \textbf{F} & \textbf{pF} & \textbf{F đầy đủ} & \textbf{F} & \textbf{pF} & \textbf{F đầy đủ} \\
 \midrule
-\textbf{Sauvola} ($w=2{,}5h$, $k=0{,}3$) & \textbf{0,922} & 0,922 & 0,898 & \textbf{0,922} & 0,922 & 0,900 \\
-Wolf & 0,931 & 0,931 & 0,912 & 0,931 & 0,931 & 0,910 \\
-Otsu & 0,909 & 0,910 & 0,932 & 0,849 & 0,849 & 0,879 \\
+Sauvola, $w=2{,}5h$, $k=0{,}3$ (pipeline) & 0,922 & 0,922 & 0,898 & 0,922 & 0,922 & 0,900 \\
+Wolf & \textbf{0,931} & \textbf{0,931} & 0,912 & \textbf{0,931} & \textbf{0,931} & \textbf{0,910} \\
+Otsu & 0,909 & 0,910 & \textbf{0,932} & 0,849 & 0,849 & 0,879 \\
 ISODATA & 0,908 & 0,909 & 0,931 & 0,807 & 0,807 & 0,845 \\
 Tam giác & 0,275 & 0,275 & 0,518 & 0,279 & 0,279 & 0,505 \\
 Đối xứng nền & 0,251 & 0,251 & 0,489 & 0,295 & 0,295 & 0,485 \\
 Niblack & 0,152 & 0,152 & 0,354 & 0,126 & 0,126 & 0,322 \\
 \bottomrule
 \end{tabular}
-\\[0.3em]{\footnotesize $w$, $k$ chọn trên valid. Script: \texttt{code/experiments/t2\_binarize.py}}
 \end{table}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{cleaning/T3.png}
-\caption{F-measure theo mức hỏng, mỗi đường chỉ gồm mẫu bị đúng một loại hỏng (nét liền: có khử bóng; nét đứt: không).}\label{fig:T3}
+\caption{F-measure của các phương pháp nhị phân hóa theo mức suy biến trên tập kiểm tra \bo{5} (thí nghiệm T3).
+Mỗi đường chỉ gồm các mẫu bị đúng một loại suy biến.
+Nét liền là có khử bóng, nét đứt là không khử bóng.}\label{fig:T3}
 \end{figure}
 
-\textbf{Nhận xét.} (1) Sauvola cho kết quả \emph{như nhau} dù có hay không khử bóng (\num{0.922}), còn Otsu tụt từ \num{0.909}
-xuống \num{0.849}: ở bóng mức 2--3 không khử bóng, Otsu sụp còn F $\approx0{,}04$ (cả vùng tối thành mực) trong khi Sauvola giữ
-$\approx1{,}00$ (Hình~\ref{fig:T3}) --- đúng giả thiết lược đồ hai đỉnh của Otsu bị vi phạm \chuong{5, S66}. Khử bóng
-(Closing 81) và Sauvola là hai lớp bảo vệ độc lập. (2) Với ảnh mờ mức 3, Sauvola \num{0.683} so với Otsu \num{0.428}.
-(3) Cột ``F đầy đủ'' cho thấy nếu không bỏ dải viền thì Otsu được lợi giả ($0{,}932>0{,}898$) vì đáp án do chính Otsu tạo ra.
-(4) Wolf --- biến thể của Sauvola --- nhỉnh hơn $0{,}009$; nhóm giữ Sauvola theo kế hoạch, khác biệt nằm trong sai số của tập
-160 mẫu. (5) Tam giác, Đối xứng nền, Niblack thất bại: nền giấy gần trắng tuyệt đối nên đỉnh nền rất nhọn, các ngưỡng dựa trên
-hình dạng lược đồ đặt sai; Niblack tạo nhiễu dày ở vùng nền trơn (đúng nhược điểm mà Sauvola khắc phục).
-\textbf{Khử bóng (T1):} Closing $81\times81$ đạt PSNR \SI{47.9}{dB}, trung vị cỡ lớn \SI{35.2}{dB}, không khử \SI{11.7}{dB}.
-\textbf{Dấu đỏ (T4):} tìm được 95\% số dấu (phủ $\ge80\%$ nét dấu), IoU nét \num{0.65}.
-\textbf{Ca lỗi:} dấu đỏ mức 3 che chữ làm F của mọi phương pháp $\le0{,}72$ vì vùng dấu bị coi là mực. Chi tiết ở Phụ lục~\ref{app:cleaning}.
+Sauvola cho cùng F-measure \num{0.922} dù có hay không có khử bóng.
+Khi bỏ khử bóng, F-measure của Otsu giảm từ \num{0.909} xuống \num{0.849}.
+Hình~\ref{fig:T3} cho thấy ở bóng mức 2--3 không khử bóng, F-measure của Otsu chỉ còn khoảng $0{,}04$ vì cả vùng tối bị coi là mực, trong khi Sauvola giữ khoảng $1{,}00$.
+Nguyên nhân là giả thiết histogram hai đỉnh của Otsu bị vi phạm \chuong{5, S66}.
+Do đó khử bóng bằng phép đóng và nhị phân hóa bằng Sauvola là hai lớp bảo vệ độc lập trước bóng đổ.
+Với ảnh mờ mức 3, Sauvola đạt \num{0.683}, còn Otsu đạt \num{0.428}.
 
-\textbf{T2-CER (ảnh thật, Bảng~\ref{tab:T2CER} ở Phụ lục~\ref{app:cleaning}).} OCR từng dòng cắt từ ảnh nhị phân: Sauvola tốt
-hơn Otsu rõ rệt (VAIPE test 0,159 so với 0,260; \bo{2} 0,538 so với 0,551), nhưng theo đúng tiêu chí chốt trước thì phương pháp có
-CER thấp nhất trên VAIPE valid là \emph{Niblack} (0,146): nét dày hơn có lợi cho OCR, còn nhiễu nền (lý do F chỉ 0,15 ở T2) nằm
-ngoài khung dòng nên không bị phạt. Quan trọng hơn, \emph{OCR trên ảnh xám sạch tốt hơn mọi ảnh nhị phân} (0,063 valid, 0,046
-test) vì Tesseract tự nhị phân hóa với đủ mức xám. Vì vậy pipeline OCR ảnh xám (xác nhận ở T8), ảnh nhị phân chỉ phục vụ tách
-vùng --- vai trò mà Sauvola vẫn hơn hẳn Niblack (T2). Đây là điều chỉnh sau khi có số liệu, không phải Sauvola thắng theo CER.
-\textbf{T5 (\bo{4}, định tính):} trên 5 phiếu có mực đỏ thật, \textbf{0/5} phiếu bị xóa nhầm chữ đỏ: không thành phần đỏ nào bị
-coi là dấu (dấu chữ nhật của phòng xét nghiệm có độ tròn thấp nên được giữ), chữ cảnh báo ``Dương tính'' còn rõ trong ảnh nhị phân
-(Phụ lục~\ref{app:cleaning}).
+Cột ``F đầy đủ'' cho thấy khi không bỏ dải viền, Otsu được lợi giả (\num{0.932} so với \num{0.898} của Sauvola), vì ảnh nhị phân chuẩn do chính Otsu tạo ra.
+Wolf, một biến thể của Sauvola, cao hơn Sauvola $0{,}009$.
+Sauvola được giữ theo kế hoạch, vì chênh lệch này nằm trong sai số của tập 160 mẫu.
+Phương pháp tam giác, đối xứng nền và Niblack đạt F-measure dưới $0{,}30$.
+Nền giấy gần trắng tuyệt đối nên đỉnh nền của histogram nhọn, khiến các ngưỡng dựa trên hình dạng histogram đặt sai.
+Niblack tạo nhiễu dày ở vùng nền trơn, đúng nhược điểm mà Sauvola khắc phục.
+
+\subsubsection{Khử bóng và tách dấu}
+Trong thí nghiệm T1, khử bóng bằng phép đóng $81\times81$ đạt PSNR \SI{47.9}{dB}.
+Lọc trung vị cửa sổ lớn đạt \SI{35.2}{dB}, còn ảnh không khử bóng đạt \SI{11.7}{dB} (Bảng~\ref{tab:T1}, Phụ lục~\ref{app:cleaning}).
+Trong thí nghiệm T4, phương pháp tìm được 95\% số dấu đỏ (phủ ít nhất 80\% nét dấu), với IoU nét dấu \num{0.65}.
+Ca lỗi điển hình là dấu đỏ mức 3 che lên chữ.
+Ở mức này, F-measure của mọi phương pháp nhị phân hóa không vượt quá $0{,}72$, vì vùng dấu bị coi là mực.
+
+\subsubsection{Ảnh hưởng của nhị phân hóa lên OCR}
+Thí nghiệm T2-CER chạy OCR trên từng dòng cắt từ ảnh thật đã nhị phân hóa (Bảng~\ref{tab:T2CER}, Phụ lục~\ref{app:cleaning}).
+Sauvola cho CER thấp hơn Otsu: \num{0.159} so với \num{0.260} trên tập kiểm tra VAIPE, và \num{0.538} so với \num{0.551} trên \bo{2}.
+Tuy nhiên, theo tiêu chí chốt trước khi chạy, phương pháp có CER thấp nhất trên tập kiểm định VAIPE là Niblack (\num{0.146}).
+Nét chữ dày hơn có lợi cho OCR, còn nhiễu nền làm F-measure của Niblack chỉ đạt \num{0.15} ở T2 lại nằm ngoài khung dòng nên không bị tính lỗi.
+OCR trên ảnh xám sạch cho CER thấp hơn mọi ảnh nhị phân: \num{0.063} trên tập kiểm định và \num{0.046} trên tập kiểm tra.
+Nguyên nhân là Tesseract tự nhị phân hóa khi có đủ thông tin mức xám.
+Vì vậy pipeline chạy OCR trên ảnh xám, kết quả được xác nhận lại ở thí nghiệm T8.
+Ảnh nhị phân chỉ dùng để tách vùng, và ở vai trò này Sauvola đạt F-measure \num{0.922} so với \num{0.152} của Niblack (Bảng~\ref{tab:T2}).
+Đây là điều chỉnh thiết kế sau khi có số liệu, không phải kết quả Sauvola thắng theo CER.
+
+\subsubsection{Giữ chữ đỏ trên phiếu xét nghiệm thật}
+Thí nghiệm T5 kiểm tra định tính 5 phiếu xét nghiệm có mực đỏ thật trong \bo{4}.
+Không phiếu nào bị xóa nhầm chữ đỏ (0/5), vì không thành phần đỏ nào bị coi là dấu.
+Dấu chữ nhật của phòng xét nghiệm có độ tròn~\eqref{eq:circ} thấp nên được giữ lại.
+Chữ cảnh báo ``Dương tính'' vẫn rõ trong ảnh nhị phân (Hình~\ref{fig:T5}, Phụ lục~\ref{app:cleaning}).

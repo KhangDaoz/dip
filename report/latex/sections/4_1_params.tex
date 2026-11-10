@@ -1,0 +1,28 @@
+% ===== Mục 4.3 =====
+Tham số của các bước (1), (2) và (4) được chọn trên tập kiểm định.
+Tham số của bước (3) được chọn bằng tìm kiếm lưới trên 4 fold, lặp lại 5 lượt.
+Bảng~\ref{tab:params-main} liệt kê các tham số chính đã chọn.
+Khoảng giá trị đã thử và lý do chọn được trình bày đầy đủ trong Bảng~\ref{tab:params-pre}, \ref{tab:params-clean}, \ref{tab:params-table} và~\ref{tab:params-pres} ở phụ lục.
+
+\begin{table}[H]
+\centering
+\caption{Tham số chính của pipeline.}\label{tab:params-main}
+\small
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Bước} & \textbf{Tham số} & \textbf{Giá trị} \\
+\midrule
+(1) & Ngưỡng mờ $\tau_B$ trong~\eqref{eq:blur} & \num{448.6} \\
+    & Ngưỡng lóa $\tau_V$, $\tau_S$ trong~\eqref{eq:glare} & 240; 60 \\
+    & Ngưỡng Canny $(T_2,T_1)$ & (30, 60) \\
+    & Bước góc chỉnh nghiêng & 0,25° \\
+(2) & SE ước lượng nền trong~\eqref{eq:shading} & $81\times81$ \\
+    & Cửa sổ $w$ và hệ số $k$ của Sauvola trong~\eqref{eq:sauvola} & $2{,}5h$; $0{,}3$ \\
+    & Ngưỡng diện tích nhiễu & $(0{,}4h)^2$ \\
+(3) & SE giãn ngang khi gom dòng; $W_s$; $T$ & $2h$; 1; 10\% \\
+    & Độ rộng khe cột; tỉ lệ dòng mà khe xuyên qua & $0{,}5h$; 60\% \\
+(4) & Hệ số $s$ của SE giãn dọc; ngưỡng độ đậm & 3; 1,25 \\
+    & Khe dòng tối đa trong vùng thuốc; số dòng theo sau & $2h$; 1 \\
+\bottomrule
+\end{tabularx}
+\end{table}

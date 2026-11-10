@@ -1,69 +1,98 @@
-% ===== phụ lục (không giới hạn trang) =====
-\textbf{K0 --- ground truth} (\texttt{k0\_gt.py}). 55 ảnh \bo{2} có nhãn thân bảng (2 ảnh chỉ có nhãn loại phiếu), \num{3255}
-cụm từ. Dòng: union-find các cụm từ chồng nhau theo chiều dọc $\ge50\%$ --- độc lập với cả hai thuật toán gom dòng được so sánh.
-Cột: vai trò cụm từ. Cả 55 ảnh được soát bằng mắt (\texttt{results/k0/review/}); giữ \textbf{32 ảnh} (498 dòng chỉ số,
-\num{1953} cụm từ). Ảnh bị loại: hộp nhãn gốc lệch khỏi chữ, ảnh chụp mờ, bố cục máy in nhiều cột mà nhãn không phân biệt.
-9 ảnh được sửa theo quy tắc ghi trong \texttt{code/experiments/k0\_review.json}: (i) bỏ dòng mô tả (Peripheral Smear,
-Morphology, ``Adequate'') và tiêu đề nhóm không có kết quả --- 32 cụm từ; (ii) gộp tên chỉ số viết hai dòng và tên lệch xuống do
-ảnh nghiêng (3 cụm từ).
+% ===== Phụ lục C =====
+\subsection{Nhãn chuẩn cấu trúc bảng (K0)}
+Thí nghiệm K0 (\path{k0_gt.py}) dùng 55 ảnh của \bo{2} có nhãn thân bảng, với \num{3255} cụm từ.
+Hai ảnh còn lại chỉ có nhãn loại phiếu.
+Nhãn dòng được tạo bằng thuật toán hợp-tìm (union-find) trên các cặp cụm từ chồng nhau theo chiều dọc ít nhất 50\%.
+Cách tạo nhãn này độc lập với cả hai thuật toán gom dòng được so sánh.
+Nhãn cột là vai trò của cụm từ.
+Cả 55 ảnh được soát bằng mắt (\path{results/k0/review/}), và 32 ảnh được giữ lại với 498 dòng chỉ số và \num{1953} cụm từ.
+Các ảnh bị loại có khung nhãn gốc lệch khỏi chữ, bị chụp mờ, hoặc có bố cục máy in nhiều cột mà nhãn không phân biệt được.
 
-\textbf{Text ground truth cho K5.} \Bo{2} không có nhãn chữ. Chữ trong từng khung do LLM (Claude) phiên âm từ \emph{ảnh gốc màu}
-(không phải ảnh sau xử lý, để đáp án không mang lỗi của (1), (2)); ô không đọc được để trống và bị bỏ khỏi đáp án, ô đọc không
-chắc được đánh dấu để soát trước (\texttt{k0\_text\_gt.json}). LLM độc lập với Tesseract nên không thiên vị phương án nào trong K5.
-Trên 32 ảnh giữ lại: \num{1952} khung có chữ, 23 khung còn đánh dấu không chắc.
+Chín ảnh được sửa nhãn theo quy tắc ghi trong \path{k0_review.json}:
+\begin{enumerate}[label=(\roman*)]
+  \item bỏ các dòng mô tả (Peripheral Smear, Morphology, ``Adequate'') và các tiêu đề nhóm không có kết quả, tổng cộng 32 cụm từ;
+  \item gộp các tên chỉ số viết trên hai dòng và các tên bị lệch xuống dòng dưới do ảnh nghiêng, tổng cộng 3 cụm từ.
+\end{enumerate}
 
-\textbf{K1, K2, K4 --- đầy đủ} (5-fold, trung bình $\pm$ độ lệch chuẩn qua 5 fold; ``đúng hoàn toàn'' = \% ảnh không sai cặp
-nào). ``+ xóa kẻ'': chiếu trên ảnh đã trừ đường kẻ (Opening SE đường thẳng).
+\subsection{Nhãn chữ cho thí nghiệm K5}
+\Bo{2} không có nhãn chữ.
+Chữ trong từng khung do LLM (Claude) phiên âm từ ảnh gốc màu, không dùng ảnh sau xử lý, để nhãn chuẩn không mang lỗi của bước (1) và (2).
+Ô không đọc được để trống và bị loại khỏi nhãn chuẩn.
+Ô đọc không chắc chắn được đánh dấu để soát trước (\path{k0_text_gt.json}).
+LLM độc lập với Tesseract nên không thiên vị phương án nào trong K5.
+Trên 32 ảnh giữ lại có \num{1952} khung có chữ, trong đó 23 khung vẫn được đánh dấu là không chắc chắn.
+
+\subsection{Kết quả đầy đủ của K1, K2 và K4}
+Bảng~\ref{tab:K2full} trình bày kết quả đầy đủ, gồm cả hai cách đặt tham số theo $h$.
+Tỉ lệ ``ảnh đúng hết'' là phần trăm số ảnh không sai cặp cụm từ nào.
+Các phương án có ``xóa kẻ'' chạy lược đồ chiếu trên ảnh đã trừ đường kẻ bằng phép mở với SE đường thẳng.
+
 \begin{table}[H]
 \centering\small
+\caption{Kết quả gom dòng và tìm cột trên 32 ảnh \bo{2}, trung bình $\pm$ độ lệch chuẩn qua 5 fold, với $h$ ước lượng theo từng ảnh hoặc cố định (thí nghiệm K1, K2, K4).
+Giá trị tốt nhất trong từng bước con được in đậm.}\label{tab:K2full}
 \begin{tabular}{lllrrrr}
 \toprule
-Bước & Phương án & $h$ & F1 & Precision & Recall & Đúng hoàn toàn \\
+\textbf{Bước con} & \textbf{Phương án} & \textbf{$h$} & \textbf{F1} & \textbf{Precision} & \textbf{Recall} & \makecell[r]{\textbf{Ảnh đúng}\\\textbf{hết (\%)}} \\
 \midrule
-Gom dòng & Projection ngang & từng ảnh & 0,705 $\pm$ 0,210 & 0,592 & 0,994 & 71,4\% \\
-         & Projection ngang & cố định & 0,814 $\pm$ 0,205 & 0,739 & 0,993 & 74,3\% \\
-         & Projection + xóa kẻ & từng ảnh & 0,937 $\pm$ 0,115 & 0,905 & 0,995 & 80,5\% \\
-         & Projection + xóa kẻ & cố định & 0,942 $\pm$ 0,105 & 0,912 & 0,995 & 80,5\% \\
-         & Tâm $y$, khe cố định & --- & 0,990 $\pm$ 0,007 & 1,000 & 0,980 & 64,8\% \\
+Gom dòng & Lược đồ chiếu ngang & Từng ảnh & 0,705 $\pm$ 0,210 & 0,592 & 0,994 & 71,4 \\
+         & Lược đồ chiếu ngang & Cố định & 0,814 $\pm$ 0,205 & 0,739 & 0,993 & 74,3 \\
+         & \makecell[l]{Lược đồ chiếu ngang,\\xóa kẻ} & Từng ảnh & 0,937 $\pm$ 0,115 & 0,905 & \textbf{0,995} & \textbf{80,5} \\
+         & \makecell[l]{Lược đồ chiếu ngang,\\xóa kẻ} & Cố định & 0,942 $\pm$ 0,105 & 0,912 & \textbf{0,995} & \textbf{80,5} \\
+         & Tâm $y$, khe cố định & --- & \textbf{0,990 $\pm$ 0,007} & \textbf{1,000} & 0,980 & 64,8 \\
 \midrule
-Tìm cột  & Projection dọc (có / không xóa kẻ) & từng ảnh / cố định & 0,963 $\pm$ 0,023 & 0,930 & 1,000 & 87,1\% \\
-         & XY-cut đệ quy & từng ảnh / cố định & 0,913 $\pm$ 0,057 & 0,847 & 0,997 & 74,3\% \\
-         & Khe $x$ cố định & --- & 0,893 $\pm$ 0,051 & 0,813 & 0,997 & 65,2\% \\
+Tìm cột  & \makecell[l]{Lược đồ chiếu dọc\\(có hoặc không xóa kẻ)} & \makecell[l]{Từng ảnh\\hoặc cố định} & \textbf{0,963 $\pm$ 0,023} & \textbf{0,930} & \textbf{1,000} & \textbf{87,1} \\
+         & XY-cut đệ quy & \makecell[l]{Từng ảnh\\hoặc cố định} & 0,913 $\pm$ 0,057 & 0,847 & 0,997 & 74,3 \\
+         & Khe $x$ cố định & --- & 0,893 $\pm$ 0,051 & 0,813 & 0,997 & 65,2 \\
 \bottomrule
 \end{tabular}
 \end{table}
-\textbf{K4} ($h$ từng ảnh so với $h$ cố định $=5$~px, trung vị cả bộ): với cột không khác biệt; với dòng $h$ cố định nhỉnh hơn
-(\num{0.942} so với \num{0.937} khi đã xóa kẻ) vì $h$ ước lượng trên ảnh 640~px chỉ 4--11~px và ảnh trong \bo{2} có cùng kích
-thước --- lợi thế của tham số theo $h$ chỉ xuất hiện khi độ phân giải khác nhau, điều \bo{2} không kiểm được.
 
-\textbf{K3 --- đầy đủ} (\texttt{k3\_skew.py}, \texttt{results/k3/table.csv}): ước lượng góc của (1) (projection, bước
-$0{,}25^\circ$) có sai số trung vị $0^\circ$ ở mọi góc thử; độ giảm của đường ``chỉnh nghiêng rồi projection'' ở $4$--$5^\circ$
-chủ yếu do khung cụm từ bị xoay hai lần nên hình chữ nhật bao phình ra, không do góc ước lượng sai.
+Thí nghiệm K4 so sánh $h$ ước lượng theo từng ảnh với $h$ cố định bằng 5~px, là trung vị của cả bộ.
+Với tìm cột, hai cách cho cùng kết quả.
+Với gom dòng, $h$ cố định cho F1 cao hơn một chút (\num{0.942} so với \num{0.937} khi đã xóa kẻ).
+Nguyên nhân là $h$ ước lượng trên ảnh 640~px chỉ nằm trong khoảng 4--11~px, và mọi ảnh trong \bo{2} có cùng kích thước.
+Lợi thế của tham số theo $h$ chỉ xuất hiện khi các ảnh có độ phân giải khác nhau, điều mà \bo{2} không kiểm tra được.
 
-\textbf{K6 --- phiếu Việt Nam chụp thật (định tính)} (\texttt{k6\_bo4.py}, 5 phiếu \bo{4} chọn ngẫu nhiên, seed 42; ảnh
-có thông tin bệnh nhân nên không đưa vào báo cáo). Tìm cột gần đúng khi bảng chiếm gần hết khung hình (2/5 phiếu), nhưng
-tách thừa ở chỗ nhiều đường kẻ sát nhau. Gom dòng \emph{sụp ở cả 5 phiếu}: giấy cong làm đường kẻ không thẳng nên Opening SE
-đường thẳng không lấy được (1 phiếu đúng 8 dòng đầu rồi gộp phần còn lại); nét khoanh tay cắt ngang nhiều dòng; 2 phiếu chụp
-kèm nền mà (1) không tách được trang nên cả trang bị coi là bảng. Phương pháp chọn trên \bo{2} (640~px, phần lớn không kẻ)
-\emph{không chuyển} sang phiếu Việt Nam có kẻ, chữ cao 10--27~px --- cần tìm vùng bảng trước và lấy đường kẻ chịu được cong
-(SE ngắn theo từng đoạn, hoặc Hough) trước khi chiếu.
+\subsection{Kết quả đầy đủ của K3}
+Thí nghiệm K3 (\path{k3_skew.py}, \path{results/k3/table.csv}) cho thấy ước lượng góc của bước (1), dùng lược đồ chiếu với bước $0{,}25^\circ$, có sai số trung vị $0^\circ$ ở mọi góc thử.
+F1 của phương án ``chỉnh nghiêng rồi chiếu'' giảm ở góc $4$--$5^\circ$ (Hình~\ref{fig:K3}).
+Nguyên nhân chủ yếu là khung cụm từ bị xoay hai lần nên hình chữ nhật bao phình ra, không phải do góc ước lượng sai.
 
-\textbf{Bảng tham số} (KeHoach.md mục 7.3): chọn bằng grid search trên 4 fold, lặp 5 lượt; tham số ở từng fold trong
-\texttt{results/k2/folds.csv} --- cả 5 lượt chọn cùng một bộ cho mọi phương án đề xuất, tức tham số ổn định.
+\subsection{Phiếu xét nghiệm Việt Nam chụp thật (K6)}
+Thí nghiệm K6 (\path{k6_bo4.py}) kiểm tra định tính 5 phiếu của \bo{4} chọn ngẫu nhiên với seed 42.
+Ảnh chứa thông tin bệnh nhân nên không đưa vào báo cáo.
+Tìm cột cho kết quả gần đúng ở 2/5 phiếu, khi bảng chiếm gần hết khung hình, nhưng tách thừa cột ở chỗ có nhiều đường kẻ sát nhau.
+Gom dòng thất bại ở cả 5 phiếu, vì ba nguyên nhân:
+\begin{enumerate}
+  \item giấy cong làm đường kẻ không thẳng, nên phép mở với SE đường thẳng không lấy được đường kẻ, ví dụ một phiếu chỉ đúng 8 dòng đầu rồi gộp phần còn lại;
+  \item nét khoanh bằng tay cắt ngang nhiều dòng;
+  \item 2 phiếu được chụp kèm nền mà bước (1) không tách được trang, nên cả trang bị coi là bảng.
+\end{enumerate}
+Phương pháp chọn trên \bo{2}, với ảnh 640~px và phần lớn bảng không kẻ, không chuyển được sang phiếu Việt Nam có kẻ và chữ cao 10--27~px.
+Để áp dụng cho loại phiếu này, cần tìm vùng bảng trước và lấy đường kẻ bằng cách chịu được đường cong, ví dụ dùng SE ngắn theo từng đoạn hoặc biến đổi Hough, trước khi chiếu.
+
+\subsection{Bảng tham số}
+Tham số được chọn bằng tìm kiếm lưới trên 4 fold, lặp lại 5 lượt.
+Tham số ở từng fold được lưu trong \path{results/k2/folds.csv}.
+Cả 5 lượt chọn cùng một bộ tham số cho mọi phương án đề xuất, cho thấy tham số ổn định.
+Bảng~\ref{tab:params-table} liệt kê các tham số.
+
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\linewidth}{llX}
+\caption{Tham số của bước (3).}\label{tab:params-table}
+\begin{tabularx}{\linewidth}{XlX}
 \toprule
-Tham số & Khoảng thử & Chọn (lý do) \\
+\textbf{Tham số} & \textbf{Khoảng thử} & \textbf{Giá trị chọn và lý do} \\
 \midrule
-SE gom dòng ($\times h$) & 2, 3, 4, 5 & \textbf{2} (F1 cặp cùng dòng; SE lớn nối sang dòng kề khi dòng sát nhau) \\
-Cửa sổ làm trơn $W$ & 1, 3, 5 & \textbf{1} (dòng chỉ cách vài px; làm trơn san mất thung lũng --- C5 S62 khuyến nghị 3--5 cho lược đồ mức xám) \\
-Ngưỡng thung lũng $T$ (\% đỉnh) & 2, 5, 10 & \textbf{10\%} \\
+SE giãn ngang khi gom dòng ($\times h$) & 2, 3, 4, 5 & 2, theo F1 cặp cùng dòng; SE lớn hơn nối sang dòng kề khi các dòng sát nhau \\
+Cửa sổ làm trơn $W_s$ & 1, 3, 5 & 1; các dòng chỉ cách nhau vài px nên làm trơn xóa mất thung lũng. Học phần khuyến nghị 3--5 cho histogram mức xám \chuong{5, S62} \\
+Ngưỡng thung lũng $T$ (\% đỉnh) & 2, 5, 10 & 10\% \\
 Khe tâm $y$ cố định (px) & 3, 5, 8, 10, 15 & 5 (đối chứng) \\
-Độ rộng khe cột ($\times h$); \% dòng xuyên qua & 0,5--2; 40--80\% & \textbf{0,5}; \textbf{60\%} (F1 cặp cùng cột) \\
-Khe XY-cut ($\times h$); khe $x$ cố định (px) & 0,5--2; 5--30 & theo F1 (đối chứng) \\
-SE lấy đường kẻ & $W/20$, $H/20$ & cố định theo kế hoạch (C7 S6, S28) \\
-Phóng ô trước OCR & $\times3$ & cố định: chữ \bo{2} cao 4--11 px (trung vị 5), Tesseract cần $\approx$20 px \\
+Độ rộng khe cột ($\times h$); tỉ lệ dòng khe xuyên qua & 0,5--2; 40--80\% & 0,5 và 60\%, theo F1 cặp cùng cột \\
+Khe XY-cut ($\times h$); khe $x$ cố định (px) & 0,5--2; 5--30 & Theo F1 (đối chứng) \\
+SE lấy đường kẻ & $W/20$, $H/20$ & Cố định theo kế hoạch \chuong{7, S6, S28} \\
+Hệ số phóng ô trước OCR & $\times3$ & Cố định; chữ \bo{2} cao 4--11~px (trung vị 5~px), trong khi Tesseract cần khoảng 20~px \\
 \bottomrule
 \end{tabularx}
 \end{table}

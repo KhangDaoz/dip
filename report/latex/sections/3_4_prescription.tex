@@ -1,19 +1,45 @@
-% ===== ≈ 0,75 trang =====
-Một \emph{khoản thuốc} = dòng tên thuốc (in đậm, kèm số lượng cùng hàng) $+$ dòng cách dùng ngay dưới. Khe giữa hai dòng trong
-cùng khoản xấp xỉ khe giữa hai khoản, nên chỉ dựa vào khoảng cách là không tách được.
-\textbf{S-B0:} $h$ = trung vị chiều cao thành phần liên thông \chuong{5, S83--84}.
-\textbf{S-B2 --- dòng:} $P(y)=\sum_x B(x,y)$, làm trơn $W=3$, khe dòng $P(y)\le0{,}05\max P$ \chuong{5, S62--64}; bỏ dòng cao
-$<0{,}3h$. Đối chứng: gom thành phần liên thông theo tâm $y$ (C5 S84--85).
-\textbf{Độ đậm của dòng:} tỉ lệ pixel mực còn lại sau phép co SE $3\times3$ --- phép co xóa nét mảnh hơn SE, nét đậm sống sót
-\chuong{7, S9, S14}. Trong vùng thuốc, các dòng được chia đậm / thường bằng ngưỡng Otsu trên chính dãy độ đậm \chuong{5, S65--67},
-chỉ chấp nhận khi nhóm đậm $\ge1{,}15\times$ nhóm thường.
-\textbf{S-B3 --- gom khoản (đề xuất):} mỗi dòng tô thành dải ngang, Dilation dọc SE $1\times(s\cdot h)$, $s=3$
-\chuong{7, S5, S19, S24} gom các dòng gần nhau thành khối; trong khối, mỗi dòng \emph{đậm} mở một khoản mới, dòng thường hợp vào
-khoản trước \chuong{5, S87}. Không có dòng đậm thì dùng luật thụt lề. Đối chứng: (a) mỗi dòng một khoản, (b) khe cố định,
-(c) số dòng cố định, (d) chỉ Dilation dọc, (f) Closing dọc (giữ kích thước khối, C7 S35, S38).
-\textbf{S-B1 --- vùng thuốc:} chuỗi dài nhất các cặp liền nhau ``dòng đậm hơn dòng ngay dưới $\ge1{,}15\times$ $+$ 1 dòng theo sau'',
-hai dòng kế nhau cách $\le3h$ (Dilation dọc SE $3h$); hòa thì chọn chuỗi có dòng đầu rộng hơn (tên thuốc $+$ số lượng trải gần
-hết bề ngang). So sánh độ đậm \emph{cục bộ} từng cặp vì trang có tiêu đề, mã vạch, khung bảng còn đậm hơn tên thuốc.
-\textbf{Hậu xử lý S-B4:} bỏ khoản cao $<0{,}5h$ hoặc ít mực; Opening được thử ($1\times1$ / $2\times2$) và tắt theo kết quả valid.
-\textbf{S-B5:} OCR từng khoản rồi tách tên, hàm lượng, liều bằng biểu thức chính quy (hậu xử lý văn bản).
-Tham số $s$, ngưỡng độ đậm, Opening chọn trên valid VAIPE (S1); $k$ và số dòng theo sau chọn bằng S4.
+% ===== Mục 3.4 =====
+Một khoản thuốc gồm dòng tên thuốc và dòng cách dùng ngay bên dưới.
+Dòng tên thuốc in đậm và chứa số lượng ở cùng hàng.
+Khe giữa hai dòng trong cùng một khoản xấp xỉ khe giữa hai khoản, nên chỉ dựa vào khoảng cách thì không tách được các khoản.
+
+Độ đậm của một dòng được đo bằng tỉ lệ pixel mực còn lại sau phép co \chuong{7, S9, S14}:
+\begin{equation}\label{eq:bold}
+  \rho=\frac{|A\ominus B_3|}{|A|},
+\end{equation}
+trong đó $A$ là tập pixel mực của dòng, $B_3$ là SE vuông $3\times3$ và $|\cdot|$ là số phần tử của tập.
+Phép co xóa các nét mảnh hơn SE, còn nét đậm vẫn còn lại một phần, nên dòng đậm có $\rho$ lớn hơn.
+
+Các bước thực hiện:
+\begin{enumerate}
+  \item Ước lượng $h$ bằng trung vị chiều cao các thành phần liên thông \chuong{5, S83--84}.
+  \item Tách dòng theo~\eqref{eq:proj} và~\eqref{eq:valley}, với $W_s=3$ và $T=5\%$ \chuong{5, S62--64}.
+        Bỏ các dòng cao dưới $0{,}3h$.
+        Đối chứng là gom thành phần liên thông theo tọa độ tâm $y$ \chuong{5, S84--85}.
+  \item Tính độ đậm $\rho$ của từng dòng theo~\eqref{eq:bold}.
+        Chia các dòng trong vùng thuốc thành nhóm đậm và nhóm thường bằng ngưỡng Otsu trên chính dãy giá trị $\rho$ \chuong{5, S65--67}.
+        Chỉ chấp nhận cách chia khi $\rho$ trung bình của nhóm đậm đạt ít nhất $1{,}25$ lần nhóm thường.
+  \item Khoanh vùng thuốc.
+        Tìm chuỗi dài nhất các cặp dòng liền nhau trong đó dòng trên đậm hơn dòng ngay dưới ít nhất $1{,}25$ lần, kèm 1 dòng theo sau.
+        Hai dòng kế nhau trong chuỗi cách nhau không quá $2h$, điều kiện được kiểm bằng phép giãn dọc.
+        Khi hai chuỗi dài bằng nhau, chọn chuỗi có dòng đầu rộng hơn, vì dòng tên thuốc kèm số lượng trải gần hết bề ngang trang.
+        Độ đậm được so sánh cục bộ theo từng cặp, vì tiêu đề, mã vạch và khung bảng của trang còn đậm hơn tên thuốc.
+  \item Gom khoản thuốc (phương pháp đề xuất).
+        Tô mỗi dòng thành một dải ngang, rồi giãn theo chiều dọc với SE $1\times(s\cdot h)$, $s=3$ \chuong{7, S5, S19, S24}, để gom các dòng gần nhau thành khối.
+        Trong mỗi khối, mỗi dòng đậm mở một khoản mới và mỗi dòng thường được hợp vào khoản trước nó \chuong{5, S87}.
+        Khi khối không có dòng đậm, dùng luật thụt lề.
+  \item Hậu xử lý: bỏ các khoản cao dưới $0{,}5h$ hoặc có ít mực.
+  \item Chạy OCR trên từng khoản, rồi tách tên thuốc, hàm lượng và liều dùng bằng biểu thức chính quy.
+        Bước này là hậu xử lý văn bản.
+\end{enumerate}
+Phương pháp đề xuất được so với năm cách gom khoản đối chứng:
+\begin{enumerate}[label=(\alph*)]
+  \item mỗi dòng một khoản;
+  \item gom theo khe cố định;
+  \item gom theo số dòng cố định;
+  \item chỉ dùng phép giãn dọc;
+  \item[(f)] dùng phép đóng dọc để giữ kích thước khối \chuong{7, S35, S38}.
+\end{enumerate}
+Hệ số $s$, ngưỡng độ đậm và việc dùng phép mở được chọn trên tập kiểm định của \bo{1} (thí nghiệm S1).
+Phép mở với SE $1\times1$ và $2\times2$ được thử rồi tắt theo kết quả trên tập kiểm định.
+Khe dòng tối đa trong vùng thuốc và số dòng theo sau được chọn trong thí nghiệm S4.

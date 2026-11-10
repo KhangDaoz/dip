@@ -11,27 +11,43 @@
   ItalicFont=*-italic, BoldItalicFont=*-bolditalic]
 
 % ---------- Trang ----------
-\usepackage[a4paper,margin=2cm]{geometry}
-\usepackage{setspace}\setstretch{1.05}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{setspace}\setstretch{1.25}                % giãn dòng cho dễ đọc
+% Đoạn văn: không thụt đầu dòng, cách nhau một khoảng trắng
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.8em plus 0.2em minus 0.1em}
 \usepackage{titlesec}
-\titlespacing*{\section}{0pt}{1.2ex}{0.6ex}
-\titlespacing*{\subsection}{0pt}{1ex}{0.4ex}
+\titleformat{\section}{\Large\bfseries}{\thesection}{0.8em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.8em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.8em}{}
+\titlespacing*{\section}{0pt}{4ex plus 1ex}{2ex}
+\titlespacing*{\subsection}{0pt}{3ex plus 1ex}{1.5ex}
+\titlespacing*{\subsubsection}{0pt}{2.5ex plus 0.5ex}{1ex}
 
 % ---------- Hình, bảng, toán ----------
 \usepackage{graphicx}\graphicspath{{figure/}}
 \usepackage{booktabs,tabularx,multirow,makecell}
+\renewcommand{\arraystretch}{1.35}                     % giãn hàng trong bảng
+\setlength{\tabcolsep}{7pt}
 \usepackage{caption,subcaption}
-\captionsetup{font=small,labelfont=bf}
+\captionsetup{font=small,labelfont=bf,skip=8pt}
 \captionsetup[table]{position=top}
 \usepackage{float}
+\setlength{\intextsep}{1.8em plus 0.4em minus 0.2em}  % khoảng cách quanh bảng, hình
 \usepackage{amsmath,amssymb}
+\AtBeginDocument{%                                     % khoảng cách quanh công thức
+  \setlength{\abovedisplayskip}{1.2em plus 0.3em}\setlength{\belowdisplayskip}{1.2em plus 0.3em}%
+  \setlength{\abovedisplayshortskip}{0.8em plus 0.2em}\setlength{\belowdisplayshortskip}{1.2em plus 0.3em}}
 \usepackage{siunitx}\sisetup{output-decimal-marker={,},group-separator={.}}
-\usepackage{enumitem}\setlist{nosep,leftmargin=*}
+\usepackage{enumitem}
+\setlist{leftmargin=2em,itemsep=0.35em,topsep=0.6em,parsep=0pt}  % danh sách thoáng, thụt lề rõ
 \usepackage{xcolor}
 
 % ---------- Tài liệu tham khảo (IEEE) ----------
 \usepackage{csquotes}
+\DeclareQuoteAlias{english}{vietnamese}               % csquotes không có kiểu ngoặc tiếng Việt → dùng “…” kiểu Anh
 \usepackage[style=ieee,backend=biber,language=english]{biblatex}   % biblatex chưa hỗ trợ tiếng Việt; nguồn trích đều tiếng Anh
+\DeclareLanguageMapping{vietnamese}{english}           % không có vietnamese.lbx → dùng chuỗi tiếng Anh (vol., no., pp.)
 \addbibresource{refs/common.bib}
 \addbibresource{refs/preprocessing.bib}
 \addbibresource{refs/cleaning.bib}
@@ -50,16 +66,18 @@
 
 \input{sections/0_title}
 
-% ===================== BẢN CHÍNH (≤ 10 trang) =====================
+% ===================== BẢN CHÍNH =====================
+% Tối đa 3 cấp mục.
 \section{Đặt vấn đề}\label{sec:intro}
 \input{sections/1_introduction}
 
 \section{Dữ liệu}\label{sec:data}
+\input{sections/2_0_intro}
 \subsection{Các bộ dữ liệu}\label{sec:datasets}
 \input{sections/2_1_datasets}
-\subsection{Chia tập và chống rò rỉ}\label{sec:split}
+\subsection{Chia tập và chống rò rỉ dữ liệu}\label{sec:split}
 \input{sections/2_2_split}
-\subsection{Bộ 5 --- benchmark tổng hợp}\label{sec:synthetic}
+\subsection{Bộ dữ liệu tổng hợp (bộ 5)}\label{sec:synthetic}
 \input{sections/2_3_synthetic}
 
 \section{Phương pháp}\label{sec:method}
@@ -73,32 +91,38 @@
 \subsection{Bóc tách đơn thuốc}\label{sec:m-pres}
 \input{sections/3_4_prescription}
 
+% Thứ tự: dữ liệu → môi trường và công cụ → tham số → kết quả → đánh giá, so sánh
 \section{Thực nghiệm}\label{sec:exp}
-\subsection{Thiết lập và độ đo}\label{sec:setup}
+\input{sections/4_0_intro}
+\subsection{Dữ liệu đánh giá}\label{sec:e-data}
+\input{sections/4_1_data}
+\subsection{Môi trường, công cụ và độ đo}\label{sec:setup}
 \input{sections/4_1_setup}
-\subsection{Tiền xử lý và phân loại}\label{sec:e-pre}
+\subsection{Tham số}\label{sec:params}
+\input{sections/4_1_params}
+\subsection{Kết quả tiền xử lý và phân loại}\label{sec:e-pre}
 \input{sections/4_2_preprocessing}
-\subsection{Làm sạch và tách lớp mực}\label{sec:e-clean}
+\subsection{Kết quả làm sạch và tách lớp mực}\label{sec:e-clean}
 \input{sections/4_3_cleaning}
-\subsection{Dựng bảng}\label{sec:e-table}
+\subsection{Kết quả dựng bảng}\label{sec:e-table}
 \input{sections/4_4_table}
-\subsection{Bóc tách đơn thuốc}\label{sec:e-pres}
+\subsection{Kết quả bóc tách đơn thuốc}\label{sec:e-pres}
 \input{sections/4_5_prescription}
-\subsection{Ablation toàn pipeline}\label{sec:ablation}
+\subsection{Đánh giá toàn pipeline}\label{sec:ablation}
 \input{sections/4_6_ablation}
-\subsection{Thời gian chạy}\label{sec:runtime}
 \input{sections/4_7_runtime}
 
 \section{Thảo luận}\label{sec:discussion}
 \input{sections/5_discussion}
+
+\section{Kết luận}\label{sec:conclusion}
+\input{sections/5_1_conclusion}
 
 \section{Phân công}\label{sec:contrib}
 \input{sections/6_contribution}
 
 \section{Khai báo sử dụng AI}\label{sec:ai}
 \input{sections/7_ai_declaration}
-
-\printbibliography[heading=bibintoc,title={Tài liệu tham khảo}]
 
 % ===================== PHỤ LỤC =====================
 \clearpage
@@ -109,7 +133,10 @@
 \input{appendix/B_cleaning}
 \section{Dựng bảng}\label{app:table}
 \input{appendix/C_table}
-\section{Bóc tách đơn thuốc và bộ 5}\label{app:prescription}
+\section{Bóc tách đơn thuốc và kiểm chứng bộ 5}\label{app:prescription}
 \input{appendix/D_prescription}
+
+% Danh mục tài liệu tham khảo đặt cuối bài
+\printbibliography[heading=bibintoc,title={Tài liệu tham khảo}]
 
 \end{document}

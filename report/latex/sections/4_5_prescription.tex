@@ -1,50 +1,82 @@
-% ===== ≈ 1 trang =====
+% ===== Mục 4.7 =====
+\subsubsection{Gom khoản thuốc}
+Thí nghiệm S1 đánh giá cách gom khoản trên 176 ảnh tập kiểm tra VAIPE (443 khoản), cắt theo vùng thuốc của nhãn chuẩn.
+Tham số được chọn trên 176 ảnh tập kiểm định.
+Bảng~\ref{tab:S1} trình bày kết quả.
+
 \begin{table}[H]
 \centering
-\caption{Gom khoản thuốc trên 176 ảnh test VAIPE (443 khoản), cắt theo vùng thuốc ground truth; tham số chọn trên 176 ảnh valid.
-Khoản đúng khi IoU $>0{,}5$.}\label{tab:S1}
+\caption{Gom khoản thuốc trên 176 ảnh tập kiểm tra VAIPE, khoản đúng khi IoU $>0{,}5$ (thí nghiệm S1).}\label{tab:S1}
 \small
 \begin{tabular}{lrrrr}
 \toprule
-Phương án gom khoản (tách dòng bằng projection) & Precision & Recall & F1 & IoU TB \\
+\textbf{Phương án gom khoản} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \makecell[r]{\textbf{IoU}\\\textbf{trung bình}} \\
 \midrule
-\textbf{Dilation dọc $+$ luật dòng đậm} ($s=3$, ngưỡng đậm 1,25) & \textbf{0,971} & \textbf{0,975} & \textbf{0,973} & 0,813 \\
-(c) số dòng cố định ($n=2$) & 0,968 & 0,971 & 0,970 & 0,814 \\
-(d) chỉ Dilation dọc & 0,214 & 0,422 & 0,284 & 0,603 \\
-(f) Closing dọc & 0,131 & 0,111 & 0,120 & 0,733 \\
-(b) khe cố định & 0,101 & 0,113 & 0,107 & 0,758 \\
-(a) mỗi dòng một khoản & 0,048 & 0,095 & 0,064 & 0,728 \\
+\multicolumn{5}{l}{Tách dòng bằng lược đồ chiếu ngang} \\
+\makecell[l]{Phép giãn dọc và luật dòng đậm,\\$s=3$, ngưỡng 1,25 (đề xuất)} & \textbf{0,971} & \textbf{0,975} & \textbf{0,973} & 0,813 \\
+(c) Số dòng cố định, $n=2$ & 0,968 & 0,971 & 0,970 & 0,814 \\
+(d) Chỉ phép giãn dọc & 0,214 & 0,422 & 0,284 & 0,603 \\
+(f) Phép đóng dọc & 0,131 & 0,111 & 0,120 & 0,733 \\
+(b) Khe cố định & 0,101 & 0,113 & 0,107 & 0,758 \\
+(a) Mỗi dòng một khoản & 0,048 & 0,095 & 0,064 & 0,728 \\
 \midrule
-Đề xuất, tách dòng bằng thành phần liên thông & 0,831 & 0,946 & 0,885 & 0,833 \\
+\multicolumn{5}{l}{Tách dòng bằng thành phần liên thông} \\
+Phương án đề xuất & 0,831 & 0,946 & 0,885 & \textbf{0,833} \\
 \bottomrule
 \end{tabular}
-\\[0.3em]{\footnotesize Script: \texttt{code/experiments/s0\_gt\_vaipe.py}, \texttt{s1\_items.py}}
 \end{table}
 
+Trên đơn VAIPE, khe giữa hai dòng trong một khoản xấp xỉ khe giữa hai khoản.
+Vì vậy mọi cách chỉ dựa vào khoảng cách, gồm phép giãn, phép đóng và khe cố định, đều đạt F1 không quá $0{,}28$.
+Thêm luật ``dòng đậm mở khoản mới'', với độ đậm đo bằng phép co~\eqref{eq:bold}, nâng F1 lên \num{0.973}.
+Phương án (c), mỗi khoản 2 dòng, đạt F1 gần bằng (\num{0.970}) chỉ vì mọi đơn VAIPE dùng cùng một mẫu in.
+Phương án này không tổng quát cho đơn có khoản 1 dòng hoặc 3 dòng, còn luật dòng đậm không giả định số dòng.
+Tách dòng bằng lược đồ chiếu cho F1 cao hơn tách bằng thành phần liên thông (\num{0.973} so với \num{0.885}).
+Nguyên nhân là dấu thanh tiếng Việt tạo nhiều thành phần nhỏ lệch tâm dòng.
+Khi khoanh vùng thuốc tự động (thí nghiệm S4), IoU vùng đạt \num{0.725} và F1 khoản đầu-cuối đạt \num{0.820}, so với \num{0.219} khi lấy cả trang (Bảng~\ref{tab:S4}, Phụ lục~\ref{app:prescription}).
+
+\subsubsection{Chạy đầu-cuối trên dữ liệu tổng hợp}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{prescription/S2.png}
-\caption{F1 khoản thuốc chạy đầu-cuối (1)$\rightarrow$(2)$\rightarrow$(4) trên test \bo{5}, mỗi đường chỉ gồm mẫu bị đúng một loại hỏng.}\label{fig:S2}
+\caption{F1 khoản thuốc khi chạy đầu-cuối qua các bước (1), (2) và (4) trên tập kiểm tra \bo{5} (thí nghiệm S2).
+Mỗi đường chỉ gồm các mẫu bị đúng một loại suy biến.}\label{fig:S2}
 \end{figure}
 
-\textbf{Nhận xét.} (1) Trên đơn VAIPE, khe giữa hai dòng trong một khoản xấp xỉ khe giữa hai khoản, nên mọi cách chỉ dựa vào
-khoảng cách --- Dilation, Closing, khe cố định --- đều thất bại (F1 $\le0{,}28$). Thêm luật ``dòng đậm mở khoản'' (độ đậm đo bằng
-phép co, C7 S14) đưa F1 lên \num{0.973}. Phương án (c) ``2 dòng mỗi khoản'' đạt gần bằng (\num{0.970}) chỉ vì mọi đơn VAIPE cùng một
-mẫu in; nó không tổng quát cho đơn có khoản 1 hoặc 3 dòng, còn luật dòng đậm không giả định số dòng.
-(2) Tách dòng bằng projection tốt hơn gom thành phần liên thông (\num{0.973} so với \num{0.885}) vì dấu thanh tiếng Việt tạo
-nhiều thành phần nhỏ lệch tâm.
-(3) Khoanh vùng thuốc tự động đạt IoU vùng \num{0.725} và F1 khoản đầu-cuối \num{0.820}, so với \num{0.219} khi lấy cả trang
-(Phụ lục~\ref{app:prescription}).
-(4) Chạy đầu-cuối trên \bo{5} (Hình~\ref{fig:S2}): nghiêng và phối cảnh gần như không ảnh hưởng (F1 0,85--0,99, chỉ giảm còn
-\num{0.69} ở 30°) nhờ bước nắn; F1 chung trên 450 mẫu là \num{0.725}.
-\textbf{Ca lỗi.} Bóng đổ làm F1 tụt từ \num{0.85} xuống \num{0.19}--\num{0.35} dù ảnh nhị phân vẫn đúng (T3): vùng tối sau khử bóng
-có nét chữ mảnh hơn, tỉ lệ ``đậm / thường'' không còn tách được nên vùng thuốc và ranh giới khoản sai; mờ mức 3 (\num{0.48}) và dấu
-đỏ đè lên dòng tên thuốc (\num{0.56}) gây lỗi tương tự. Hướng sửa: chuẩn hóa độ đậm theo độ tương phản cục bộ của từng dòng.
-\textbf{S3 --- tách khoản có giúp OCR?} (\texttt{s3\_ocr.py}; 176 ảnh test đã soát, chữ chuẩn = các dòng trong vùng thuốc, bbox
-do (4) tự tìm, Tesseract 5 \texttt{vie} trên ảnh xám sau (2)). CER toàn tập / F1 từ: OCR cả trang \num{2.815} / \num{0.365} (đọc
-được 87\% số từ nhưng lẫn toàn bộ phần hành chính); OCR một lần vùng thuốc tự động \num{0.215} / \num{0.700}; từng dòng
-\num{0.241} / \num{0.592}; \textbf{từng khoản (pipeline) \num{0.225} / \num{0.658}}; từng dòng ground truth (trần trên)
-\num{0.053} / \num{0.821}. Lợi ích chính đến từ khoanh vùng thuốc (CER giảm hơn 12 lần); OCR theo khoản không thấp hơn OCR cả vùng
-về CER nhưng cho sẵn ranh giới từng thuốc để tách trường. Khoảng cách tới trần trên (0,23 so với 0,05) là lỗi khoanh vùng / tách
-khoản tự động (S4: F1 \num{0.820}). Trên 5 đơn thật chụp bằng điện thoại (S5, định tính) chỉ 1 đơn tách đúng một phần vì luật dòng
-đậm gắn với mẫu in VAIPE (Phụ lục~\ref{app:prescription}).
+Hình~\ref{fig:S2} cho thấy nghiêng và méo phối cảnh ít ảnh hưởng đến kết quả, với F1 0,85--0,99, và chỉ giảm còn \num{0.69} ở góc 30°.
+Nguyên nhân là bước (1) đã nắn ảnh trước khi tách khoản.
+F1 chung trên 450 mẫu là \num{0.725}.
+Ca lỗi điển hình là bóng đổ, làm F1 giảm từ \num{0.85} xuống \num{0.19}--\num{0.35} dù ảnh nhị phân vẫn đúng (thí nghiệm T3).
+Sau khử bóng, nét chữ trong vùng tối mảnh hơn, nên tỉ lệ độ đậm giữa dòng đậm và dòng thường không còn đủ lớn.
+Hệ quả là vùng thuốc và ranh giới khoản bị xác định sai.
+Mờ mức 3 (F1 \num{0.48}) và dấu đỏ đè lên dòng tên thuốc (F1 \num{0.56}) gây lỗi tương tự.
+Hướng sửa là chuẩn hóa độ đậm theo độ tương phản cục bộ của từng dòng.
+
+\subsubsection{Ảnh hưởng lên OCR}
+Thí nghiệm S3 đo lợi ích của tách khoản đối với OCR, trên 176 ảnh tập kiểm tra đã soát.
+Chữ nhãn chuẩn là các dòng trong vùng thuốc.
+Khung bao do bước (4) tự tìm, và Tesseract~5 với gói \texttt{vie} đọc ảnh xám sau bước (2).
+Bảng~\ref{tab:S3} trình bày kết quả.
+
+\begin{table}[H]
+\centering
+\caption{OCR phần thuốc trên 176 ảnh tập kiểm tra VAIPE với các cách cắt vùng khác nhau (thí nghiệm S3).}\label{tab:S3}
+\small
+\begin{tabular}{lrr}
+\toprule
+\textbf{Cách cắt vùng trước OCR} & \textbf{CER} & \textbf{F1 từ} \\
+\midrule
+Cả trang (đối chứng) & 2,815 & 0,365 \\
+Vùng thuốc tự động, OCR một lần & \textbf{0,215} & \textbf{0,700} \\
+Từng dòng & 0,241 & 0,592 \\
+Từng khoản thuốc (pipeline) & 0,225 & 0,658 \\
+Từng dòng của nhãn chuẩn (cận trên) & 0,053 & 0,821 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+OCR cả trang đọc được 87\% số từ nhưng lẫn toàn bộ phần hành chính của đơn, nên CER lên tới \num{2.815}.
+Lợi ích chính đến từ khoanh vùng thuốc, giúp CER giảm hơn 12 lần.
+OCR theo khoản không cho CER thấp hơn OCR cả vùng thuốc (\num{0.225} so với \num{0.215}), nhưng cho sẵn ranh giới từng thuốc để tách các trường.
+Khoảng cách tới cận trên (\num{0.225} so với \num{0.053}) là lỗi của bước khoanh vùng và tách khoản tự động, với F1 \num{0.820} ở thí nghiệm S4.
+Trên 5 đơn thật chụp bằng điện thoại (thí nghiệm S5, định tính), chỉ 1 đơn được tách đúng một phần, vì luật dòng đậm gắn với mẫu in VAIPE (Phụ lục~\ref{app:prescription}).

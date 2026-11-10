@@ -1,92 +1,122 @@
-% ===== phụ lục (không giới hạn trang) =====
-\textbf{D1 --- đo mờ, đo lóa} (\texttt{d1\_iqa.py}; 160 mẫu test \bo{5} không biến dạng hình học, 15 mẫu mờ).
+% ===== Phụ lục A =====
+\subsection{Đo mờ và đo lóa (D1)}
+Thí nghiệm D1 (\path{d1_iqa.py}) dùng 160 mẫu tập kiểm tra \bo{5} không có biến dạng hình học, trong đó 15 mẫu bị mờ.
+Ngưỡng của mỗi độ đo được chọn để F1 lớn nhất trên tập kiểm định.
+Bảng~\ref{tab:D1} và Hình~\ref{fig:D1} trình bày kết quả.
+
 \begin{table}[H]
 \centering\small
-\caption{Phát hiện ảnh mờ: ngưỡng chọn F1 lớn nhất trên valid.}\label{tab:D1}
+\caption{Phát hiện ảnh mờ bằng ba độ đo (thí nghiệm D1).}\label{tab:D1}
 \begin{tabular}{lrrrr}
 \toprule
-Điểm & Ngưỡng & F1 valid & F1 test & AUC test \\
+\textbf{Độ đo} & \textbf{Ngưỡng} & \textbf{F1 kiểm định} & \textbf{F1 kiểm tra} & \textbf{AUC kiểm tra} \\
 \midrule
-$\mathrm{Var}(\nabla^2 f)$ (C5 S28--29) & 448,6 & 0,947 & \textbf{0,857} & \textbf{0,979} \\
-Tenengrad (Sobel, C5 S19) & \num{11427} & 0,878 & 0,828 & 0,954 \\
-Năng lượng tần số cao (C3 S8) & 0,289 & 0,818 & 0,600 & 0,920 \\
+$\sigma^2_L$ theo~\eqref{eq:blur} \chuong{5, S28--29} & 448,6 & \textbf{0,947} & \textbf{0,857} & \textbf{0,979} \\
+Tenengrad, Sobel \chuong{5, S19} & \num{11427} & 0,878 & 0,828 & 0,954 \\
+Năng lượng tần số cao \chuong{3, S8} & 0,289 & 0,818 & 0,600 & 0,920 \\
 \bottomrule
 \end{tabular}
 \end{table}
-\begin{figure}[H]\centering\includegraphics[width=0.45\linewidth]{preprocessing/D1_roc.png}
-\caption{Đường đánh đổi phát hiện ảnh mờ (test \bo{5}).}\end{figure}
-Lóa: $\tau_V=240$, $\tau_S=60$ chọn theo IoU trên valid; IoU mask lóa trên test theo 3 mức: \num{0.19} / \num{0.66} / \num{0.82}
-(lóa nhẹ khó vì giấy scan vốn đã gần trắng).
 
-\textbf{D4 --- chỉnh nghiêng} (\texttt{d4\_deskew.py}; 90 ảnh chỉ xoay $\pm2,\pm5,\pm10,\pm15^\circ$ $+$ 30 ảnh sạch $0^\circ$).
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\linewidth]{preprocessing/D1_roc.png}
+\caption{Đường ROC của ba độ đo phát hiện ảnh mờ trên tập kiểm tra \bo{5} (thí nghiệm D1).}\label{fig:D1}
+\end{figure}
+
+Hình~\ref{fig:D1} cho thấy $\sigma^2_L$ phát hiện đủ 100\% ảnh mờ ở tỉ lệ báo nhầm khoảng $0{,}12$, sớm nhất trong ba độ đo.
+Tenengrad chỉ đạt 100\% ở tỉ lệ báo nhầm khoảng $0{,}33$.
+AUC của ba độ đo lần lượt là \num{0.979}, \num{0.954} và \num{0.920}.
+Ngưỡng lóa $\tau_V=240$ và $\tau_S=60$ được chọn theo IoU của mặt nạ lóa trên tập kiểm định.
+Trên tập kiểm tra, IoU của mặt nạ lóa ở ba mức lóa lần lượt là \num{0.19}, \num{0.66} và \num{0.82}.
+Lóa nhẹ khó phát hiện vì giấy scan vốn đã gần trắng.
+
+\subsection{Chỉnh nghiêng (D4)}
+Thí nghiệm D4 (\path{d4_deskew.py}) dùng 90 ảnh chỉ bị xoay $\pm2^\circ$, $\pm5^\circ$, $\pm10^\circ$, $\pm15^\circ$ và 30 ảnh sạch không xoay.
+Bảng~\ref{tab:D4} trình bày kết quả.
+
 \begin{table}[H]
 \centering\small
-\caption{Chỉnh nghiêng: sai số góc tuyệt đối và thời gian (trung vị, CPU).}\label{tab:D4}
+\caption{Sai số góc tuyệt đối và thời gian chạy trung vị trên CPU của ba phương pháp chỉnh nghiêng (thí nghiệm D4).}\label{tab:D4}
 \begin{tabular}{lrrr}
 \toprule
-Phương án & Sai số TB (°) & $\le0{,}5^\circ$ (\%) & Thời gian (ms) \\
+\textbf{Phương án} & \textbf{Sai số trung bình (°)} & \textbf{Sai số $\le0{,}5^\circ$ (\%)} & \textbf{Thời gian (ms)} \\
 \midrule
-\textbf{Projection} $\arg\max\mathrm{Var}(P_\theta)$ & \textbf{0,000} & 100 & \textbf{79} \\
-Hough & 0,058 & 100 & 90 \\
-Radon & 0,000 & 100 & \num{9560} \\
+Lược đồ chiếu theo~\eqref{eq:skew} & \textbf{0,000} & \textbf{100} & \textbf{79} \\
+Hough & 0,058 & \textbf{100} & 90 \\
+Radon & \textbf{0,000} & \textbf{100} & \num{9560} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{D5 --- khử lóa} (\texttt{d5\_glare.py}; 30 mẫu test \bo{5} chỉ có lóa, so với ảnh sạch cùng mức phơi sáng).
+\subsection{Khử lóa (D5)}
+Thí nghiệm D5 (\path{d5_glare.py}) dùng 30 mẫu tập kiểm tra \bo{5} chỉ bị lóa, so với ảnh sạch có cùng mức phơi sáng.
+Bảng~\ref{tab:D5} trình bày kết quả.
+
 \begin{table}[H]
 \centering\small
+\caption{Khử lóa bằng inpainting trên 30 mẫu chỉ bị lóa (thí nghiệm D5).}\label{tab:D5}
 \begin{tabular}{lrrr}
 \toprule
-Phương án & PSNR vùng lóa (dB) & PSNR cả ảnh (dB) & F-measure chữ trong vùng lóa \\
+\textbf{Phương án} & \makecell{\textbf{PSNR vùng}\\\textbf{lóa (dB)}} & \makecell{\textbf{PSNR cả}\\\textbf{ảnh (dB)}} & \makecell{\textbf{F-measure chữ}\\\textbf{trong vùng lóa}} \\
 \midrule
-Không khử & 15,10 & 29,13 & \textbf{0,361} \\
-Inpainting Telea, mask H4 & 15,78 & 29,64 & 0,343 \\
-Inpainting Navier--Stokes, mask H4 & \textbf{15,97} & \textbf{29,83} & 0,347 \\
-Telea, mask ground truth & 15,26 & 29,39 & 0,059 \\
-Pipeline (chỉ khử khi lóa 1--8\%) & 15,43 & 29,39 & 0,351 \\
+Không khử lóa & 15,10 & 29,13 & \textbf{0,361} \\
+Inpainting Telea, mặt nạ theo~\eqref{eq:glare} & 15,78 & 29,64 & 0,343 \\
+Inpainting Navier--Stokes, mặt nạ theo~\eqref{eq:glare} & \textbf{15,97} & \textbf{29,83} & 0,347 \\
+Inpainting Telea, mặt nạ nhãn chuẩn & 15,26 & 29,39 & 0,059 \\
+Pipeline (chỉ khử khi lóa chiếm 1--8\%) & 15,43 & 29,39 & 0,351 \\
 \bottomrule
 \end{tabular}
 \end{table}
-Inpainting nâng PSNR $0{,}3$--$0{,}9$~dB vì làm vùng cháy sáng gần màu giấy hơn, nhưng \emph{không lấy lại được chữ}: F-measure
-trong vùng lóa không tăng (lóa mức 1 / 2 / 3: 0,57 / 0,31 / 0,20 khi không khử), và với mask đúng toàn vùng thì inpainting xóa
-luôn chữ (F $0{,}06$). Chữ dưới lóa đã mất độ tương phản thì không khôi phục được từ chính ảnh đó; vì vậy pipeline chỉ khử lóa
-nhẹ (37\% số mẫu) và báo ``chụp lại'' khi lóa $>8\%$ --- đây là vai trò thật của bước H4.
 
-\textbf{D10 --- soát nhãn \bo{4}} (\texttt{code/experiments/d10\_bo4\_review.json}): xem ảnh thu nhỏ của cả 83 ảnh, 83/83 nằm đúng
-thư mục loại tài liệu, không phải chuyển ảnh nào. Ba ca biên giữ nguyên nhãn: hai phiếu xét nghiệm chỉ có một dòng kết quả
-(SARS-CoV-2, sinh học phân tử) và một bảng kê chi phí (lớp ``khác'' nhưng có bảng nhiều cột).
+Inpainting nâng PSNR thêm $0{,}3$--$0{,}9$~dB, vì vùng cháy sáng được tô gần màu giấy hơn.
+Tuy nhiên inpainting không khôi phục được chữ: F-measure trong vùng lóa không tăng.
+Khi không khử lóa, F-measure ở ba mức lóa lần lượt là 0,57, 0,31 và 0,20.
+Với mặt nạ đúng toàn vùng lóa, inpainting xóa luôn chữ, làm F-measure giảm còn $0{,}06$.
+Chữ dưới vùng lóa đã mất độ tương phản thì không khôi phục được từ chính ảnh đó.
+Vì vậy pipeline chỉ khử lóa nhẹ (37\% số mẫu) và báo người dùng chụp lại khi lóa chiếm trên 8\% diện tích.
+Vai trò thực tế của bước đo lóa là phát hiện ảnh cần chụp lại.
 
-\textbf{D9 --- thời gian chạy} (\texttt{d9\_runtime.py}).
+\subsection{Soát nhãn \bo{4} (D10)}
+Cả 83 ảnh thu nhỏ của \bo{4} được xem lại bằng mắt (\path{d10_bo4_review.json}).
+Cả 83/83 ảnh nằm đúng thư mục loại tài liệu, không ảnh nào phải chuyển.
+Ba ca biên được giữ nguyên nhãn: hai phiếu xét nghiệm chỉ có một dòng kết quả (SARS-CoV-2 và sinh học phân tử), và một bảng kê chi phí thuộc lớp ``khác'' nhưng có bảng nhiều cột.
+
+\subsection{Thời gian chạy (D9)}
+Thí nghiệm D9 (\path{d9_runtime.py}) đo thời gian chạy trên 10 ảnh mẫu trong \path{code/samples/}, mỗi ảnh chạy 3 lần.
+Bảng~\ref{tab:runtime} trình bày kết quả.
+
 \begin{table}[H]
 \centering
-\caption{Thời gian chạy trên CPU (trung vị, 10 ảnh mẫu \texttt{code/samples/}, mỗi ảnh 3 lần; chưa gồm OCR).}\label{tab:runtime}
+\caption{Thời gian chạy trung vị trên CPU theo từng bước, chưa tính OCR (thí nghiệm D9).}\label{tab:runtime}
 \small
 \begin{tabular}{lrrrr}
 \toprule
-Loại ảnh & (1) tiền xử lý $+$ phân loại & (2) làm sạch & (3)/(4) cấu trúc & Tổng \\
+\textbf{Loại ảnh} & \makecell{\textbf{(1) Tiền xử lý,}\\\textbf{phân loại (ms)}} & \makecell{\textbf{(2) Làm sạch}\\\textbf{(ms)}} & \makecell{\textbf{(3)/(4) Cấu trúc}\\\textbf{(ms)}} & \textbf{Tổng (ms)} \\
 \midrule
-Phiếu xét nghiệm ($640\times640$) & 210 ms & 135 ms & 36 ms & 381 ms \\
-Đơn thuốc ($\approx760\times1070$) & 357 ms & 299 ms & 24 ms & 679 ms \\
-Tài liệu khác (dừng sau (1)) & 436 ms & --- & --- & 436 ms \\
+Phiếu xét nghiệm ($640\times640$) & 210 & 135 & 36 & 381 \\
+Đơn thuốc (khoảng $760\times1070$) & 357 & 299 & 24 & 679 \\
+Tài liệu khác (dừng sau bước (1)) & 436 & --- & --- & 436 \\
 \bottomrule
 \end{tabular}
-\\[0.3em]{\footnotesize Script: \texttt{code/experiments/d9\_runtime.py}}
 \end{table}
 
-\textbf{Bảng tham số} (KeHoach.md mục 5.3).
+\subsection{Bảng tham số}
+Bảng~\ref{tab:params-pre} liệt kê tham số của bước (1), khoảng giá trị đã thử và lý do chọn.
+
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\linewidth}{lllX}
+\caption{Tham số của bước (1).}\label{tab:params-pre}
+\begin{tabularx}{\linewidth}{XllX}
 \toprule
-Tham số & Khoảng thử & Chọn & Lý do \\
+\textbf{Tham số} & \textbf{Khoảng thử} & \textbf{Giá trị chọn} & \textbf{Lý do} \\
 \midrule
-Ngưỡng mờ $\tau_B$ & 20--400+ (mọi giá trị điểm) & 448,6 & F1 lớn nhất trên valid (D1) \\
-$\tau_V$, $\tau_S$ lóa & 220--250; 20--60 & 240; 60 & IoU mask lóa lớn nhất trên valid \\
-Canny $(T_2, T_1)$ & $T_2$ 30--100, $T_1=2T_2$ hoặc $3T_2$ & (30, 60) & Tỉ lệ thành công D2 trên valid; đúng khuyến nghị C5 S47 \\
-Sai số xấp xỉ tứ giác & --- & $0{,}02\times$ chu vi & Giá trị thông dụng; D2 đã đạt 99\% \\
-Bước góc chỉnh nghiêng & thô 1°, tinh 0,25° & 0,25° & Sai số 0° ở 79~ms \\
-$k$ kNN, khoảng cách & $k\in\{1,3,5,7\}$; Euclid, Cosine, $\chi^2$ & theo 5-fold & Macro-F1 5-fold trên train (C8 S41) \\
+Ngưỡng mờ $\tau_B$ & 20 đến trên 400 (mọi giá trị điểm) & 448,6 & F1 lớn nhất trên tập kiểm định (D1) \\
+Ngưỡng lóa $\tau_V$; $\tau_S$ & 220--250; 20--60 & 240; 60 & IoU mặt nạ lóa lớn nhất trên tập kiểm định \\
+Ngưỡng Canny $(T_2, T_1)$ & $T_2$ 30--100; $T_1=2T_2$ hoặc $3T_2$ & (30, 60) & Tỉ lệ thành công D2 trên tập kiểm định; đúng khuyến nghị \chuong{5, S47} \\
+Sai số xấp xỉ tứ giác & --- & $0{,}02\times$ chu vi & Giá trị thông dụng; D2 đạt 99,0\% \\
+Bước góc chỉnh nghiêng & Thô 1°; tinh 0,25° & 0,25° & Sai số 0° với thời gian 79~ms \\
+$k$ và khoảng cách của kNN & $k\in\{1,3,5,7\}$; Euclid, cosine, $\chi^2$ & Theo 5-fold & Macro-F1 kiểm định chéo 5-fold trên tập huấn luyện \chuong{8, S41} \\
 \bottomrule
 \end{tabularx}
 \end{table}

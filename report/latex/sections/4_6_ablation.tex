@@ -1,36 +1,50 @@
-% ===== ≈ 0,5 trang =====
+% ===== Mục 4.8 =====
+\subsubsection{Thí nghiệm cắt bỏ từng bước}
+Thí nghiệm cắt bỏ (ablation) T8 tắt lần lượt từng bước của pipeline và đo CER cuối của phần thuốc trên 450 mẫu tập kiểm tra \bo{5}.
+OCR chạy trên từng khoản do bước (4) tự tìm, bằng Tesseract~5 với gói \texttt{vie}.
+Thí nghiệm D6 thêm bước tăng tương phản vào pipeline.
+Bảng~\ref{tab:T8} trình bày kết quả.
+Cột cuối là CER trên nhóm mẫu có đúng loại suy biến mà bước bị tắt xử lý.
+
 \begin{table}[H]
 \centering
-\caption{Ablation trên 450 mẫu test \bo{5}: CER cuối của chữ phần thuốc (OCR từng khoản do (4) tự tìm, Tesseract 5 \texttt{vie})
-khi tắt từng bước. Cột phải: CER trên nhóm mẫu có đúng loại hỏng mà bước đó xử lý.}\label{tab:T8}
+\caption{CER cuối của phần thuốc khi tắt hoặc thêm từng bước, 450 mẫu tập kiểm tra \bo{5} (thí nghiệm T8 và D6).}\label{tab:T8}
 \small
-\begin{tabular}{lrrl}
+\begin{tabularx}{\linewidth}{lrrX}
 \toprule
-Cấu hình & CER $\downarrow$ & F1 từ & CER trên nhóm liên quan (đầy đủ $\rightarrow$ tắt) \\
+\textbf{Cấu hình} & \textbf{CER} & \textbf{F1 từ} & \textbf{CER trên nhóm liên quan (đầy đủ $\rightarrow$ đã tắt)} \\
 \midrule
-\textbf{Đầy đủ} & \textbf{0,374} & \textbf{0,545} & --- \\
-$-$ nắn phối cảnh $+$ chỉnh nghiêng (1) & 0,831 & 0,317 & 230 mẫu nghiêng / phối cảnh: 0,205 $\rightarrow$ 1,143 \\
-$-$ khử lóa (1) & 0,374 & 0,545 & 30 mẫu lóa: 0,313 $\rightarrow$ 0,311 \\
-$-$ tách mực $+$ xóa dấu / bút (2) & 0,394 & 0,530 & dấu: 0,433 $\rightarrow$ 0,539; bút: 0,238 $\rightarrow$ 0,384 \\
-$-$ khử bóng (2) & 0,369 & 0,550 & 15 mẫu bóng: 0,865 $\rightarrow$ 0,702 \\
-OCR ảnh nhị phân thay ảnh xám (2) & 0,437 & 0,353 & --- \\
-$-$ tách vùng: OCR cả trang (3)(4) & 2,501 & 0,326 & recall từ 0,665 nhưng precision 0,216 \\
-Không xử lý gì (OCR ảnh chụp) & 1,952 & 0,284 & --- \\
+Pipeline đầy đủ & 0,374 & 0,545 & --- \\
+Bỏ nắn phối cảnh và chỉnh nghiêng (1) & 0,831 & 0,317 & 230 mẫu nghiêng hoặc méo phối cảnh: 0,205 $\rightarrow$ 1,143 \\
+Bỏ khử lóa (1) & 0,374 & 0,545 & 30 mẫu lóa: 0,313 $\rightarrow$ 0,311 \\
+Bỏ tách mực, xóa dấu và nét bút (2) & 0,394 & 0,530 & Dấu: 0,433 $\rightarrow$ 0,539; nét bút: 0,238 $\rightarrow$ 0,384 \\
+Bỏ khử bóng (2) & \textbf{0,369} & \textbf{0,550} & 15 mẫu bóng: 0,865 $\rightarrow$ 0,702 \\
+OCR ảnh nhị phân thay cho ảnh xám (2) & 0,437 & 0,353 & --- \\
+Bỏ tách vùng, OCR cả trang (3)(4) & 2,501 & 0,326 & Recall 0,665 nhưng Precision 0,216 \\
+Không xử lý, OCR trực tiếp ảnh chụp & 1,952 & 0,284 & --- \\
 \midrule
-$+$ CLAHE trước (2) (D6) & 0,399 & 0,544 & nghiêng 0,182; lóa 0,243; kết hợp nhiều hỏng 1,334 \\
-$+$ cân bằng lược đồ toàn cục (D6) & 1,071 & 0,139 & tệ hơn ở mọi nhóm \\
+Thêm CLAHE trước bước (2) (D6) & 0,399 & 0,544 & Nghiêng: 0,182; lóa: 0,243; nhiều suy biến: 1,334 \\
+Thêm cân bằng histogram toàn cục (D6) & 1,071 & 0,139 & Tăng CER ở mọi nhóm \\
 \bottomrule
-\end{tabular}
-\\[0.3em]{\footnotesize CER $>1$ khi kết quả có nhiều chữ thừa ngoài phần thuốc. Script: \texttt{t8\_ablation.py}, \texttt{d6\_enhance.py}.}
+\end{tabularx}
 \end{table}
-\textbf{Nhận xét.} Ba bước đóng góp rõ nhất là \emph{tách vùng} (bỏ đi thì CER từ 0,37 lên 2,50 vì OCR đọc cả đầu và chân đơn),
-\emph{nắn phối cảnh} (0,21 lên 1,14 trên ảnh nghiêng) và \emph{xóa dấu / bút} (dấu 0,43 lên 0,54, bút 0,24 lên 0,38). Khử lóa
-gần như không đổi CER vì chỉ chạy khi lóa nhẹ và inpainting không lấy lại được chữ dưới lóa (D5, Phụ lục~\ref{app:preprocessing}).
-Khử bóng \emph{không} giúp CER cuối (0,374 so với 0,369): Sauvola và Tesseract đã chịu được bóng (đúng kết quả T2), dù khử bóng
-tăng PSNR (T1). OCR trên ảnh xám sạch tốt hơn trên ảnh nhị phân, khớp T2-CER. \textbf{Ca lỗi lớn nhất:} trên 15 mẫu chỉ có bóng,
-CER đầy đủ là 0,865 nhưng bỏ bước (1) chỉ còn 0,092 --- ảnh scan không có mép giấy nên tìm góc rơi về phương án dự phòng
-``hình chữ nhật bao nhỏ nhất'' bám theo ranh giới bóng, cắt mất một phần trang và xoay sai $\pm16^\circ$. D2 không phát hiện được
-lỗi này vì chỉ chấm trên mẫu có phối cảnh. Hướng sửa: chỉ nhận khung dự phòng khi nó chiếm phần lớn ảnh, ngược lại giữ cả ảnh.
-\textbf{D6:} CLAHE giảm CER trên ảnh hỏng một loại (nghiêng 0,205 xuống 0,182, lóa 0,313 xuống 0,243) nhưng khuếch đại nhiễu ở ảnh
-mờ / kết hợp nên CER chung tăng nhẹ (0,374 lên 0,399); cân bằng toàn cục làm nét chữ dính và nền nổi hạt \chuong{3, S32--33} nên
-hỏng hẳn. Pipeline giữ nguyên, không đưa bước tăng tương phản vào đường OCR.
+
+Ba bước giảm CER nhiều nhất là tách vùng, nắn phối cảnh và xóa dấu, nét bút.
+Bỏ tách vùng làm CER tăng từ 0,37 lên 2,50, vì OCR đọc cả phần đầu và phần chân đơn.
+Bỏ nắn phối cảnh làm CER trên ảnh nghiêng tăng từ 0,21 lên 1,14.
+Bỏ xóa dấu làm CER trên nhóm có dấu tăng từ 0,43 lên 0,54, và trên nhóm có nét bút từ 0,24 lên 0,38.
+Bỏ khử lóa chỉ làm CER trên nhóm lóa đổi từ 0,313 thành 0,311, vì bước này chỉ chạy khi lóa nhẹ và inpainting không khôi phục được chữ dưới vùng lóa (thí nghiệm D5, Bảng~\ref{tab:D5}).
+Khử bóng không giảm CER cuối: CER là 0,374 khi có khử bóng và 0,369 khi bỏ khử bóng, dù khử bóng tăng PSNR ở thí nghiệm T1.
+Nguyên nhân là Sauvola và Tesseract đã chịu được bóng, đúng như kết quả T2.
+OCR trên ảnh xám sạch cho CER thấp hơn trên ảnh nhị phân (0,374 so với 0,437), khớp với kết quả T2-CER.
+
+Ca lỗi lớn nhất xuất hiện trên 15 mẫu chỉ có bóng: CER của pipeline đầy đủ là 0,865, nhưng khi bỏ bước (1) chỉ còn 0,092.
+Ảnh scan không có mép giấy, nên bước tìm góc rơi về phương án dự phòng hình chữ nhật bao nhỏ nhất.
+Khung dự phòng bám theo ranh giới bóng, cắt mất một phần trang và xoay sai $\pm16^\circ$.
+Thí nghiệm D2 không phát hiện được lỗi này, vì D2 chỉ chấm trên các mẫu có phối cảnh.
+Hướng sửa là chỉ nhận khung dự phòng khi khung chiếm phần lớn diện tích ảnh, ngược lại giữ nguyên cả ảnh.
+
+Trong thí nghiệm D6, CLAHE giảm CER trên ảnh có một loại suy biến: ảnh nghiêng từ 0,205 xuống 0,182, ảnh lóa từ 0,313 xuống 0,243.
+Tuy nhiên CLAHE khuếch đại nhiễu ở ảnh mờ và ảnh có nhiều suy biến, nên CER chung tăng từ 0,374 lên 0,399.
+Cân bằng histogram toàn cục làm nét chữ dính nhau và nền nổi hạt \chuong{3, S32--33}, nên CER tăng lên 1,071.
+Vì vậy pipeline không đưa bước tăng tương phản vào đường OCR.

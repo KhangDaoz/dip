@@ -1,0 +1,12 @@
+% ===== Chương 6 =====
+Đồ án xây dựng pipeline 4 bước bóc tách cấu trúc đơn thuốc và phiếu xét nghiệm từ ảnh chụp điện thoại, chỉ dùng kỹ thuật xử lý ảnh cổ điển của học phần.
+Mỗi bước được so sánh với các phương pháp đối chứng bằng độ đo định lượng.
+
+Các kết quả chính gồm:
+\begin{enumerate}
+  \item Nắn phối cảnh bằng Canny và đường bao thành công ở 99,0\% số mẫu, chỉnh nghiêng bằng lược đồ chiếu có sai số $0^\circ$.
+  \item Khử bóng bằng phép đóng mức xám đạt PSNR \SI{47.9}{dB}, và Sauvola không phụ thuộc vào bước khử bóng.
+  \item Dựng bảng bằng lược đồ chiếu sau khi xóa đường kẻ giảm CER của OCR bảng từ \num{0.765} xuống \num{0.470}.
+  \item Gom khoản thuốc bằng phép giãn dọc và luật dòng đậm đạt F1 \num{0.973} trên tập kiểm tra VAIPE.
+  \item Toàn pipeline xử lý mỗi ảnh dưới 1~giây trên CPU, chưa tính OCR.
+\end{enumerate}

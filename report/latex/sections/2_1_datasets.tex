@@ -1,27 +1,39 @@
-% ===== ≈ 0,5 trang =====
+% ===== Mục 2.1 =====
+Bảng~\ref{tab:datasets} liệt kê nguồn, số ảnh và mục đích sử dụng của năm bộ dữ liệu.
+
 \begin{table}[H]
 \centering
 \caption{Các bộ dữ liệu sử dụng.}\label{tab:datasets}
 \small
 \begin{tabularx}{\linewidth}{clrX}
 \toprule
-Bộ & Nguồn & Ảnh gốc & Dùng cho \\
+\textbf{Bộ} & \textbf{Nguồn} & \textbf{Số ảnh gốc} & \textbf{Mục đích sử dụng} \\
 \midrule
 1 & VAIPE (đơn thuốc Việt Nam, Kaggle) & \num{1345} & Tách khoản thuốc; lớp đơn thuốc; nguồn ảnh sạch của \bo{5} \\
-2 & Roboflow Report Keywords Detection (CC BY 4.0) & 57 & Phiếu xét nghiệm (tiếng Anh): dựng bảng; lớp phiếu XN \\
-3 & RVL-CDIP~\cite{harley2015rvlcdip} (tập con) & \num{1000} & Lớp ``tài liệu khác'' (800) + lớp lạ open-set (200) \\
-4 & Nhóm tự chụp & 83 & Chỉ để test: phân loại (định lượng), các bước khác (định tính) \\
-5 & Tổng hợp từ ảnh sạch \bo{1} & \num{1500} & Ground truth chính xác cho mọi bước \\
+2 & Roboflow Report Keywords Detection (CC BY 4.0) & 57 & Dựng bảng phiếu xét nghiệm tiếng Anh; lớp phiếu xét nghiệm \\
+3 & RVL-CDIP~\cite{harley2015rvlcdip} (tập con) & \num{1000} & Lớp ``tài liệu khác'' (800 ảnh); lớp lạ khi kiểm tra tập mở (200 ảnh) \\
+4 & Nhóm tự chụp & 83 & Chỉ dùng để kiểm tra: phân loại (định lượng), các bước khác (định tính) \\
+5 & Tổng hợp từ ảnh sạch của \bo{1} & \num{1500} & Nhãn chuẩn chính xác cho mọi bước \\
 \bottomrule
 \end{tabularx}
 \end{table}
-Nhãn có sẵn: \bo{1} có khung và chữ từng dòng với vai trò \texttt{drugname}, \texttt{usage}, \texttt{quantity},~\ldots;
-\bo{2} có khung từng cụm từ với vai trò (tên chỉ số, kết quả, đơn vị, khoảng tham chiếu), ảnh đã bị ép về $640\times640$;
-\bo{4} gồm 48 phiếu xét nghiệm, 18 đơn thuốc, 17 tài liệu khác, chỉ có nhãn loại tài liệu.
-Ground truth khoản thuốc của \bo{1} được gom tự động từ nhãn dòng: mỗi \texttt{drugname} cùng các box \texttt{usage},
-\texttt{quantity} cùng hàng hoặc ngay dưới; khoản là dải ngang trải hết bề ngang vùng thuốc (nhãn đôi khi thiếu box số lượng).
-Ground truth dòng / cột của \bo{2} suy từ nhãn cụm từ: hai cụm từ cùng dòng nếu chồng nhau theo chiều dọc $\ge 50\%$; cột
-là vai trò cụm từ. Sau khi soát bằng mắt cả 55 ảnh có nhãn thân bảng, giữ \textbf{32 ảnh} đủ cơ sở (loại ảnh nhãn lệch khỏi chữ,
-ảnh mờ không đọc được, bố cục máy in nhiều cột); 9 ảnh được sửa dòng theo quy tắc ghi trong \texttt{k0\_review.json} (bỏ dòng
-mô tả và tiêu đề nhóm, gộp tên chỉ số hai dòng). \Bo{2} không có nhãn chữ: chữ từng khung do LLM phiên âm từ ảnh gốc rồi
-người soát (mục~7), dùng làm đáp án CER cho K5.
+
+\Bo{1} có sẵn khung bao và chữ của từng dòng.
+Mỗi dòng mang một trong sáu vai trò \texttt{drugname}, \texttt{usage}, \texttt{quantity}, \texttt{date}, \texttt{diagnose} và \texttt{other}.
+\Bo{2} có khung bao của từng cụm từ kèm vai trò: tên chỉ số, kết quả, đơn vị hoặc khoảng tham chiếu.
+Mọi ảnh của \bo{2} đã bị ép về kích thước $640\times640$.
+\Bo{4} gồm 48 phiếu xét nghiệm, 18 đơn thuốc và 17 tài liệu khác, chỉ có nhãn loại tài liệu.
+
+Nhãn chuẩn khoản thuốc của \bo{1} được gom tự động từ nhãn dòng.
+Mỗi khoản gồm một dòng \texttt{drugname} cùng các khung \texttt{usage} và \texttt{quantity} nằm cùng hàng hoặc ngay bên dưới.
+Khoản được biểu diễn bằng một dải ngang trải hết bề ngang vùng thuốc, vì nhãn đôi khi thiếu khung số lượng.
+
+Nhãn chuẩn dòng và cột của \bo{2} được suy ra từ nhãn cụm từ.
+Hai cụm từ thuộc cùng một dòng nếu phần chồng nhau theo chiều dọc đạt ít nhất 50\%.
+Cột của một cụm từ là vai trò của cụm từ đó.
+Cả 55 ảnh có nhãn thân bảng được soát bằng mắt, sau đó 32 ảnh đủ cơ sở được giữ lại.
+Các ảnh bị loại có nhãn lệch khỏi chữ, bị mờ không đọc được, hoặc có bố cục máy in nhiều cột.
+Trong 32 ảnh giữ lại, 9 ảnh được sửa nhãn dòng theo hai quy tắc: bỏ dòng mô tả và tiêu đề nhóm, gộp tên chỉ số viết trên hai dòng.
+\Bo{2} không có nhãn chữ.
+Chữ trong từng khung do mô hình ngôn ngữ lớn (LLM) phiên âm từ ảnh gốc, sau đó được người soát lại (Mục~\ref{sec:ai}).
+Bản phiên âm này là nhãn chuẩn để tính tỉ lệ lỗi ký tự (CER) trong thí nghiệm K5.

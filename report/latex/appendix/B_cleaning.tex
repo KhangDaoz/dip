@@ -1,98 +1,148 @@
-% ===== phụ lục (không giới hạn trang) =====
-\textbf{T1 --- khử bóng} (\texttt{t1\_background.py}; mẫu chỉ có bóng: 10 valid, 15 test; PSNR / SSIM so với ảnh sạch xám).
+% ===== Phụ lục B =====
+\subsection{Khử bóng (T1)}
+Thí nghiệm T1 (\path{t1_background.py}) dùng các mẫu chỉ có bóng: 10 mẫu kiểm định và 15 mẫu kiểm tra.
+PSNR và SSIM được tính so với ảnh xám sạch.
+Bảng~\ref{tab:T1} trình bày kết quả.
+
 \begin{table}[H]
 \centering\small
+\caption{Ước lượng nền để khử bóng trên 15 mẫu kiểm tra chỉ có bóng (thí nghiệm T1).}\label{tab:T1}
 \begin{tabular}{lrrr}
 \toprule
-Ước lượng nền & SE / cửa sổ (chọn trên valid) & PSNR test (dB) & SSIM test \\
+\textbf{Ước lượng nền} & \makecell{\textbf{SE hoặc}\\\textbf{cửa sổ (px)}} & \textbf{PSNR (dB)} & \textbf{SSIM} \\
 \midrule
-Không khử & --- & 11,67 & 0,886 \\
-Trung vị cỡ lớn (C3 S73) & 101 & 35,24 & 0,995 \\
-\textbf{Closing ảnh xám} (C3 S74, C7 S35) & 81 & \textbf{47,91} & \textbf{0,9993} \\
-Closing $+$ trung vị 21 & 81 & 48,10 & 0,9994 \\
+Không khử bóng & --- & 11,67 & 0,886 \\
+Lọc trung vị cửa sổ lớn \chuong{3, S73} & 101 & 35,24 & 0,995 \\
+Phép đóng mức xám \chuong{3, S74}, \chuong{7, S35} (pipeline) & 81 & 47,91 & 0,9993 \\
+Phép đóng, sau đó lọc trung vị cửa sổ 21 & 81 & \textbf{48,10} & \textbf{0,9994} \\
 \bottomrule
 \end{tabular}
 \end{table}
-Closing $+$ trung vị nhỉnh $0{,}2$~dB nhưng chậm hơn; giữ Closing 81 (trên valid Closing đơn thuần cao hơn: 52,79 so với 52,64~dB).
 
-\textbf{T4 --- dấu đỏ} (\texttt{t4\_stamp.py}; 40 mẫu có dấu, val $+$ test).
+Phép đóng kết hợp lọc trung vị cao hơn phép đóng đơn thuần $0{,}2$~dB trên tập kiểm tra nhưng chạy chậm hơn.
+Trên tập kiểm định, phép đóng đơn thuần cao hơn (52,79~dB so với 52,64~dB), nên pipeline giữ phép đóng $81\times81$.
+
+\subsection{Tách dấu đỏ (T4)}
+Thí nghiệm T4 (\path{t4_stamp.py}) dùng 40 mẫu có dấu, gộp từ tập kiểm định và tập kiểm tra.
+Bảng~\ref{tab:T4} trình bày kết quả theo mức che của dấu.
+
 \begin{table}[H]
 \centering\small
+\caption{Tách dấu đỏ theo mức che trên 40 mẫu có dấu (thí nghiệm T4).}\label{tab:T4}
 \begin{tabular}{lrrrr}
 \toprule
-Mức dấu & IoU mask đỏ HSV & IoU nét dấu tìm được & Phủ nét dấu & Tìm được ($\ge80\%$) \\
+\textbf{Mức dấu} & \makecell{\textbf{IoU mặt nạ}\\\textbf{đỏ HSV}} & \makecell{\textbf{IoU nét dấu}\\\textbf{tìm được}} & \makecell{\textbf{Tỉ lệ phủ}\\\textbf{nét dấu}} & \makecell{\textbf{Tìm được,}\\\textbf{phủ $\ge80\%$ (\%)}} \\
 \midrule
-1 & 0,534 & 0,534 & 0,950 & 100\% \\
-2 & 0,741 & 0,679 & 0,896 & 92\% \\
-3 & 0,809 & 0,746 & 0,903 & 92\% \\
-\textbf{Tất cả} & 0,690 & 0,650 & 0,917 & 95\% \\
+1 & 0,534 & 0,534 & \textbf{0,950} & \textbf{100} \\
+2 & 0,741 & 0,679 & 0,896 & 92 \\
+3 & \textbf{0,809} & \textbf{0,746} & 0,903 & 92 \\
+Tất cả & 0,690 & 0,650 & 0,917 & 95 \\
 \bottomrule
 \end{tabular}
 \end{table}
-PSNR trong vùng dấu sau khi xóa: tô màu giấy \SI{13.9}{dB}, Telea \SI{13.5}{dB}, Navier--Stokes \SI{13.4}{dB}, không xóa \SI{13.0}{dB}
---- ba cách xóa gần nhau. Ảnh hưởng lên OCR đo ở T8: xóa dấu / bút giảm CER từ 0,539 xuống 0,433 (dấu) và từ 0,384 xuống 0,238 (bút).
+
+PSNR trong vùng dấu sau khi xóa là \SI{13.9}{dB} khi tô màu giấy, \SI{13.5}{dB} với inpainting Telea, \SI{13.4}{dB} với inpainting Navier--Stokes, và \SI{13.0}{dB} khi không xóa.
+Ba cách xóa chênh nhau không quá \SI{0.5}{dB}.
+Ảnh hưởng lên OCR được đo ở thí nghiệm T8: xóa dấu giảm CER từ 0,539 xuống 0,433, và xóa nét bút giảm CER từ 0,384 xuống 0,238.
+
+\subsection{Ảnh hưởng của nhị phân hóa lên OCR (T2-CER)}
+Thí nghiệm T2-CER (\path{t2cer_binarize_ocr.py}) chạy Tesseract~5 trên từng dòng cắt từ ảnh thật đã nhị phân hóa cả trang sau khử bóng.
+Mỗi tập VAIPE gồm 600 dòng.
+Tập \bo{2} gồm 600 cụm từ của 32 phiếu, phóng to 3 lần.
+Tiêu chí chốt trước khi chạy là chọn phương pháp có CER thấp nhất trên tập kiểm định VAIPE.
+Bảng~\ref{tab:T2CER} trình bày kết quả.
 
 \begin{table}[H]
 \centering
-\caption{T2-CER: CER toàn tập khi OCR từng dòng (Tesseract 5) cắt từ ảnh thật đã nhị phân cả trang (sau khử bóng). 600 dòng VAIPE
-mỗi tập; 600 cụm từ của 32 phiếu \bo{2} (phóng $\times3$). Tiêu chí chốt trước khi chạy: chọn theo VAIPE valid.}\label{tab:T2CER}
+\caption{CER khi OCR từng dòng cắt từ ảnh thật với các đầu vào khác nhau (thí nghiệm T2-CER).}\label{tab:T2CER}
 \small
 \begin{tabular}{lrrr}
 \toprule
-Đầu vào OCR & VAIPE valid (chọn) & VAIPE test & \Bo{2} \\
+\textbf{Đầu vào OCR} & \textbf{VAIPE kiểm định} & \textbf{VAIPE kiểm tra} & \textbf{\Bo{2}} \\
 \midrule
-Ảnh xám đã khử bóng (không nhị phân) & 0,063 & 0,046 & 0,300 \\
+Ảnh xám đã khử bóng, không nhị phân hóa & \textbf{0,063} & \textbf{0,046} & \textbf{0,300} \\
 \midrule
-Niblack & \textbf{0,146} & \textbf{0,142} & 0,568 \\
-\textbf{Sauvola} & 0,160 & 0,159 & \textbf{0,538} \\
-Tam giác / Đối xứng nền & 0,256 & 0,205 / 0,217 & 0,955 / 0,991 \\
+Niblack & 0,146 & 0,142 & 0,568 \\
+Sauvola & 0,160 & 0,159 & 0,538 \\
+Tam giác / đối xứng nền & 0,256 & 0,205 / 0,217 & 0,955 / 0,991 \\
 ISODATA & 0,281 & 0,259 & 0,558 \\
 Otsu & 0,282 & 0,260 & 0,551 \\
 Wolf & 0,296 & 0,271 & 0,627 \\
 \bottomrule
 \end{tabular}
-\\[0.3em]{\footnotesize Script: \texttt{t2cer\_binarize\_ocr.py}}
 \end{table}
 
-\textbf{T5 --- giữ chữ đỏ trên phiếu xét nghiệm thật} (\texttt{t5\_red\_text.py}; định tính trên 5 phiếu \bo{4} chọn bằng mắt
-vì có mực đỏ thật: 003, 004, 028, 041, 048). Mỗi phiếu chạy (1) $\rightarrow$ (2) nhánh phiếu xét nghiệm; ảnh trước / sau ở
-\texttt{results/t5/} (có thông tin bệnh nhân, không đưa vào repo).
+Trong các phương pháp nhị phân hóa, Niblack có CER thấp nhất trên VAIPE (\num{0.146} trên tập kiểm định), còn Sauvola có CER thấp nhất trên \bo{2} (\num{0.538}).
+Ảnh xám không nhị phân hóa cho CER thấp nhất trên cả ba tập.
+
+\subsection{Giữ chữ đỏ trên phiếu xét nghiệm thật (T5)}
+Thí nghiệm T5 (\path{t5_red_text.py}) kiểm tra định tính 5 phiếu của \bo{4} có mực đỏ thật: phiếu 003, 004, 028, 041 và 048.
+Mỗi phiếu được chạy qua bước (1) và nhánh phiếu xét nghiệm của bước (2).
+Ảnh trước và sau xử lý lưu ở \path{results/t5/}, không đưa vào kho mã vì chứa thông tin bệnh nhân.
+Bảng~\ref{tab:T5} trình bày nhận xét trên từng phiếu.
+
 \begin{table}[H]
 \centering\small
+\caption{Kết quả tách mực đỏ trên 5 phiếu xét nghiệm thật (thí nghiệm T5).}\label{tab:T5}
 \begin{tabularx}{\linewidth}{lrrX}
 \toprule
-Phiếu & Pixel đỏ & Bị coi là dấu & Nhận xét bằng mắt \\
+\textbf{Phiếu} & \textbf{Số pixel đỏ} & \textbf{Số thành phần bị coi là dấu} & \textbf{Nhận xét} \\
 \midrule
-003 & \num{1349} & 0 & Chữ đỏ cảnh báo ``10.29'', ``Dương tính'' giữ nguyên và còn rõ trong ảnh nhị phân (Hình~\ref{fig:T5}) \\
-004 & \num{16977} & 0 & Giấy hồng: đường kẻ bảng bị mask đỏ bắt nhầm (dương tính giả), không có gì bị xóa \\
-028 & \num{90131} & 0 & Khối chữ đầu phiếu (người lấy / nhận mẫu) bị mask đỏ đánh dấu là chữ đỏ và được giữ; mép tay / giấy hồng ở góc là dương tính giả \\
+003 & \num{1349} & 0 & Chữ đỏ cảnh báo ``10.29'' và ``Dương tính'' được giữ nguyên và còn rõ trong ảnh nhị phân (Hình~\ref{fig:T5}) \\
+004 & \num{16977} & 0 & Giấy hồng làm mặt nạ đỏ bắt nhầm đường kẻ bảng (dương tính giả), không có gì bị xóa \\
+028 & \num{90131} & 0 & Khối chữ đầu phiếu (người lấy và người nhận mẫu) được đánh dấu là chữ đỏ và được giữ; mép tay và giấy hồng ở góc là dương tính giả \\
 041 & \num{26052} & 0 & Logo đỏ in chìm sau bảng: chỉ 2 mảng đậm nhất vượt ngưỡng $S$, Sauvola loại phần còn lại khỏi ảnh nhị phân \\
-048 & \num{7828} & 0 & Dấu đỏ \emph{chữ nhật} của phòng xét nghiệm: độ tròn thấp nên được giữ như chữ đỏ, đọc được trong ảnh nhị phân \\
+048 & \num{7828} & 0 & Dấu chữ nhật của phòng xét nghiệm có độ tròn thấp nên được giữ như chữ đỏ, đọc được trong ảnh nhị phân \\
 \bottomrule
 \end{tabularx}
 \end{table}
-Không phiếu nào có thành phần đỏ bị R4 coi là dấu, nên kể cả khi (nhầm) chạy nhánh xóa dấu của đơn thuốc thì cũng không mất chữ
-đỏ nào; số phiếu có chữ đỏ bị xóa nhầm: \textbf{0/5}. Hai ca lỗi không thuộc bước tách mực: phiếu 003 bị bước (1) chọn khung bảng
-làm ``tờ giấy'' nên mất phần đầu phiếu; phiếu 048 có vùng bóng tay đè lên cột kết quả dòng 2--7, Sauvola làm mất các số in mờ
-trong vùng này. Mask đỏ HSV có dương tính giả trên giấy hồng / vàng và da tay, vô hại với phiếu xét nghiệm (không xóa gì) nhưng
-là rủi ro nếu ảnh đơn thuốc chụp trên nền như vậy.
-\begin{figure}[H]\centering\includegraphics[width=\linewidth]{cleaning/T5.jpg}
-\caption{T5, phiếu 003 (vùng kết quả, không có thông tin cá nhân): ảnh đã nắn $|$ chữ đỏ được giữ (xanh lá) $|$ ảnh nhị phân sau (2).}\label{fig:T5}\end{figure}
 
-\textbf{Bảng tham số} (KeHoach.md mục 6.3).
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.325\linewidth}
+  \centering\includegraphics[width=\linewidth]{cleaning/T5_a.jpg}
+  \caption{Ảnh đã nắn sau bước (1)}\label{fig:T5a}
+\end{subfigure}\hfill
+\begin{subfigure}{0.325\linewidth}
+  \centering\includegraphics[width=\linewidth]{cleaning/T5_b.jpg}
+  \caption{Chữ đỏ được giữ (tô xanh lá)}\label{fig:T5b}
+\end{subfigure}\hfill
+\begin{subfigure}{0.325\linewidth}
+  \centering\includegraphics[width=\linewidth]{cleaning/T5_c.jpg}
+  \caption{Ảnh nhị phân Sauvola sau bước (2)}\label{fig:T5c}
+\end{subfigure}
+\caption{Tách mực đỏ trên vùng kết quả của phiếu 003 (thí nghiệm T5, ngưỡng $H$ và $S$ trong HSV, Sauvola với $w=2{,}5h$ và $k=0{,}3$).}\label{fig:T5}
+\end{figure}
+
+Hình~\ref{fig:T5b} cho thấy hai chữ đỏ ``10.29'' và ``Dương tính'' được mặt nạ đỏ bắt đúng và không bị coi là dấu.
+Trong Hình~\ref{fig:T5c}, hai chữ này vẫn đọc được sau nhị phân hóa.
+Không phiếu nào có thành phần đỏ bị bước nhận dạng dấu coi là dấu.
+Vì vậy, ngay cả khi phiếu bị chạy nhầm sang nhánh xóa dấu của đơn thuốc, chữ đỏ cũng không bị mất.
+Số phiếu có chữ đỏ bị xóa nhầm là 0/5.
+
+Hai ca lỗi không thuộc bước tách mực.
+Ở phiếu 003, bước (1) chọn khung bảng làm tờ giấy nên mất phần đầu phiếu.
+Ở phiếu 048, bóng tay đè lên cột kết quả từ dòng 2 đến dòng 7, và Sauvola làm mất các số in mờ trong vùng này.
+Mặt nạ đỏ HSV có dương tính giả trên giấy hồng, giấy vàng và da tay.
+Lỗi này vô hại với phiếu xét nghiệm, vì nhánh phiếu xét nghiệm không xóa gì, nhưng là rủi ro khi đơn thuốc được chụp trên nền tương tự.
+
+\subsection{Bảng tham số}
+Bảng~\ref{tab:params-clean} liệt kê tham số của bước (2), khoảng giá trị đã thử và lý do chọn.
+
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\linewidth}{lllX}
+\caption{Tham số của bước (2).}\label{tab:params-clean}
+\begin{tabularx}{\linewidth}{XllX}
 \toprule
-Tham số & Khoảng thử & Chọn & Lý do \\
+\textbf{Tham số} & \textbf{Khoảng thử} & \textbf{Giá trị chọn} & \textbf{Lý do} \\
 \midrule
-SE ước lượng nền & 31, 51, 81, 101 & 81 & PSNR lớn nhất trên valid (T1) \\
-Phương pháp nhị phân & 7 cách & Sauvola (cho tách vùng) & Bền nhất khi không khử bóng (T2, T3). Theo T2-CER, Niblack có CER dòng thấp nhất nhưng OCR trên ảnh xám còn tốt hơn, nên nhị phân chỉ dùng tách vùng \\
-Cửa sổ Sauvola ($\times h$) & 1,5--4 & 2,5 & F-measure (bỏ dải viền) lớn nhất trên valid \\
-$k$ Sauvola & 0,1--0,5 & 0,3 & như trên \\
-Opening hậu xử lý & tắt, $2\times2$ & tắt & Opening xóa nét chữ 1--2~px (C7 S14) \\
-Ngưỡng diện tích nhiễu & $(0{,}4h)^2$, $\ge3$~px & theo $h$ & Ngưỡng cố định 10~px xóa sạch chữ ảnh 640~px \\
-Độ tròn dấu; diện tích & 0,6; $\ge0{,}2\%$ trang & --- & Phát hiện 95\% dấu (T4) \\
+SE ước lượng nền (px) & 31, 51, 81, 101 & 81 & PSNR lớn nhất trên tập kiểm định (T1) \\
+Phương pháp nhị phân hóa & 7 phương pháp & Sauvola (tách vùng) & Ổn định nhất khi không khử bóng (T2, T3). Theo T2-CER, Niblack có CER dòng thấp nhất, nhưng OCR trên ảnh xám còn tốt hơn, nên ảnh nhị phân chỉ dùng để tách vùng \\
+Cửa sổ Sauvola ($\times h$) & 1,5--4 & 2,5 & F-measure (bỏ dải viền) lớn nhất trên tập kiểm định \\
+Hệ số $k$ của Sauvola & 0,1--0,5 & 0,3 & F-measure (bỏ dải viền) lớn nhất trên tập kiểm định \\
+Phép mở hậu xử lý & Tắt; $2\times2$ & Tắt & Phép mở xóa nét chữ 1--2~px \chuong{7, S14} \\
+Ngưỡng diện tích nhiễu & $(0{,}4h)^2$; $\ge3$~px & Theo $h$ & Ngưỡng cố định 10~px xóa sạch chữ ở ảnh 640~px \\
+Độ tròn dấu; diện tích dấu & 0,6; $\ge0{,}2\%$ trang & --- & Phát hiện 95\% số dấu (T4) \\
 \bottomrule
 \end{tabularx}
 \end{table}

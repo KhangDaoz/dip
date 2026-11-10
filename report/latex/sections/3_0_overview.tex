@@ -1,27 +1,37 @@
-% ===== ≈ 0,5 trang =====
-Pipeline gồm 4 bước nối nhau qua các hợp đồng dữ liệu JSON (\texttt{code/src/common/contracts.py}); tọa độ của (2)(3)(4) đều tính
-trên ảnh đã nắn của (1):
-\textbf{(1)} tiền xử lý và phân loại $\rightarrow$ ảnh đã nắn, ma trận $H$, loại tài liệu;
-\textbf{(2)} làm sạch $\rightarrow$ ảnh xám sạch, ảnh nhị phân, mask dấu / bút / chữ đỏ;
-\textbf{(3)} dựng bảng (phiếu xét nghiệm) hoặc \textbf{(4)} tách khoản thuốc (đơn thuốc) $\rightarrow$ khung từng dòng chỉ số / khoản thuốc.
-Tài liệu loại ``khác'' dừng sau (1). Mỗi bước có bước \emph{hậu xử lý} theo khung pipeline của học phần.
+% ===== Mở đầu chương 3 =====
+Pipeline đề xuất gồm bốn bước nối tiếp.
+Trong Mục~\ref{sec:method}, $f(x,y)$ là ảnh xám đầu vào của một bước và $g(x,y)$ là ảnh kết quả.
+Ảnh nhị phân được ký hiệu $b(x,y)\in\{0,1\}$, với giá trị 1 là pixel mực.
+Trong các phép hình thái, $A$ là tập pixel mực và $B$ là phần tử cấu trúc (structuring element, SE).
+
+Các bước trao đổi dữ liệu qua các hợp đồng dữ liệu JSON (\texttt{code/src/common/contracts.py}).
+Tọa độ ở các bước (2), (3) và (4) đều tính trên ảnh đã nắn của bước (1).
+\begin{enumerate}[label=(\arabic*)]
+  \item Tiền xử lý và phân loại: trả về ảnh đã nắn, ma trận biến đổi $H$ và loại tài liệu.
+  \item Làm sạch: trả về ảnh xám sạch, ảnh nhị phân và mặt nạ dấu, nét bút, chữ đỏ.
+  \item Dựng bảng (với phiếu xét nghiệm): trả về khung bao từng dòng chỉ số.
+  \item Tách khoản thuốc (với đơn thuốc): trả về khung bao từng khoản thuốc.
+\end{enumerate}
+Tài liệu thuộc lớp ``khác'' dừng sau bước (1).
+Theo khung pipeline của học phần, mỗi bước kết thúc bằng một bước hậu xử lý.
+Bảng~\ref{tab:chapters} liệt kê kiến thức học phần dùng trong từng bước.
 
 \begin{table}[H]
 \centering
-\caption{Kiến thức học phần dùng trong từng bước ($\bullet$ phương pháp chính, $\circ$ đối chứng / đánh giá / \bo{5}).}\label{tab:chapters}
+\caption{Kiến thức học phần dùng trong từng bước ($\bullet$: phương pháp chính, $\circ$: đối chứng, đánh giá hoặc sinh \bo{5}).}\label{tab:chapters}
 \small
-\begin{tabular}{llcccc}
+\begin{tabularx}{\linewidth}{cXcccc}
 \toprule
-Chương & Kỹ thuật chính & (1) & (2) & (3) & (4) \\
+\textbf{Chương} & \textbf{Kỹ thuật chính (slide)} & \textbf{(1)} & \textbf{(2)} & \textbf{(3)} & \textbf{(4)} \\
 \midrule
-C1 & các giai đoạn xử lý ảnh (S27--34) & $\circ$ & $\circ$ & $\circ$ & $\circ$ \\
-C2 & lấy mẫu, độ phân giải, nắn phối cảnh (S23--26) & $\bullet$ & $\circ$ & $\circ$ & $\circ$ \\
-C3 & lược đồ, kéo giãn tương phản, lọc trung vị, Max / Min (S21--33, S47--75) & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ \\
-C4 & HSV: lóa, mực đỏ / xanh (S37--41) & $\bullet$ & $\bullet$ & $\circ$ & $\circ$ \\
-C5 & Laplacian, Canny, Otsu / ISODATA / Tam giác, vùng liên thông, tách / hợp vùng & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ \\
-C6 & đánh giá chất lượng RMS / PSNR, JPEG (S37--54) & $\circ$ & $\circ$ & --- & $\circ$ \\
-C7 & Dilation, Erosion, Opening, Closing, tách biên, làm đầy vùng (S5--45) & $\circ$ & $\bullet$ & $\bullet$ & $\bullet$ \\
-C8 & HOG / GLCM / lược đồ màu, kNN, ma trận nhầm lẫn, F1 (S12--49) & $\bullet$ & $\circ$ & $\circ$ & $\circ$ \\
+1 & Các giai đoạn xử lý ảnh (S27--34) & $\circ$ & $\circ$ & $\circ$ & $\circ$ \\
+2 & Lấy mẫu, độ phân giải, nắn phối cảnh (S23--26) & $\bullet$ & $\circ$ & $\circ$ & $\circ$ \\
+3 & Histogram, kéo giãn tương phản, lọc trung vị, lọc Max / Min (S21--33, S47--75) & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ \\
+4 & Không gian màu HSV: lóa, mực đỏ, mực xanh (S37--41) & $\bullet$ & $\bullet$ & $\circ$ & $\circ$ \\
+5 & Laplacian, Canny, Otsu, ISODATA, tam giác, thành phần liên thông, tách và hợp vùng & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ \\
+6 & Đánh giá chất lượng RMS, PSNR; nén JPEG (S37--54) & $\circ$ & $\circ$ & --- & $\circ$ \\
+7 & Phép giãn, phép co, phép mở, phép đóng, tách biên, làm đầy vùng (S5--45) & $\circ$ & $\bullet$ & $\bullet$ & $\bullet$ \\
+8 & HOG, GLCM, histogram màu, kNN, ma trận nhầm lẫn, F1 (S12--49) & $\bullet$ & $\circ$ & $\circ$ & $\circ$ \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}

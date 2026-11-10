@@ -1,18 +1,61 @@
-% ===== ≈ 0,75 trang =====
-\textbf{Khử bóng (R1--R2b).} Nền $\hat B$ ước lượng bằng Closing ảnh xám SE $81\times81$ --- tương đương lọc Max rồi Min
-\chuong{3, S74; 7, S35}: nét chữ tối, hẹp hơn SE bị nền sáng lấp. Ảnh $\approx$ chiếu sáng $\times$ phản xạ (C2 S22) nên chia
-$I/\hat B\cdot255$ (toán tử điểm, C3 S10) bỏ được bóng~\cite{zhang2007whiteboard}. Kéo giãn tương phản tuyến tính từng đoạn
-\chuong{3, S21} được thử nhưng không cải thiện tách khoản trên valid nên tắt.
-\textbf{Tách lớp mực (R3--R6).} Ngưỡng $H$, $S$ trong HSV tách mực đỏ, xanh, đen \chuong{4, S37--41}. Mỗi thành phần liên thông
-đỏ (C5 S84) là \emph{dấu} nếu to, có vành kín và độ tròn $C=4\pi A/P^2\ge 0{,}6$ \chuong{8, S16}; mask dấu đặc lấy bằng tách biên
-$\beta(A)=A-(A\ominus B)$ và làm đầy vùng $X_k=(X_{k-1}\oplus B)\cap A^c$ \chuong{7, S40--45}. Chỉ đơn thuốc mới xóa dấu và
-nét bút xanh (inpainting~\cite{telea2004inpainting}; đối chứng tô màu giấy); phiếu xét nghiệm giữ nguyên chữ đỏ cảnh báo.
-\textbf{Nhị phân hóa (R7).} Phương pháp chính là Sauvola~\cite{sauvola2000binarization}
-$T(x,y)=m\,[1+k(s/R-1)]$ với $m$, $s$ trung bình và độ lệch chuẩn cửa sổ $w\times w$, $R=128$ --- mở rộng cục bộ của ngưỡng toàn
-cục (C5 S64): Otsu~\cite{otsu1979threshold} giả định lược đồ hai đỉnh \chuong{5, S66} nên hỏng khi bóng còn sót, mép giấy tối,
-ô tô nền xám. Cửa sổ $w\approx2{,}5h$ ($h$ = trung vị chiều cao thành phần liên thông) để không thủng ruột chữ đậm.
-Đối chứng: Otsu, ISODATA, Tam giác~\cite{zack1977triangle}, Đối xứng nền \chuong{5, S65--78}, Niblack~\cite{niblack1986introduction},
-Wolf~\cite{wolf2002text}; mỗi cách chạy có và không khử bóng. Ảnh nhị phân phục vụ tách dòng / cột / khoản; OCR đọc ảnh xám sạch vì cho CER thấp hơn (T2-CER, T8).
-\textbf{Hậu xử lý (R8--R9).} Bỏ thành phần liên thông có diện tích $<(0{,}4h)^2$ (lọc vùng theo diện tích); Opening $2\times2$
-được thử nhưng tắt vì xóa nét chữ mảnh 1--2~px (C7 S14). Thành phần còn lại gán nhãn chữ in / viết tay / dấu / khác bằng luật màu
-và hình dạng (không dùng học máy).
+% ===== Mục 3.2 =====
+\subsubsection{Khử bóng}
+Ảnh chụp được mô hình hóa là tích của thành phần chiếu sáng và thành phần phản xạ, $f(x,y)=i(x,y)\,r(x,y)$ \chuong{2, S22}.
+Thành phần chiếu sáng được ước lượng bằng phép đóng mức xám, rồi ảnh được chia cho ước lượng này~\cite{zhang2007whiteboard}:
+\begin{equation}\label{eq:shading}
+  \hat\imath=(f\oplus B)\ominus B,\qquad g(x,y)=255\cdot\frac{f(x,y)}{\hat\imath(x,y)},
+\end{equation}
+trong đó $B$ là SE vuông $81\times81$, $\oplus$ và $\ominus$ là phép giãn và phép co mức xám, $\hat\imath$ là ảnh nền ước lượng.
+Phép đóng mức xám tương đương lọc Max rồi lọc Min \chuong{3, S74}, \chuong{7, S35}.
+Nét chữ tối và hẹp hơn SE nên bị nền sáng xung quanh lấp đi.
+Phép chia ở~\eqref{eq:shading} là một toán tử điểm \chuong{3, S10}.
+
+\subsubsection{Tách lớp mực}
+Một thành phần liên thông màu đỏ \chuong{5, S84} được coi là dấu khi nó đủ lớn, có vành kín và có độ tròn đủ cao \chuong{8, S16}:
+\begin{equation}\label{eq:circ}
+  C=\frac{4\pi a}{p^2}\ge 0{,}6,
+\end{equation}
+trong đó $a$ là diện tích và $p$ là chu vi của thành phần liên thông.
+Giá trị $C=1$ ứng với hình tròn.
+Mặt nạ dấu đặc được tạo bằng tách biên và làm đầy vùng \chuong{7, S40--45}:
+\begin{equation}\label{eq:fill}
+  \beta(A)=A-(A\ominus B),\qquad X_k=(X_{k-1}\oplus B)\cap A^c,\quad k=1,2,\dots,
+\end{equation}
+trong đó $\beta(A)$ là biên của tập $A$, $A^c$ là phần bù của $A$, $X_0$ là một điểm bên trong vành dấu, và phép lặp dừng khi $X_k=X_{k-1}$.
+
+Các bước thực hiện:
+\begin{enumerate}
+  \item Phân ngưỡng (thresholding) kênh $H$ và kênh $S$ trong không gian HSV để tách mực đỏ, mực xanh và mực đen \chuong{4, S37--41}.
+  \item Gán nhãn dấu cho các thành phần đỏ thỏa~\eqref{eq:circ} và có diện tích ít nhất $0{,}2\%$ diện tích trang.
+  \item Tạo mặt nạ dấu đặc theo~\eqref{eq:fill}.
+  \item Xóa dấu và nét bút xanh bằng inpainting~\cite{telea2004inpainting}, chỉ với đơn thuốc.
+        Đối chứng là tô vùng cần xóa bằng màu giấy.
+        Phiếu xét nghiệm giữ nguyên chữ đỏ, vì chữ đỏ thường là cảnh báo kết quả bất thường.
+\end{enumerate}
+
+\subsubsection{Nhị phân hóa}
+Phương pháp chính là ngưỡng cục bộ Sauvola~\cite{sauvola2000binarization}:
+\begin{equation}\label{eq:sauvola}
+  T(x,y)=m(x,y)\left[1+k\left(\frac{s(x,y)}{R}-1\right)\right],\qquad
+  b(x,y)=\begin{cases}1, & f(x,y)<T(x,y)\\ 0, & \text{ngược lại}\end{cases}
+\end{equation}
+trong đó $m(x,y)$ và $s(x,y)$ là trung bình và độ lệch chuẩn mức xám trong cửa sổ $w\times w$ tâm $(x,y)$, $R=128$ là độ lệch chuẩn cực đại, và $k=0{,}3$.
+Kích thước cửa sổ là $w=2{,}5h$, với $h$ là trung vị chiều cao các thành phần liên thông.
+Cửa sổ này đủ lớn để không làm thủng phần ruột của chữ đậm.
+Sauvola là mở rộng cục bộ của ngưỡng toàn cục \chuong{5, S64}.
+Otsu~\cite{otsu1979threshold} giả định histogram có hai đỉnh \chuong{5, S66}.
+Giả định này bị vi phạm khi ảnh còn sót bóng, có mép giấy tối hoặc có ô tô nền xám.
+
+Đối chứng gồm sáu phương pháp: Otsu, ISODATA, tam giác~\cite{zack1977triangle}, đối xứng nền \chuong{5, S65--78}, Niblack~\cite{niblack1986introduction} và Wolf~\cite{wolf2002text}.
+Mỗi phương pháp được chạy cả khi có và khi không có bước khử bóng.
+Ảnh nhị phân phục vụ việc tách dòng, tách cột và tách khoản thuốc.
+OCR đọc ảnh xám sạch, vì ảnh xám cho CER thấp hơn ảnh nhị phân (thí nghiệm T2-CER và T8, Mục~\ref{sec:e-clean} và~\ref{sec:ablation}).
+
+\subsubsection{Hậu xử lý}
+\begin{enumerate}
+  \item Bỏ các thành phần liên thông có diện tích nhỏ hơn $(0{,}4h)^2$.
+  \item Gán mỗi thành phần còn lại vào một trong bốn nhãn chữ in, chữ viết tay, dấu và khác, bằng luật màu và hình dạng, không dùng học máy.
+\end{enumerate}
+Hai thao tác được thử trên tập kiểm định rồi tắt.
+Kéo giãn tương phản tuyến tính từng đoạn \chuong{3, S21} không cải thiện kết quả tách khoản thuốc.
+Phép mở với SE $2\times2$ xóa các nét chữ mảnh 1--2~px \chuong{7, S14}.

@@ -1,49 +1,66 @@
-% ===== phụ lục (không giới hạn trang) =====
-\textbf{S0 --- ground truth VAIPE} (\texttt{s0\_gt\_vaipe.py}): valid 176 ảnh / 405 khoản, test 176 ảnh / 443 khoản; ảnh vẽ khung
-để soát bằng mắt ở \texttt{results/s0/review/}. Thắng soát bằng mắt \emph{toàn bộ 176 ảnh test} (443 khoản) và duyệt cả
-176 ảnh, không phải sửa hay loại ảnh nào (\texttt{results/s0/review\_test.csv}, cột \texttt{ok}); vì vậy S1, S3 báo trên đủ 176
-ảnh đã soát ($\ge50$). Tập valid (chọn tham số) giữ ground truth gom tự động.
+% ===== Phụ lục D =====
+\subsection{Nhãn chuẩn VAIPE (S0)}
+Thí nghiệm S0 (\path{s0_gt_vaipe.py}) tạo nhãn chuẩn khoản thuốc cho tập kiểm định (176 ảnh, 405 khoản) và tập kiểm tra (176 ảnh, 443 khoản).
+Ảnh có vẽ khung để soát bằng mắt được lưu ở \path{results/s0/review/}.
+Thắng đã soát bằng mắt toàn bộ 176 ảnh tập kiểm tra (443 khoản) và không phải sửa hay loại ảnh nào (\path{results/s0/review_test.csv}, cột \texttt{ok}).
+Vì vậy kết quả S1 và S3 được báo cáo trên đủ 176 ảnh đã soát, vượt mức 50 ảnh.
+Tập kiểm định, dùng để chọn tham số, giữ nhãn chuẩn gom tự động.
 
-\textbf{S4 --- khoanh vùng thuốc} (\texttt{s4\_region.py}; $k$ và số dòng theo sau chọn trên valid).
+\subsection{Khoanh vùng thuốc (S4)}
+Thí nghiệm S4 (\path{s4_region.py}) so sánh ba cách lấy vùng thuốc trước khi gom khoản.
+Hệ số $k$ và số dòng theo sau được chọn trên tập kiểm định.
+Bảng~\ref{tab:S4} trình bày kết quả.
+
 \begin{table}[H]
 \centering\small
+\caption{Khoanh vùng thuốc và F1 khoản đầu-cuối trên 176 ảnh tập kiểm tra VAIPE (thí nghiệm S4).}\label{tab:S4}
 \begin{tabular}{lrrrr}
 \toprule
-Cách lấy vùng & IoU vùng & Precision & Recall & F1 khoản \\
+\textbf{Cách lấy vùng} & \textbf{IoU vùng} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 khoản} \\
 \midrule
-\textbf{Tự động} ($k=2$, 1 dòng theo sau) & \textbf{0,725} & 0,821 & 0,819 & \textbf{0,820} \\
+Tự động, $k=2$, 1 dòng theo sau (pipeline) & \textbf{0,725} & \textbf{0,821} & \textbf{0,819} & \textbf{0,820} \\
 Cả trang (đối chứng) & 0,108 & 0,133 & 0,623 & 0,219 \\
-Vùng ground truth (trần trên) & 1,000 & 0,971 & 0,975 & 0,973 \\
+\midrule
+Vùng nhãn chuẩn (cận trên) & 1,000 & 0,971 & 0,975 & 0,973 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{S6 --- kiểm chứng \bo{5}} (\texttt{s6\_bo5\_check.py}): xem Mục~\ref{sec:synthetic}. PSNR ảnh hỏng so với ảnh sạch
-(C6 S39), trung bình theo công thức sinh: chỉ JPEG \SI{36.8}{dB}, chỉ mờ \SI{22.7}{dB}, chỉ bóng \SI{11.7}{dB}, kết hợp nhiều loại
-(có biến dạng hình học) $\approx\SI{5}{dB}$.
+\subsection{Kiểm chứng \bo{5} (S6)}
+Thí nghiệm S6 (\path{s6_bo5_check.py}) bổ sung cho các thống kê ở Mục~\ref{sec:synthetic}.
+PSNR theo~\eqref{eq:psnr} giữa ảnh suy biến và ảnh sạch \chuong{6, S39}, lấy trung bình theo từng công thức sinh, là \SI{36.8}{dB} với chỉ JPEG, \SI{22.7}{dB} với chỉ mờ và \SI{11.7}{dB} với chỉ bóng.
+Với mẫu kết hợp nhiều loại suy biến, có cả biến dạng hình học, PSNR chỉ khoảng \SI{5}{dB}.
 
-\textbf{Bảng tham số} (KeHoach.md mục 8.4).
+\subsection{Đơn thuốc chụp thật (S5)}
+Thí nghiệm S5 (\path{s5_bo4.py}) kiểm tra định tính 5 đơn thuốc của \bo{4} chọn ngẫu nhiên với seed 42, không có nhãn chuẩn.
+Chỉ 1/5 đơn được tách đúng một phần.
+Ở đơn 010, vùng thuốc phía trên được khoanh đúng và ranh giới 2 khoản đầu được tách đúng, nhưng 2 khoản cuối bị bỏ sót.
+Các ca sai còn lại đi theo chuỗi phụ thuộc của pipeline:
+\begin{enumerate}[label=(\alph*)]
+  \item bước (1) tìm góc sai, vì biến đổi Hough chọn cạnh của tờ giấy bên dưới, nên ảnh nắn chỉ còn một mảnh trang (đơn 002);
+  \item bước (1) không tìm được góc nên dùng cả ảnh, và chữ to ($h=33$~px) làm vùng thuốc chỉ còn một dòng (đơn 016);
+  \item mẫu in khác VAIPE và dấu đỏ ``Phòng khám VIP'' đè lên vùng thuốc làm luật dòng đậm gộp 4 khoản thành 1 (đơn 007);
+  \item giấy cong vênh làm dòng không còn thẳng sau khi nắn, nên chỉ giữ được 1/2 khoản (đơn 013).
+\end{enumerate}
+Luật dòng đậm gắn với mẫu in VAIPE.
+Trên ảnh thật, cần chọn tham số trên ảnh chụp thật và bổ sung một luật mở khoản không dựa vào độ đậm, ví dụ dựa vào số thứ tự ``1)'' hoặc ``2-'' ở đầu dòng.
+
+\subsection{Bảng tham số}
+Bảng~\ref{tab:params-pres} liệt kê tham số của bước (4), khoảng giá trị đã thử và lý do chọn.
+
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\linewidth}{lllX}
+\caption{Tham số của bước (4).}\label{tab:params-pres}
+\begin{tabularx}{\linewidth}{XllX}
 \toprule
-Tham số & Khoảng thử & Chọn & Lý do \\
+\textbf{Tham số} & \textbf{Khoảng thử} & \textbf{Giá trị chọn} & \textbf{Lý do} \\
 \midrule
-$s$: SE dọc gom khoản ($\times h$) & 0,5; 1; 1,5; 2; 3; 4 & 3 & $s=2,3,4$ hòa trên valid (F1 0,960) $\rightarrow$ chọn giữa vùng hòa \\
-Ngưỡng đậm (nhóm đậm / thường) & 1,15; 1,25; 1,5; 2 & 1,25 & như trên; mẫu đơn 1150~px chỉ đạt $\approx1{,}3\times$ \\
-Opening trước tách dòng & tắt, $2\times2$ & tắt & F1 valid 0,960 so với 0,926 \\
-$k$: khe dòng tối đa trong vùng ($\times h$) & 1; 1,5; 2; 3; 4 & 2 & F1 khoản trên valid (S4) \\
-Số dòng theo sau mỗi khoản & 1, 2 & 1 & như trên \\
-$T$, $W$ tách dòng & --- & 5\% đỉnh, 3 & C5 S62 khuyến nghị $W=3$ hoặc 5 \\
+Hệ số $s$ của SE dọc gom khoản ($\times h$) & 0,5; 1; 1,5; 2; 3; 4 & 3 & $s=2$, 3, 4 cho cùng F1 0,960 trên tập kiểm định, nên chọn giá trị giữa \\
+Ngưỡng độ đậm (nhóm đậm / nhóm thường) & 1,15; 1,25; 1,5; 2 & 1,25 & Chọn trên tập kiểm định như trên; mẫu đơn 1150~px chỉ đạt tỉ lệ khoảng 1,3 \\
+Phép mở trước tách dòng & Tắt; $2\times2$ & Tắt & F1 kiểm định 0,960 so với 0,926 \\
+Khe dòng tối đa trong vùng thuốc $k$ ($\times h$) & 1; 1,5; 2; 3; 4 & 2 & F1 khoản trên tập kiểm định (S4) \\
+Số dòng theo sau mỗi khoản & 1; 2 & 1 & F1 khoản trên tập kiểm định (S4) \\
+$T$ và $W_s$ khi tách dòng & --- & 5\% đỉnh; 3 & Học phần khuyến nghị $W_s=3$ hoặc 5 \chuong{5, S62} \\
 \bottomrule
 \end{tabularx}
 \end{table}
-
-\textbf{S5 --- đơn thật chụp bằng điện thoại} (\texttt{s5\_bo4.py}; 5 đơn \bo{4} chọn ngẫu nhiên, seed 42; định tính, không có
-ground truth). Chỉ 1/5 đơn tách đúng một phần: đơn 010 khoanh đúng vùng thuốc phía trên và tách đúng ranh giới 2 khoản đầu,
-nhưng bỏ sót 2 khoản cuối. Các ca sai theo đúng chuỗi phụ thuộc của pipeline: (a) bước (1) tìm góc sai (Hough chọn cạnh của tờ
-giấy bên dưới) nên ảnh nắn chỉ còn một mảnh trang (đơn 002); (b) không tìm được góc (dùng cả ảnh) và chữ to ($h=33$~px) nên
-vùng thuốc chỉ còn một dòng (016); (c) mẫu in khác VAIPE và dấu đỏ ``Phòng khám VIP'' đè lên vùng thuốc làm luật dòng đậm
-gộp 4 khoản thành 1 (007); (d) giấy cong vênh làm dòng không còn thẳng sau nắn, chỉ giữ được 1/2 khoản (013). Kết luận: luật dòng đậm gắn với mẫu
-in VAIPE; trên ảnh thật cần tham số chọn trên ảnh chụp thật và một luật mở khoản không dựa vào độ đậm (ví dụ số thứ tự ``1)'',
-``2-'' ở đầu dòng).
