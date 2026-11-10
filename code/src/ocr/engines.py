@@ -10,6 +10,10 @@ import shutil
 
 import numpy as np
 
+# Tesseract tự mở nhiều luồng OpenMP; khi chạy song song nhiều ảnh (ProcessPool) sẽ quá tải CPU và chậm hàng chục lần.
+# Tesseract khuyến nghị đặt OMP_THREAD_LIMIT=1 khi song song hóa ở mức tiến trình.
+os.environ.setdefault("OMP_THREAD_LIMIT", "1")
+
 _CACHE = {}
 
 

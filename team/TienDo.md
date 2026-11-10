@@ -19,7 +19,7 @@
 | :--- | :--- | :---: | :---: | :--- |
 | Hiếu | Đặc trưng + kNN, D10; D3; chọn 10 ảnh mẫu `code/samples/` | 5, 12.4 | ✅ | D1 (AUC Laplacian 0,979), D2 (tìm góc 99 %), D3 (đường cong), D4 (projection sai số 0°), D9 (< 0,7 s/ảnh), D10 (test 0,94; bộ 4 chỉ 0,39 — học thuộc nguồn); 10 ảnh mẫu; mô hình `code/models/doc_knn.pkl`. **Còn:** D5, D6 (cần OCR) |
 | Trường | Nối các bước ② đầu-cuối; T5; thêm ISODATA, Tam giác vào T2 | 6, 12.4 | 🔄 | `clean()` chạy đầu-cuối; T1 (Closing 81: 47,9 dB), T2 7 cách (Sauvola 0,922 bền với bóng, Otsu tụt 0,849 khi không khử bóng), T3 đường cong, T4 (tìm 95 % dấu). **Còn:** T5 (soát chữ đỏ bộ 4), T2-CER, T8 (cần OCR) |
-| Khang | GT 57 ảnh bộ 2 (soát bằng mắt); K1, K2 bằng 5-fold trên 57 ảnh | 7, 12.4 | 🔄 | `extract_table()` chạy; K0 GT tự sinh 55 ảnh (`results/k0/review/` — **cần soát bằng mắt**); K2 cột projection 0,917; K1 dòng projection 0,583 thua tâm y cố định 0,692; K4. **Còn:** soát GT, K3, K5 (cần OCR) |
+| Khang | GT 57 ảnh bộ 2 (soát bằng mắt); K1, K2 bằng 5-fold trên 57 ảnh | 7, 12.4 | ✅ | 10/11: soát 55 ảnh, giữ **32 ảnh** GT (`code/experiments/k0_review.json`, 9 ảnh sửa dòng); chữ GT do LLM phiên âm + soát (`k0_text_gt.json`). Chạy lại trên 32 ảnh: cột projection 0,963; dòng projection 0,705 → **0,937 sau xóa đường kẻ** (tâm y 0,990, nhưng ít ảnh đúng hết hơn); tách cụm từ 0,748; K4 không khác biệt |
 | Thắng | Chia VAIPE 70 / 15 / 15; GT tự gom cho valid + test; GT ≥ 50 ảnh test (soát bằng mắt); S1, S3 | 8, 12.4 | 🔄 | Đã chia VAIPE; S0 GT tự gom (`results/s0/review/test/` — **cần soát ≥ 50 ảnh**); S1 F1 0,973; S4 khoanh vùng 0,820; S2 đầu-cuối bộ 5 (0,725, bóng là ca lỗi chính); S6 mask dải viền + 99,4 % bất đồng Otsu/Sauvola nằm trong dải viền. **Còn:** soát GT, S3 (cần OCR) |
 | Cả nhóm | 🎯 **Tối: chạy cả pipeline trên 10 ảnh mẫu** (`python run_pipeline.py samples/`) | 12.4 | ✅ | 10/11: chạy hết 10 ảnh không lỗi; phân loại đúng 7/10; ảnh `out/*_overlay.png` dùng cho demo |
 
@@ -29,7 +29,7 @@
 | :--- | :--- | :--- | :--- | :---: | :--- |
 | Hiếu | Ghép báo cáo, slide | Quay đoạn demo; ghép video | Đóng gói; một bạn cài lại trên máy sạch | ⬜ | |
 | Trường | T8 ablation; phần báo cáo + 2 slide | Quay đoạn demo | Đọc chéo báo cáo | ⬜ | |
-| Khang | K3, K4, K5; phần báo cáo + 2 slide | Quay đoạn demo | Đọc chéo báo cáo | ⬜ | |
+| Khang | K3, K4, K5; phần báo cáo + 2 slide | Quay đoạn demo | Đọc chéo báo cáo | 🔄 | ✅ K3 (không chỉnh nghiêng sụp từ 1°; có ① giữ 0,87–0,92 đến 5°), K4, K5 (CER cả trang 0,765 → theo ô 0,470; khung GT 0,216); báo cáo 3.3, 4.4, phụ lục C, 2.1, 2.2, 5, 7 đã cập nhật. **Còn:** 2 slide, demo |
 | Thắng | S2; phần báo cáo + 2 slide | Quay đoạn demo | Đọc chéo + thử máy sạch | ⬜ | |
 
 ## 11/11 (Thứ tư) — HẠN NỘP
@@ -47,7 +47,7 @@ Quyết định 09/11 (kế hoạch mục 3.2): bộ 4 **không gán nhãn chi t
 | :--- | :--- | :--- | :---: |
 | Hiếu | Soát nhanh 83 ảnh nằm đúng thư mục loại tài liệu | D10 (định lượng) | ⬜ |
 | Trường | Chọn ≥ 5 phiếu có chữ đỏ, xuất lưới ảnh trước / sau | T5 (định tính) | ⬜ |
-| Khang | Chọn 3–5 phiếu, xuất ảnh overlay dòng / cột | K6 (định tính) | ⬜ |
+| Khang | Chọn 3–5 phiếu, xuất ảnh overlay dòng / cột | K6 (định tính) | ✅ 5 phiếu (`results/k6/`, có thông tin BN — không commit): cột gần đúng, dòng sụp cả 5 (kẻ cong, nét tay) |
 | Thắng | Chọn 3–5 đơn, xuất ảnh khung từng khoản | S5 (định tính) | ⬜ |
 
 ## Thứ tự cắt khi thiếu thời gian (mục 12.5)

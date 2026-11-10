@@ -11,13 +11,16 @@ def char_height(binary: np.ndarray, min_h: int = 4, max_ratio: float = 0.2) -> f
     return float(np.median(hs)) if len(hs) else 15.0
 
 
-def words_from_binary(binary: np.ndarray, h: float, a: float = 0.5, min_area_ratio: float = 0.05) -> list:
-    """K2: Dilation ngang SE 1 × (a·h) rồi lấy vùng liên thông (C7 · S5, S19, S23–24). Trả về list bbox [x, y, w, h].
+def words_from_binary(binary: np.ndarray, h: float, a: float = 0.5, min_area_ratio: float = 0.05,
+                      v: float = 0.0) -> list:
+    """K2: Dilation SE (v·h) × (a·h) rồi lấy vùng liên thông (C7 · S5, S19, S23–24). Trả về list bbox [x, y, w, h].
 
-    SE chỉ 1 hàng nên chỉ nối khe giữa các ký tự cùng dòng, không nối dòng trên / dưới.
+    v = 0: SE chỉ 1 hàng, chỉ nối khe giữa các ký tự cùng dòng. v > 0 (nhỏ hơn khe giữa hai dòng) nối thêm nét chữ bị
+    đứt theo chiều dọc — gặp ở ảnh độ phân giải thấp (bộ 2, chữ cao 4–11 px) sau nhị phân hóa.
     """
     width = max(1, int(round(a * h)))
-    smear = cv2.dilate((binary > 0).astype(np.uint8) * 255, np.ones((1, width), np.uint8))
+    height = max(1, int(round(v * h))) if v > 0 else 1
+    smear = cv2.dilate((binary > 0).astype(np.uint8) * 255, np.ones((height, width), np.uint8))
     n, _, stats, _ = cv2.connectedComponentsWithStats(smear, connectivity=8)
     out = []
     for x, y, w, hh, area in stats[1:]:

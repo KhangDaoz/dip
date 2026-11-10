@@ -2,15 +2,17 @@
 \textbf{Điểm mạnh.} Các bước hình học và làm sạch rất ổn định: tìm 4 góc thành công 99\% với sai số $\approx1{,}4$~px, chỉnh
 nghiêng bằng projection sai số $0^\circ$, khử bóng bằng Closing đạt \SI{47.9}{dB}. Sauvola không phụ thuộc vào việc khử bóng có
 tốt hay không, trong khi Otsu sụp ở bóng nặng --- xác nhận lý do chọn ngưỡng cục bộ. Tìm cột bằng projection dọc đạt F1
-\num{0.917} trên bảng không kẻ; tách khoản thuốc bằng luật dòng đậm đạt \num{0.973} mà không cần học.
+\num{0.963} trên \bo{2}; dựng bảng giảm CER OCR từ \num{0.765} (cả trang) xuống \num{0.470} nhờ giữ thứ tự đọc; tách khoản thuốc bằng luật dòng đậm đạt \num{0.973} mà không cần học.
 
 \textbf{Hạn chế.} (1) Phân loại tài liệu không tổng quát sang ảnh chụp thật (\bo{4}: \num{0.39}) vì mỗi lớp đến từ một nguồn
-ảnh khác nhau. (2) Luật dòng đậm nhạy với bóng, mờ, dấu đè (S2) và gắn với mẫu in VAIPE. (3) Gom dòng bằng projection thua gom
-tâm $y$ trên \bo{2} vì ảnh bị ép $640\times640$, dòng sát nhau; \bo{2} là phiếu tiếng Anh nên kết quả trên phiếu Việt Nam chỉ định
-tính. (4) \Bo{5} là dữ liệu tổng hợp từ ảnh scan nên sáng và sạch hơn ảnh thật (độ sáng trung bình 209 so với 169); kết luận
+ảnh khác nhau. (2) Luật dòng đậm nhạy với bóng, mờ, dấu đè (S2) và gắn với mẫu in VAIPE. (3) Dựng bảng trên \bo{2} chỉ đánh giá được
+32 ảnh (dưới mức 50) và rất nhạy với độ nghiêng: không chỉnh nghiêng thì gom dòng sụp từ $1^\circ$ (K3); ảnh ép $640\times640$
+làm tách cụm từ chỉ đạt F1 \num{0.748} và OCR kể cả với khung hoàn hảo còn CER \num{0.216}; \bo{2} là phiếu tiếng Anh; trên 5 phiếu
+Việt Nam chụp thật (K6, định tính) gom dòng sụp vì đường kẻ cong và nét viết tay. (4) \Bo{5} là dữ liệu tổng hợp từ ảnh scan nên sáng và sạch hơn ảnh thật (độ sáng trung bình 209 so với 169); kết luận
 chính được kiểm lại trên \bo{1}, \bo{2}, \bo{4}. (5) Ảnh nhị phân chuẩn là Otsu; đã khử thiên vị bằng dải viền bỏ qua nhưng vẫn
-là đáp án do thuật toán tạo. (6) Ground truth khoản thuốc và dòng bảng gom tự động từ nhãn, mới soát một phần bằng mắt.
-(7) Các phép đo CER (lợi ích thực tế cho OCR) chưa thực hiện.
+là đáp án do thuật toán tạo. (6) Ground truth khoản thuốc gom tự động từ nhãn, mới soát một phần bằng mắt; ground truth bảng đã soát đủ
+nhưng đáp án chữ của \bo{2} do LLM phiên âm.
+(7) CER mới đo cho dựng bảng (K5); các phép đo CER của làm sạch và đơn thuốc (T2-CER, T8, S3) chưa thực hiện.
 
 \textbf{Hướng phát triển.} Chuẩn hóa độ đậm theo tương phản cục bộ; dùng chiều cao dòng thay cho chiều cao ký tự trên ảnh độ
 phân giải thấp; thêm ảnh chụp thật vào tập train của bộ phân loại; đo CER để chọn phương pháp nhị phân theo ảnh thật.

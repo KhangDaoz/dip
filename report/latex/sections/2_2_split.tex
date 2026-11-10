@@ -4,8 +4,10 @@ Mọi tham số chọn trên tập valid, tập test chỉ chạy một lần �
 820 / 176 / 176 (70/15/15, seed 42). Ảnh cùng bệnh nhân ở các lần khám khác nhau (độ giống chữ trong nhãn, Jaccard $\ge 0{,}85$,
 \num{1030} nhóm) luôn nằm cùng một tập; pHash không dùng được vì các trang đơn quá giống nhau (ngưỡng Hamming 6 đã gom hơn
 \num{1000} ảnh thành một cụm). Một ảnh trùng byte với test gốc bị loại; 172 ảnh test gốc dùng cho minh họa và demo.
-\textbf{\Bo{2}:} 57 ảnh quá ít để vừa chọn tham số vừa có $\ge 50$ ảnh đánh giá, nên dùng kiểm định chéo 5-fold: chọn tham số
-trên 4 phần, đo trên phần còn lại, mỗi ảnh được đánh giá đúng một lần.
+\textbf{\Bo{2}:} chỉ 57 ảnh, còn 32 ảnh ground truth sau khi soát --- quá ít để tách riêng tập chọn tham số, nên dùng kiểm
+định chéo 5-fold: chọn tham số trên 4 phần, đo trên phần còn lại, mỗi ảnh được đánh giá đúng một lần.
 \textbf{\Bo{5}:} chia 60/10/30 theo \emph{ảnh gốc} (mọi biến thể của một ảnh gốc cùng tập).
-\textbf{\Bo{4}:} chỉ để test. Tập đánh giá của mỗi phần: \bo{5} test (450 mẫu) cho tiền xử lý và làm sạch; 55 ảnh \bo{2} cho dựng bảng;
-176 ảnh \bo{1} test cho tách khoản thuốc --- đều $\ge 50$ ảnh theo quy định.
+\textbf{\Bo{4}:} chỉ để test. Tập đánh giá của mỗi phần: \bo{5} test (450 mẫu) cho tiền xử lý và làm sạch; 176 ảnh \bo{1}
+test cho tách khoản thuốc --- đều $\ge 50$ ảnh theo quy định. Dựng bảng dùng 32 ảnh \bo{2} (498 dòng chỉ số, \num{1953} cụm
+từ): \emph{dưới} mức 50 ảnh vì toàn bộ nguồn công khai có nhãn thân bảng chỉ 55 ảnh và 23 ảnh không đủ chất lượng làm đáp án;
+chúng tôi chọn đáp án đúng trên ít ảnh hơn là đủ số ảnh với đáp án sai.

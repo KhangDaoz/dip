@@ -10,6 +10,27 @@ def opening_before_projection(binary: np.ndarray, ksize: int = 2) -> np.ndarray:
     return cv2.morphologyEx(binary, cv2.MORPH_OPEN, np.ones((ksize, ksize), np.uint8))
 
 
+def rule_lines(binary: np.ndarray, frac: int = 20) -> np.ndarray:
+    """Mask đường kẻ bảng: Opening với SE đường thẳng 1×(W/frac) và (H/frac)×1 (C7 · S6, S28).
+
+    Chỉ đoạn thẳng dài hơn SE mới "fit" SE nên còn lại sau Opening; nét chữ (ngắn hơn nhiều) bị xóa.
+    """
+    H, W = binary.shape[:2]
+    b = (binary > 0).astype(np.uint8) * 255
+    hor = cv2.morphologyEx(b, cv2.MORPH_OPEN, np.ones((1, max(3, W // frac)), np.uint8))
+    ver = cv2.morphologyEx(b, cv2.MORPH_OPEN, np.ones((max(3, H // frac), 1), np.uint8))
+    return cv2.bitwise_or(hor, ver)
+
+
+def remove_rule_lines(binary: np.ndarray, frac: int = 20) -> np.ndarray:
+    """Xóa đường kẻ trước khi chiếu: kẻ dọc làm P(y) dòng nào cũng có mực (mất thung lũng giữa các dòng),
+    kẻ ngang làm Q(x) cột nào cũng có mực. Mask kẻ được Dilation 3×3 để xóa cả viền răng cưa."""
+    lines = cv2.dilate(rule_lines(binary, frac), np.ones((3, 3), np.uint8))
+    out = binary.copy()
+    out[lines > 0] = 0
+    return out
+
+
 def drop_thin_rows(rows: list, words: list, h: float, min_ratio: float = 0.5) -> list:
     """Bỏ dòng cao < min_ratio·h."""
     keep = []

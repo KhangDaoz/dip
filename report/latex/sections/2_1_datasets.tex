@@ -20,4 +20,8 @@ Nhãn có sẵn: \bo{1} có khung và chữ từng dòng với vai trò \texttt{
 \bo{4} gồm 48 phiếu xét nghiệm, 18 đơn thuốc, 17 tài liệu khác, chỉ có nhãn loại tài liệu.
 Ground truth khoản thuốc của \bo{1} được gom tự động từ nhãn dòng: mỗi \texttt{drugname} cùng các box \texttt{usage},
 \texttt{quantity} cùng hàng hoặc ngay dưới; khoản là dải ngang trải hết bề ngang vùng thuốc (nhãn đôi khi thiếu box số lượng).
-Ground truth dòng / cột của \bo{2} suy từ nhãn cụm từ: hai cụm từ cùng dòng nếu chồng nhau theo chiều dọc $\ge 50\%$.
+Ground truth dòng / cột của \bo{2} suy từ nhãn cụm từ: hai cụm từ cùng dòng nếu chồng nhau theo chiều dọc $\ge 50\%$; cột
+là vai trò cụm từ. Sau khi soát bằng mắt cả 55 ảnh có nhãn thân bảng, giữ \textbf{32 ảnh} đủ cơ sở (loại ảnh nhãn lệch khỏi chữ,
+ảnh mờ không đọc được, bố cục máy in nhiều cột); 9 ảnh được sửa dòng theo quy tắc ghi trong \texttt{k0\_review.json} (bỏ dòng
+mô tả và tiêu đề nhóm, gộp tên chỉ số hai dòng). \Bo{2} không có nhãn chữ: chữ từng khung do LLM phiên âm từ ảnh gốc rồi
+người soát (mục~7), dùng làm đáp án CER cho K5.

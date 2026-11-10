@@ -1,31 +1,61 @@
 % ===== ≈ 1 trang =====
+32 ảnh \bo{2} đã soát (498 dòng chỉ số), 5-fold; tham số đề xuất được chọn \emph{giống nhau ở cả 5 fold}. Mỗi bước được cô lập:
+gom dòng / tìm cột nhận khung cụm từ ground truth và ảnh nhị phân của (2). Độ đo: F1 trên cặp cụm từ cùng dòng / cùng cột
+(C8 S49); tách cụm từ: F1 khớp khung (IoU $\ge0{,}5$).
 \begin{table}[H]
 \centering
-\caption{Gom dòng (K1) và tìm cột (K2) trên 55 ảnh \bo{2} có nhãn, kiểm định chéo 5-fold (trung bình $\pm$ độ lệch chuẩn qua 5 fold).
-Đầu vào là ảnh nhị phân của bước (2) và khung cụm từ ground truth. Độ đo: F1 trên các cặp cụm từ cùng dòng / cùng cột.}\label{tab:K2}
+\caption{Ba bước cấu trúc của (3), 32 ảnh \bo{2} (trung bình $\pm$ độ lệch chuẩn qua 5 fold).}\label{tab:K2}
 \small
 \begin{tabular}{llrrrr}
 \toprule
-Bước & Phương án & F1 & Precision & Recall & Ảnh đúng hoàn toàn \\
+Bước & Phương án & F1 & Precision & Recall & Ảnh đúng hết \\
 \midrule
-Tìm cột & \textbf{Projection dọc} (đề xuất) & \textbf{0,917 $\pm$ 0,083} & 0,864 & 0,986 & 63,6\% \\
-        & XY-cut đệ quy & 0,801 $\pm$ 0,115 & 0,683 & 0,999 & 56,4\% \\
-        & Khe $x$ cố định & 0,793 $\pm$ 0,111 & 0,670 & 0,999 & 50,9\% \\
+Tìm cột & \textbf{Projection dọc} (đề xuất) & \textbf{0,963 $\pm$ 0,023} & 0,930 & 1,000 & \textbf{87,1\%} \\
+        & XY-cut đệ quy & 0,913 $\pm$ 0,057 & 0,847 & 0,997 & 74,3\% \\
+        & Khe $x$ cố định & 0,893 $\pm$ 0,051 & 0,813 & 0,997 & 65,2\% \\
 \midrule
-Gom dòng & Projection ngang (đề xuất) & 0,583 $\pm$ 0,125 & 0,466 & 0,868 & 45,5\% \\
-         & Tâm $y$ khe cố định & \textbf{0,692 $\pm$ 0,180} & 0,902 & 0,600 & 47,3\% \\
+Gom dòng & Projection ngang & 0,705 $\pm$ 0,210 & 0,592 & 0,994 & 71,4\% \\
+         & \textbf{Projection + xóa kẻ} (đề xuất) & 0,937 $\pm$ 0,115 & 0,905 & 0,995 & \textbf{80,5\%} \\
+         & Tâm $y$ khe cố định & \textbf{0,990 $\pm$ 0,007} & 1,000 & 0,980 & 64,8\% \\
+\midrule
+Cụm từ & Dilation $(0{,}5h)\times(2h)$ & 0,748 $\pm$ 0,092 & 0,726 & 0,776 & --- \\
 \bottomrule
 \end{tabular}
-\\[0.3em]{\footnotesize Script: \texttt{code/experiments/k0\_gt.py}, \texttt{k2\_table.py}}
 \end{table}
+\textbf{Nhận xét.} (1) Projection dọc tìm cột tốt nhất: khe trắng dọc xuyên qua đa số dòng là ``đường kẻ ẩn''; XY-cut và khe
+cố định hay gộp hai cột kề. (2) Gom dòng bằng projection ban đầu chỉ \num{0.705}: 2 ảnh sụp thành \emph{một} dòng vì phiếu
+\emph{có} kẻ, kẻ dọc lấp mọi thung lũng của $P(y)$; xóa kẻ bằng Opening SE đường thẳng (C7 S6, S28) nâng lên \num{0.937}. Tâm
+$y$ có F1 cao hơn nhưng ít ảnh đúng hết hơn: sai vặt ở nhiều ảnh, còn projection sai nặng ở ít ảnh. (3) Tách cụm từ chỉ
+\num{0.748}: chữ cao 4--11~px, nét đứt cả theo chiều dọc nên SE cần thêm $0{,}5h$ chiều dọc; Opening $2\times2$ xóa nét 1~px
+(5 fold đều bỏ). (4) K4: tham số theo $h$ từng ảnh không hơn $h$ cố định vì mọi ảnh cùng bị ép $640\times640$ (Phụ lục C).
 
-\textbf{Nhận xét.} Tìm cột bằng projection dọc trên thân bảng tốt hơn rõ XY-cut và khe cố định (F1 \num{0.917}): khe trắng dọc
-xuyên qua đa số dòng chính là ``đường kẻ ẩn''. XY-cut và khe cố định gần như không bỏ sót (recall $\approx1$) nhưng hay gộp hai
-cột kề nhau (precision thấp). Ngược lại, \emph{gom dòng bằng projection thua gom tâm $y$}: precision chỉ \num{0.47}, tức hay gộp
-hai dòng liền nhau. Nguyên nhân: \bo{2} là ảnh chụp bị ép $640\times640$, dòng chỉ cách nhau vài pixel và hơi nghiêng, nên thung
-lũng giữa hai dòng trên $P(y)$ không xuống đủ thấp sau Dilation ngang và làm trơn. K4 (tham số theo $h$ của từng ảnh so với $h$ cố
-định): với cột không khác biệt (\num{0.917} cả hai), với dòng $h$ cố định nhỉnh hơn (\num{0.603} so với \num{0.583}) vì chiều cao
-chữ ước lượng trên ảnh 640~px chỉ 3--8~px nên kém tin cậy --- giả thuyết ``SE thích nghi tốt hơn'' \emph{không} được xác nhận trên \bo{2}.
-\textbf{Hạn chế.} Ground truth dòng suy từ nhãn cụm từ (chồng nhau theo chiều dọc $\ge50\%$) chưa được soát tay toàn bộ; \bo{2} là
-phiếu tiếng Anh, kết quả trên phiếu Việt Nam (\bo{4}) chỉ là minh họa định tính.
-\TODO{K3 (độ nghiêng còn sót) và K5 (CER theo ô, cần OCR)}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\linewidth]{table/K3.png}
+\caption{K3 --- gom dòng khi ảnh nghiêng thêm $0$--$5^\circ$ (32 ảnh, xoay $\pm\theta$, tham số cuối).}\label{fig:K3}
+\end{figure}
+\textbf{K3.} Không chỉnh nghiêng, cả projection lẫn tâm $y$ sụp từ $1^\circ$ (projection F1 \num{0.33}; không ảnh nào đúng hết từ
+$2{,}5^\circ$): nghiêng $1^\circ$ trên bảng rộng $\approx500$~px lệch $\approx9$~px, lớn hơn khe giữa hai dòng. Chỉnh nghiêng
+của (1) (sai số góc trung vị $0^\circ$) giữ F1 \num{0.87}--\num{0.92} đến $5^\circ$: (3) \emph{phụ thuộc} (1).
+
+\begin{table}[H]
+\centering
+\caption{K5 --- OCR (Tesseract 5, vùng cắt phóng $\times3$) trên 32 ảnh, \num{16846} ký tự đáp án. CER theo thứ tự đọc;
+F1 từ không phụ thuộc thứ tự.}\label{tab:K5}
+\small
+\begin{tabular}{lrrr}
+\toprule
+Phương án & CER $\downarrow$ & F1 từ & Kết quả số đúng \\
+\midrule
+OCR cả vùng bảng (đối chứng) & 0,765 & 0,444 & --- \\
+\textbf{OCR theo ô do (3) tự dựng} & \textbf{0,470} & 0,431 & \textbf{55,8\%} \\
+OCR theo khung ground truth (trần trên) & 0,216 & 0,514 & 65,7\% \\
+\bottomrule
+\end{tabular}
+\\[0.3em]{\footnotesize Script: \texttt{code/experiments/k0\_gt.py}, \texttt{k2\_table.py}, \texttt{k3\_skew.py}, \texttt{k5\_ocr.py}.}
+\end{table}
+\textbf{K5.} Dựng bảng giảm CER từ \num{0.765} xuống \num{0.470} nhờ \emph{giữ thứ tự đọc}: OCR cả trang đọc theo cột (mọi
+tên chỉ số rồi mọi kết quả) nên không ghép được tên với kết quả; nhận dạng thuần (F1 từ) của hai cách gần nhau. Với khung hoàn
+hảo CER vẫn \num{0.216} --- nút thắt còn lại là độ phân giải (chữ 4--11~px) và OCR, không phải cấu trúc bảng; dòng đúng cả 4
+trường (mỗi trường CER $\le0{,}2$) chỉ 4,0\% (10,6\% với khung ground truth) vì đơn vị như \texttt{10\textasciicircum3/µL} hầu
+như luôn bị đọc sai. Hạn chế: mục 5 (3).
