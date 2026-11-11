@@ -8,6 +8,12 @@
 /out/
 *.zip
 
+# Trọng số mô hình (lưu Drive, không commit)
+/code/weights/*.pt
+/code/weights/*.pth
+/code/weights/*.onnx
+/code/weights/*.bin
+
 # Python & môi trường ảo
 .venv/
 venv/
@@ -20,3 +26,4 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 .agents/
+/message.txt

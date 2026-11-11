@@ -376,7 +376,7 @@ khi đã chốt cấu hình (Ngày 10). Ghi lại commit hash trong `config.json
 | Dọn repo các module cũ sang `legacy/`, tạo thư mục mới | 10' | — | AI |
 | Viết hợp đồng dữ liệu mới (box, contract, đường dẫn) | 15' | repo | AI |
 | Viết bộ đọc nhãn VAIPE 6 lớp cho cả nhóm | 20' | hợp đồng | AI |
-| Sinh nhãn YOLO + crops VietOCR từ nhãn gốc | 20' | bộ đọc | AI |
+| Viết tools sinh nhãn YOLO + crops VietOCR từ nhãn gốc | 20' | bộ đọc | AI |
 | Sinh `items_gt`+ Thắng soát 10 ảnh test | 25' | luật ghép (D) | AI+HV |
 | Sinh ảnh test suy biến 3 mức L0/L2/L4 | 15' | bộ đọc | AI |
 | Viết khối A: nắn nghiêng, CLAHE, khử nhiễu, khử bóng | 20' | repo | AI |

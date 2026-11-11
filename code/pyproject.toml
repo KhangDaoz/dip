@@ -9,7 +9,7 @@ description = "MedTrack — pipeline xử lý ảnh đơn thuốc / phiếu xét
 requires-python = ">=3.10"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["src", "."]
 
 [tool.setuptools.package-data]
 synthetic = ["*.yaml"]
