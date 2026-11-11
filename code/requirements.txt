@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Thư viện lõi dùng chung — chạy được trên Python 3.10 → 3.13
 numpy>=1.26
 opencv-python>=4.10
@@ -12,3 +13,7 @@ imagehash>=4.3
 pyyaml>=6.0
 tqdm>=4.66
 pytest>=8.0
+
+# Khối D v2 (Thắng): so khớp từ điển tên thuốc + client VLM OpenAI-compatible
+rapidfuzz>=3.0
+openai>=1.30
