@@ -1,11 +1,8 @@
-% ===== Mục 3.2 — Khối B (≈ 0,5 trang) =====
-% Viết gì: YOLOv8s, cấu hình huấn luyện + lý do, chọn ngưỡng trên valid, đối chứng cổ điển. Người: Trường.
-\textbf{Phương pháp chính.}
-YOLOv8s~\cite{yolov8} phát hiện và phân lớp đồng thời các vùng chữ theo sáu lớp VAIPE.
-Mô hình khởi tạo từ trọng số COCO và huấn luyện 50 epoch trên 820 ảnh (Kaggle, $2\times$T4), kích thước ảnh 1024, batch 16, dừng sớm sau 15 epoch không cải thiện, seed 42.
-Ảnh huấn luyện không lật ngang (\texttt{fliplr}=0) vì lật làm hỏng chữ; mosaic giảm còn 0,5.
-Kích thước 1024 được chọn vì chữ VAIPE chỉ cao khoảng 15--25~px, thu về 640 làm mất vùng nhỏ.
-Ngưỡng tin cậy $0{,}443$ là ngưỡng cho F1 trung bình sáu lớp lớn nhất trên tập kiểm định; ngưỡng NMS giữ mặc định $0{,}7$.
+% Mục 3.2. Khối B (khoảng 0,4 trang). Người viết: Trường.
+Khối B dùng YOLOv8s~\cite{yolov8} để vừa tìm vừa phân lớp vùng chữ theo sáu lớp của VAIPE.
+Mô hình khởi tạo từ trọng số tiền huấn luyện COCO và được huấn luyện 50 epoch trên 820 ảnh (Kaggle, 2 GPU T4) với kích thước ảnh 1024, batch 16, dừng sớm nếu 15 epoch không cải thiện, seed 42.
+Chữ trên đơn chỉ cao khoảng 15 đến 25~px nên nhóm giữ kích thước ảnh 1024 để không mất các vùng nhỏ khi thu ảnh.
+Lật ngang làm ngược chữ nên được tắt (\texttt{fliplr}=0), và mosaic giảm xuống 0,5.
+Ngưỡng tin cậy 0,443 là giá trị cho F1 trung bình sáu lớp lớn nhất trên tập kiểm định, còn ngưỡng NMS giữ mặc định 0,7.
 
-\textbf{Đối chứng cổ điển.}
-\TODO{Trường: nếu có detect/classical.py — Sauvola (cửa sổ 31, $k$ 0,2) $\to$ ước lượng chiều cao chữ $h$ = trung vị chiều cao thành phần liên thông $\to$ giãn với phần tử cấu trúc $0{,}5h\times1{,}5h$ nối ký tự thành cụm \chuong{7} $\to$ thành phần liên thông $\to$ lọc theo diện tích, tỉ lệ. Nếu cắt: xóa đoạn này và ghi vào Thảo luận}
+\TODO{Trường: mô tả phương pháp đối chứng cổ điển nếu có (Sauvola, ước lượng chiều cao chữ, phép giãn nối ký tự thành cụm \chuong{7}, thành phần liên thông). Nếu không kịp thì xóa dòng này và ghi vào phần hạn chế.}

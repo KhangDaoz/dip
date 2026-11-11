@@ -22,11 +22,12 @@
 \titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.8em}{}
 \titlespacing*{\section}{0pt}{2.5ex plus 1ex}{1.2ex}
 \titlespacing*{\subsection}{0pt}{2ex plus 0.5ex}{0.8ex}
-\titlespacing*{\subsubsection}{0pt}{2.5ex plus 0.5ex}{1ex}
+\titlespacing*{\subsubsection}{0pt}{1.6ex plus 0.5ex}{0.5ex}
 
 % ---------- Hình, bảng, toán ----------
 \usepackage{graphicx}\graphicspath{{figure/}}
 \usepackage{booktabs,tabularx,multirow,makecell}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}       % cột co giãn, căn trái (không giãn chữ)
 \renewcommand{\arraystretch}{1.2}                     % giãn hàng trong bảng
 \setlength{\tabcolsep}{7pt}
 \usepackage{caption,subcaption}
@@ -55,11 +56,12 @@
 \addbibresource{refs/dl.bib}
 
 \usepackage[hidelinks]{hyperref}
+\urlstyle{tt}   % \path{...}: đường dẫn file, tự xuống dòng tại dấu /
 
 % ---------- Lệnh dùng chung ----------
 \newcommand{\TODO}[1]{\textcolor{red}{[TODO: #1]}}   % chỗ cần viết; phải hết trước khi nộp
 \newcommand{\chuong}[1]{(Chương~#1)}                  % ghi chương học phần: \chuong{3}
-\newcommand{\KQ}[1]{\textcolor{blue}{\textbf{[#1]}}}  % SỐ LIỆU CHỜ ĐIỀN: thay cả \KQ{...} bằng số; phải hết trước khi nộp
+\newcommand{\KQ}[1]{\textcolor{blue}{[#1]}}  % SỐ LIỆU CHỜ ĐIỀN: thay cả \KQ{...} bằng số; phải hết trước khi nộp
 \newcommand{\khoi}[1]{khối~#1}                       % \khoi{A} → khối A
 \newcommand{\Khoi}[1]{Khối~#1}                       % đầu câu
 
@@ -68,6 +70,7 @@
 \input{sections/0_title}          % trang bìa riêng, không đánh số
 
 \pagenumbering{roman}
+\setcounter{tocdepth}{2}         % mục lục chỉ 2 cấp cho gọn
 \begingroup\setstretch{1.0}\setlength{\parskip}{0.2em}
 \tableofcontents
 \endgroup
@@ -84,26 +87,26 @@
 
 \section{Phương pháp}\label{sec:method}
 \input{sections/3_0_overview}
-\subsection{Khối A --- Tiền xử lý ảnh cổ điển}\label{sec:m-enhance}
+\subsection{Tiền xử lý ảnh (khối A)}\label{sec:m-enhance}
 \input{sections/3_1_enhance}
-\subsection{Khối B --- Phát hiện và phân lớp vùng chữ}\label{sec:m-detect}
+\subsection{Phát hiện vùng chữ (khối B)}\label{sec:m-detect}
 \input{sections/3_2_detect}
-\subsection{Khối C --- Nhận dạng chữ}\label{sec:m-recognize}
+\subsection{Nhận dạng chữ (khối C)}\label{sec:m-recognize}
 \input{sections/3_3_recognize}
-\subsection{Khối D --- Ghép khoản thuốc}\label{sec:m-assemble}
+\subsection{Ghép khoản thuốc (khối D)}\label{sec:m-assemble}
 \input{sections/3_4_assemble}
 
 % Thứ tự: thiết lập → từng khối → đầu-cuối (bảng chính) → ablation, độ bền → thời gian
 \section{Thực nghiệm}\label{sec:exp}
 \subsection{Thiết lập và độ đo}\label{sec:setup}
 \input{sections/4_1_setup}
-\subsection{Phát hiện vùng chữ (E-B1, E-B2)}\label{sec:e-detect}
+\subsection{Phát hiện vùng chữ}\label{sec:e-detect}
 \input{sections/4_2_detect}
-\subsection{Nhận dạng chữ (E-C1)}\label{sec:e-recognize}
+\subsection{Nhận dạng chữ}\label{sec:e-recognize}
 \input{sections/4_3_recognize}
-\subsection{Đầu-cuối: pipeline, đối chứng cổ điển và VLM (E-D1, E-D2)}\label{sec:e-endtoend}
+\subsection{So sánh đầu-cuối}\label{sec:e-endtoend}
 \input{sections/4_4_endtoend}
-\subsection{Lỗi đến từ đâu và độ bền khi ảnh xấu (E-X1, E-A1)}\label{sec:e-ablation}
+\subsection{Phân tích lỗi và độ bền}\label{sec:e-ablation}
 \input{sections/4_5_ablation}
 \subsection{Thời gian chạy}\label{sec:e-runtime}
 \input{sections/4_6_runtime}

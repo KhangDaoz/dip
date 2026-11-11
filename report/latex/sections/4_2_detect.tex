@@ -1,7 +1,7 @@
 % ===== Mục 4.2 — Kết quả khối B (≈ 0,5 trang) =====
 % Viết gì: bảng E-B1 (không phân lớp, so cổ điển), bảng E-B2 (từng lớp), 2–3 câu nhận xét có số. Người: Trường.
 % Nguồn số: results/E-B1/table.csv, results/E-B2/table.csv (hoặc test_metrics.json của notebook train_yolo).
-Bảng~\ref{tab:EB} so khả năng tìm vùng chữ (bỏ qua lớp) và độ đúng từng lớp của YOLOv8s trên tập kiểm tra.
+Bảng~\ref{tab:EB} so sánh khả năng tìm vùng chữ khi bỏ qua lớp (E-B1) và độ đúng từng lớp của YOLOv8s (E-B2).
 
 \begin{table}[H]
 \centering
@@ -26,4 +26,4 @@ YOLOv8s, bỏ lớp & \KQ{} & \KQ{} & \KQ{} & --- \\
 \par\smallskip{\footnotesize Script: \texttt{code/experiments/\TODO{tên script}}. Ngưỡng tin cậy 0,443 chọn trên tập kiểm định.}
 \end{table}
 
-\TODO{Trường: 2--3 câu nhận xét có số — YOLO hơn cổ điển bao nhiêu F1; lớp nào yếu nhất và nhầm sang lớp nào (ma trận nhầm lẫn ở Phụ lục~\ref{app:examples}); vì sao cổ điển hụt (gộp cột, tách tên dài)}
+\TODO{Trường: 2 đến 3 câu nhận xét có số. YOLO hơn phương pháp cổ điển bao nhiêu điểm F1, lớp nào yếu nhất và hay bị nhầm sang lớp nào (ma trận nhầm lẫn ở Phụ lục~\ref{app:examples}), vì sao phương pháp cổ điển kém}

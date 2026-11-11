@@ -1,16 +1,15 @@
-% ===== Mục 3.1 — Khối A (≈ 0,5 trang) =====
-% Viết gì: 5 bước, công thức chính, tham số + lý do, các preset dùng trong E-A1. Người: Hiếu.
-\Khoi{A} gồm năm bước theo thứ tự cố định; mỗi bước là một hàm ảnh $\to$ ảnh và bật/tắt được (\texttt{code/src/enhance/}).
+% Mục 3.1. Khối A (khoảng 0,5 trang). Người viết: Hiếu.
+Khối A gồm năm bước chạy theo thứ tự cố định, mỗi bước là một hàm nhận ảnh và trả về ảnh, có thể tắt riêng (\path{code/src/enhance/}).
 \begin{enumerate}[label=A\arabic*.]
-  \item \textbf{Nắn phối cảnh} \chuong{5; 2}: Canny (ngưỡng 50/150) $\to$ tìm tứ giác lớn nhất chiếm $\ge20\%$ ảnh (contour, dự phòng Hough và hình chữ nhật bao nhỏ nhất) $\to$ \texttt{warpPerspective} nội suy bậc ba. Không tìm được tờ giấy thì giữ ảnh gốc.
-  \item \textbf{Chỉnh nghiêng} \chuong{5}: nhị phân Sauvola (cửa sổ 31, $k=0{,}2$), chọn góc
+  \item Nắn phối cảnh \chuong{5, 2}. Ảnh được lấy biên bằng Canny (ngưỡng 50 và 150), sau đó tìm tứ giác lớn nhất chiếm ít nhất 20\% diện tích ảnh và nắn bằng phép biến đổi phối cảnh với nội suy bậc ba. Nếu không tìm được tờ giấy thì giữ nguyên ảnh.
+  \item Chỉnh nghiêng \chuong{5}. Ảnh được nhị phân hóa bằng Sauvola~\cite{sauvola2000binarization} (cửa sổ 31, $k=0{,}2$), rồi chọn góc làm cực đại phương sai của lược đồ chiếu ngang:
   \begin{equation}\label{eq:deskew}
-    \theta^*=\arg\max_{\theta\in[-10^\circ,10^\circ]}\operatorname{Var}\bigl(P_\theta\bigr),\qquad P_\theta(y)=\sum_x b_\theta(x,y),
+    \theta^*=\arg\max_{\theta\in[-10^\circ,10^\circ]}\operatorname{Var}\bigl(P_\theta\bigr),\qquad P_\theta(y)=\sum_x b_\theta(x,y).
   \end{equation}
-  tìm thô bước $1^\circ$ rồi tinh bước $0{,}25^\circ$. Khi dòng chữ nằm ngang, mỗi hàng hoặc đầy mực hoặc trống nên phương sai lược đồ chiếu lớn nhất.
-  \item \textbf{Khử bóng} \chuong{7; 3}: ước lượng nền $\hat B=f\bullet B$ bằng phép đóng với phần tử cấu trúc vuông $81\times81$ (lớn hơn nhiều lần chiều cao chữ nên nét chữ bị lấp), rồi chia nền $g=\min\bigl(255,\;255\,f/\hat B\bigr)$ trên kênh V.
-  \item \textbf{Khử nhiễu} \chuong{3}: lọc trung vị $3\times3$.
-  \item \textbf{Tăng tương phản} \chuong{3}: CLAHE~\cite{zuiderveld1994clahe} trên kênh L, giới hạn cắt 2,0, lưới $8\times8$.
+  Khi dòng chữ nằm ngang, mỗi hàng ảnh hoặc có nhiều mực hoặc gần như trống, nên phương sai lớn nhất. Góc được tìm thô với bước $1^\circ$ rồi tinh lại với bước $0{,}25^\circ$.
+  \item Khử bóng \chuong{7, 3}. Nền $\hat B$ được ước lượng bằng phép đóng với phần tử cấu trúc vuông $81\times81$. Phần tử này lớn hơn nhiều chiều cao chữ (15 đến 25~px) nên nét chữ bị lấp, chỉ còn lại ánh sáng nền. Ảnh được chia cho nền theo $g=\min\bigl(255,\;255\,f/\hat B\bigr)$ trên kênh V.
+  \item Khử nhiễu \chuong{3}. Lọc trung vị $3\times3$ để giảm nhiễu hạt và nhiễu do nén JPEG.
+  \item Tăng tương phản \chuong{3}. CLAHE~\cite{zuiderveld1994clahe} trên kênh L, giới hạn cắt 2,0 và lưới $8\times8$.
 \end{enumerate}
-Thí nghiệm E-A1 dùng ba cấu hình: \texttt{none} (tắt hết), \texttt{light} (A2 + A3) và \texttt{full} (A1--A5).
-\TODO{Hiếu: lý do chọn từng tham số, nếu đã thử trên valid thì ghi khoảng đã thử (đưa bảng đầy đủ vào Phụ lục~\ref{app:params})}
+Thí nghiệm độ bền dùng ba cấu hình là \texttt{none} (tắt hết), \texttt{light} (A2 và A3) và \texttt{full} (A1 đến A5).
+\TODO{Hiếu: lý do chọn từng tham số, ghi khoảng đã thử nếu có và đưa bảng đầy đủ vào Phụ lục~\ref{app:params}}
