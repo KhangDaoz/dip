@@ -1,75 +1,60 @@
-# Đồ án Xử lý ảnh số — Pipeline xử lý ảnh tài liệu y tế (MedTrack)
+# Đồ án Xử lý ảnh số — Trích xuất thông tin đơn thuốc từ ảnh
 
-**Đề tài:** Nghiên cứu & xây dựng pipeline tiền xử lý, phân loại biểu mẫu và bóc tách cấu trúc tài liệu y tế (đơn thuốc, phiếu xét nghiệm) từ ảnh chụp thực tế.
+**Đề tài:** Trích xuất thông tin đơn thuốc (tên thuốc, số lượng, cách dùng, chẩn đoán, ngày) từ ảnh đơn thuốc bảo hiểm y tế,
+kết hợp học sâu với xử lý ảnh cổ điển.
 
-Môn Xử lý ảnh số (DIP), PGS.TS. Phạm Văn Cường, Học viện Công nghệ Bưu chính Viễn thông. Hình thức: **Lựa chọn 2, Dự án xử lý ảnh thực tế**.
-Nhóm: Hiếu (nhóm trưởng) · Trường · Khang · Thắng.
-
-**Kế hoạch chính** (phương pháp từng bước, thí nghiệm, tham số, lịch, checklist): [team/KeHoach.md](team/KeHoach.md). Tổng quan đề tài: [docs/DeTai_XuLyAnh_ChiTiet.md](docs/DeTai_XuLyAnh_ChiTiet.md). Hai file khác nhau thì theo kế hoạch toàn nhóm; sửa kế hoạch phải thống nhất cả nhóm.
+Môn Xử lý ảnh số, PGS.TS. Phạm Văn Cường, Học viện Công nghệ Bưu chính Viễn thông. Hình thức: **Lựa chọn 2, dự án xử lý ảnh thực tế**.
+Nhóm: Hiếu (nhóm trưởng) · Trường · Khang · Thắng. Kế hoạch: [plan.md](plan.md).
 
 ## Pipeline
 
-| Giai đoạn | Người | Nội dung | Module |
-| :--- | :--- | :--- | :--- |
-| ① Tiền xử lý & phân loại | Hiếu | Đo mờ (Laplacian) / lóa (HSV), Canny → 4 góc, nắn phối cảnh, chỉnh nghiêng (projection), CLAHE; đặc trưng + $k$-NN 3 lớp | `code/src/preprocessing/` · `code/src/classification/` |
-| ② Làm sạch & tách lớp mực | Trường | Khử bóng (Closing ước lượng nền), tách mực HSV, nhận dấu theo độ tròn, xóa dấu (đơn thuốc), nhị phân Sauvola (đối chứng Otsu) + Opening | `code/src/cleaning/` |
-| ③ Dựng bảng phiếu xét nghiệm | Khang | Bảng không kẻ: Dilation ngang → cụm từ, projection → dòng, projection dọc / XY-cut → cột, ghép ô | `code/src/table_extraction/` |
-| ④ Bóc tách đơn thuốc | Thắng | Dilation khoanh vùng thuốc, projection tách dòng, Dilation dọc gom khoản | `code/src/prescription_segmentation/` |
-| Dùng chung | Khang · Thắng | Bộ OCR (công cụ đo CER) · bộ sinh benchmark tổng hợp (bộ 5) | `code/src/ocr/` · `code/src/synthetic/` |
+```
+ảnh ─► [A] Tiền xử lý ─► [B] Phát hiện vùng chữ ─► [C] Nhận dạng chữ ─► [D] Ghép khoản thuốc ─► JSON
+       cổ điển             YOLOv8s, 6 lớp            VietOCR tinh chỉnh     luật + từ điển tên thuốc
+       (Ch. 2, 3, 5, 7)    đối chứng: Sauvola+giãn   đối chứng: Tesseract   đối chứng đầu-cuối: VLM zero-shot
+```
 
-Chi tiết từng bước, chương · slide bài giảng và đối chứng: kế hoạch toàn nhóm mục 5–8.
+| Khối | Người | Phương pháp chính | Đối chứng | Mã nguồn |
+| :--- | :--- | :--- | :--- | :--- |
+| A Tiền xử lý | Hiếu | Nắn phối cảnh (Canny), chỉnh nghiêng (lược đồ chiếu), khử bóng (phép đóng), lọc trung vị, CLAHE | Tắt khối A | `code/src/enhance/` |
+| B Phát hiện | Trường | YOLOv8s phát hiện + phân 6 lớp vùng chữ | Sauvola → giãn → thành phần liên thông | `code/src/detect/` |
+| C Nhận dạng | Khang | VietOCR `vgg_transformer` tinh chỉnh trên VAIPE (C3) | VietOCR gốc (C2), Tesseract 5 (C0, C1) | `code/src/recognize/` |
+| D Ghép khoản | Thắng | Chọn lớp, gom theo dải ngang, chuẩn hóa, so khớp từ điển | VLM zero-shot (Qwen2.5-VL) | `code/src/assemble/` |
+| Tích hợp | Hiếu | Ghép A→B→C→D, CLI, file bàn giao cho thí nghiệm | | `code/src/pipeline/`, `code/run_pipeline.py` |
+
+Dữ liệu: phần đơn thuốc của bộ VAIPE, chia lại 820 / 176 / 176 ảnh (huấn luyện / kiểm định / kiểm tra), không rò rỉ bệnh nhân giữa các tập.
 
 ## Cấu trúc repo
 
 ```
 .
-├── code/          Khung code (skeleton): src/ (module từng người), tests/, experiments/, samples/
-├── data/          Dữ liệu bộ 1–5 (KHÔNG commit, tải từ Drive nhóm); chỉ theo dõi README và nguồn/license
-├── docs/          Tổng quan đề tài, trang tra cứu lý thuyết theo chương
-│   └── references/  Tài liệu của thầy: requirements/ (quy định đồ án), lectures/ (bài giảng chương 1–8), practices/ (notebook thực hành)
-├── report/        Báo cáo: dàn ý, hướng dẫn viết, khung LaTeX
-├── slides/        Slide thuyết trình
-└── team/          Kế hoạch toàn nhóm (kế hoạch chính), bảng tiến độ
+├── code/       Mã nguồn: src/ (4 khối + pipeline), tools/, experiments/, notebooks/, tests/, samples/ — xem code/README.md
+├── data/       Dữ liệu (KHÔNG commit, tải từ Drive nhóm); chỉ theo dõi README
+├── docs/       Tổng quan đề tài, tài liệu của thầy (references/: quy định đồ án, bài giảng, notebook thực hành)
+├── report/     Báo cáo LaTeX
+├── slides/     Slide thuyết trình
+└── plan.md     Kế hoạch v2: phương pháp, thí nghiệm, phân công
 ```
 
-`results/` và `out/` (kết quả thí nghiệm, ảnh trung gian) nằm ở gốc repo và không commit.
-
-## Bắt đầu từ đâu
-
-| Cần gì | Mở file |
-| :--- | :--- |
-| **Kế hoạch chính:** phương pháp, thí nghiệm, tham số, phân công, lịch, checklist | [team/KeHoach.md](team/KeHoach.md) |
-| Tổng quan đề tài, gói nộp | [docs/DeTai_XuLyAnh_ChiTiet.md](docs/DeTai_XuLyAnh_ChiTiet.md) |
-| Quy định đồ án của thầy | [docs/references/requirements/DoAn_XuLyAnh.md](docs/references/requirements/DoAn_XuLyAnh.md) |
-| Tra cứu lý thuyết theo chương, notebook thực hành | [docs/README.md](docs/README.md) |
-| Hôm nay ai phải làm gì | [team/TienDo.md](team/TienDo.md) |
-| Cài đặt, chạy code, hợp đồng dữ liệu | [code/README.md](code/README.md) |
-| Kiểm kê dữ liệu, nguồn và license | [data/README.md](data/README.md) · [data/SOURCES_AND_LICENSES.md](data/SOURCES_AND_LICENSES.md) |
-| Dàn ý và hướng dẫn viết báo cáo | [report/outline.md](report/outline.md) · [report/guidelines.md](report/guidelines.md) |
+`results/` (kết quả thí nghiệm) và `out/` (đầu ra `run_pipeline.py`) nằm ở gốc repo và không commit.
 
 ## Chạy nhanh
 
 ```bash
 cd code
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements.txt && pip install -e .
-pytest                                              # test của hàm chưa viết hiện SKIPPED
-python run_pipeline.py samples/                     # chạy đầu-cuối trên ảnh mẫu
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130   # GPU; CPU: .../whl/cpu
+pip install -r requirements-dl.txt
+pip install --no-deps -r requirements-vietocr.txt
+pip install -e .
+python tools/download_weights.py          # trọng số YOLOv8s + VietOCR từ Drive nhóm (kiểm tra SHA-256)
+pytest                                    # phần thiếu dữ liệu / trọng số / Tesseract tự SKIP
+python run_pipeline.py samples/           # pipeline chính trên ảnh mẫu → out/<ảnh>.json + out/<ảnh>_overlay.png
 ```
 
-OCR cần thêm `requirements-ocr.txt` và Tesseract 5; chi tiết ở [code/README.md](code/README.md).
+Đối chứng Tesseract (C0, C1, preset `classical`, `hybrid`) cần cài Tesseract 5 kèm gói ngôn ngữ `vie`.
+Thí nghiệm và thứ tự chạy: [code/README.md](code/README.md).
 
-## Hạn chót
+## Nộp bài
 
-| Ngày | Việc |
-| :---: | :--- |
-| 09/11/2026 (tối) | Chạy cả pipeline trên 10 ảnh mẫu |
-| 10/11/2026 | Sáng: mỗi người gửi phần báo cáo + 2 slide, Hiếu ghép · Chiều: quay demo, ghép video · Tối: đóng gói `.zip`, thử trên máy sạch |
-| **11/11/2026** | **Nộp đồ án** qua email `uyenvnb@ptit.edu.vn` |
-
-## Quy ước
-
-- Tài liệu tự viết đặt vào `docs/`; tài liệu của thầy vào `docs/references/`; sản phẩm nộp vào `report/` và `slides/`.
-- Tên file mới: chữ thường, không dấu, không khoảng trắng (ví dụ `chuong7_xu_ly_hinh_thai.md`). Tài liệu nhóm hiện có giữ tên cũ.
-- Link giữa các tài liệu luôn dùng đường dẫn tương đối.
-- Quy ước code (ảnh BGR, mask mực = 255, bbox `[x, y, w, h]`, đọc ảnh qua `common.io`) ở [code/README.md](code/README.md) mục 3.
+Hạn **11/11/2026**, một file `.zip` (slide, mã nguồn + README, báo cáo 4–10 trang) gửi `uyenvnb@ptit.edu.vn`.
+Quy định: [docs/references/requirements/DoAn_XuLyAnh.md](docs/references/requirements/DoAn_XuLyAnh.md).

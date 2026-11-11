@@ -21,11 +21,14 @@ code/
 │   ├── common/      boxes (IoU, đổi định dạng, ghép tham lam), contracts, io, paths, seed, experiment
 │   ├── vaipe/       đọc nhãn VAIPE 6 lớp (train 820 / valid 176 / test 176); degrade (phép làm hỏng ảnh)
 │   ├── enhance/     A — nắn phối cảnh, chỉnh nghiêng, khử bóng, khử nhiễu, CLAHE (+ binarize: Sauvola, Otsu)
-│   ├── detect/      B — yolo.py
-│   ├── recognize/   C — vietocr_engine.py
-│   ├── assemble/    D — (chưa có)
-│   └── metrics/     P/R/F1 @IoU + ma trận nhầm lẫn, CER/WER, F1 khoản thuốc + bootstrap CI
-├── tools/           to_yolo, to_vietocr, make_degraded (L0/L2/L4), download_weights
+│   ├── detect/      B — yolo.py (YOLOv8s 6 lớp), classical.py (đối chứng: Sauvola + giãn + thành phần liên thông)
+│   ├── recognize/   C — vietocr_engine.py (C2 gốc, C3 tinh chỉnh), tesseract_engine.py (C0 xám, C1 Sauvola)
+│   ├── assemble/    D — rules, group (ghép khoản), lexicon (từ điển), vlm (đối chứng), load, scoring
+│   ├── metrics/     P/R/F1 @IoU + ma trận nhầm lẫn, CER/WER, F1 khoản thuốc + bootstrap CI
+│   └── pipeline/    ghép A → B → C → D, 4 preset: classical, hybrid, dl_c2, dl_c3 (chính)
+├── run_pipeline.py  CLI: ảnh / thư mục → out/<ảnh>.json + out/<ảnh>_overlay.png
+├── experiments/     thí nghiệm E-* (mục "Thí nghiệm" bên dưới)
+├── tools/           to_yolo, to_vietocr, make_degraded (L0/L2/L4), download_weights, build_items_gt, make_handoff
 ├── notebooks/       train_yolo, finetune_vietocr (Kaggle)
 ├── configs/         vietocr_vgg_transformer.yml (image_max_width 1024 — khớp lúc fine-tune)
 ├── weights/         yolo_vaipe.pt, vietocr_finetuned.pth — không commit, tải bằng tools/download_weights.py
@@ -43,7 +46,7 @@ Python 3.11 khuyến nghị (3.13 cũng chạy được).
 cd code
 python -m venv .venv
 # Windows: .venv\Scripts\activate        macOS/Linux: source .venv/bin/activate
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121   # CPU: .../whl/cpu
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130   # GPU (driver CUDA ≥ 13); CPU: .../whl/cpu
 pip install -r requirements-dl.txt
 pip install --no-deps -r requirements-vietocr.txt    # vietocr ghim thư viện cũ → cài không kèm phụ thuộc
 pip install -e .
@@ -64,6 +67,30 @@ python tools/make_degraded.py    # ảnh test suy giảm L0/L2/L4 cho thí nghi�
 ```
 
 Kỷ luật đánh giá: chọn tham số trên **valid**, test chỉ chạy một lần khi đã chốt cấu hình.
+
+## Chạy pipeline
+
+```bash
+python run_pipeline.py samples/                       # dl_c3: YOLOv8s + VietOCR tinh chỉnh + khối D
+python run_pipeline.py samples/ --preset classical    # đối chứng cổ điển (cần Tesseract 5 + vie)
+python run_pipeline.py anh.png --enhance full         # bật tiền xử lý khối A
+```
+
+## Thí nghiệm
+
+Chạy từ `code/`, kết quả ở `results/<mã>/`. Đáp án khoản thuốc cần file đáp án v1 đã soát tay (`results/s0/gt_items_<split>.json`, Drive nhóm).
+
+| Thứ tự | Lệnh | Thí nghiệm | Cần GPU |
+| :-: | :--- | :--- | :-: |
+| 1 | `python tools/make_degraded.py` · `python tools/build_items_gt.py --split test` | ảnh suy giảm, đáp án khoản thuốc | |
+| 2 | `python experiments/e_a2_deskew.py` · `e_a3_runtime.py` · `fig_a_enhance.py` | A: sai số chỉnh nghiêng, thời gian, hình minh họa | |
+| 3 | `python experiments/e_b_detection.py` | B: chọn tham số trên valid; cổ điển vs YOLO; YOLO theo lớp + mAP | ✓ |
+| 4 | `python experiments/e_c1_ocr.py` | C: C0/C1/C2/C3 trên vùng cắt chuẩn | ✓ |
+| 5 | `python experiments/e_d1.py` | D: luật ghép trên khung + chữ chuẩn | |
+| 6 | `python tools/make_handoff.py --preset dl_c3 dl_c2 hybrid classical` | file bàn giao B+C cho E-D2 | ✓ |
+| 7 | `python experiments/e_d2.py --variant dl_c3=../results/handoff/dl_c3.jsonl ... --check dl_c3 [--vlm]` | **bảng chính** đầu-cuối (VLM cần `code/.env`) | |
+| 8 | `python experiments/e_x1_ablation.py` | ablation: thay B / C bằng đáp án | ✓ |
+| 9 | `python experiments/e_a1_robustness.py` | độ bền L0/L2/L4 × có / không khối A | ✓ |
 
 ## Quy ước
 
