@@ -6,8 +6,8 @@ Mã của bốn bước nằm lần lượt ở \path{code/src/enhance/}, \path{
 Việc chia tập dùng seed 42 và loại một ảnh trùng byte với tập kiểm tra gốc của VAIPE.
 Hai ảnh được xem là cùng bệnh nhân khi hệ số Jaccard giữa tập chữ trong nhãn đạt từ \num{0.85} trở lên, cho \num{1030} nhóm, và mỗi nhóm nằm trọn trong một tập.
 Ảnh suy giảm được sinh bằng \path{code/tools/make_degraded.py} với seed 42.
-Mức L2 xoay $\pm2^\circ$, mờ Gauss $\sigma$ từ 0,8 đến 1,2, bóng nhẹ và nén JPEG chất lượng 60 đến 80.
-Mức L4 xoay đến $\pm5^\circ$, thêm biến dạng phối cảnh, mờ Gauss như L2 cộng mờ chuyển động dài 9~px, bóng đậm và nén JPEG chất lượng 25 đến 40.
+Suy giảm nhẹ xoay $\pm2^\circ$, mờ Gauss $\sigma$ từ 0,8 đến 1,2, bóng nhẹ và nén JPEG chất lượng 60 đến 80.
+Suy giảm nặng xoay đến $\pm5^\circ$, thêm biến dạng phối cảnh, mờ Gauss như suy giảm nhẹ cộng mờ chuyển động dài 9~px, bóng đậm và nén JPEG chất lượng 25 đến 40.
 
 Với bài toán phát hiện, dự đoán và nhãn chuẩn được ghép tham lam theo IoU giảm dần, mỗi nhãn chuẩn ghép tối đa một lần.
 Cặp có IoU từ 0,5 trở lên, đồng thời cùng lớp khi đánh giá theo lớp, được tính là dương tính đúng, và P, R, F1 tính theo công thức của Chương~8:

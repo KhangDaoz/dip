@@ -31,3 +31,6 @@ __pycache__/
 # Motion Studio / HyperFrames (gen video): skill, phong cách, video
 /styles/
 /videos/
+
+# Cấu hình VS Code cá nhân
+.vscode/

@@ -2,7 +2,7 @@
 % Nguồn số: results/E-X1/table.csv, results/E-A1/table.csv.
 Trước hết, hai bước hình học của tiền xử lý được kiểm tra riêng.
 Với thí nghiệm chỉnh nghiêng E-A2 trên 1232 lượt thử góc $0^\circ$--$10^\circ$ cộng nhiễu $<0{,}5^\circ$ của 176 ảnh, sai số trung vị là $0{,}063^\circ$, cực đại $0{,}261^\circ$ và 100\% lượt thử sai $\le0{,}5^\circ$.
-Với thí nghiệm nắn phối cảnh E-A3 trên 50 ảnh mỗi mức, thuật toán giữ nguyên 50 ảnh L0 và 49 ảnh L2 vì đơn đã chiếm trọn khung hình, và tìm được tờ giấy bằng contour trên 47/50 ảnh L4.
+Với thí nghiệm nắn phối cảnh E-A3 trên 50 ảnh mỗi mức, thuật toán giữ nguyên 50 ảnh gốc và 49 ảnh suy giảm nhẹ vì đơn đã chiếm trọn khung hình, và tìm được tờ giấy bằng contour trên 47/50 ảnh suy giảm nặng.
 Tiếp theo, nhóm thay lần lượt bước phát hiện và bước nhận dạng bằng nhãn chuẩn Ground Truth để tách nguồn lỗi, thí nghiệm E-X1, ở Bảng~\ref{tab:EX1}.
 
 \begin{table}[H]
@@ -23,7 +23,7 @@ YOLOv8s & VietOCR tinh chỉnh & \num{0.9966} & \num{0.9966} & \num{1.0000} & \n
 \end{table}
 
 Khi thay riêng khung Ground Truth đi cùng VietOCR tinh chỉnh hoặc khung YOLOv8s đi cùng chữ Ground Truth, F1 khoản đều đạt \num{1.0000}; mức giảm \num{0.0034} điểm ở pipeline chính, ứng với 173/176 đơn đúng hoàn toàn hay \num{0.9830}, chỉ xuất hiện khi ghép đồng thời khung dự đoán YOLOv8s với chữ VietOCR tinh chỉnh.
-Độ bền của pipeline đề xuất trên ba mức suy giảm L0, L2, L4 khi không tiền xử lý, ký hiệu \texttt{none}, và khi tiền xử lý đầy đủ, ký hiệu \texttt{full}, được trình bày ở Hình~\ref{fig:EA1}, thí nghiệm E-A1.
+Độ bền của pipeline đề xuất trên ba mức suy giảm là ảnh gốc, suy giảm nhẹ và suy giảm nặng khi không tiền xử lý, ký hiệu \texttt{none}, và khi tiền xử lý đầy đủ, ký hiệu \texttt{full}, được trình bày ở Hình~\ref{fig:EA1}, thí nghiệm E-A1.
 
 \begin{figure}[H]
 \centering
@@ -31,5 +31,5 @@ Khi thay riêng khung Ground Truth đi cùng VietOCR tinh chỉnh hoặc khung Y
 \caption{F1 khoản thuốc theo mức suy giảm trên 176 ảnh kiểm tra mỗi mức, có và không có tiền xử lý.}\label{fig:EA1}
 \end{figure}
 
-Kết quả chưa như kỳ vọng: bật tiền xử lý đầy đủ \texttt{full} cho F1 khoản thấp hơn ở cả ba mức: từ \num{0.9966} xuống \num{0.9955} ở L0, từ \num{0.9585} xuống \num{0.7692} ở L2 kéo đơn đúng từ \num{0.9091} xuống \num{0.4886}, và từ \num{0.1264} xuống \num{0.0470} ở L4.
-Một lý do có thể là phép đóng $81\times81$ ở bước khử bóng và CLAHE ở bước tăng tương phản để lại vài mảng xám ở rìa vùng bóng và làm nét chữ nhạt hơn, trong khi YOLOv8s chỉ huấn luyện trên ảnh gốc L0 nên dễ nhận nhầm vệt nền thành chữ. Thống kê ở \path{result/e_a1_robustness/diagnostics.csv} phù hợp với giải thích này, khi số khung/ảnh tăng từ \num{34.5} lên \num{50.5} ở L2 và từ \num{33.3} lên \num{54.5} ở L4, đồng thời sót vùng \texttt{date} khi chỉ thấy trên 58/176 ảnh L2 và 21/176 ảnh L4, kéo tỷ lệ ngày đúng ở L2 từ \num{1.0000} xuống \num{0.6932}. Việc tách riêng đóng góp của từng bước tiền xử lý được để cho các nghiên cứu tiếp theo.
+Kết quả chưa như kỳ vọng: bật tiền xử lý đầy đủ \texttt{full} cho F1 khoản thấp hơn ở cả ba mức: từ \num{0.9966} xuống \num{0.9955} ở ảnh gốc, từ \num{0.9585} xuống \num{0.7692} ở ảnh suy giảm nhẹ kéo đơn đúng từ \num{0.9091} xuống \num{0.4886}, và từ \num{0.1264} xuống \num{0.0470} ở ảnh suy giảm nặng.
+Một lý do có thể là phép đóng $81\times81$ ở bước khử bóng và CLAHE ở bước tăng tương phản để lại vài mảng xám ở rìa vùng bóng và làm nét chữ nhạt hơn, trong khi YOLOv8s chỉ huấn luyện trên ảnh gốc nên dễ nhận nhầm vệt nền thành chữ. Thống kê ở \path{result/e_a1_robustness/diagnostics.csv} phù hợp với giải thích này, khi số khung/ảnh tăng từ \num{34.5} lên \num{50.5} ở ảnh suy giảm nhẹ và từ \num{33.3} lên \num{54.5} ở ảnh suy giảm nặng, đồng thời sót vùng \texttt{date} khi chỉ thấy trên 58/176 ảnh suy giảm nhẹ và 21/176 ảnh suy giảm nặng, kéo tỷ lệ ngày đúng ở ảnh suy giảm nhẹ từ \num{1.0000} xuống \num{0.6932}. Việc tách riêng đóng góp của từng bước tiền xử lý được để cho các nghiên cứu tiếp theo.

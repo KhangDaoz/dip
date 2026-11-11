@@ -1,13 +1,15 @@
 % Mục 3.3. Nhận dạng chữ. Người viết: Khang. Chi tiết huấn luyện nằm ở Mục 4.3.
-Mỗi vùng chữ được cắt theo khung bao, đệm thêm một chút viền, rồi đưa vào VietOCR~\cite{vietocr} kiến trúc \texttt{vgg\_transformer}.
-Bộ mã hóa VGG19-BN~\cite{simonyan2015vgg} biến ảnh dòng chữ thành chuỗi đặc trưng, và bộ giải mã Transformer~\cite{vaswani2017attention} sinh từng ký tự trong bảng chữ tiếng Việt có dấu.
-Nhóm giải mã tham lam, không dùng beam search, để giữ tốc độ.
+Sau khi phát hiện, mỗi vùng chữ được cắt theo khung bao và đệm thêm một viền nhỏ để không mất nét chữ sát mép, rồi đưa vào bộ nhận dạng ký tự (OCR) để đọc thành văn bản.
+Nhóm dùng hai công cụ là VietOCR~\cite{vietocr}, một bộ OCR học sâu cho tiếng Việt, và Tesseract 5~\cite{smith2007tesseract}, một bộ OCR truyền thống có gói ngôn ngữ tiếng Việt.
 
-Phương án chính là tinh chỉnh VietOCR từ trọng số đã công bố trên chính các vùng chữ đơn thuốc, gồm cả lớp \texttt{other} để mô hình gặp đủ các kiểu chữ.
-Nhóm cũng nâng chiều rộng tối đa của ảnh vào từ 512 lên 1024~px, vì với 512 những vùng chữ dài như dòng chẩn đoán bị thu nhỏ theo chiều ngang và mất chữ.
+Phương án chính là tinh chỉnh VietOCR từ bộ trọng số đã công bố trên chính các vùng chữ của đơn thuốc, gồm cả lớp \texttt{other} để mô hình làm quen với nhiều kiểu chữ và nội dung khác nhau.
+Ngoài ra, chiều rộng tối đa của ảnh đưa vào được nâng từ 512 lên 1024~px.
+Với giới hạn 512, những vùng chữ dài như dòng chẩn đoán bị thu nhỏ theo chiều ngang, làm giảm độ phân giải không gian và mất chữ.
 
-Có ba phương án đối chứng.
-Phương án thứ nhất là VietOCR với trọng số đã công bố, không tinh chỉnh, gọi là VietOCR gốc; so với phương án chính, nó cho biết tinh chỉnh có tác dụng bao nhiêu.
-Hai phương án còn lại dùng Tesseract 5~\cite{smith2007tesseract} với gói ngôn ngữ tiếng Việt, đọc từng vùng như một dòng chữ, để so với một bộ OCR truyền thống.
-Tesseract xám nhận ảnh xám phóng lớn hai lần bằng nội suy bậc ba, tức thay đổi độ phân giải không gian của vùng cắt, còn Tesseract nhị phân giống vậy nhưng đầu vào là ảnh nhị phân Sauvola, nhằm kiểm tra xem nhị phân hóa có giúp nhận dạng hay không.
-Từ đây, bốn phương án được gọi là Tesseract xám, Tesseract nhị phân, VietOCR gốc và VietOCR tinh chỉnh.
+Để đánh giá phương án chính, nhóm so sánh với ba phương án đối chứng.
+Thứ nhất là VietOCR gốc, dùng trọng số đã công bố mà không tinh chỉnh, để biết việc tinh chỉnh cải thiện được bao nhiêu.
+Thứ hai và thứ ba là Tesseract, đọc mỗi vùng như một dòng chữ.
+Tesseract xám nhận ảnh mức xám phóng lớn hai lần bằng nội suy bậc ba, còn Tesseract nhị phân làm tương tự nhưng ảnh được nhị phân hóa bằng Sauvola trước khi đọc.
+Hai phương án này cho biết nhị phân hóa có giúp Tesseract nhận dạng tốt hơn hay không.
+
+Như vậy, nhóm so sánh bốn phương án OCR gồm Tesseract xám, Tesseract nhị phân, VietOCR gốc và VietOCR tinh chỉnh.
