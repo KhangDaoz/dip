@@ -1,0 +1,15 @@
+{"image":"VAIPE_P_TRAIN_1.png","boxes":[
+{"idx":1,"class":"diagnose","conf":0.832,"xyxy":[27.9,271.8,718.1,294.9],"ocr":"2) Chản dưỡng Khôngphưỡc nsưỡn;(100) Tăng não căn (mg+20mg","gt":"Chấn đoán: E11 - Bệnh đái tháo đường không phụ thuộc insulin; (110) Tăng huyết áp vô căn (nguyên","iou":0.95},
+{"idx":2,"class":"diagnose","conf":0.911,"xyxy":[25.6,294.0,65.2,312.2],"ocr":"phảt)","gt":"phát)","iou":0.97},
+{"idx":3,"class":"drugname","conf":0.946,"xyxy":[45.6,386.0,325.6,413.0],"ocr":"1) GLUCOFAST 850 850mg","gt":"1) GLUCOFAST 850 850mg","iou":1.0},
+{"idx":4,"class":"quantity","conf":0.944,"xyxy":[594.7,387.0,707.8,409.1],"ocr":"SL. 60 ViÊn","gt":"SL: 60 Viên","iou":0.99},
+{"idx":5,"class":"usage","conf":0.945,"xyxy":[288.5,416.1,376.2,436.4],"ocr":"Sảng 1 Viền","gt":"Sáng 1 Viên","iou":0.97},
+{"idx":6,"class":"usage","conf":0.956,"xyxy":[513.5,414.0,604.8,432.7],"ocr":"Chiều 1 ViÊn","gt":"Chiều 1 Viên","iou":0.98},
+{"idx":7,"class":"drugname","conf":0.906,"xyxy":[49.0,438.0,474.1,465.6],"ocr":"2) DIAMICRON MR TAB 30MG 60'S 30mg","gt":"2) DIAMICRON MR TAB 30MG 60'S 30mg","iou":0.97},
+{"idx":8,"class":"quantity","conf":0.956,"xyxy":[594.8,439.0,708.4,461.1],"ocr":"SL; 30 ViÊn","gt":"SL: 30 Viên","iou":0.99},
+{"idx":9,"class":"usage","conf":0.95,"xyxy":[288.3,467.9,375.9,488.3],"ocr":"Sảng 1 Viền","gt":"Sáng 1 Viên","iou":0.97},
+{"idx":10,"class":"drugname","conf":0.933,"xyxy":[43.8,490.3,258.4,518.0],"ocr":"3) ENALAPRIL 5mg","gt":"3) ENALAPRIL 5mg","iou":0.97},
+{"idx":11,"class":"quantity","conf":0.945,"xyxy":[594.6,490.9,708.1,513.2],"ocr":"SL. 30 ViÊn","gt":"SL: 30 Viên","iou":0.98},
+{"idx":12,"class":"usage","conf":0.915,"xyxy":[288.8,519.2,376.1,540.2],"ocr":"Sảng 1 ViÊn","gt":"Sáng 1 Viên","iou":0.98},
+{"idx":13,"class":"date","conf":0.938,"xyxy":[484.5,632.7,620.8,651.8],"ocr":"1) Ngảy 18/00 / 201g","gt":"Ngày 18/09/2019","iou":0.97}],
+"missed_gt":[]}

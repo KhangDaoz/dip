@@ -16,6 +16,52 @@
 | **Đánh giá** | F1 khoản thuốc trên 176 ảnh test, kèm khoảng tin cậy 95 % (bootstrap) |
 | **Đã kiểm chứng trước** | Nguyên mẫu D1–D3 đạt **F1 = 1,000 (443/443 khoản)** trên nhãn chuẩn của 176 ảnh test, và **3/3 khoản** trên file mẫu của Khang |
 
+### 0.1 Trạng thái (cập nhật 11/11, nhánh `thangnt`)
+
+**Đã xong (code đã kiểm):**
+
+| Hạng mục | Bằng chứng |
+| :--- | :--- |
+| Code D1–D5 + độ đo + dựng đáp án + E-D1, E-D2 (mục 8.2) | `pytest` **66/66** (27 của Hiếu + 39 khối D), pyflakes sạch; chạy được sau `pip install -e .`, không cần `PYTHONPATH` |
+| Đáp án `data/1_vaipe/test/items_gt.json` | 176 ảnh, 443 khoản, 0 vi phạm bất biến; tên lấy từ `lines` drugname (3 ảnh từng sai đã đúng) |
+| **E-D1** | F1 = **1,000** (443/443) ở cả "có nhãn" và "chỉ text"; bật từ điển cũng 1,000 |
+| Kiểm rộng | 1172 ảnh (train + valid + test), 2843 khoản, cả 2 chế độ: 0 ảnh vi phạm (số khoản = số tên, khoản nào cũng có SL, đơn nào cũng có ngày) |
+| Lỗi tìm ra khi kiểm và đã sửa | (1) chuỗi số "51…" bị nhận là SL; (2) tên thuốc xuống dòng có box chồng nhẹ không được gộp; (3) từ điển kéo thuốc ngoài từ điển sang **liều khác** → thêm "chặn liều sạch" (mục 4.4) |
+| `requirements.txt` | Thêm `rapidfuzz`, `openai`; thêm dòng `# -*- coding: utf-8 -*-` vì trên Windows (cp1252) pip **không đọc được** chú thích tiếng Việt. Lỗi này có từ trước. `requirements-ocr.txt` của Khang bị cùng lỗi |
+
+**Chưa làm:**
+
+| # | Việc | Chờ gì | Ghi chú |
+| :-- | :--- | :--- | :--- |
+| 1 | **Soát tay 10 ảnh chẩn đoán và ngày** trong `items_gt.json` | Thắng (đang làm) | Danh sách bên dưới. Ghi kết quả vào `results/gt_review_D.csv` (`image_id, date_ok, diagnose_ok, ghi_chu`) |
+| 2 | **VLM gọi API thật** (D5) | Key FPT AI hoặc OpenRouter (**để sau**) | Code, prompt, cache, parse đã có và đã test (không gọi mạng). Cần điền `code/.env` theo `.env.example` và kiểm tên model bằng lệnh liệt kê model |
+| 3 | **E-D2 thật** trên 176 ảnh test | File của Khang cho đủ 176 ảnh test | Script đã chạy thử được với file mẫu 1 ảnh. Lệnh: `python experiments/e_d2.py --variant dl_c3=<file> --check dl_c3 [--vlm]` |
+| 4 | Phân tích 20 ca lỗi + 2 hình (mục 6.2) | Sau việc 3 | |
+| 5 | Báo cáo phần D + Thảo luận + 2–3 slide | Sau việc 3 | Mục 11 |
+| 6 | Commit + push code khối D | Thắng | `plan_Thang.md` đã push; code chưa |
+
+**10 ảnh cần soát** (chọn có chủ đích, seed 42). Trên test, 30 ảnh mẫu 2 cũng chính là 30 ảnh có ngày dạng chữ, nên 4 ảnh mẫu 2
+đã phủ luôn tiêu chí "ngày dạng chữ":
+
+| Ảnh | Loại | date (đáp án) | diagnose (đáp án, 80 ký tự đầu) |
+| :--- | :--- | :--- | :--- |
+| VAIPE_P_TRAIN_1082 | mẫu 2, ngày chữ, CĐ nhiều dòng | 31/12/2021 | L03 - Viêm mô bào; (L23.9) Viêm da dị ứng tiếp xúc, nguyên nhân không đặc hiệu |
+| VAIPE_P_TRAIN_278 | mẫu 2, ngày chữ, CĐ nhiều dòng | 21/12/2021 | K12.2 - Viêm mô tế bào và áp xe của miệng; (KO4) Bệnh tủy và mô quanh chân răng |
+| VAIPE_P_TRAIN_490 | mẫu 2, ngày chữ, CĐ nhiều dòng | 27/12/2021 | E11 - Bệnh đái tháo đường không phụ thuộc insuline; (J42) Viêm phế quản mãn tính |
+| VAIPE_P_TRAIN_650 | mẫu 2, ngày chữ | 27/12/2021 | J42 - Viêm phế quản mãn tính không phân loại |
+| VAIPE_P_TRAIN_207 | CĐ nhiều dòng | 18/09/2019 | E11 - Bệnh đái tháo đường không phụ thuộc insulin; (110) Tăng huyết áp vô căn (n… |
+| VAIPE_P_TRAIN_228 | CĐ nhiều dòng | 25/06/2018 | [10 - Tăng huyết áp vô căn (nguyên phát); (G45) Cơn thiếu máu não thoáng qua và… |
+| VAIPE_P_TRAIN_29 | CĐ nhiều dòng | 27/11/2018 | [10 - Tăng huyết áp vô căn (nguyên phát); (E78) Rối loạn chuyển hoá lipoprotein… |
+| VAIPE_P_TRAIN_139 | ngẫu nhiên (từng sai tên ở GT v1) | 27/04/2018 | J20 - Viêm phế quản cấp |
+| VAIPE_P_TRAIN_189 | ngẫu nhiên | 07/04/2021 | R07.2 - Đau trước tim; (H61.2) Nút ráy tai trái; (G61) Viêm đa dây thần kinh |
+| VAIPE_P_TRAIN_773 | ngẫu nhiên | 26/07/2021 | I10 - Bệnh lý tăng huyết áp |
+
+**Khi soát, chú ý:** chữ trong **nhãn gốc VAIPE** đã có lỗi kiểu OCR, ví dụ `[10` thay cho `I10`, `(110)` thay cho `(I10)`,
+`KO4` thay cho `K04`.
+- Nếu đáp án **khớp nhãn gốc** thì code đúng, ghi `diagnose_ok = 1` và ghi chú "lỗi từ nhãn nguồn".
+- **Không sửa tay** các lỗi này, để đáp án nhất quán với nhãn VAIPE. Nêu chuyện này trong phần giới hạn của báo cáo.
+- Chẩn đoán chỉ là độ đo phụ, không ảnh hưởng F1 khoản.
+
 ---
 
 ## 1. Phạm vi và giả định
@@ -226,8 +272,17 @@ Vì vậy cần giả định G1. Đã thử sửa góc ngay trên tọa độ: 
 - Còn lại: **giữ tên sau D3**.
 - **Khóa liều:** nếu hai ứng viên sát nhau (s₁ − s₂ < 5) mà khác dãy số (ví dụ 30MG và 60MG, S9), thì chỉ thay khi dãy số
   trong tên OCR trùng với ứng viên.
+- **Chặn liều sạch** (bổ sung khi kiểm code, 11/11): ở vùng 80 ≤ s₁ < 90, nếu tên OCR có một liều **đọc sạch** (dạng
+  `250MG`, `0,25g`) mà ứng viên không có liều đó, thì giữ tên OCR.
+  - *Lý do:* chạy E-D1 có bật từ điển, thuốc ngoài từ điển `CEPHALEXIN 250MG 0,25g` (2 đơn test) bị kéo thành
+    `CEPHALEXIN PMP 500 0,5g`. Điểm là 80, bỏ xa ứng viên thứ hai, tức là **sai liều**.
+  - *Minh bạch:* ca này được phát hiện **trên test**, nên chi phí đo trên **valid**. Ở CER OCR 0,10, tỉ lệ tên đạt
+    CER ≤ 0,1 giảm từ 0,973 xuống 0,965; ở CER 0,03–0,06 không đổi.
+  - *Phương án bị loại:* bắt cả dãy số phải khớp ở vùng 80–90. Ở CER 0,10, tỉ lệ đạt giảm mạnh, 0,973 xuống 0,768, vì OCR
+    hay đọc sai chữ số.
+  - Báo cáo phải ghi rõ luật này được thêm sau khi xem một ca của test.
 
-**Tham số:** 90 / 80 / 5, **cố định trước khi chạy test, không chỉnh**.
+**Tham số:** 90 / 80 / 5, **cố định trước khi chạy E-D2, không chỉnh**.
 
 **Lý do và bằng chứng** (mô phỏng lỗi kiểu OCR trên tên thuốc của valid, ô ghi "đúng / kéo nhầm / bỏ qua"):
 
@@ -486,10 +541,11 @@ File của Khang trễ thì làm bước 1–5 và phần viết phương pháp 
 
 ## 12. Checklist xong
 
-- [ ] Test `tests/test_assemble.py` xanh, kể cả test "không đọc `gt`".
-- [ ] `data/1_vaipe/test/items_gt.json` (đọc tên từ `lines`), 10 ảnh chẩn đoán và ngày đã soát.
-- [ ] E-D1 = 1,000 hoặc có giải thích từng ca sai.
+- [x] Test `tests/test_assemble.py` xanh, kể cả test "không đọc `gt`" (66/66 toàn bộ).
+- [x] `data/1_vaipe/test/items_gt.json` (đọc tên từ `lines`).
+- [ ] 10 ảnh chẩn đoán và ngày đã soát (danh sách ở mục 0.1).
+- [x] E-D1 = 1,000 (443/443, cả 2 chế độ).
 - [ ] E-D2 có ít nhất dòng (iii), (v), (kiểm), mỗi dòng có khoảng tin cậy 95 % và cột "không từ điển".
-- [ ] `config.json` của mỗi thí nghiệm có commit hash, tham số, tên model VLM.
+- [ ] `config.json` của mỗi thí nghiệm có commit hash, tham số, tên model VLM (E-D1 đã có; chạy lại E-D1 sau khi commit để ghi đúng hash).
 - [ ] `error_analysis.csv` (20 ca) + 2 hình.
 - [ ] Báo cáo phần D + Thảo luận + phụ lục prompt; 2–3 slide; 1–2 câu khai báo AI (AI viết code và đo kiểm; Thắng chọn phương án, soát đáp án, chạy và kiểm số liệu).
