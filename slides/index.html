@@ -10,12 +10,10 @@
     Home / End : slide đầu / cuối        F : toàn màn hình
     N : bật/tắt ghi chú người nói       E : chế độ sửa chữ (Ctrl+S tải file HTML đã sửa)
   XUẤT PDF: Ctrl+P → Lưu thành PDF, Khổ giấy: tùy chỉnh 1920×1080 hoặc A4 ngang, Lề: Không, bật "Đồ họa nền".
-  ĐỔI MÀU: sửa biến trong :root.   ĐỔI FONT: sửa thẻ <link> Google Fonts.
+  ĐỔI MÀU: sửa biến trong :root.   ĐỔI FONT: font nhúng sẵn trong fonts/ (chạy được khi không có mạng).
   Phong cách: MedTrack Capsule (figure/FRAME.md). Số liệu: report/latex/result/ (176 ảnh kiểm tra).
 -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fonts/fonts.css">
 <style>
 /* ===========================================
    THEME — MedTrack Capsule (figure/FRAME.md)
@@ -137,6 +135,8 @@ h2{margin-top:22px;font:700 68px/1.06 var(--f-display);letter-spacing:-.02em}
 .slide.visible .reveal.d5{transition-delay:.48s}.slide.visible .reveal.d6{transition-delay:.58s}
 .pop{opacity:0;transform:rotate(var(--rot,0)) scale(.6);transition:opacity .5s,transform .6s cubic-bezier(.3,1.4,.5,1)}
 .slide.visible .pop{opacity:1;transform:rotate(var(--rot,0)) scale(1);transition-delay:.3s}
+@page{size:1920px 1080px;margin:0}
+@media print{html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.slide::before{z-index:0}.slide::after{display:none}}
 @media print{.reveal,.pop{opacity:1!important;transform:rotate(var(--rot,0))!important}.fill{width:var(--w)!important;transition:none}}
 
 /* ===========================================
