@@ -59,14 +59,3 @@ Quyết định 09/11 (kế hoạch mục 3.2): bộ 4 **không gán nhãn chi t
 | Trường | T6 → Đối xứng nền → ISODATA / Tam giác | T1, T2, T3, T5, T8 |
 | Khang | K8, K9 (mở rộng) → K6 → K3 | GT 57 ảnh, K1, K2, K4, K5 |
 | Thắng | S6 → S5 → S4 → Closing dọc | GT ≥ 50 ảnh, S1, S2, S3 |
-
-## 11/11 — v2 (theo [plan.md](../plan.md) mục 8)
-
-| Giai đoạn | Việc | Trạng thái | Ghi chú |
-| :--- | :--- | :---: | :--- |
-| GĐ1 | Dọn legacy, boxes, contracts, vaipe/dataset, to_yolo, to_vietocr, make_degraded | ✅ | commit `ec63481`, 27/27 test |
-| GĐ2 | Khối A `enhance/`, B `detect/{yolo,classical}`, C `recognize/` (C0–C3), D `assemble/` (luật, ghép, từ điển, VLM), `metrics/`, `pipeline.py`, `run_pipeline.py`, `app.py`, `build_items_gt.py`, notebook Kaggle YOLO + VietOCR, `requirements-dl.txt`, test | ✅ code | Đã chạy 31 test logic thuần (luật D1, ghép D2, parser, F1 khoản) — qua hết. **Cần chạy `pytest` đầy đủ trên máy có OpenCV/numpy** |
-| GĐ2 | Trường: push `notebooks/train_yolo.ipynb` lên Kaggle T4×2 | ⬜ | ~2h30' nền |
-| GĐ2 | Khang: push `notebooks/finetune_vietocr.ipynb` lên Kaggle session 2 | ⬜ | 4–6h nền; trễ → C2 |
-| GĐ1 | Thắng: `python tools/build_items_gt.py --split all --review 10`, soát vào `results/gt_review.csv` | ⬜ | |
-| GĐ3 | Script thí nghiệm E-A1, E-B1/B2, E-C1, E-D1/D2, E-X1 | ⬜ | |

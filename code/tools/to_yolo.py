@@ -53,7 +53,7 @@ def write_data_yaml(out_root: Path, train_dir: Path, valid_dir: Path):
     yaml = f"""path: {out_root.as_posix()}
 train: {train_dir.name}/images
 val: {valid_dir.name}/images
-test: test/images
+test: {train_dir.name}/images  # dùng valid làm test tạm; test thật = val
 
 names:
   0: drugname

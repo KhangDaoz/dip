@@ -1,30 +1,3 @@
-# Thí nghiệm v2 (plan.md §5, §6) — chạy từ `code/`
-
-Chuẩn bị: data VAIPE ở `data/1_vaipe/`, trọng số ở `code/weights/` (xem `weights/README.md`), rồi:
-
-```bash
-python tools/build_items_gt.py --split all       # đáp án khoản thuốc (bắt buộc cho E-D/E-X/E-A1)
-python tools/make_degraded.py                    # ảnh L0/L2/L4 cho E-A1
-```
-
-| Thứ tự | Lệnh | Người | Ra | Thời gian ước tính |
-| :---: | :--- | :--- | :--- | :--- |
-| 1 | `python experiments/e_d_items.py --pipelines dl_c2 --limit 10` | ai cũng được | thử nhanh, kiểm tra trọng số | 2' |
-| 2 | `python experiments/e_b_detection.py` | Trường | `results/e_b/` E-B0 (chọn conf trên valid), E-B1, E-B2 + ma trận nhầm lẫn | 10–20' |
-| 3 | `python experiments/e_c1_ocr.py --limit 3000` | Khang | `results/e_c1/table.csv` C0–C3 | 20–40' (Tesseract chậm) |
-| 4 | `python experiments/e_d_items.py` | Thắng | `results/e_d1/`, **`results/e_d2/table.csv` (bảng chính)** | 30–60' |
-| 5 | `python experiments/e_x1_ablation.py --ocr C3` | Hiếu | `results/e_x1/table.csv` | 15' (tái dùng không được cache của E-D2) |
-| 6 | `python experiments/e_a1_robustness.py --ocr C3` | Hiếu | `results/e_a1/` bảng + `robustness.png` | 30–60' |
-| 7 | `python experiments/e_a2_deskew.py` | Hiếu | `results/e_a2/table.csv` | 5' |
-
-Dự đoán từng ảnh được cache (`results/<mã>/<biến thể>/<id>.json`): chạy lại chỉ tính phần thiếu; đổi cấu hình thì
-xóa thư mục cache tương ứng. Chưa có C3 → thay `--ocr C2` / `--pipelines dl_c2` (plan §8.4).
-Kỷ luật: chọn tham số (conf YOLO, τ từ điển) trên **valid**; test chạy một lần với cấu hình đã chốt.
-
----
-
-# (Cũ, v1 — không còn chạy được vì import module đã chuyển sang `legacy/`)
-
 # Thí nghiệm
 
 Mỗi thí nghiệm là **một file** `<mã>_<tên>.py`, ghi kết quả vào `results/<mã>/` (CSV, hình, `config.json`). Copy [`_template.py`](_template.py), đổi `EXP_ID` và `CONFIG`, rồi viết `load_data`, `run`, `plot`.
