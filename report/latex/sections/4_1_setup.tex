@@ -1,7 +1,7 @@
 % Mục 4.1. Thiết lập và độ đo (khoảng 0,5 trang). Người viết: Hiếu.
 Quá trình huấn luyện chạy trên GPU T4 của Kaggle, còn suy luận và đánh giá chạy trên máy cá nhân dùng CPU Intel Core i7-12700H, GPU RTX~3050 4~GB, Python 3.13 và \texttt{seed} bằng 42, theo các thư viện trong \path{code/requirements-dl.txt}.
 Mọi số liệu được tính trên 176 ảnh kiểm tra bằng mã trong \path{code/experiments/}, mỗi thí nghiệm một kịch bản.
-Mã của bốn khối nằm lần lượt ở \path{code/src/enhance/}, \path{code/src/detect/}, \path{code/src/recognize/} và \path{code/src/assemble/}, và các khối trao đổi dữ liệu qua hợp đồng chung \path{code/src/common/contracts.py}, trong đó khung bao có dạng $[x_0,y_0,x_1,y_1]$ tính theo pixel.
+Mã của bốn bước nằm lần lượt ở \path{code/src/enhance/}, \path{code/src/detect/}, \path{code/src/recognize/} và \path{code/src/assemble/}, và các bước trao đổi dữ liệu qua hợp đồng chung \path{code/src/common/contracts.py}, trong đó khung bao có dạng $[x_0,y_0,x_1,y_1]$ tính theo pixel.
 
 Việc chia tập dùng seed 42 và loại một ảnh trùng byte với tập kiểm tra gốc của VAIPE.
 Hai ảnh được xem là cùng bệnh nhân khi hệ số Jaccard giữa tập chữ trong nhãn đạt từ \num{0.85} trở lên, cho \num{1030} nhóm, và mỗi nhóm nằm trọn trong một tập.

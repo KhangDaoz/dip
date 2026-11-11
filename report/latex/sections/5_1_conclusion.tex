@@ -1,6 +1,6 @@
 % Mục 6. Kết luận: kết quả đạt được, hạn chế, hướng phát triển. Người viết: Hiếu.
 \textbf{Kết quả đạt được.}
-Đồ án xây dựng pipeline trích xuất đơn thuốc gồm YOLOv8s, VietOCR tinh chỉnh và luật ghép khoản có từ điển, kèm một khối tiền xử lý cổ điển tùy chọn.
+Đồ án xây dựng pipeline trích xuất đơn thuốc gồm YOLOv8s, VietOCR tinh chỉnh và luật ghép khoản có từ điển, kèm một bước tiền xử lý cổ điển tùy chọn.
 Trên 176 ảnh kiểm tra của VAIPE, pipeline chính đạt F1 khoản thuốc \num{0.9966} (khoảng tin cậy 95\%: $[\num{0.9930}; \num{1.0000}]$), cao hơn bản lai (\num{0.9865}) và bản cổ điển (\num{0.9487}).
 So với VLM zero-shot Qwen3.8-27B, hai bên ngang nhau khi có từ điển; khi bỏ từ điển pipeline cao hơn (\num{0.9966} so với \num{0.9875}), nhưng chênh lệch chỉ ứng với vài khoản thuốc.
 Tinh chỉnh VietOCR giảm CER từ \num{0.0864} xuống \num{0.0329}, còn từ điển tên thuốc nâng F1 khoản của các cấu hình chưa tinh chỉnh thêm \num{0.0316} đến \num{0.0452} điểm.
@@ -12,6 +12,6 @@ Thực nghiệm độ bền cho thấy hai bước hình học (nắn phối c�
 \textbf{Hướng phát triển.}
 Nhóm dự định
 (1) thu thập ảnh đơn chụp thật từ nhiều bệnh viện;
-(2) huấn luyện lại YOLOv8s và VietOCR có tăng cường suy giảm, đồng thời khảo sát riêng ảnh hưởng của từng bước khối A;
+(2) huấn luyện lại YOLOv8s và VietOCR có tăng cường suy giảm, đồng thời khảo sát riêng ảnh hưởng của từng bước tiền xử lý;
 (3) bỏ qua các vùng \texttt{other}, chiếm khoảng 68\% số vùng, trước khi nhận dạng để giảm thời gian chạy;
 (4) thay từ điển dựng từ tập huấn luyện bằng danh mục thuốc quốc gia.

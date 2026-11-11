@@ -1,5 +1,5 @@
 % ===== Phụ lục B — Ví dụ kết quả và ca lỗi =====
-% Hai nhóm hình: (1) kết quả và ca lỗi của pipeline, (2) kiểm thử riêng khối A.
+% Hai nhóm hình: (1) kết quả và ca lỗi của pipeline, (2) kiểm thử riêng tiền xử lý.
 \subsection*{Kết quả và ca lỗi}
 
 Hình~\ref{fig:example} là đầu ra của toàn pipeline trên một đơn thuốc.
@@ -7,7 +7,7 @@ Hình~\ref{fig:example} là đầu ra của toàn pipeline trên một đơn thu
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.5\linewidth]{common/pipeline_example.png}
-\caption{Kết quả đầu-cuối trên một ảnh mẫu VAIPE sau \khoi{A}. Khung màu theo lớp YOLO gồm đỏ (\texttt{drugname}), xanh lá (\texttt{quantity}), xanh dương (\texttt{usage}), cam (\texttt{diagnose}), tím (\texttt{date}) và xám (\texttt{other}). Khung vàng \#1 đến \#3 là ba khoản thuốc sau khối D. Cả ba khoản đúng tên, số lượng và cách dùng, lỗi duy nhất là mã bệnh ``I10'' bị đọc thành ``110'', cùng kiểu lỗi với Hình~\ref{fig:c3err}(c).}\label{fig:example}
+\caption{Kết quả đầu-cuối trên một ảnh mẫu VAIPE sau tiền xử lý. Khung màu theo lớp YOLO gồm đỏ (\texttt{drugname}), xanh lá (\texttt{quantity}), xanh dương (\texttt{usage}), cam (\texttt{diagnose}), tím (\texttt{date}) và xám (\texttt{other}). Khung vàng \#1 đến \#3 là ba khoản thuốc sau bước ghép khoản. Cả ba khoản đúng tên, số lượng và cách dùng, lỗi duy nhất là mã bệnh ``I10'' bị đọc thành ``110'', cùng kiểu lỗi với Hình~\ref{fig:c3err}(c).}\label{fig:example}
 \end{figure}
 
 Ma trận nhầm lẫn ở Hình~\ref{fig:confusion} cho thấy YOLOv8s gần như không nhầm giữa các lớp; lỗi chủ yếu là sót hoặc thừa khung \texttt{other}.
@@ -23,10 +23,10 @@ Hình~\ref{fig:c3err} là ba vùng VietOCR tinh chỉnh đọc khác nhãn, tron
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\linewidth]{e_c1_ocr/c3_errors.png}
-\caption{Ba vùng C3 đọc khác nhãn. (a) Nhãn sai, C3 đọc đúng. (b) C3 sai dấu từ ``Gẫy'' thành ``Gắy'' và từ ``vai'' thành ``vài''. (c) Nhãn huấn luyện ghi ``110'' thay vì ``I10'' và C3 đọc theo nhãn.}\label{fig:c3err}
+\caption{Ba vùng VietOCR tinh chỉnh đọc khác nhãn. (a) Nhãn sai, mô hình đọc đúng. (b) Mô hình sai dấu từ ``Gẫy'' thành ``Gắy'' và từ ``vai'' thành ``vài''. (c) Nhãn huấn luyện ghi ``110'' thay vì ``I10'' và mô hình đọc theo nhãn.}\label{fig:c3err}
 \end{figure}
 
-\subsection*{Kiểm thử khối A}
+\subsection*{Kiểm thử tiền xử lý}
 
 Hình~\ref{fig:levels} là cùng một đơn ở ba mức suy giảm dùng trong thí nghiệm độ bền.
 
@@ -41,13 +41,13 @@ Hình~\ref{fig:shadow} minh họa bước khử bóng bằng phép đóng và ph
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\linewidth]{fig_enhance/a_shadow.png}
-\caption{Khử bóng ở bước A3: ảnh xám có bóng, nền ước lượng bằng phép đóng $81\times81$, ảnh sau khi chia cho nền.}\label{fig:shadow}
+\caption{Khử bóng ở bước khử bóng: ảnh xám có bóng, nền ước lượng bằng phép đóng $81\times81$, ảnh sau khi chia cho nền.}\label{fig:shadow}
 \end{figure}
 
-Hình~\ref{fig:asteps} là một ảnh L4 qua đủ năm bước của khối A.
+Hình~\ref{fig:asteps} là một ảnh L4 qua đủ năm bước tiền xử lý.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{fig_enhance/a_steps.png}
-\caption{Ảnh L4 qua các bước của khối A. Nắn phối cảnh và chia nền loại bỏ nền bàn tối và vùng bóng, nhưng độ mờ vẫn còn và CLAHE làm xuất hiện vài vệt khối ở vùng nền.}\label{fig:asteps}
+\caption{Ảnh L4 qua các bước tiền xử lý. Nắn phối cảnh và chia nền loại bỏ nền bàn tối và vùng bóng, nhưng độ mờ vẫn còn và CLAHE làm xuất hiện vài vệt khối ở vùng nền.}\label{fig:asteps}
 \end{figure}

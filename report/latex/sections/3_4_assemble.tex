@@ -1,6 +1,6 @@
-% Mục 3.4. Khối D. Người viết: Thắng. Ngưỡng số cụ thể nằm ở Phụ lục A và Mục 4.4.
-Khối D là bước hậu xử lý, biến danh sách vùng chữ đã đọc thành bản ghi đơn thuốc qua bốn bước.
-\begin{enumerate}[label=D\arabic*.]
+% Mục 3.4. Ghép khoản thuốc. Người viết: Thắng. Ngưỡng số cụ thể nằm ở Phụ lục A và Mục 4.4.
+Ghép khoản thuốc là bước hậu xử lý, biến danh sách vùng chữ đã đọc thành bản ghi đơn thuốc qua bốn bước.
+\begin{enumerate}[label=\arabic*.]
   \item Xác định lớp. Lớp của mỗi vùng trước hết lấy từ YOLO. Chỉ khi YOLO gán \texttt{other} hoặc không đủ tin cậy thì lớp mới được xét lại bằng biểu thức chính quy trên chữ, ví dụ tên thuốc bắt đầu bằng ``$N$)'' và số lượng bắt đầu bằng ``SL''. Hai vùng chồng nhau nhiều thì chỉ giữ vùng có độ tin cậy cao hơn.
   \item Gom thành khoản. Các vùng được gom theo dải ngang. Tên thuốc được sắp từ trên xuống, mỗi tên mở một dải kéo đến tên kế tiếp, riêng dải cuối kéo đến dòng ngày. Vùng số lượng và cách dùng có tâm nằm trong dải thì thuộc khoản đó. Tên thuốc bị xuống dòng, tức không có tiền tố ``$N$)'', cùng lề trái và nằm ngay dưới, được nối vào tên trước. Nếu OCR đọc tên thuốc và ``SL: $N$'' thành một vùng thì phần số lượng được tách riêng. Chẩn đoán là chữ của các vùng \texttt{diagnose} nằm trên tên thuốc đầu tiên, nối theo thứ tự đọc.
   \item Chuẩn hóa chữ. Nhóm bỏ tiền tố ``$N$)'', tách số lượng và đơn vị từ chuỗi như ``SL: 28 Viên'', chuẩn hóa cách dùng, đọc ngày và kiểm tra ngày hợp lệ. Các luật chịu được một số lỗi OCR thường gặp như ``)'' thành ``]'' hay ``S'' thành ``5'', còn trường hợp không chắc chắn thì giữ nguyên hoặc để trống.
@@ -8,4 +8,4 @@ Khối D là bước hậu xử lý, biến danh sách vùng chữ đã đọc t
 \end{enumerate}
 Phương pháp đối chứng là một mô hình thị giác--ngôn ngữ (VLM) thuộc họ Qwen-VL~\cite{bai2025qwen25vl}, cụ thể là Qwen3.8-27B.
 Mô hình nhận nguyên ảnh cùng một lời nhắc cố định và trả về JSON theo đúng lược đồ trên.
-Kết quả của VLM đi qua cùng bước chuẩn hóa D3 và từ điển D4 để việc so sánh công bằng.
+Kết quả của VLM đi qua cùng bước chuẩn hóa chữ và bước sửa tên bằng từ điển để việc so sánh công bằng.

@@ -1,9 +1,9 @@
 % ===== Mở đầu mục 3 — Tổng quan pipeline (≈ 0,5 trang) =====
-% Viết gì: sơ đồ, hợp đồng dữ liệu giữa các khối, bảng chương học phần. Người: Hiếu.
-Pipeline gồm bốn khối nối tiếp như minh họa ở Hình~\ref{fig:pipeline}, trong đó các khối trao đổi dữ liệu qua khung bao chữ nhật theo tọa độ pixel.
-Khối D là bước hậu xử lý, ghép các vùng chữ thành bản ghi JSON.
-Mỗi khối có một phương pháp đối chứng, và toàn pipeline được so với một VLM zero-shot.
-Bảng~\ref{tab:chapters} cho biết kiến thức của học phần được dùng ở đâu.
+% Viết gì: sơ đồ pipeline. Bảng kiến thức học phần nằm ở Phụ lục A. Người: Hiếu.
+Pipeline gồm bốn bước nối tiếp là tiền xử lý ảnh, phát hiện vùng chữ, nhận dạng chữ và ghép khoản thuốc, như minh họa ở Hình~\ref{fig:pipeline}. Các bước trao đổi dữ liệu qua khung bao chữ nhật theo tọa độ pixel.
+Ghép khoản thuốc là bước hậu xử lý, ghép các vùng chữ thành bản ghi JSON.
+Mỗi bước có một phương pháp đối chứng, và toàn pipeline được so với một VLM zero-shot.
+Phụ lục~\ref{app:chapters} tổng hợp kiến thức của học phần được dùng ở bước nào.
 
 \begin{figure}[H]
 \centering
@@ -11,10 +11,10 @@ Bảng~\ref{tab:chapters} cho biết kiến thức của học phần được d
   blk/.style={draw, rounded corners=2pt, align=center, minimum height=1.1cm, text width=2.25cm, fill=gray!6},
   io/.style={align=center, text width=1.5cm}, >={Stealth[length=2mm]}]
   \node[io] (in) {Ảnh\\đơn thuốc};
-  \node[blk, right=of in] (a) {A. Tiền xử lý\\[-1pt]{\footnotesize cổ điển}};
-  \node[blk, right=of a] (b) {B. Phát hiện\\[-1pt]{\footnotesize YOLOv8s}};
-  \node[blk, right=of b] (c) {C. Nhận dạng\\[-1pt]{\footnotesize VietOCR}};
-  \node[blk, right=of c] (d) {D. Ghép khoản\\[-1pt]{\footnotesize luật + từ điển}};
+  \node[blk, right=of in] (a) {Tiền xử lý\\[-1pt]{\footnotesize cổ điển}};
+  \node[blk, right=of a] (b) {Phát hiện\\[-1pt]{\footnotesize YOLOv8s}};
+  \node[blk, right=of b] (c) {Nhận dạng\\[-1pt]{\footnotesize VietOCR}};
+  \node[blk, right=of c] (d) {Ghép khoản\\[-1pt]{\footnotesize luật + từ điển}};
   \node[io, right=of d] (out) {JSON};
   \draw[->] (in) -- (a); \draw[->] (a) -- (b); \draw[->] (b) -- (c); \draw[->] (c) -- (d); \draw[->] (d) -- (out);
   \node[draw, dashed, rounded corners=2pt, align=center, minimum height=0.8cm, text width=6.6cm]
@@ -24,24 +24,3 @@ Bảng~\ref{tab:chapters} cho biết kiến thức của học phần được d
 \end{tikzpicture}
 \caption{Pipeline đề xuất vẽ nét liền và phương pháp đối chứng đầu-cuối vẽ nét đứt.}\label{fig:pipeline}
 \end{figure}
-
-\begin{table}[H]
-\centering
-\caption{Kiến thức học phần dùng trong từng khối ($\bullet$: phương pháp chính, $\circ$: đối chứng hoặc đánh giá).}\label{tab:chapters}
-\small
-\begin{tabularx}{\linewidth}{cLcccc}
-\toprule
-\textbf{Chương} & \textbf{Kỹ thuật} & \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} \\
-\midrule
-2 & Mô hình thu nhận ảnh cho khử bóng, độ phân giải không gian khi đổi kích thước ảnh & $\bullet$ & $\circ$ & $\circ$ & --- \\
-3 & Lọc trung vị, lọc Max và Min, toán tử điểm, cân bằng lược đồ CLAHE, lọc không gian khi sinh ảnh suy giảm & $\bullet$ & --- & --- & --- \\
-5 & Canny, ngưỡng tự động Otsu mở rộng thành Sauvola, vùng liên thông & $\bullet$ & $\circ$ & $\circ$ & --- \\
-7 & Phép đóng ước lượng nền, phép mở, phép giãn trong bộ phát hiện cổ điển & $\bullet$ & $\circ$ & --- & --- \\
-8 & P/R/F1, ma trận nhầm lẫn & $\circ$ & $\circ$ & $\circ$ & $\circ$ \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-Một số kỹ thuật không có slide trong bài giảng nên được ghi riêng ở từng mục.
-Biến đổi phối cảnh và xoay ảnh được dùng theo gợi ý đề tài số hóa tài liệu chụp bằng điện thoại của học phần \chuong{2, 3, 5, 7}, còn nội suy bậc ba, Sauvola, CLAHE và lược đồ chiếu là mở rộng từ các khái niệm có trong bài giảng.
-

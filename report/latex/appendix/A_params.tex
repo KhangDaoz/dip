@@ -6,35 +6,35 @@
 \footnotesize
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{1.3cm} >{\raggedright\arraybackslash}p{3.1cm} >{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{1.6cm} L@{}}
 \toprule
-\textbf{Khối} & \textbf{Tham số} & \textbf{Giá trị} & \textbf{Đã thử} & \textbf{Lý do} \\
+\textbf{Bước} & \textbf{Tham số} & \textbf{Giá trị} & \textbf{Đã thử} & \textbf{Lý do} \\
 \midrule
-A1 & Ngưỡng Canny & 50 / 150 & --- & Tỉ lệ 1:3 chuẩn Canny, giữ biên tờ giấy \\
-A1 & Diện tích tứ giác tối thiểu & 20\% ảnh & --- & Loại tứ giác nhỏ như bảng hoặc ô \\
-A2 & Khoảng góc, bước & $\pm10^\circ$, $0{,}25^\circ$ & --- & Nghiêng chụp tay thường $<10^\circ$ \\
-A2 & Sauvola cửa sổ, $k$ & 31; 0,2 & --- & Cửa sổ lớn hơn chữ cao 20--32~px, $k$ theo bài gốc \\
-A3 & Phép đóng, lọc trơn nền & $81\times81$; $21\times21$ & --- & Lớn gấp 2,5--4 lần chiều cao chữ để xóa nét mực \\
-A4 & Lọc trung vị & $3\times3$ & --- & Khử nhiễu điểm, không làm mất dấu tiếng Việt \\
-A5 & CLAHE giới hạn cắt, lưới & 2,0; $8\times8$ & --- & Tăng tương phản vừa phải, tránh nổi nhiễu nền \\
+Nắn phối cảnh & Ngưỡng Canny & 50 / 150 & --- & Tỉ lệ 1:3 chuẩn Canny, giữ biên tờ giấy \\
+Nắn phối cảnh & Diện tích tứ giác tối thiểu & 20\% ảnh & --- & Loại tứ giác nhỏ như bảng hoặc ô \\
+Chỉnh nghiêng & Khoảng góc, bước & $\pm10^\circ$, $0{,}25^\circ$ & --- & Nghiêng chụp tay thường $<10^\circ$ \\
+Chỉnh nghiêng & Sauvola cửa sổ, $k$ & 31; 0,2 & --- & Cửa sổ lớn hơn chữ cao 20--32~px, $k$ theo bài gốc \\
+Khử bóng & Phép đóng, lọc trơn nền & $81\times81$; $21\times21$ & --- & Lớn gấp 2,5--4 lần chiều cao chữ để xóa nét mực \\
+Khử nhiễu & Lọc trung vị & $3\times3$ & --- & Khử nhiễu điểm, không làm mất dấu tiếng Việt \\
+Tăng tương phản & CLAHE giới hạn cắt, lưới & 2,0; $8\times8$ & --- & Tăng tương phản vừa phải, tránh nổi nhiễu nền \\
 \midrule
-B & Mô hình, kích thước ảnh & YOLOv8s, 1024 & --- & Khung chữ cao trung vị 20 đến 32~px \\
-B & Epoch, batch, dừng sớm & 50, 16, 15 & --- & Vừa thời gian Kaggle \\
-B & \texttt{fliplr}, mosaic & 0; 0,5 & --- & Lật ngang làm hỏng chữ \\
-B & Ngưỡng tin cậy & 0,443 & 0,05 đến 0,85 & F1 trung bình 6 lớp lớn nhất trên tập kiểm định \\
-B & Ngưỡng NMS & 0,7 & --- & Mặc định Ultralytics \\
-B & Giãn cổ điển ($a\cdot h,\;v\cdot h$) & $2{,}5h;\;0{,}2h$ & $a$: 0,5--4; $v$: 0--0,5 & Nối ký tự thành cụm, F1 đạt 0,810 trên kiểm định \\
+Phát hiện & Mô hình, kích thước ảnh & YOLOv8s, 1024 & --- & Khung chữ cao trung vị 20 đến 32~px \\
+Phát hiện & Epoch, batch, dừng sớm & 50, 16, 15 & --- & Vừa thời gian Kaggle \\
+Phát hiện & \texttt{fliplr}, mosaic & 0; 0,5 & --- & Lật ngang làm hỏng chữ \\
+Phát hiện & Ngưỡng tin cậy & 0,443 & 0,05 đến 0,85 & F1 trung bình 6 lớp lớn nhất trên tập kiểm định \\
+Phát hiện & Ngưỡng NMS & 0,7 & --- & Mặc định Ultralytics \\
+Phát hiện & Giãn cổ điển ($a\cdot h,\;v\cdot h$) & $2{,}5h;\;0{,}2h$ & $a$: 0,5--4; $v$: 0--0,5 & Nối ký tự thành cụm, F1 đạt 0,810 trên kiểm định \\
 \midrule
-C & Kiến trúc & \texttt{vgg\_transformer} & --- & Trọng số tiếng Việt có sẵn \\
-C & Số vòng, batch, lr & \num{20000}, 32, $3\cdot10^{-4}$ & --- & Vừa thời gian Kaggle T4 \\
-C & Chiều rộng ảnh tối đa & 1024~px & 512 & 512 làm co $\approx5\%$ vùng dài \\
-C & Đệm vùng cắt & 2~px & --- & Giữ dấu, nét sát khung \\
-C & Giải mã & tham lam & --- & Nhanh, tỉ lệ khớp nguyên chuỗi đạt 92,3\% \\
-C0, C1 & Chế độ Tesseract; phóng ảnh & \texttt{-{}-psm 7}; $\times2$ nội suy bậc ba & --- & Mỗi vùng là một dòng; chữ nhỏ cần phóng to \\
+Nhận dạng & Kiến trúc & \texttt{vgg\_transformer} & --- & Trọng số tiếng Việt có sẵn \\
+Nhận dạng & Số vòng, batch, lr & \num{20000}, 32, $3\cdot10^{-4}$ & --- & Vừa thời gian Kaggle T4 \\
+Nhận dạng & Chiều rộng ảnh tối đa & 1024~px & 512 & 512 làm co $\approx5\%$ vùng dài \\
+Nhận dạng & Đệm vùng cắt & 2~px & --- & Giữ dấu, nét sát khung \\
+Nhận dạng & Giải mã & tham lam & --- & Nhanh, tỉ lệ khớp nguyên chuỗi đạt 92,3\% \\
+Tesseract & Chế độ Tesseract; phóng ảnh & \texttt{-{}-psm 7}; $\times2$ nội suy bậc ba & --- & Mỗi vùng là một dòng; chữ nhỏ cần phóng to \\
 \midrule
-D1 & Ngưỡng tin cậy hỏi lại & 0,5 & --- & Chỉ dùng biểu thức chính quy khi lớp YOLO kém tin cậy \\
-D1 & IoU trùng & 0,7 & --- & Loại khung dự đoán chồng lấp trên cùng cụm chữ \\
-D4 & Từ điển $\tau_{\text{cao}}$, $\tau_{\text{thấp}}$, lề & 90, 80, 5 & --- & Cố định trước khi chạy tập kiểm tra; chặn kéo sai liều, xem Mục~\ref{sec:m-assemble} \\
-D (VLM) & Nhiệt độ & 0 & --- & Kết quả lặp lại được \\
-D & Khớp tên khi chấm & CER $\le0{,}1$ & --- & Cho phép lỗi nhỏ không đổi nghĩa \\
+Xác định lớp & Ngưỡng tin cậy hỏi lại & 0,5 & --- & Chỉ dùng biểu thức chính quy khi lớp YOLO kém tin cậy \\
+Xác định lớp & IoU trùng & 0,7 & --- & Loại khung dự đoán chồng lấp trên cùng cụm chữ \\
+Từ điển & Từ điển $\tau_{\text{cao}}$, $\tau_{\text{thấp}}$, lề & 90, 80, 5 & --- & Cố định trước khi chạy tập kiểm tra; chặn kéo sai liều, xem Mục~\ref{sec:m-assemble} \\
+VLM & Nhiệt độ & 0 & --- & Kết quả lặp lại được \\
+Ghép khoản & Khớp tên khi chấm & CER $\le0{,}1$ & --- & Cho phép lỗi nhỏ không đổi nghĩa \\
 \midrule
 Đánh giá & Bootstrap theo ảnh & \num{1000} lần & --- & Ước lượng khoảng tin cậy 95\% \\
 Chung & Seed & 42 & --- & Lặp lại được việc chia tập, sinh ảnh suy giảm, huấn luyện \\

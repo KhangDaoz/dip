@@ -1,0 +1,21 @@
+% ===== Phụ lục A — Kiến thức học phần được sử dụng =====
+% Thay cho các ghi chú "(Chương N)" trong thân bài.
+Bảng~\ref{tab:chapters} cho biết từng kiến thức của học phần được dùng ở bước nào của pipeline.
+\begin{table}[H]
+\centering
+\caption{Kiến thức học phần và nơi sử dụng trong đồ án.}\label{tab:chapters}
+\small
+\begin{tabularx}{\linewidth}{cLL}
+\toprule
+\textbf{Chương} & \textbf{Kiến thức} & \textbf{Nơi sử dụng} \\
+\midrule
+2 & Mô hình thu nhận ảnh; độ phân giải không gian và nội suy & Khử bóng; nắn phối cảnh; phóng lớn vùng chữ cho Tesseract; chọn kích thước ảnh vào YOLO và VietOCR \\
+3 & Lọc trung vị, lọc Max và Min, toán tử điểm, cân bằng lược đồ (CLAHE), lọc không gian & Khử bóng, khử nhiễu, tăng tương phản; sinh ảnh mờ khi tạo ảnh suy giảm \\
+5 & Canny, ngưỡng tự động Otsu mở rộng thành Sauvola, vùng liên thông & Nắn phối cảnh, chỉnh nghiêng, bộ phát hiện cổ điển, Tesseract trên ảnh nhị phân \\
+7 & Phép đóng, phép mở, phép giãn & Ước lượng nền khi khử bóng; bộ phát hiện cổ điển \\
+8 & P/R/F1, ma trận nhầm lẫn & Đánh giá phát hiện, nhận dạng và ghép khoản \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Một số kỹ thuật không có slide trong bài giảng. Biến đổi phối cảnh và xoay ảnh được dùng theo gợi ý đề tài số hóa tài liệu chụp bằng điện thoại của học phần, còn nội suy bậc ba, Sauvola, CLAHE và lược đồ chiếu là mở rộng từ các khái niệm có trong bài giảng.

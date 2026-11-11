@@ -9,7 +9,7 @@ Tham số \texttt{image\_max\_width} được nâng từ 512 lên 1024 vì với
 Hai bộ nhận dạng được bọc trong \path{code/src/recognize/vietocr_engine.py} và \path{code/src/recognize/tesseract_engine.py}.
 Tesseract chạy với \texttt{--psm 7}, tức chế độ một dòng chữ.
 
-Để tách riêng khối C, mọi phương án đọc cùng 6086 vùng cắt theo khung chuẩn của tập kiểm tra, và kết quả E-C1 được trình bày ở Bảng~\ref{tab:EC1}.
+Để tách riêng bước nhận dạng, mọi phương án đọc cùng 6086 vùng cắt theo khung chuẩn của tập kiểm tra, và kết quả thí nghiệm E-C1 được trình bày ở Bảng~\ref{tab:EC1}.
 
 \begin{table}[H]
 \centering
@@ -19,10 +19,10 @@ Tesseract chạy với \texttt{--psm 7}, tức chế độ một dòng chữ.
 \toprule
 \textbf{Phương án} & \textbf{CER} & \textbf{WER} & \textbf{Khớp} & \textbf{CER \texttt{drugname}} & \textbf{CER \texttt{quantity}} & \textbf{ms/vùng} \\
 \midrule
-C0 Tesseract \texttt{vie} & \num{0.0689} & \num{0.1961} & \num{0.636} & \num{0.0363} & \num{0.0016} & \num{35.7} \\
-C1 Tesseract, nhị phân Sauvola & \num{0.0684} & \num{0.2002} & \num{0.619} & \num{0.0340} & \num{0.0168} & \num{37.8} \\
-C2 VietOCR công bố & \num{0.0864} & \num{0.1097} & \num{0.816} & \num{0.0275} & \num{0.0014} & \textbf{\num{17.3}} \\
-C3 VietOCR tinh chỉnh & \textbf{\num{0.0329}} & \textbf{\num{0.0437}} & \textbf{\num{0.923}} & \textbf{\num{0.0003}} & \textbf{\num{0.0004}} & \num{18.9} \\
+Tesseract xám & \num{0.0689} & \num{0.1961} & \num{0.636} & \num{0.0363} & \num{0.0016} & \num{35.7} \\
+Tesseract nhị phân & \num{0.0684} & \num{0.2002} & \num{0.619} & \num{0.0340} & \num{0.0168} & \num{37.8} \\
+VietOCR gốc & \num{0.0864} & \num{0.1097} & \num{0.816} & \num{0.0275} & \num{0.0014} & \textbf{\num{17.3}} \\
+VietOCR tinh chỉnh & \textbf{\num{0.0329}} & \textbf{\num{0.0437}} & \textbf{\num{0.923}} & \textbf{\num{0.0003}} & \textbf{\num{0.0004}} & \num{18.9} \\
 \bottomrule
 \end{tabular}
 \par\smallskip{\footnotesize Nguồn: \path{result/e_c1_ocr/}. Tesseract chạy 8 luồng CPU, VietOCR chạy trên GPU RTX 3050 nên thời gian không so trực tiếp được.}
@@ -30,6 +30,6 @@ C3 VietOCR tinh chỉnh & \textbf{\num{0.0329}} & \textbf{\num{0.0437}} & \textb
 
 Tinh chỉnh giảm CER từ \num{0.0864} xuống \num{0.0329}, tức khoảng 62\%, và tăng tỉ lệ vùng đọc đúng nguyên chuỗi từ \num{0.816} lên \num{0.923}.
 Mức giảm đến chủ yếu từ dòng chẩn đoán với CER từ \num{0.2325} xuống \num{0.0625} và dòng cách dùng từ \num{0.0123} xuống \num{0.0038}, còn tên thuốc và số lượng gần như không còn lỗi.
-Tesseract có CER tổng thấp hơn C2 vì đọc dòng chẩn đoán tốt hơn ở mức \num{0.0811} so với \num{0.2325}, nhưng đọc cách dùng kém hơn nhiều với \num{0.1039} so với \num{0.0123} nên WER và tỉ lệ đọc đúng nguyên chuỗi đều thua C2.
-Nhị phân hóa Sauvola ở C1 không đổi CER tổng và làm CER của số lượng tăng từ \num{0.0016} lên \num{0.0168}, nên không giúp ích.
-Lỗi còn lại của C3 tập trung ở dòng chẩn đoán, trong đó có cả lỗi do nhãn sai ở Hình~\ref{fig:c3err}, Phụ lục~\ref{app:examples}.
+Tesseract có CER tổng thấp hơn VietOCR gốc vì đọc dòng chẩn đoán tốt hơn ở mức \num{0.0811} so với \num{0.2325}, nhưng đọc cách dùng kém hơn nhiều với \num{0.1039} so với \num{0.0123} nên WER và tỉ lệ đọc đúng nguyên chuỗi đều thua VietOCR gốc.
+Nhị phân hóa Sauvola ở Tesseract nhị phân không đổi CER tổng và làm CER của số lượng tăng từ \num{0.0016} lên \num{0.0168}, nên không giúp ích.
+Lỗi còn lại của VietOCR tinh chỉnh tập trung ở dòng chẩn đoán, trong đó có cả lỗi do nhãn sai ở Hình~\ref{fig:c3err}, Phụ lục~\ref{app:examples}.

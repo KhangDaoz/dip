@@ -1,14 +1,14 @@
-% Mục 3.2. Khối B. Người viết: Trường. Chi tiết huấn luyện nằm ở Mục 4.2.
-Khối B dùng YOLOv8s~\cite{yolov8} để vừa tìm vừa phân lớp vùng chữ theo sáu lớp của VAIPE.
+% Mục 3.2. Phát hiện vùng chữ. Người viết: Trường. Chi tiết huấn luyện nằm ở Mục 4.2.
+Bước phát hiện dùng YOLOv8s~\cite{yolov8} để vừa tìm vừa phân lớp vùng chữ theo sáu lớp của VAIPE.
 YOLO là bộ phát hiện một giai đoạn: mạng nhìn toàn ảnh một lần và dự đoán luôn khung bao cùng lớp của từng vùng, nên nhanh và không cần bước phân lớp riêng.
 Mô hình khởi tạo từ trọng số tiền huấn luyện trên COCO rồi được huấn luyện tiếp trên ảnh đơn thuốc.
 
-Vì chữ rất nhỏ, nhóm giữ ảnh vào ở độ phân giải cao thay vì thu nhỏ mạnh, để nét chữ không bị mất đi khi đổi kích thước ảnh \chuong{2}.
+Vì chữ rất nhỏ, nhóm giữ ảnh vào ở độ phân giải cao thay vì thu nhỏ mạnh, để nét chữ không bị mất đi khi đổi kích thước ảnh.
 Phép lật ngang bị tắt vì làm ngược chữ.
 Ngưỡng tin cậy được chọn trên tập kiểm định sao cho F1 trung bình của sáu lớp lớn nhất.
 
 Phương pháp đối chứng là bộ phát hiện cổ điển, không phân lớp.
-Ảnh xám được nhị phân hóa bằng Sauvola, ngưỡng cục bộ mở rộng từ Otsu \chuong{5}, rồi phép mở loại các chấm nhiễu nhỏ \chuong{7}.
-Chiều cao chữ được ước lượng bằng trung vị chiều cao các thành phần liên thông, khái niệm vùng liên thông của phần phân vùng ảnh \chuong{5}.
-Ảnh nhị phân sau đó được giãn \chuong{7} theo phương ngang để nối các ký tự bị đứt thành cụm mà không nối qua khoảng trống giữa hai cột, rồi lấy khung bao của các thành phần liên thông còn lại sau khi lọc theo kích thước.
+Ảnh xám được nhị phân hóa bằng Sauvola, ngưỡng cục bộ mở rộng từ Otsu, rồi phép mở loại các chấm nhiễu nhỏ.
+Chiều cao chữ được ước lượng bằng trung vị chiều cao các thành phần liên thông, khái niệm vùng liên thông của phần phân vùng ảnh.
+Ảnh nhị phân sau đó được giãn theo phương ngang để nối các ký tự bị đứt thành cụm mà không nối qua khoảng trống giữa hai cột, rồi lấy khung bao của các thành phần liên thông còn lại sau khi lọc theo kích thước.
 Mức giãn theo hai phương được chọn trên tập kiểm định.
