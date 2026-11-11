@@ -3,10 +3,9 @@
 
 \TODO{Thắng: học sâu theo khối và VLM. VLM mạnh ở chỗ không cần huấn luyện và đọc được ngữ cảnh. VLM yếu ở chỗ nào (bịa tên hoặc liều, chậm, phụ thuộc API, phải gửi ảnh y tế ra ngoài). Dẫn số từ Bảng~\ref{tab:ED2}.}
 
-Nhóm thấy ba hạn chế.
-Thứ nhất, VAIPE là ảnh in máy, sạch và cùng một mẫu đơn, nên kết quả chưa nói được gì về ảnh chụp điện thoại thật hay đơn của bệnh viện khác, và bộ ảnh suy giảm chỉ mô phỏng được một phần.
-Thứ hai, đáp án khoản thuốc được dẫn xuất bằng chính luật của khối D và chỉ soát bằng mắt \KQ{số ảnh} ảnh, nên E-D1 bằng \num{1.000} chỉ cho thấy luật nhất quán.
-Thứ ba, từ điển lấy từ tập huấn luyện nên \KQ{\% OOV} tên thuốc kiểm tra nằm ngoài từ điển không được hưởng lợi.
+Hạn chế đầu tiên nằm ở dữ liệu, vì VAIPE là ảnh in máy, sạch và cùng một mẫu đơn nên kết quả chưa nói được gì về ảnh chụp điện thoại thật hay đơn của bệnh viện khác, và bộ ảnh suy giảm chỉ mô phỏng được một phần.
+Hạn chế thứ hai là đáp án khoản thuốc được dẫn xuất bằng chính luật của khối D và chỉ soát bằng mắt \KQ{số ảnh} ảnh, nên E-D1 bằng \num{1.000} chỉ cho thấy luật nhất quán.
+Hạn chế thứ ba là từ điển lấy từ tập huấn luyện nên chỉ có 2 trong 443 khoản của tập kiểm tra (0,5\%) nằm ngoài từ điển. Tỉ lệ này thấp vì các đơn VAIPE dùng chung một danh mục thuốc, và với đơn của bệnh viện khác thì từ điển sẽ giúp được ít hơn.
 \TODO{Ghi các phần đã cắt vì thời gian: E-B3, E-C2, E-D3, và Tesseract hoặc khối B cổ điển nếu không chạy}
 
 \TODO{Hướng phát triển, 1 đến 2 câu. Thu ảnh chụp thật để đánh giá, huấn luyện lại có tăng cường suy giảm, bỏ vùng \texttt{other} trước OCR để tăng tốc, dùng từ điển thuốc quốc gia thay cho từ điển của tập huấn luyện.}

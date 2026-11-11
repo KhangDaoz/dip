@@ -1,7 +1,7 @@
 % Mục 3.2. Khối B (khoảng 0,4 trang). Người viết: Trường.
 Khối B dùng YOLOv8s~\cite{yolov8} để vừa tìm vừa phân lớp vùng chữ theo sáu lớp của VAIPE.
 Mô hình khởi tạo từ trọng số tiền huấn luyện COCO và được huấn luyện 50 epoch trên 820 ảnh (Kaggle, 2 GPU T4) với kích thước ảnh 1024, batch 16, dừng sớm nếu 15 epoch không cải thiện, seed 42.
-Chữ trên đơn chỉ cao khoảng 15 đến 25~px nên nhóm giữ kích thước ảnh 1024 để không mất các vùng nhỏ khi thu ảnh.
+Khung chữ trên đơn cao trung vị 22~px nên nhóm giữ kích thước ảnh 1024 để không mất các vùng nhỏ khi thu ảnh.
 Lật ngang làm ngược chữ nên được tắt (\texttt{fliplr}=0), và mosaic giảm xuống 0,5.
 Ngưỡng tin cậy 0,443 là giá trị cho F1 trung bình sáu lớp lớn nhất trên tập kiểm định, còn ngưỡng NMS giữ mặc định 0,7.
 

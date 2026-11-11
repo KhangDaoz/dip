@@ -43,6 +43,7 @@
 \usepackage{enumitem}
 \setlist{leftmargin=2em,itemsep=0.35em,topsep=0.6em,parsep=0pt}  % danh sách thoáng, thụt lề rõ
 \usepackage{xcolor}
+\usepackage{fancyvrb}                                     % khối mã JSON
 \usepackage{tikz}\usetikzlibrary{positioning,arrows.meta,calc}
 
 % ---------- Tài liệu tham khảo (IEEE) ----------
@@ -131,7 +132,8 @@
 \section{Ví dụ kết quả và ca lỗi}\label{app:examples}
 \input{appendix/B_examples}
 
-% Danh mục tài liệu tham khảo đặt cuối bài
+% Danh mục tài liệu tham khảo đặt cuối bài, bắt đầu ở trang mới
+\clearpage
 \printbibliography[heading=bibintoc,title={Tài liệu tham khảo}]
 
 \end{document}
