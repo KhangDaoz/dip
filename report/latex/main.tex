@@ -11,29 +11,29 @@
   ItalicFont=*-italic, BoldItalicFont=*-bolditalic]
 
 % ---------- Trang ----------
-\usepackage[a4paper,margin=2.5cm]{geometry}
-\usepackage{setspace}\setstretch{1.25}                % giãn dòng cho dễ đọc
+\usepackage[a4paper,left=3cm,right=2cm,top=2cm,bottom=2cm]{geometry}  % lề theo quy chuẩn văn bản
+\usepackage{setspace}\setstretch{1.12}                % giãn dòng cho dễ đọc
 % Đoạn văn: không thụt đầu dòng, cách nhau một khoảng trắng
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0.8em plus 0.2em minus 0.1em}
+\setlength{\parskip}{0.5em plus 0.2em minus 0.1em}
 \usepackage{titlesec}
 \titleformat{\section}{\Large\bfseries}{\thesection}{0.8em}{}
 \titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.8em}{}
 \titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.8em}{}
-\titlespacing*{\section}{0pt}{4ex plus 1ex}{2ex}
-\titlespacing*{\subsection}{0pt}{3ex plus 1ex}{1.5ex}
+\titlespacing*{\section}{0pt}{2.5ex plus 1ex}{1.2ex}
+\titlespacing*{\subsection}{0pt}{2ex plus 0.5ex}{0.8ex}
 \titlespacing*{\subsubsection}{0pt}{2.5ex plus 0.5ex}{1ex}
 
 % ---------- Hình, bảng, toán ----------
 \usepackage{graphicx}\graphicspath{{figure/}}
 \usepackage{booktabs,tabularx,multirow,makecell}
-\renewcommand{\arraystretch}{1.35}                     % giãn hàng trong bảng
+\renewcommand{\arraystretch}{1.2}                     % giãn hàng trong bảng
 \setlength{\tabcolsep}{7pt}
 \usepackage{caption,subcaption}
 \captionsetup{font=small,labelfont=bf,skip=8pt}
 \captionsetup[table]{position=top}
 \usepackage{float}
-\setlength{\intextsep}{1.8em plus 0.4em minus 0.2em}  % khoảng cách quanh bảng, hình
+\setlength{\intextsep}{1.0em plus 0.3em minus 0.2em}  % khoảng cách quanh bảng, hình
 \usepackage{amsmath,amssymb}
 \AtBeginDocument{%                                     % khoảng cách quanh công thức
   \setlength{\abovedisplayskip}{1.2em plus 0.3em}\setlength{\belowdisplayskip}{1.2em plus 0.3em}%
@@ -42,6 +42,7 @@
 \usepackage{enumitem}
 \setlist{leftmargin=2em,itemsep=0.35em,topsep=0.6em,parsep=0pt}  % danh sách thoáng, thụt lề rõ
 \usepackage{xcolor}
+\usepackage{tikz}\usetikzlibrary{positioning,arrows.meta,calc}
 
 % ---------- Tài liệu tham khảo (IEEE) ----------
 \usepackage{csquotes}
@@ -51,66 +52,61 @@
 \addbibresource{refs/common.bib}
 \addbibresource{refs/preprocessing.bib}
 \addbibresource{refs/cleaning.bib}
-\addbibresource{refs/table.bib}
-\addbibresource{refs/prescription.bib}
+\addbibresource{refs/dl.bib}
 
 \usepackage[hidelinks]{hyperref}
 
 % ---------- Lệnh dùng chung ----------
 \newcommand{\TODO}[1]{\textcolor{red}{[TODO: #1]}}   % chỗ cần viết; phải hết trước khi nộp
 \newcommand{\chuong}[1]{(Chương~#1)}                  % ghi chương học phần: \chuong{3}
-\newcommand{\bo}[1]{bộ~#1}                            % tên bộ dữ liệu: \bo{5}
-\newcommand{\Bo}[1]{Bộ~#1}                            % đầu câu: \Bo{5}
+\newcommand{\KQ}[1]{\textcolor{blue}{\textbf{[#1]}}}  % SỐ LIỆU CHỜ ĐIỀN: thay cả \KQ{...} bằng số; phải hết trước khi nộp
+\newcommand{\khoi}[1]{khối~#1}                       % \khoi{A} → khối A
+\newcommand{\Khoi}[1]{Khối~#1}                       % đầu câu
 
 \begin{document}
 
-\input{sections/0_title}
+\input{sections/0_title}          % trang bìa riêng, không đánh số
+
+\pagenumbering{roman}
+\begingroup\setstretch{1.0}\setlength{\parskip}{0.2em}
+\tableofcontents
+\endgroup
+\clearpage
+\pagenumbering{arabic}            % bản chính đánh số từ 1 → dễ kiểm giới hạn 10 trang
 
 % ===================== BẢN CHÍNH =====================
-% Tối đa 3 cấp mục.
+% Tối đa 3 cấp mục. Ngân sách ≈ 8–9 trang (giới hạn 10). Tìm chỗ còn trống:  grep -n 'KQ{\|TODO{' sections/*.tex appendix/*.tex
 \section{Đặt vấn đề}\label{sec:intro}
 \input{sections/1_introduction}
 
 \section{Dữ liệu}\label{sec:data}
-\input{sections/2_0_intro}
-\subsection{Các bộ dữ liệu}\label{sec:datasets}
-\input{sections/2_1_datasets}
-\subsection{Chia tập và chống rò rỉ dữ liệu}\label{sec:split}
-\input{sections/2_2_split}
-\subsection{Bộ dữ liệu tổng hợp (bộ 5)}\label{sec:synthetic}
-\input{sections/2_3_synthetic}
+\input{sections/2_data}
 
 \section{Phương pháp}\label{sec:method}
 \input{sections/3_0_overview}
-\subsection{Tiền xử lý và phân loại tài liệu}\label{sec:m-pre}
-\input{sections/3_1_preprocessing}
-\subsection{Làm sạch ảnh và tách lớp mực}\label{sec:m-clean}
-\input{sections/3_2_cleaning}
-\subsection{Dựng bảng phiếu xét nghiệm}\label{sec:m-table}
-\input{sections/3_3_table}
-\subsection{Bóc tách đơn thuốc}\label{sec:m-pres}
-\input{sections/3_4_prescription}
+\subsection{Khối A --- Tiền xử lý ảnh cổ điển}\label{sec:m-enhance}
+\input{sections/3_1_enhance}
+\subsection{Khối B --- Phát hiện và phân lớp vùng chữ}\label{sec:m-detect}
+\input{sections/3_2_detect}
+\subsection{Khối C --- Nhận dạng chữ}\label{sec:m-recognize}
+\input{sections/3_3_recognize}
+\subsection{Khối D --- Ghép khoản thuốc}\label{sec:m-assemble}
+\input{sections/3_4_assemble}
 
-% Thứ tự: dữ liệu → môi trường và công cụ → tham số → kết quả → đánh giá, so sánh
+% Thứ tự: thiết lập → từng khối → đầu-cuối (bảng chính) → ablation, độ bền → thời gian
 \section{Thực nghiệm}\label{sec:exp}
-\input{sections/4_0_intro}
-\subsection{Dữ liệu đánh giá}\label{sec:e-data}
-\input{sections/4_1_data}
-\subsection{Môi trường, công cụ và độ đo}\label{sec:setup}
+\subsection{Thiết lập và độ đo}\label{sec:setup}
 \input{sections/4_1_setup}
-\subsection{Tham số}\label{sec:params}
-\input{sections/4_1_params}
-\subsection{Kết quả tiền xử lý và phân loại}\label{sec:e-pre}
-\input{sections/4_2_preprocessing}
-\subsection{Kết quả làm sạch và tách lớp mực}\label{sec:e-clean}
-\input{sections/4_3_cleaning}
-\subsection{Kết quả dựng bảng}\label{sec:e-table}
-\input{sections/4_4_table}
-\subsection{Kết quả bóc tách đơn thuốc}\label{sec:e-pres}
-\input{sections/4_5_prescription}
-\subsection{Đánh giá toàn pipeline}\label{sec:ablation}
-\input{sections/4_6_ablation}
-\input{sections/4_7_runtime}
+\subsection{Phát hiện vùng chữ (E-B1, E-B2)}\label{sec:e-detect}
+\input{sections/4_2_detect}
+\subsection{Nhận dạng chữ (E-C1)}\label{sec:e-recognize}
+\input{sections/4_3_recognize}
+\subsection{Đầu-cuối: pipeline, đối chứng cổ điển và VLM (E-D1, E-D2)}\label{sec:e-endtoend}
+\input{sections/4_4_endtoend}
+\subsection{Lỗi đến từ đâu và độ bền khi ảnh xấu (E-X1, E-A1)}\label{sec:e-ablation}
+\input{sections/4_5_ablation}
+\subsection{Thời gian chạy}\label{sec:e-runtime}
+\input{sections/4_6_runtime}
 
 \section{Thảo luận}\label{sec:discussion}
 \input{sections/5_discussion}
@@ -127,14 +123,10 @@
 % ===================== PHỤ LỤC =====================
 \clearpage
 \appendix
-\section{Tiền xử lý và phân loại}\label{app:preprocessing}
-\input{appendix/A_preprocessing}
-\section{Làm sạch và tách lớp mực}\label{app:cleaning}
-\input{appendix/B_cleaning}
-\section{Dựng bảng}\label{app:table}
-\input{appendix/C_table}
-\section{Bóc tách đơn thuốc và kiểm chứng bộ 5}\label{app:prescription}
-\input{appendix/D_prescription}
+\section{Bảng tham số đầy đủ}\label{app:params}
+\input{appendix/A_params}
+\section{Ví dụ kết quả và ca lỗi}\label{app:examples}
+\input{appendix/B_examples}
 
 % Danh mục tài liệu tham khảo đặt cuối bài
 \printbibliography[heading=bibintoc,title={Tài liệu tham khảo}]

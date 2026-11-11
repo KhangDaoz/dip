@@ -1,28 +1,28 @@
-% ===== Chương 8 =====
+% ===== Mục 7 — Khai báo sử dụng AI =====
+% Viết gì: công cụ, dùng vào việc gì, phần người tự làm, cách kiểm tra. Mỗi người 1–2 câu. Người: Hiếu gộp.
 Đồ án có sử dụng công cụ AI.
 
 \subsection{Công cụ và phạm vi sử dụng}
-Công cụ được dùng là Claude (Anthropic), thông qua Claude Code.
-AI được dùng cho các việc sau:
+Công cụ được dùng là Claude (Anthropic) qua Claude Code\TODO{, và công cụ khác nếu có (opencode, ...)}.
+AI được dùng để:
 \begin{enumerate}
-  \item rà soát kế hoạch và đối chiếu từng kỹ thuật với slide bài giảng;
-  \item viết và sửa mã nguồn các module và các script thí nghiệm;
-  \item chạy thí nghiệm và tổng hợp bảng số liệu;
-  \item soạn bản nháp các mục của báo cáo.
+  \item viết khung mã nguồn các khối, script chuyển nhãn, notebook huấn luyện và script thí nghiệm;
+  \item viết kiểm thử đơn vị và sửa lỗi;
+  \item soạn bản nháp và định dạng báo cáo, slide.
 \end{enumerate}
-Ngày 10/11, AI viết và chạy các thí nghiệm có OCR (T2-CER, T8, D6, S3), thí nghiệm D5 và các phép kiểm định tính trên \bo{4} (T5, S5, soát nhãn D10 bằng ảnh thu nhỏ).
-AI cũng soạn bản nháp các mục kết quả tương ứng.
 
 \subsection{Phần việc nhóm tự làm}
-Nhóm tự chọn đề tài và chốt phương pháp, ví dụ chọn Sauvola làm phương pháp nhị phân hóa chính và cách chia lại \bo{1}.
-Nhóm tự thu thập và chụp \bo{4}, sinh \bo{5}, soát nhãn chuẩn bằng mắt, đọc và chỉnh lại toàn bộ nội dung báo cáo.
-Ở bước (3), AI viết mã thí nghiệm K1--K5, phân tích lỗi gom dòng (phát hiện phiếu có kẻ) và phiên âm chữ trong \num{3255} khung của \bo{2} làm nhãn chuẩn CER.
-Khang soát bằng mắt cả 55 ảnh nhãn chuẩn, quyết định giữ 32 ảnh, duyệt quy tắc sửa dòng và đối chiếu kết quả.
-\TODO{Hiếu, Trường, Thắng: mỗi bạn bổ sung 1 câu: phần mình dùng AI vào việc gì, phần nào tự làm}
+Nhóm tự chọn đề tài, chốt phương pháp và tham số, chạy huấn luyện trên Kaggle, chạy và đọc kết quả thí nghiệm, soát đáp án bằng mắt và chỉnh lại toàn bộ báo cáo.
+\begin{itemize}
+  \item Hiếu: \TODO{1--2 câu}
+  \item Trường: \TODO{1--2 câu}
+  \item Khang: \TODO{1--2 câu, ví dụ: AI viết notebook tinh chỉnh và engine VietOCR; Khang chạy huấn luyện, chọn \texttt{image\_max\_width} 1024 sau khi kiểm tra vùng dài bị co, đối chiếu kết quả}
+  \item Thắng: \TODO{1--2 câu}
+\end{itemize}
 
 \subsection{Cách kiểm tra}
 \begin{enumerate}
-  \item Mọi hàm có kiểm thử đơn vị (\texttt{pytest}, 25 bài kiểm thử).
-  \item Mọi con số trong báo cáo lấy từ tệp CSV do script tương ứng trong \texttt{code/experiments/} sinh ra, chạy lại được với seed 42.
-  \item Các trích dẫn chương và slide được đối chiếu với tệp bài giảng.
+  \item Mọi module có kiểm thử đơn vị (\texttt{pytest}, \KQ{số} bài kiểm thử).
+  \item Mọi con số trong báo cáo lấy từ tệp kết quả do script trong \texttt{code/experiments/} hoặc notebook sinh ra, chạy lại được với seed 42.
+  \item Tham số chọn trên tập kiểm định; tập kiểm tra chạy một lần.
 \end{enumerate}

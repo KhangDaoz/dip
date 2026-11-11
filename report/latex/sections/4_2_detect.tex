@@ -1,0 +1,29 @@
+% ===== Mục 4.2 — Kết quả khối B (≈ 0,5 trang) =====
+% Viết gì: bảng E-B1 (không phân lớp, so cổ điển), bảng E-B2 (từng lớp), 2–3 câu nhận xét có số. Người: Trường.
+% Nguồn số: results/E-B1/table.csv, results/E-B2/table.csv (hoặc test_metrics.json của notebook train_yolo).
+Bảng~\ref{tab:EB} so khả năng tìm vùng chữ (bỏ qua lớp) và độ đúng từng lớp của YOLOv8s trên tập kiểm tra.
+
+\begin{table}[H]
+\centering
+\caption{Phát hiện vùng chữ trên 176 ảnh kiểm tra, IoU $\ge0{,}5$. Trên: không phân lớp (E-B1). Dưới: YOLOv8s từng lớp (E-B2).}\label{tab:EB}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Phương pháp / lớp} & \textbf{P} & \textbf{R} & \textbf{F1} & \textbf{mAP50} \\
+\midrule
+Cổ điển (Sauvola + giãn) & \KQ{} & \KQ{} & \KQ{} & --- \\
+YOLOv8s, bỏ lớp & \KQ{} & \KQ{} & \KQ{} & --- \\
+\midrule
+\texttt{drugname} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
+\texttt{quantity} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
+\texttt{usage}    & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
+\texttt{diagnose} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
+\texttt{date}     & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
+\texttt{other}    & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
+\textbf{Trung bình 6 lớp} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
+\bottomrule
+\end{tabular}
+\par\smallskip{\footnotesize Script: \texttt{code/experiments/\TODO{tên script}}. Ngưỡng tin cậy 0,443 chọn trên tập kiểm định.}
+\end{table}
+
+\TODO{Trường: 2--3 câu nhận xét có số — YOLO hơn cổ điển bao nhiêu F1; lớp nào yếu nhất và nhầm sang lớp nào (ma trận nhầm lẫn ở Phụ lục~\ref{app:examples}); vì sao cổ điển hụt (gộp cột, tách tên dài)}

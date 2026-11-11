@@ -1,32 +1,33 @@
-% ===== Chương 1 =====
+% ===== Mục 1 — Đặt vấn đề (≈ 0,5–0,75 trang) =====
+% Viết gì: bối cảnh, bài toán (đầu vào/đầu ra), khó khăn, hướng tiếp cận, đóng góp. Người: Hiếu.
 \subsection{Bối cảnh}\label{sec:context}
-Phần lớn hồ sơ y tế ở Việt Nam, gồm đơn thuốc và phiếu xét nghiệm, vẫn là giấy in.
-Người bệnh thường lưu lại các giấy tờ này bằng ảnh chụp điện thoại.
-Ảnh chụp kiểu này bị suy biến theo nhiều cách cùng lúc: méo phối cảnh và nghiêng, mờ do rung tay, lóa đèn flash, bóng tay đổ lên giấy.
-Dấu đỏ và chữ ký còn đè lên chữ in.
-Phiếu xét nghiệm thường là bảng không kẻ lưới.
-Khi nhận dạng ký tự quang học (OCR) chạy trực tiếp trên cả trang, các khoản thuốc và các dòng chỉ số bị trộn lẫn vào nhau.
+Đơn thuốc bảo hiểm y tế ở Việt Nam phần lớn vẫn được in trên giấy và giao cho người bệnh.
+Để theo dõi thuốc đang dùng, nhắc giờ uống hay đối chiếu giữa các lần khám, người bệnh hoặc người chăm sóc phải đọc và nhập lại bằng tay tên thuốc, số lượng và cách dùng.
+Việc nhập tay vừa tốn thời gian vừa dễ sai, nhất là với tên thuốc dài kèm hàm lượng như ``GLUCOFAST 850 850mg''.
+Một hệ thống tự đọc ảnh đơn thuốc và trả về dữ liệu có cấu trúc giúp số hóa bước này.
 
 \subsection{Phát biểu bài toán}\label{sec:problem}
-Đầu vào là ảnh chụp một đơn thuốc hoặc một phiếu xét nghiệm.
-Đầu ra gồm ba thành phần:
+Đầu vào là ảnh một đơn thuốc.
+Đầu ra là một bản ghi JSON gồm:
 \begin{enumerate}
-  \item ảnh đã nắn phẳng, đã làm sạch và đã nhị phân hóa;
-  \item nhãn loại tài liệu;
-  \item khung bao từng khoản thuốc (với đơn thuốc) hoặc từng dòng chỉ số (với phiếu xét nghiệm), dùng để chạy OCR theo vùng.
+  \item danh sách khoản thuốc, mỗi khoản có tên thuốc, số lượng, đơn vị và cách dùng;
+  \item chẩn đoán;
+  \item ngày kê đơn.
 \end{enumerate}
+Bài toán khó ở ba điểm.
+Thứ nhất, chữ nhỏ (cao khoảng 15--25~px) và tiếng Việt có dấu, nên chỉ sai một dấu thanh hoặc một chữ số là sai thông tin (``250mg'' và ``500mg'' là hai liều khác nhau).
+Thứ hai, các trường của một khoản thuốc không nằm trên một dòng: tên thuốc và số lượng cùng hàng nhưng cách xa nhau, cách dùng nằm ở dòng dưới, nên phải biết vùng chữ nào thuộc khoản nào.
+Thứ ba, ảnh thực tế có thể bị nghiêng, mờ, có bóng hoặc nén mạnh.
+
+\subsection{Hướng tiếp cận}\label{sec:approach}
 Đồ án thực hiện theo Lựa chọn~2 của học phần: một pipeline nhiều bước, mỗi bước có phương pháp đối chứng và độ đo định lượng.
+Pipeline gồm bốn khối: tiền xử lý ảnh bằng kỹ thuật cổ điển của học phần \chuong{2, 3, 5, 7}, phát hiện và phân lớp vùng chữ bằng YOLOv8, nhận dạng chữ bằng VietOCR tinh chỉnh, và ghép khoản thuốc bằng luật kết hợp từ điển tên thuốc.
+Mỗi khối được so với một phương án đối chứng; toàn pipeline được so với một mô hình thị giác--ngôn ngữ (VLM) đọc thẳng ảnh mà không qua huấn luyện.
 
 \subsection{Đóng góp}\label{sec:contrib-list}
 \begin{enumerate}
-  \item Đề xuất pipeline 4 bước chỉ dùng kỹ thuật xử lý ảnh cổ điển.
-        Pipeline phủ 8/8 chương của học phần, với trục chính là Chương~3, 5 và 7.
-        Đề tài khớp với gợi ý ``số hóa tài liệu chụp bằng điện thoại'' của học phần.
-  \item Xây dựng bộ dữ liệu tổng hợp \num{1500} mẫu (\bo{5}) có nhãn chuẩn (ground truth) chính xác cho mọi bước.
-        Nhãn chuẩn gồm ma trận biến dạng, ảnh sạch, ảnh nhị phân chuẩn, mặt nạ lóa, mặt nạ dấu, mặt nạ nét bút và khung khoản thuốc.
-  \item Đề xuất cách tách khoản thuốc không cần học máy.
-        Cách này kết hợp phép giãn theo chiều dọc với luật ``dòng đậm'' đo bằng phép co, đạt F1 \num{0.973} trên vùng thuốc.
-  \item Xây dựng phép chấm nhị phân hóa khách quan.
-        Ảnh nhị phân chuẩn tạo bằng Otsu nhưng bỏ qua dải viền 1~px quanh nét chữ, tính bằng phép hình thái.
-        Thực nghiệm cho thấy \num{99.4}\% số pixel khác nhau giữa Otsu và Sauvola nằm trong dải này.
+  \item Pipeline 4 khối trả về JSON có cấu trúc, đạt F1 khoản thuốc \KQ{F1 khoản DL} trên 176 ảnh kiểm tra của VAIPE.
+  \item Tinh chỉnh VietOCR trên vùng chữ đơn thuốc, giảm tỉ lệ lỗi ký tự từ \num{0.0864} xuống \num{0.0329} so với trọng số công bố.
+  \item So sánh định lượng trên cùng tập kiểm tra giữa pipeline học sâu, pipeline cổ điển và VLM zero-shot.
+  \item Đo ảnh hưởng của tiền xử lý cổ điển lên pipeline học sâu khi ảnh bị suy giảm ở nhiều mức.
 \end{enumerate}

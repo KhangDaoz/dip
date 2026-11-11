@@ -1,59 +1,29 @@
-# Pipeline tiền xử lý, phân loại và bóc tách cấu trúc tài liệu y tế từ ảnh chụp điện thoại
+# Trích xuất thông tin đơn thuốc từ ảnh: học sâu kết hợp xử lý ảnh cổ điển
 
-## 1. Đặt vấn đề
-Bối cảnh số hóa hồ sơ y tế giấy; khó khăn của ảnh chụp điện thoại (méo, nghiêng, mờ, lóa, bóng, dấu đè chữ, bảng không kẻ); đầu vào, đầu ra của bài toán; đóng góp của nhóm.
+Dàn ý báo cáo v2 (theo [plan.md](../plan.md) §10). Bản chính ≤ 10 trang, hiện khung ≈ 9,5 trang khi còn chỗ trống.
+Số liệu chờ điền đánh dấu `\KQ{...}` (chữ xanh), đoạn văn chờ viết đánh dấu `\TODO{...}` (chữ đỏ).
+Tìm chỗ còn trống: `grep -n 'KQ{\|TODO{' report/latex/sections/*.tex report/latex/appendix/*.tex`.
 
-## 2. Dữ liệu
-### 2.1. Các bộ dữ liệu
-Bộ 1–5: nguồn, số ảnh gốc, loại nhãn, mục đích sử dụng; bảng tập đánh giá ≥ 50 ảnh của từng người.
-### 2.2. Chia tập và chống rò rỉ
-Chia theo ảnh gốc; bộ 2 chỉ dùng 57 ảnh gốc, không dùng bản tăng cường của Roboflow; tham số chọn trên val, báo cáo trên test; riêng phần dựng bảng dùng kiểm định chéo 5-fold trên 57 ảnh bộ 2.
-### 2.3. Bộ 5 — benchmark tổng hợp
-Cách sinh từ ảnh sạch, các loại và mức hỏng, ground truth đi kèm, mức độ giống ảnh thật.
+| Mục | File | Nội dung | Số liệu cần | Người |
+| :-- | :-- | :-- | :-- | :-- |
+| 1. Đặt vấn đề | `1_introduction.tex` | Bài toán ảnh → JSON, lý do đổi hướng từ v1, đóng góp | F1 khoản (E-D2) | Hiếu |
+| 2. Dữ liệu | `2_data.tex` | VAIPE 6 lớp, chia 820/176/176 theo bệnh nhân, đáp án khoản thuốc, bộ suy giảm L0/L2/L4 | số khoản test, % OOV, số ảnh soát | Hiếu |
+| 3.0 Tổng quan | `3_0_overview.tex` | Sơ đồ A→D (TikZ), hợp đồng dữ liệu, bảng chương học phần | — | Hiếu |
+| 3.1 Khối A | `3_1_enhance.tex` | 5 bước + công thức chỉnh nghiêng, khử bóng | — | Hiếu |
+| 3.2 Khối B | `3_2_detect.tex` | YOLOv8s, cấu hình + lý do, ngưỡng 0,443; đối chứng cổ điển | — | Trường |
+| 3.3 Khối C | `3_3_recognize.tex` | VietOCR `vgg_transformer`, tinh chỉnh 20k vòng, max width 1024; đối chứng C2 (C0/C1 nếu có) | — | Khang |
+| 3.4 Khối D | `3_4_assemble.tex` | Chọn lớp, dải ngang, chuẩn hóa, từ điển; đối chứng VLM | số tên trong từ điển | Thắng |
+| 4.1 Thiết lập | `4_1_setup.tex` | Phần cứng, IoU/P/R/F1, CER/WER, F1 khoản, bootstrap | phiên bản thư viện | Hiếu |
+| 4.2 E-B1, E-B2 | `4_2_detect.tex` | Bảng P/R/F1/mAP50 (bỏ lớp + 6 lớp) | toàn bảng | Trường |
+| 4.3 E-C1 | `4_3_recognize.tex` | Bảng CER/WER/khớp, CER theo lớp, ms/vùng | C2, C3 toàn tập **đã có**; cột theo lớp, thời gian | Khang |
+| 4.4 E-D1, E-D2 | `4_4_endtoend.tex` | **Bảng chính** 5–7 dòng | toàn bảng | Thắng |
+| 4.5 E-X1, E-A1 | `4_5_ablation.tex` | Bảng thay khối bằng đáp án; hình F1 theo mức suy giảm | toàn bảng + hình | Hiếu |
+| 4.6 Thời gian | `4_6_runtime.tex` | Giây/ảnh từng khối | toàn bảng | Hiếu |
+| 5. Thảo luận | `5_discussion.tex` | Cổ điển vs DL, DL vs VLM, hạn chế, hướng phát triển | dẫn số từ mục 4 | Hiếu + Thắng |
+| 6. Kết luận | `5_1_conclusion.tex` | 4–5 câu | F1 các dòng chính | Hiếu |
+| 7. Phân công | `6_contribution.tex` | Bảng | — | Hiếu |
+| 8. Khai báo AI | `7_ai_declaration.tex` | Công cụ, phạm vi, mỗi người 1–2 câu | số bài pytest | Cả nhóm |
+| Phụ lục A | `appendix/A_params.tex` | Bảng tham số đầy đủ | — | Mỗi người dòng của mình |
+| Phụ lục B | `appendix/B_examples.tex` | Ảnh overlay (đã có), ma trận nhầm lẫn, ca lỗi | hình | Trường, Khang, Thắng |
 
-## 3. Phương pháp
-### 3.0. Tổng quan pipeline
-Sơ đồ 4 bước, dữ liệu chuyển giữa các bước, ma trận chương học phần (8/8 chương, trục chính C3, C5, C7).
-*Ghi chú:* phải có bước **Hậu xử lý** theo khung pipeline Slide 7 (Dữ liệu → Tiền xử lý → Xử lý chính → Hậu xử lý → Đánh giá); bảng chương học phần ↔ kỹ thuật thêm cột Hậu xử lý.
-### 3.1. Tiền xử lý và phân loại tài liệu
-Khử nhiễu, đo chất lượng (mờ, lóa), tìm 4 góc, nắn phối cảnh, chỉnh nghiêng, tăng tương phản, khử lóa; phân loại 3 lớp bằng đặc trưng + kNN.
-*Ghi chú:* phải viết 1–2 câu về bước hậu xử lý.
-### 3.2. Làm sạch ảnh và tách lớp mực
-Ước lượng nền và khử bóng, tách mực màu, nhận dạng dấu theo độ tròn, xóa dấu / chữ ký (đơn thuốc), giữ chữ đỏ cảnh báo (phiếu xét nghiệm), nhị phân hóa.
-*Ghi chú:* phải viết 1–2 câu về bước hậu xử lý.
-### 3.3. Dựng bảng phiếu xét nghiệm
-Bảng không kẻ: chiều cao chữ, tách cụm từ, gom dòng, tìm cột, ghép ô; vai trò cột và cờ bất thường bằng luật (hậu xử lý văn bản).
-*Ghi chú:* phải viết 1–2 câu về bước hậu xử lý.
-### 3.4. Bóc tách đơn thuốc
-Khoanh vùng thuốc, tách dòng, gom thành từng khoản thuốc; tách trường bằng luật (hậu xử lý văn bản).
-*Ghi chú:* phải viết 1–2 câu về bước hậu xử lý.
-
-## 4. Thực nghiệm
-### 4.1. Thiết lập và độ đo
-Môi trường chạy, độ đo dùng chung (PSNR, SSIM, F-measure, F1, IoU, CER).
-### 4.2. Tiền xử lý và phân loại
-So sánh các phương án tìm góc, chỉnh nghiêng, khử lóa; sai số nắn theo mức méo; kết quả phân loại.
-### 4.3. Làm sạch và tách lớp mực
-So sánh các cách nhị phân hóa; độ bền theo mức hỏng; ràng buộc giữ chữ đỏ.
-### 4.4. Dựng bảng
-Độ chính xác gán cụm từ vào dòng, cột, F1 quan hệ kề; độ bền theo góc nghiêng; tham số theo chiều cao chữ vs cố định.
-### 4.5. Bóc tách đơn thuốc
-Độ chính xác tách khoản thuốc; độ bền theo mức hỏng; lợi ích cho OCR.
-### 4.6. Ablation toàn pipeline
-Tắt lần lượt từng bước, đo ảnh hưởng lên kết quả cuối.
-### 4.7. Thời gian chạy
-Thời gian mỗi bước và toàn pipeline.
-
-## 5. Thảo luận
-Điểm mạnh, hạn chế, ca thất bại điển hình, hướng phát triển.
-
-## 6. Phân công
-Phần việc và mức đóng góp của từng thành viên.
-
-## 7. Khai báo sử dụng AI
-Công cụ đã dùng, dùng cho việc gì, cách kiểm tra kết quả.
-
-## Tài liệu tham khảo
-
-## Phụ lục
-Bảng tham số đầy đủ, đường cong theo tham số, ảnh ví dụ bổ sung.
+Hình đặt trong `report/latex/figure/{common,enhance,detect,recognize,assemble}/`.

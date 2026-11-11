@@ -1,29 +1,18 @@
-% ===== Mục 4.2 =====
-Mọi thí nghiệm chạy trên CPU với Python 3.13, OpenCV 5.0 và scikit-image 0.26, seed 42.
-OCR dùng Tesseract~5 với gói ngôn ngữ \texttt{vie} cho đơn thuốc.
+% ===== Mục 4.1 — Thiết lập và độ đo (≈ 0,5 trang) =====
+% Viết gì: phần cứng, phiên bản, định nghĩa độ đo dùng chung. Người: Hiếu.
+Huấn luyện chạy trên Kaggle (GPU T4); suy luận và đánh giá chạy trên máy cá nhân \TODO{CPU}, GPU RTX~3050 4~GB, Python 3.11, PyTorch \KQ{phiên bản}, Ultralytics \KQ{phiên bản}, VietOCR 0.3.13, seed 42.
+Mọi số liệu trên 176 ảnh kiểm tra; mã chạy lại ở \texttt{code/experiments/}.
 
-Các bài toán phát hiện và phân lớp được đánh giá bằng Precision, Recall và F1 \chuong{8, S49}:
+\textbf{Phát hiện.} Dự đoán và nhãn chuẩn được ghép tham lam theo IoU giảm dần, mỗi nhãn chuẩn ghép tối đa một lần; cặp có IoU $\ge0{,}5$ (và cùng lớp, nếu đo có lớp) là dương tính đúng \chuong{8}:
 \begin{equation}\label{eq:prf}
-  P=\frac{TP}{TP+FP},\qquad R=\frac{TP}{TP+FN},\qquad F_1=\frac{2PR}{P+R},
+  \mathrm{IoU}(K_1,K_2)=\frac{|K_1\cap K_2|}{|K_1\cup K_2|},\qquad
+  P=\frac{TP}{TP+FP},\quad R=\frac{TP}{TP+FN},\quad F_1=\frac{2PR}{P+R}.
 \end{equation}
-trong đó $TP$, $FP$ và $FN$ lần lượt là số dương tính đúng, dương tính giả và âm tính giả.
-F-measure của nhị phân hóa là F1 tính ở mức pixel, với pixel mực là lớp dương.
+$TP$, $FP$, $FN$ cộng dồn trên toàn tập, không lấy trung bình từng ảnh. mAP50 tính bằng Ultralytics, chỉ báo cáo kèm.
 
-Chất lượng khôi phục ảnh được đo bằng tỉ số tín hiệu cực đại trên nhiễu (PSNR) \chuong{6, S39}:
-\begin{equation}\label{eq:psnr}
-  \mathrm{PSNR}=20\log_{10}\frac{255}{e_{\text{rms}}},\qquad
-  e_{\text{rms}}=\sqrt{\frac{1}{MN}\sum_{x=0}^{M-1}\sum_{y=0}^{N-1}\bigl[g(x,y)-f(x,y)\bigr]^2},
-\end{equation}
-trong đó $f$ là ảnh sạch tham chiếu, $g$ là ảnh sau xử lý và $M\times N$ là kích thước ảnh.
+\textbf{Nhận dạng.} Tỉ lệ lỗi ký tự $\mathrm{CER}=\sum_i d(\hat s_i,s_i)\,/\sum_i|s_i|$, với $d$ là khoảng cách Levenshtein~\cite{levenshtein1966} và $s_i$ là chuỗi chuẩn; WER tính tương tự trên từ.
+Trước khi so, cả hai chuỗi được chuẩn hóa Unicode NFC và gộp khoảng trắng; có phân biệt hoa thường.
 
-Độ khớp giữa hai khung bao được đo bằng tỉ số giao trên hợp (IoU):
-\begin{equation}\label{eq:iou}
-  \mathrm{IoU}(K_1,K_2)=\frac{|K_1\cap K_2|}{|K_1\cup K_2|},
-\end{equation}
-trong đó $|K_1\cap K_2|$ và $|K_1\cup K_2|$ là diện tích phần giao và phần hợp của hai khung.
-Một khoản thuốc dự đoán là đúng khi IoU với một khoản trong nhãn chuẩn lớn hơn $0{,}5$.
-Các khoản được ghép theo thuật toán tham lam, mỗi khoản nhãn chuẩn chỉ ghép một lần.
-
-Chất lượng OCR được đo bằng tỉ lệ lỗi ký tự (CER), là khoảng cách chỉnh sửa giữa chuỗi nhận dạng và chuỗi nhãn chuẩn chia cho độ dài chuỗi nhãn chuẩn.
-CER có thể lớn hơn 1 khi kết quả OCR chứa nhiều chữ thừa.
-F1 từ là F1 trên tập từ, không phụ thuộc thứ tự đọc.
+\textbf{Đầu-cuối (độ đo chính).} Một khoản dự đoán khớp một khoản chuẩn khi CER của tên $\le0{,}1$ và số lượng bằng nhau; ghép tham lam theo CER tên tăng dần.
+Từ đó tính F1 khoản thuốc, F1 tên thuốc (chỉ xét tên), tỉ lệ đúng số lượng và tỉ lệ đơn đúng hoàn toàn (mọi khoản khớp, không khoản thừa).
+Khoảng tin cậy 95\% của F1 khoản thuốc lấy bằng bootstrap \num{1000} lần theo ảnh~\cite{efron1993bootstrap}.
