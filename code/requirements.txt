@@ -12,3 +12,4 @@ imagehash>=4.3
 pyyaml>=6.0
 tqdm>=4.66
 pytest>=8.0
+rapidfuzz>=3.6       # so khớp tên thuốc (khối D)

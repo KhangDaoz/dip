@@ -1,4 +1,44 @@
-# Code — Pipeline xử lý ảnh MedTrack
+# Code — Trích xuất đơn thuốc VAIPE (v2)
+
+> **v2 (11/11, theo [plan.md](../plan.md)):** pipeline học sâu A→B→C→D cho đơn thuốc VAIPE. Code v1 (phiếu XN, bộ 1–5)
+> chuyển sang `legacy/`, dùng lại làm đối chứng cổ điển. Các script cũ trong `experiments/` (D*, T*, K*, S*) còn import
+> module v1 nên **không chạy được nữa**; thí nghiệm v2 (E-*) viết mới.
+
+```
+ảnh ─► [A] enhance/ ─► [B] detect/ ─► [C] recognize/ ─► [D] assemble/ ─► PrescriptionResult (JSON)
+       deskew, shadow,   yolo (chính)     C0/C1 Tesseract     classify_rules (D1), group (D2),
+       denoise, clahe    classical        C2/C3 VietOCR       lexicon (D3), vlm (D4 đối chứng)
+                         Ghép: src/pipeline.py · Độ đo: src/metrics/ · Hợp đồng: src/common/contracts.py
+```
+
+### Chạy nhanh v2
+
+```bash
+cd code
+pip install -r requirements-dl.txt && pip install -e .
+pytest                                                   # phần cần trọng số / data tự SKIP
+python tools/to_yolo.py && python tools/to_vietocr.py    # nhãn YOLO + crops VietOCR
+python tools/build_items_gt.py --split all --review 10   # đáp án khoản thuốc + 10 ảnh để soát
+python run_pipeline.py samples/ --preset classical        # chạy được ngay, không cần trọng số
+python run_pipeline.py samples/ --preset dl_c2            # YOLO + VietOCR pretrained
+python run_pipeline.py samples/                           # pipeline chính: YOLO + VietOCR fine-tune (C3)
+python run_pipeline.py samples/ --vlm                     # đối chứng VLM (đặt VLM_API_KEY trước)
+python app.py                                             # demo Gradio
+```
+
+| Preset | B | C | Phân lớp |
+| :--- | :--- | :--- | :--- |
+| `classical` | Sauvola + giãn | Tesseract C0 | luật D1 |
+| `hybrid` | YOLO | Tesseract C0 | YOLO |
+| `dl` (chính) | YOLO | VietOCR C3 | YOLO |
+| `dl_c2` | YOLO | VietOCR C2 | YOLO |
+
+Trọng số (không commit): `weights/yolo_vaipe.pt` từ `notebooks/train_yolo.ipynb`, `weights/vietocr_finetuned.pth`
+từ `notebooks/finetune_vietocr.ipynb` (Kaggle). Ablation E-X1: `Pipeline(detector="gt", ocr="C3")(img, id, gt=annotations)`.
+
+---
+
+# (Cũ, v1) Code — Pipeline xử lý ảnh MedTrack
 
 Khung code (skeleton) cho đồ án Xử lý ảnh số. Mọi hàm đã có **tên, tham số mặc định và docstring theo [kế hoạch toàn nhóm](../team/KeHoach.md)**; thân hàm là `raise NotImplementedError`. **Mỗi người chỉ sửa module của mình.** Ai muốn đổi `common/` hoặc hợp đồng dữ liệu thì phải báo cả nhóm.
 
