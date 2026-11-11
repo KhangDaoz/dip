@@ -1,6 +1,6 @@
 # Kết quả cho báo cáo
 
-Sinh bởi `code/tools/export_report_results.py` lúc 11/11/2026 17:03, commit `08a8d4b`. Mọi số liệu trên **176 ảnh kiểm tra** trừ khi ghi khác. Chạy lại script để cập nhật.
+Sinh bởi `code/tools/export_report_results.py` lúc 11/11/2026 18:49, commit `45be984`. Mọi số liệu trên **176 ảnh kiểm tra** trừ khi ghi khác. Chạy lại script để cập nhật.
 
 ## Dữ liệu (đáp án khoản thuốc, từ điển)
 
@@ -106,24 +106,68 @@ File: `result/e_d1_rules/`
 
 ## E-D2 — Bảng chính đầu-cuối
 
-_chưa có — chưa chạy thí nghiệm_
+| pipeline | f1_item | ci_low | ci_high | f1_item_nolex | f1_name | qty_acc | exact_rate | date_acc | n_json_fail | n_api_error |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| classical | 0.9487 | 0.9316 | 0.9647 | 0.9161 | 0.9580 | 0.9187 | 0.8011 | 0.8693 |  |  |
+| hybrid | 0.9865 | 0.9736 | 0.9977 | 0.9549 | 0.9955 | 0.9865 | 0.9716 | 0.7784 |  |  |
+| dl_c2 | 0.9966 | 0.9895 | 1.0 | 0.9514 | 0.9966 | 0.9955 | 0.9943 | 1.0 |  |  |
+| dl_c3 | 0.9966 | 0.9930 | 1.0 | 0.9966 | 0.9966 | 1.0 | 0.9830 | 1.0 |  |  |
+| dl_c3_gt_text | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |  |  |
 
+`f1_item` có từ điển, `f1_item_nolex` không từ điển; [ci_low, ci_high] = CI 95 % bootstrap. Dòng `*_gt_text` = khung dự đoán + chữ chuẩn.
+
+
+File: `result/e_d2_endtoend/`
 
 ## E-X1 — Ablation: lỗi đến từ khối nào
 
-_chưa có — chưa chạy thí nghiệm_
+| config | f1_item | ci_low | ci_high | f1_item_nolex | f1_name | qty_acc | exact_rate | date_acc |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| B chuẩn + C chuẩn | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |
+| B chuẩn + C3 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |
+| YOLO + C chuẩn | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |
+| YOLO + C3 (pipeline chính) | 0.9966 | 0.9930 | 1.0 | 0.9966 | 0.9966 | 1.0 | 0.9830 | 1.0 |
 
+
+File: `result/e_x1_ablation/`
 
 ## E-A1 — Độ bền khi ảnh suy giảm
 
-_chưa có — chưa chạy thí nghiệm_
+| level | enhance | config | f1_item | ci_low | ci_high | f1_item_nolex | f1_name | qty_acc | exact_rate | date_acc |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| L0 | none | L0 · A=none | 0.9966 | 0.9930 | 1.0 | 0.9966 | 0.9966 | 1.0 | 0.9830 | 1.0 |
+| L0 | full | L0 · A=full | 0.9955 | 0.9907 | 0.9989 | 0.9955 | 0.9955 | 1.0 | 0.9773 | 1.0 |
+| L2 | none | L2 · A=none | 0.9585 | 0.9339 | 0.9802 | 0.9562 | 0.9944 | 0.9639 | 0.9091 | 1.0 |
+| L2 | full | L2 · A=full | 0.7692 | 0.7329 | 0.8094 | 0.7551 | 0.8927 | 0.8352 | 0.4886 | 0.6932 |
+| L4 | none | L4 · A=none | 0.1264 | 0.0854 | 0.1743 | 0.0926 | 0.2912 | 0.1219 | 0.0341 | 0.1477 |
+| L4 | full | L4 · A=full | 0.0470 | 0.0290 | 0.0668 | 0.0359 | 0.1436 | 0.0767 | 0.0 | 0.0682 |
 
+Hình: `robustness.png`.
+
+**Chẩn đoán** (`diagnostics.csv`): số vùng YOLO tìm được mỗi ảnh và số ảnh có vùng `date`.
+
+| level | enhance | box_per_img | imgs_with_date_box | n |
+| --- | --- | --- | --- | --- |
+| L0 | none | 34.7 | 176 | 176 |
+| L0 | full | 34.4 | 176 | 176 |
+| L2 | none | 34.5 | 176 | 176 |
+| L2 | full | 50.5 | 58 | 176 |
+| L4 | none | 33.3 | 115 | 176 |
+| L4 | full | 54.5 | 21 | 176 |
+
+Khối A làm giảm F1. Quan sát trên ảnh: phép đóng với phần tử cấu trúc vuông 81×81 (A3) để lại mảng xám hình khối và vệt sọc ở rìa vệt bóng, chữ nhạt và mảnh hơn; YOLO (huấn luyện trên ảnh gốc) nhận thêm nhiều vùng giả và bỏ sót vùng ngày. Chưa tách riêng ảnh hưởng của từng bước A1–A5.
+
+
+File: `result/e_a1_robustness/`
 
 ## Thời gian khối B + C theo pipeline
 
 | preset | n | B_s_per_img | C_s_per_img |
 | --- | --- | --- | --- |
+| classical | 176 | 0.0482 | 1.1139 |
+| dl_c2 | 176 | 0.0343 | 3.7368 |
 | dl_c3 | 176 | 0.0494 | 3.3196 |
+| hybrid | 176 | 0.1146 | 1.2660 |
 
 Khối B + C trên 176 ảnh test (GPU RTX 3050 cho YOLO / VietOCR, Tesseract CPU). Khối A xem E-A3; khối D ≈ 0,01–0,03 s/ảnh.
 

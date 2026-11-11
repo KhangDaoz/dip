@@ -1,0 +1,28 @@
+{
+  "experiment": "E-D2",
+  "split": "test",
+  "n_images": 176,
+  "commit": "45be98428fd6eb5edf98b25da8f4b4b1c5dd7fa7",
+  "variants": {
+    "classical": "../results/handoff/classical.jsonl",
+    "hybrid": "../results/handoff/hybrid.jsonl",
+    "dl_c2": "../results/handoff/dl_c2.jsonl",
+    "dl_c3": "../results/handoff/dl_c3.jsonl"
+  },
+  "check": "dl_c3",
+  "vlm_model": null,
+  "lexicon": {
+    "source": "train",
+    "size": 138,
+    "tau_high": 90.0,
+    "tau_low": 80.0,
+    "margin": 5.0
+  },
+  "conf_yolo": 0.5,
+  "dedupe_iou": 0.7,
+  "cer_thr": 0.1,
+  "bootstrap": {
+    "n": 1000,
+    "seed": 42
+  }
+}

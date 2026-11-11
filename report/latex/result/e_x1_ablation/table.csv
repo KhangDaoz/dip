@@ -1,0 +1,5 @@
+﻿config,f1_item,ci_low,ci_high,f1_item_nolex,f1_name,qty_acc,exact_rate,date_acc
+B chuẩn + C chuẩn,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+B chuẩn + C3,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+YOLO + C chuẩn,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+YOLO + C3 (pipeline chính),0.9966,0.993,1.0,0.9966,0.9966,1.0,0.983,1.0

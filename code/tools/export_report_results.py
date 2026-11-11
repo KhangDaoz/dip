@@ -174,8 +174,30 @@ def main():
             "Dòng `*_gt_text` = khung dự đoán + chữ chuẩn.\n")
     section("E-X1 — Ablation: lỗi đến từ khối nào", "e_x1_ablation",
             lambda: md_table(read_csv(DEST / "e_x1_ablation" / "table.csv")))
-    section("E-A1 — Độ bền khi ảnh suy giảm", "e_a1_robustness",
-            lambda: md_table(read_csv(DEST / "e_a1_robustness" / "table.csv")) + "\nHình: `robustness.png`.\n")
+    def ea1():
+        rows = []
+        for r in read_csv(DEST / "e_a1_robustness" / "table.csv"):
+            p = RESULTS_DIR / "e_a1" / f"{r['level']}_{r['enhance']}.jsonl"
+            if r["level"] == "L0" and r["enhance"] == "none" and not p.exists():
+                p = RESULTS_DIR / "handoff" / "dl_c3.jsonl"
+            if not p.exists():
+                continue
+            recs = [json.loads(l) for l in p.read_text(encoding="utf-8").splitlines() if l.strip()]
+            rows.append({"level": r["level"], "enhance": r["enhance"],
+                         "box_per_img": sum(len(x["boxes"]) for x in recs) / len(recs),
+                         "imgs_with_date_box": sum(any(b["class"] == "date" for b in x["boxes"]) for x in recs),
+                         "n": len(recs)})
+        with open(DEST / "e_a1_robustness" / "diagnostics.csv", "w", encoding="utf-8-sig", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(rows[0]))
+            w.writeheader()
+            w.writerows(rows)
+        return (md_table(read_csv(DEST / "e_a1_robustness" / "table.csv")) + "\nHình: `robustness.png`.\n\n"
+                "**Chẩn đoán** (`diagnostics.csv`): số vùng YOLO tìm được mỗi ảnh và số ảnh có vùng `date`.\n\n" +
+                md_table(rows, nd=1) +
+                "\nKhối A làm giảm F1. Quan sát trên ảnh: phép đóng với phần tử cấu trúc vuông 81×81 (A3) để lại mảng xám "
+                "hình khối và vệt sọc ở rìa vệt bóng, chữ nhạt và mảnh hơn; YOLO (huấn luyện trên ảnh gốc) nhận thêm "
+                "nhiều vùng giả và bỏ sót vùng ngày. Chưa tách riêng ảnh hưởng của từng bước A1–A5.\n")
+    section("E-A1 — Độ bền khi ảnh suy giảm", "e_a1_robustness", ea1)
 
     def rt():
         rows = []

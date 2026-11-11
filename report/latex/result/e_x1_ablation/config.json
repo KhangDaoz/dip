@@ -1,0 +1,6 @@
+{
+  "split": "test",
+  "n_images": 176,
+  "handoff": "E:\\Project\\dip\\results\\handoff\\dl_c3.jsonl",
+  "lexicon_size": 138
+}

@@ -1,0 +1,12 @@
+{
+  "levels": [
+    "L0",
+    "L2",
+    "L4"
+  ],
+  "enhance": [
+    "none",
+    "full"
+  ],
+  "limit": null
+}
