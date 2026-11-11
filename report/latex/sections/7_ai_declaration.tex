@@ -1,10 +1,23 @@
-% Mục 8. Khai báo sử dụng AI. Mỗi người điền 1 đến 2 câu. Người viết: Hiếu tổng hợp.
-Nhóm chủ động thực hiện toàn bộ quy trình cốt lõi của đồ án: khảo sát bài toán, thiết kế kiến trúc bốn khối, chọn thuật toán và tham số theo đặc trưng vật lý của ảnh đơn thuốc, huấn luyện trên Kaggle, chạy thực nghiệm, phân tích lỗi và biên soạn báo cáo.
-Công cụ Claude của Anthropic thông qua Claude Code được sử dụng có kiểm soát để hỗ trợ viết mã khung cho các mô-đun, kịch bản chuyển đổi dữ liệu và bộ kiểm thử đơn vị:
-\begin{itemize}
-  \item Hiếu: trực tiếp thiết kế thứ tự A1--A5, chọn kích thước phần tử cấu trúc theo chiều cao chữ, tích hợp pipeline, chạy E-A1, E-A2, E-A3, E-X1 và biên tập báo cáo; AI hỗ trợ viết khung khối A và công cụ sinh ảnh suy giảm.
-  \item Trường: trực tiếp thiết kế bộ phát hiện cổ điển kết hợp Sauvola và phép giãn, huấn luyện YOLOv8s ở kích thước 1024, quét lưới chọn ngưỡng 0,443 và phân tích E-B1, E-B2; AI hỗ trợ viết kịch bản chuyển nhãn VAIPE sang YOLO.
-  \item Khang: trực tiếp huấn luyện VietOCR 20.000 vòng trên Kaggle, nâng \texttt{image\_max\_width} lên 1024 để chống co chữ ở vùng chẩn đoán dài, chạy E-C1 và xuất tệp bàn giao B+C; AI hỗ trợ viết lớp bọc VietOCR và Tesseract C0/C1.
-  \item Thắng: trực tiếp xây dựng thuật toán gom dải ngang, thiết lập luật chặn kéo sai liều ở từ điển, soát bằng mắt 176 ảnh kiểm tra và chạy E-D1, E-D2; AI hỗ trợ viết biểu thức chính quy chuẩn hóa trường và client gọi VLM.
-\end{itemize}
-Mọi đoạn mã có AI hỗ trợ đều được đối chiếu công thức giáo trình và kiểm chứng qua \num{101} bài kiểm thử đơn vị bằng \texttt{pytest}; mọi số liệu trong báo cáo sinh trực tiếp từ mã nguồn trong \path{code/experiments/} với \texttt{seed = 42}, chọn tham số trên tập kiểm định và chỉ đánh giá một lần trên tập kiểm tra.
+% Mục 8. Khai báo sử dụng AI. Người viết: Hiếu tổng hợp.
+Nhóm dùng Claude (Anthropic) thông qua Claude Code để viết mã khung cho các mô-đun, kịch bản chuyển đổi dữ liệu và bài kiểm thử đơn vị, và để rà soát câu chữ báo cáo.
+Việc thiết kế pipeline, chọn thuật toán và tham số, huấn luyện, chạy thí nghiệm và phân tích kết quả do nhóm tự làm (Bảng~\ref{tab:ai}).
+
+\begin{table}[H]
+\centering
+\caption{Việc AI hỗ trợ và phần nhóm tự thực hiện.}\label{tab:ai}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{1.4cm}>{\raggedright\arraybackslash}p{4.4cm}L@{}}
+\toprule
+\textbf{Thành viên} & \textbf{AI hỗ trợ} & \textbf{Nhóm tự thực hiện} \\
+\midrule
+Hiếu & Mã khung khối A, công cụ sinh ảnh suy giảm & Thứ tự A1--A5, chọn kích thước phần tử cấu trúc theo chiều cao chữ, tích hợp pipeline, các thí nghiệm khối A, biên tập báo cáo \\
+Trường & Kịch bản chuyển nhãn VAIPE sang định dạng YOLO & Bộ phát hiện cổ điển (Sauvola và phép giãn), huấn luyện YOLOv8s ở kích thước 1024, quét lưới chọn ngưỡng \num{0.443} \\
+Khang & Lớp bọc VietOCR và Tesseract & Huấn luyện VietOCR \num{20000} vòng trên Kaggle, nâng chiều rộng ảnh vào lên 1024 để không co chữ ở dòng chẩn đoán dài, xuất tệp bàn giao B+C \\
+Thắng & Biểu thức chính quy chuẩn hóa trường, mã gọi VLM & Thuật toán gom dải ngang, luật chặn kéo sai liều ở từ điển, soát bằng mắt 176 ảnh kiểm tra \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Cách kiểm tra.}
+Mọi đoạn mã có AI hỗ trợ đều được đối chiếu với công thức trong giáo trình và kiểm tra bằng \num{101} bài kiểm thử đơn vị (\texttt{pytest}).
+Mọi số liệu trong báo cáo được sinh từ mã thí nghiệm của nhóm với seed 42; tham số được chọn trên tập kiểm định và kết quả báo cáo trên tập kiểm tra.

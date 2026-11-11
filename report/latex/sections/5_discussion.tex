@@ -1,12 +1,26 @@
-% Mục 5. Thảo luận (khoảng 0,6 trang). Mỗi ý 2 đến 3 câu có số lấy từ mục 4. Người viết: Hiếu và Thắng.
-\begin{itemize}[leftmargin=*, nosep]
-\item \textbf{Hiệu quả theo khối và đầu-cuối:} Ở khối B, học sâu vượt phương pháp cổ điển với F1 \num{0.993} so với \num{0.818} và nhanh hơn; ở khối C, Tesseract đọc chẩn đoán tốt hơn VietOCR công bố nhưng kém xa ở cách dùng, và VietOCR chỉ vượt toàn diện sau khi tinh chỉnh với CER \num{0.0329}. Ở đầu-cuối E-D2, thay bộ phát hiện cổ điển ở (i) bằng YOLOv8s ở (ii) nâng F1 khoản từ \num{0.9487} lên \num{0.9865} và đơn đúng từ \num{0.8011} lên \num{0.9716} do bộ cổ điển không phân lớp và sót vùng số lượng với SL đúng \num{0.9187}; thay tiếp Tesseract bằng VietOCR tinh chỉnh ở (iii) đưa F1 khoản lên \num{0.9966} và ngày đúng từ \num{0.7784} lên \num{1.0000}.
+% Mục 5. Thảo luận (khoảng 0,6 trang). Mỗi ý có số lấy từ mục 4. Người viết: Hiếu và Thắng.
+% Hướng phát triển nằm ở Mục 6 (Kết luận).
+\textbf{Hiệu quả theo khối và đầu-cuối.}
+Ở khối B, YOLOv8s đạt F1 \num{0.993}, cao hơn bộ phát hiện cổ điển (\num{0.818}), và nhanh hơn (\num{0.031} so với \num{0.061} giây mỗi ảnh; YOLOv8s chạy GPU, bộ cổ điển chạy CPU).
+Ở khối C, Tesseract đọc dòng chẩn đoán tốt hơn VietOCR công bố nhưng kém xa ở dòng cách dùng; VietOCR chỉ tốt hơn ở mọi mặt sau khi tinh chỉnh, với CER \num{0.0329}.
+Ở mức đầu-cuối, thay bộ phát hiện cổ điển (i) bằng YOLOv8s (ii) nâng F1 khoản từ \num{0.9487} lên \num{0.9865} và tỉ lệ đơn đúng từ \num{0.8011} lên \num{0.9716}, một phần vì bộ cổ điển không phân lớp nên số lượng đúng chỉ đạt \num{0.9187}.
+Thay tiếp Tesseract bằng VietOCR tinh chỉnh (iii) đưa F1 khoản lên \num{0.9966} và tỉ lệ ngày đúng từ \num{0.7784} lên \num{1.0000}.
 
-\item \textbf{Vai trò của Khối A:} Hai bước hình học gồm nắn phối cảnh A1 đúng 47/50 ảnh L4 và chỉnh nghiêng A2 với sai số trung vị $0{,}063^\circ$ hoạt động hiệu quả, còn phép đóng chia nền A3 và CLAHE A5 có thể tạo thêm vệt nền khiến YOLOv8s, vốn chỉ huấn luyện trên ảnh sạch, kém ổn định hơn trong E-A1; ảnh hưởng của từng bước là hướng cần khảo sát thêm.
+\textbf{Vai trò của khối A.}
+Hai bước hình học hoạt động hiệu quả: nắn phối cảnh (A1) tìm đúng tờ giấy trên 47/50 ảnh L4, chỉnh nghiêng (A2) có sai số trung vị $0{,}063^\circ$.
+Ngược lại, phép đóng chia nền (A3) và CLAHE (A5) có thể tạo thêm vệt nền, khiến YOLOv8s, vốn chỉ được huấn luyện trên ảnh gốc, kém ổn định hơn (Mục~\ref{sec:e-ablation}).
+Vì vậy kết quả chính ở Mục~\ref{sec:e-endtoend} dùng ảnh gốc, không qua khối A; ảnh hưởng riêng của từng bước cần được khảo sát thêm.
 
-\item \textbf{Đối chiếu với VLM zero-shot \texttt{Qwen3.8-27B}:} Pipeline học sâu theo khối (iii) đạt cùng F1 khoản \num{0.9966} khi bật từ điển nhưng cao hơn khi tắt từ điển với \num{0.9966} so với \num{0.9875}, đúng tuyệt đối \num{1.0000} ở số lượng và ngày kê đơn so với \num{0.9932} và \num{0.9943} của VLM, không gặp lỗi hỏng JSON như 1/176 ảnh của VLM và chạy cục bộ nên đảm bảo tính riêng tư cho ảnh y tế.
+\textbf{Đối chiếu với VLM zero-shot Qwen3.8-27B.}
+Pipeline (iii) đạt cùng F1 khoản \num{0.9966} với VLM khi có từ điển, và cao hơn khi bỏ từ điển (\num{0.9966} so với \num{0.9875}).
+Pipeline đúng toàn bộ số lượng và ngày kê đơn (\num{1.0000} so với \num{0.9932} và \num{0.9943} của VLM), nhưng VLM có tỉ lệ đơn đúng hoàn toàn cao hơn (\num{0.9943} so với \num{0.9830}).
+Các khoảng tin cậy chồng nhau và chênh lệch chỉ ứng với vài khoản thuốc, nên chưa thể kết luận bên nào chính xác hơn.
+Ưu điểm rõ ràng của pipeline là chạy cục bộ, không gửi ảnh y tế ra dịch vụ bên ngoài, và không bị lỗi định dạng JSON (VLM lỗi trên 1/176 ảnh).
 
-\item \textbf{Hạn chế:} Thứ nhất, VAIPE là ảnh in máy cùng mẫu đơn nên điểm số chưa phản ánh hết ảnh chụp thật từ nhiều bệnh viện. Thứ hai, đáp án khoản thuốc dẫn xuất từ chính luật khối D nên E-D1 bằng \num{1.000} chủ yếu phản ánh tính nhất quán của luật dù đã soát tay 176 ảnh. Thứ ba, ngưỡng $\text{CER} \le 0{,}1$ có thể bỏ qua lỗi liều ở tên dài, cụ thể trong 141 tên thuốc của cả bộ dữ liệu có 5 cặp tên cách nhau $\text{CER} \le 0{,}1$, trong đó có cặp khác liều như ``DIAMICRON MR TAB 30MG'' và ``60MG'' với CER \num{0.097}. Thứ tư, từ điển lấy từ tập huấn luyện nên chỉ 2/443 khoản kiểm tra, tức 0,5\%, nằm ngoài từ điển; nhóm cũng lược bỏ các thí nghiệm phụ E-B3, E-C2, E-D3 do giới hạn thời gian.
-
-\item \textbf{Hướng phát triển:} Thu thập ảnh đơn chụp thật từ nhiều bệnh viện, huấn luyện lại YOLOv8s và VietOCR có tăng cường suy giảm, lọc bỏ vùng \texttt{other} trước OCR để giảm hai phần ba thời gian suy luận và thay bằng danh mục thuốc quốc gia.
-\end{itemize}
+\textbf{Hạn chế.}
+\begin{enumerate}[label=(\arabic*), leftmargin=2em, itemsep=0.15em, topsep=0.3em]
+  \item VAIPE là ảnh in máy theo cùng mẫu đơn, nên điểm số chưa phản ánh ảnh chụp thật từ nhiều bệnh viện.
+  \item Đáp án khoản thuốc được dẫn xuất từ chính luật của khối D, nên việc chạy luật trên khung và chữ chuẩn cho F1 \num{1.000} chủ yếu phản ánh tính nhất quán của luật, dù đã soát tay 176 ảnh.
+  \item Ngưỡng $\text{CER}\le0{,}1$ có thể bỏ qua lỗi liều ở tên dài: trong 141 tên thuốc của bộ dữ liệu có 5 cặp tên cách nhau $\text{CER}\le0{,}1$, trong đó có cặp khác liều ``DIAMICRON MR TAB 30MG'' và ``60MG'' (CER \num{0.097}).
+  \item Từ điển lấy từ tập huấn luyện và chỉ 2/443 khoản kiểm tra (0,5\%) nằm ngoài từ điển; ngoài ra nhóm đã lược bỏ một số thí nghiệm phụ do giới hạn thời gian.
+\end{enumerate}

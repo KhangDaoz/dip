@@ -4,7 +4,7 @@
 \centering
 \caption{Tham số của pipeline. Dấu ``---'' nghĩa là không dò, dùng giá trị mặc định hoặc theo lý do ghi bên cạnh.}\label{tab:params}
 \footnotesize
-\begin{tabularx}{\linewidth}{@{}l >{\raggedright\arraybackslash}p{3.25cm} >{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}p{2.25cm} L@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{1.3cm} >{\raggedright\arraybackslash}p{3.1cm} >{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{1.6cm} L@{}}
 \toprule
 \textbf{Khối} & \textbf{Tham số} & \textbf{Giá trị} & \textbf{Đã thử} & \textbf{Lý do} \\
 \midrule
@@ -28,11 +28,16 @@ C & Số vòng, batch, lr & \num{20000}, 32, $3\cdot10^{-4}$ & --- & Vừa thờ
 C & Chiều rộng ảnh tối đa & 1024~px & 512 & 512 làm co $\approx5\%$ vùng dài \\
 C & Đệm vùng cắt & 2~px & --- & Giữ dấu, nét sát khung \\
 C & Giải mã & tham lam & --- & Nhanh, tỉ lệ khớp nguyên chuỗi đạt 92,3\% \\
+C0, C1 & Chế độ Tesseract; phóng ảnh & \texttt{-{}-psm 7}; $\times2$ nội suy bậc ba & --- & Mỗi vùng là một dòng; chữ nhỏ cần phóng to \\
 \midrule
 D1 & Ngưỡng tin cậy hỏi lại & 0,5 & --- & Chỉ dùng biểu thức chính quy khi lớp YOLO kém tin cậy \\
 D1 & IoU trùng & 0,7 & --- & Loại khung dự đoán chồng lấp trên cùng cụm chữ \\
-D4 & Từ điển $\tau_{\text{cao}}$, $\tau_{\text{thấp}}$, lề & 90, 80, 5 & kiểm trên tập kiểm định & Chặn kéo sai liều; xem Mục~\ref{sec:m-assemble} \\
+D4 & Từ điển $\tau_{\text{cao}}$, $\tau_{\text{thấp}}$, lề & 90, 80, 5 & --- & Cố định trước khi chạy tập kiểm tra; chặn kéo sai liều, xem Mục~\ref{sec:m-assemble} \\
+D (VLM) & Nhiệt độ & 0 & --- & Kết quả lặp lại được \\
 D & Khớp tên khi chấm & CER $\le0{,}1$ & --- & Cho phép lỗi nhỏ không đổi nghĩa \\
+\midrule
+Đánh giá & Bootstrap theo ảnh & \num{1000} lần & --- & Ước lượng khoảng tin cậy 95\% \\
+Chung & Seed & 42 & --- & Lặp lại được việc chia tập, sinh ảnh suy giảm, huấn luyện \\
 \bottomrule
 \end{tabularx}
 \end{table}
