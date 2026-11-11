@@ -1,11 +1,12 @@
 % Mục 5. Thảo luận (khoảng 0,6 trang). Mỗi ý 2 đến 3 câu có số lấy từ mục 4. Người viết: Hiếu và Thắng.
-\TODO{Cổ điển và học sâu. So dòng (i), (ii) với (iii) ở Bảng~\ref{tab:ED2} và kết quả E-B1. Phương pháp cổ điển vẫn tìm được vùng chữ nhưng không phân lớp, nên phải dựa vào luật trên chữ OCR và lỗi OCR kéo theo lỗi phân lớp. Nêu phần nào của phương pháp cổ điển vẫn đáng dùng, dựa trên E-A1.}
+\begin{itemize}[leftmargin=*, nosep]
+\item \textbf{Hiệu quả theo khối và đầu-cuối:} Ở khối B, học sâu vượt phương pháp cổ điển (F1 \num{0.993} so với \num{0.818}) và nhanh hơn; ở khối C, Tesseract đọc chẩn đoán tốt hơn VietOCR công bố nhưng kém xa ở cách dùng, và VietOCR chỉ vượt toàn diện sau khi tinh chỉnh (CER \num{0.0329}). Ở mức đầu-cuối (E-D2), thay bộ phát hiện cổ điển ở (i) bằng YOLOv8s ở (ii) nâng F1 khoản từ \num{0.9487} lên \num{0.9865} (đơn đúng từ \num{0.8011} lên \num{0.9716}) do phương pháp cổ điển không phân lớp và sót vùng số lượng (SL đúng \num{0.9187}); thay tiếp Tesseract bằng VietOCR tinh chỉnh ở (iii) đưa F1 khoản lên \num{0.9966} và ngày đúng từ \num{0.7784} lên \num{1.0000}.
 
-\TODO{Thắng: học sâu theo khối và VLM. VLM mạnh ở chỗ không cần huấn luyện và đọc được ngữ cảnh. VLM yếu ở chỗ nào (bịa tên hoặc liều, chậm, phụ thuộc API, phải gửi ảnh y tế ra ngoài). Dẫn số từ Bảng~\ref{tab:ED2}.}
+\item \textbf{Vai trò của Khối A:} Hai bước hình học gồm nắn phối cảnh (A1, đúng 47/50 ảnh L4) và chỉnh nghiêng (A2, sai số trung vị $0{,}063^\circ$) hoạt động hiệu quả, còn phép đóng chia nền (A3) và CLAHE (A5) tạo vệt nền làm giảm độ chính xác của YOLOv8s vốn chỉ huấn luyện trên ảnh sạch (E-A1).
 
-Hạn chế đầu tiên nằm ở dữ liệu, vì VAIPE là ảnh in máy, sạch và cùng một mẫu đơn nên kết quả chưa nói được gì về ảnh chụp điện thoại thật hay đơn của bệnh viện khác, và bộ ảnh suy giảm chỉ mô phỏng được một phần.
-Hạn chế thứ hai là đáp án khoản thuốc được dẫn xuất bằng chính luật của khối D và chỉ soát bằng mắt \KQ{số ảnh} ảnh, nên E-D1 bằng \num{1.000} chỉ cho thấy luật nhất quán.
-Hạn chế thứ ba là từ điển lấy từ tập huấn luyện nên chỉ có 2 trong 443 khoản của tập kiểm tra (0,5\%) nằm ngoài từ điển. Tỉ lệ này thấp vì các đơn VAIPE dùng chung một danh mục thuốc, và với đơn của bệnh viện khác thì từ điển sẽ giúp được ít hơn.
-\TODO{Ghi các phần đã cắt vì thời gian: E-B3, E-C2, E-D3, và Tesseract hoặc khối B cổ điển nếu không chạy}
+\item \textbf{Đối chiếu với VLM zero-shot (\texttt{Qwen3.8-27B}):} Pipeline học sâu theo khối (iii) đạt cùng F1 khoản \num{0.9966} khi bật từ điển nhưng cao hơn khi tắt từ điển (\num{0.9966} so với \num{0.9875}), đúng tuyệt đối số lượng và ngày kê đơn (\num{1.0000} so với \num{0.9932} và \num{0.9943}), không gặp lỗi hỏng JSON (VLM hỏng 1/176 ảnh) và chạy cục bộ nên đảm bảo tính riêng tư cho ảnh y tế.
 
-\TODO{Hướng phát triển, 1 đến 2 câu. Thu ảnh chụp thật để đánh giá, huấn luyện lại có tăng cường suy giảm, bỏ vùng \texttt{other} trước OCR để tăng tốc, dùng từ điển thuốc quốc gia thay cho từ điển của tập huấn luyện.}
+\item \textbf{Hạn chế:} (1) VAIPE là ảnh in máy cùng mẫu đơn nên điểm số chưa phản ánh hết ảnh chụp thật từ nhiều bệnh viện; (2) đáp án khoản thuốc dẫn xuất từ chính luật khối D nên E-D1 bằng \num{1.000} chủ yếu phản ánh tính nhất quán của luật dù đã soát tay 176 ảnh; (3) ngưỡng $\text{CER} \le 0{,}1$ có thể bỏ qua lỗi liều ở tên dài (trong 141 tên thuốc có 5 cặp khác liều nhưng $\text{CER} \le 0{,}1$, như ``DIAMICRON MR TAB 30MG'' và ``60MG'', CER \num{0.097}); (4) từ điển lấy từ tập huấn luyện nên chỉ 2/443 khoản kiểm tra (0,5\%) ngoài từ điển; nhóm cũng lược bỏ các thí nghiệm phụ (E-B3, E-C2, E-D3) do giới hạn thời gian.
+
+\item \textbf{Hướng phát triển:} Thu thập ảnh đơn chụp thật từ nhiều bệnh viện, huấn luyện lại YOLOv8s và VietOCR có tăng cường suy giảm, lọc bỏ vùng \texttt{other} trước OCR để giảm hai phần ba thời gian suy luận và thay bằng danh mục thuốc quốc gia.
+\end{itemize}

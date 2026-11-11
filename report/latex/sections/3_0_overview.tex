@@ -1,9 +1,7 @@
 % ===== Mở đầu mục 3 — Tổng quan pipeline (≈ 0,5 trang) =====
 % Viết gì: sơ đồ, hợp đồng dữ liệu giữa các khối, bảng chương học phần. Người: Hiếu.
-Pipeline gồm bốn khối nối tiếp (Hình~\ref{fig:pipeline}).
-Khối A nhận ảnh gốc và trả về ảnh đã chuẩn hóa hình học và độ sáng.
-Khối B tìm các vùng chữ và gán lớp, khối C đọc chữ trong từng vùng, còn khối D đóng vai trò hậu xử lý, ghép các vùng thành bản ghi JSON.
-Các khối trao đổi dữ liệu qua hợp đồng chung \path{code/src/common/contracts.py}, trong đó khung bao có dạng $[x_0,y_0,x_1,y_1]$ tính theo pixel.
+Pipeline gồm bốn khối nối tiếp (Hình~\ref{fig:pipeline}) và trao đổi dữ liệu qua hợp đồng chung \path{code/src/common/contracts.py}, trong đó khung bao có dạng $[x_0,y_0,x_1,y_1]$ tính theo pixel.
+Khối D là bước hậu xử lý, ghép các vùng chữ thành bản ghi JSON.
 Mỗi khối có một phương pháp đối chứng, và toàn pipeline được so với một VLM zero-shot.
 Bảng~\ref{tab:chapters} cho biết kiến thức của học phần được dùng ở đâu.
 
@@ -20,7 +18,7 @@ Bảng~\ref{tab:chapters} cho biết kiến thức của học phần được d
   \node[io, right=of d] (out) {JSON};
   \draw[->] (in) -- (a); \draw[->] (a) -- (b); \draw[->] (b) -- (c); \draw[->] (c) -- (d); \draw[->] (d) -- (out);
   \node[draw, dashed, rounded corners=2pt, align=center, minimum height=0.8cm, text width=6.6cm]
-       (vlm) at ($(b)!0.5!(c)+(0,-1.45)$) {Đối chứng VLM zero-shot (Qwen2.5-VL)};
+       (vlm) at ($(b)!0.5!(c)+(0,-1.45)$) {Đối chứng VLM zero-shot (Qwen3.8-27B)};
   \draw[->, dashed] (in.south) |- (vlm.west);
   \draw[->, dashed] (vlm.east) -| (out.south);
 \end{tikzpicture}
@@ -35,11 +33,15 @@ Bảng~\ref{tab:chapters} cho biết kiến thức của học phần được d
 \toprule
 \textbf{Chương} & \textbf{Kỹ thuật} & \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} \\
 \midrule
-2 & Nội suy khi xoay, nắn phối cảnh, phóng vùng cắt & $\bullet$ & --- & $\circ$ & --- \\
-3 & Lọc trung vị, CLAHE, chia nền, tích chập Gauss (sinh ảnh suy giảm) & $\bullet$ & --- & $\circ$ & --- \\
-5 & Canny, lược đồ chiếu, Otsu, Sauvola, thành phần liên thông & $\bullet$ & $\circ$ & $\circ$ & --- \\
-7 & Phép đóng ước lượng nền, phép giãn nối ký tự & $\bullet$ & $\circ$ & --- & --- \\
-8 & P/R/F1, ma trận nhầm lẫn, chia tập huấn luyện/kiểm định/kiểm tra & $\circ$ & $\circ$ & $\circ$ & $\circ$ \\
+2 & Mô hình thu nhận ảnh (khử bóng), độ phân giải không gian (đổi kích thước ảnh) & $\bullet$ & $\circ$ & $\circ$ & --- \\
+3 & Lọc trung vị, lọc Max và Min, toán tử điểm, cân bằng lược đồ (CLAHE), lọc không gian (sinh ảnh suy giảm) & $\bullet$ & --- & --- & --- \\
+5 & Canny, ngưỡng tự động (Otsu, mở rộng thành Sauvola), vùng liên thông & $\bullet$ & $\circ$ & $\circ$ & --- \\
+7 & Phép đóng (ước lượng nền), phép mở, phép giãn (bộ phát hiện cổ điển) & $\bullet$ & $\circ$ & --- & --- \\
+8 & P/R/F1, ma trận nhầm lẫn & $\circ$ & $\circ$ & $\circ$ & $\circ$ \\
 \bottomrule
 \end{tabularx}
 \end{table}
+
+Một số kỹ thuật không có slide trong bài giảng nên được ghi riêng ở từng mục.
+Biến đổi phối cảnh và xoay ảnh được dùng theo gợi ý đề tài số hóa tài liệu chụp bằng điện thoại của học phần (Chương 2, 3, 5, 7), còn nội suy bậc ba, Sauvola, CLAHE và lược đồ chiếu là mở rộng từ các khái niệm có trong bài giảng.
+

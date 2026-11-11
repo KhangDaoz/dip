@@ -1,9 +1,9 @@
 % Mục 4.1. Thiết lập và độ đo (khoảng 0,5 trang). Người viết: Hiếu.
-Huấn luyện chạy trên Kaggle (GPU T4), còn suy luận và đánh giá chạy trên máy cá nhân \TODO{CPU}, GPU RTX~3050 4~GB, Python 3.11, PyTorch \KQ{phiên bản}, Ultralytics \KQ{phiên bản}, VietOCR 0.3.13, seed 42.
-Mọi số liệu tính trên 176 ảnh kiểm tra và chạy lại được bằng mã trong \path{code/experiments/}.
+Huấn luyện chạy trên Kaggle (GPU T4), còn suy luận và đánh giá chạy trên máy cá nhân (CPU Intel Core i7-12700H, GPU RTX~3050 4~GB), Python 3.13, seed 42, theo các thư viện trong \path{code/requirements-dl.txt}.
+Mọi số liệu được tính trên 176 ảnh kiểm tra bằng mã trong \path{code/experiments/}.
 
 Với bài toán phát hiện, dự đoán và nhãn chuẩn được ghép tham lam theo IoU giảm dần, mỗi nhãn chuẩn ghép tối đa một lần.
-Cặp có IoU từ 0,5 trở lên (và cùng lớp, nếu đo có lớp) được tính là dương tính đúng \chuong{8}:
+Cặp có IoU từ 0,5 trở lên (và cùng lớp, nếu đo có lớp) được tính là dương tính đúng, và P, R, F1 tính theo công thức của Chương~8:
 \begin{equation}\label{eq:prf}
   \mathrm{IoU}(K_1,K_2)=\frac{|K_1\cap K_2|}{|K_1\cup K_2|},\qquad
   P=\frac{TP}{TP+FP},\quad R=\frac{TP}{TP+FN},\quad F_1=\frac{2PR}{P+R}.
@@ -11,7 +11,7 @@ Cặp có IoU từ 0,5 trở lên (và cùng lớp, nếu đo có lớp) đượ
 $TP$, $FP$ và $FN$ được cộng dồn trên toàn tập chứ không lấy trung bình theo ảnh.
 mAP50 do Ultralytics tính và chỉ báo cáo kèm.
 
-Với nhận dạng, độ đo là tỉ lệ lỗi ký tự $\mathrm{CER}=\sum_i d(\hat s_i,s_i)\,/\sum_i|s_i|$, trong đó $d$ là khoảng cách Levenshtein~\cite{levenshtein1966} giữa chuỗi dự đoán $\hat s_i$ và chuỗi chuẩn $s_i$, còn WER được tính tương tự nhưng trên từ.
+Với nhận dạng, độ đo là tỉ lệ lỗi ký tự $\mathrm{CER}=\sum_i d(\hat s_i,s_i)\,/\sum_i|s_i|$, với $d$ là khoảng cách Levenshtein~\cite{levenshtein1966} giữa chuỗi dự đoán $\hat s_i$ và chuỗi chuẩn $s_i$, còn WER được tính tương tự nhưng trên từ.
 Hai chuỗi được chuẩn hóa Unicode NFC và gộp khoảng trắng trước khi so, có phân biệt hoa thường.
 
 Độ đo chính của đồ án là F1 khoản thuốc.

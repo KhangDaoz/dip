@@ -7,7 +7,9 @@ Phương án chính (C3) là tinh chỉnh VietOCR từ trọng số đã công b
 Dữ liệu gồm toàn bộ vùng chữ có nhãn của tập huấn luyện, cắt giống lúc suy luận (\path{code/tools/to_vietocr.py}), kể cả lớp \texttt{other} để mô hình gặp đủ các kiểu chữ.
 Quá trình huấn luyện chạy \num{20000} vòng với batch 32, tốc độ học cực đại $3\cdot10^{-4}$ theo lịch one-cycle, có tăng cường ảnh của VietOCR, seed 42, trên Kaggle T4.
 Trọng số được chọn theo độ chính xác khớp nguyên chuỗi trên tập kiểm định.
-Chiều rộng tối đa của ảnh vào được nâng từ 512 lên 1024~px và giữ nguyên khi suy luận, vì với 512 khoảng 5\% vùng chữ dài như dòng chẩn đoán bị co ngang và mất chữ \chuong{2}.
+Chiều rộng tối đa của ảnh vào được nâng từ 512 lên 1024~px và giữ nguyên khi suy luận, vì với 512 khoảng 5\% vùng chữ dài như dòng chẩn đoán bị giảm độ phân giải theo chiều ngang và mất chữ \chuong{2}.
 
-Phương án đối chứng (C2) là VietOCR với trọng số đã công bố, không tinh chỉnh, cùng cách cắt vùng.
-\TODO{Khang: nếu kịp chạy Tesseract 5 (\texttt{vie}) thì mô tả C0 và C1 ở đây, nếu không thì xóa dòng này.}
+Có ba phương án đối chứng.
+C2 là VietOCR với trọng số đã công bố, không tinh chỉnh, cùng cách cắt vùng.
+C0 và C1 dùng Tesseract 5~\cite{smith2007tesseract} với gói ngôn ngữ \texttt{vie} ở chế độ một dòng chữ (\texttt{--psm 7}).
+C0 nhận ảnh xám của vùng cắt, phóng lớn hai lần bằng nội suy bậc ba, tức thay đổi độ phân giải không gian của vùng cắt \chuong{2}, còn C1 giống C0 nhưng đầu vào là ảnh nhị phân Sauvola \chuong{5}, nhằm kiểm tra xem nhị phân hóa có giúp nhận dạng hay không.

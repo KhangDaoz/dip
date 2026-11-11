@@ -1,19 +1,21 @@
 % ===== Mục 4.6 — Thời gian chạy (≈ 0,25 trang) =====
 % Viết gì: giây/ảnh từng khối, trung bình 176 ảnh test. Người: Hiếu.
 % Tham khảo: lần chạy thử 2 ảnh mẫu (11/11, RTX 3050) cho A ≈ 0,1 s, B ≈ 0,1–0,4 s, C ≈ 2,6 s, D ≈ 0,01 s.
-Bảng~\ref{tab:runtime} cho thời gian trung bình mỗi ảnh trên \TODO{CPU / RTX 3050}.
+Bảng~\ref{tab:runtime} cho thời gian trung bình mỗi ảnh trên máy cá nhân (CPU Intel Core i7-12700H, GPU RTX~3050).
 
 \begin{table}[H]
 \centering
-\caption{Thời gian trung bình mỗi ảnh (giây), 176 ảnh kiểm tra.}\label{tab:runtime}
+\caption{Thời gian trung bình mỗi ảnh (giây). Khối A đo trên 50 ảnh L0 bằng CPU, khối B và C đo trên 176 ảnh kiểm tra bằng GPU, khối D lấy theo khoảng đo được.}\label{tab:runtime}
 \small
 \begin{tabular}{ccccc}
 \toprule
 \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} & \textbf{Tổng} \\
 \midrule
-\KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
+\num{0.12} & \num{0.05} & \num{3.32} & $\approx\num{0.02}$ & $\approx\num{3.5}$ \\
 \bottomrule
 \end{tabular}
+\par\smallskip{\footnotesize Nguồn: \path{result/e_a3_runtime/}, \path{result/runtime/}.}
 \end{table}
 
-Khối C chiếm phần lớn thời gian vì VietOCR đọc mọi vùng, kể cả \KQ{tỉ lệ}\% vùng lớp \texttt{other} mà khối D không dùng. Bỏ qua các vùng này sẽ giảm thời gian của khối C tương ứng.
+Khối C chiếm gần hết thời gian vì VietOCR đọc mọi vùng, kể cả khoảng 68\% số vùng thuộc lớp \texttt{other} mà khối D không dùng.
+Bỏ qua các vùng này sẽ giảm đáng kể thời gian của khối C.

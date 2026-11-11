@@ -2,7 +2,7 @@
 % Viết gì: bảng E-C1 trên vùng cắt theo KHUNG CHUẨN của test (cô lập khối C), nhận xét, 1 ca lỗi. Người: Khang.
 % Nguồn số: C2/C3 toàn tập = lần chạy Kaggle (notebooks/finetune_vietocr.ipynb, ô kiểm tra cuối: C2 (0.0864, 0.1097, 0.8156),
 % C3 (0.0329, 0.0437, 0.9229) = (CER, WER, khớp nguyên chuỗi)). Cột theo lớp + thời gian: chạy lại cục bộ.
-Để tách riêng khối C, mọi phương án đọc cùng các vùng cắt theo khung chuẩn của tập kiểm tra (\KQ{số vùng} vùng), và kết quả (E-C1) được trình bày ở Bảng~\ref{tab:EC1}.
+Để tách riêng khối C, mọi phương án đọc cùng các vùng cắt theo khung chuẩn của tập kiểm tra (6086 vùng), và kết quả (E-C1) được trình bày ở Bảng~\ref{tab:EC1}.
 
 \begin{table}[H]
 \centering
@@ -12,15 +12,17 @@
 \toprule
 \textbf{Phương án} & \textbf{CER} & \textbf{WER} & \textbf{Khớp} & \textbf{CER \texttt{drugname}} & \textbf{CER \texttt{quantity}} & \textbf{ms/vùng} \\
 \midrule
-C0 Tesseract \texttt{vie}             & \KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
-C1 Tesseract + nhị phân               & \KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
-C2 VietOCR công bố                    & \num{0.0864} & \num{0.1097} & \num{0.816} & \KQ{} & \KQ{} & \KQ{} \\
-\textbf{C3 VietOCR tinh chỉnh}        & \textbf{\num{0.0329}} & \textbf{\num{0.0437}} & \textbf{\num{0.923}} & \KQ{} & \KQ{} & \KQ{} \\
+C0 Tesseract \texttt{vie} & \num{0.0689} & \num{0.1961} & \num{0.636} & \num{0.0363} & \num{0.0016} & \num{35.7} \\
+C1 Tesseract, nhị phân Sauvola & \num{0.0684} & \num{0.2002} & \num{0.619} & \num{0.0340} & \num{0.0168} & \num{37.8} \\
+C2 VietOCR công bố & \num{0.0864} & \num{0.1097} & \num{0.816} & \num{0.0275} & \num{0.0014} & \textbf{\num{17.3}} \\
+C3 VietOCR tinh chỉnh & \textbf{\num{0.0329}} & \textbf{\num{0.0437}} & \textbf{\num{0.923}} & \textbf{\num{0.0003}} & \textbf{\num{0.0004}} & \num{18.9} \\
 \bottomrule
 \end{tabular}
-\par\smallskip{\footnotesize Nguồn: \path{code/notebooks/finetune_vietocr.ipynb} (C2, C3 toàn tập) và \TODO{script theo lớp, thời gian}. Bỏ dòng C0, C1 nếu không chạy Tesseract.}
+\par\smallskip{\footnotesize Nguồn: \path{result/e_c1_ocr/}. Tesseract chạy 8 luồng CPU, VietOCR chạy trên GPU RTX 3050 nên thời gian không so trực tiếp được.}
 \end{table}
 
-Tinh chỉnh giảm CER từ \num{0.0864} xuống \num{0.0329}, tức giảm khoảng 62\%, và tăng tỉ lệ vùng đọc đúng nguyên chuỗi từ \num{0.816} lên \num{0.923}.
-\TODO{Khang: 1 đến 2 câu về lỗi C2 hay gặp mà C3 sửa được (ví dụ ``SL: 60 Viên'' đọc thành ``SL. 60 ViÊn'', ``Sáng'' thành ``Sảng''), lớp nào còn CER cao nhất và vì sao}
-\TODO{Khang: 1 ca lỗi còn lại của C3 kèm ảnh vùng cắt ở Phụ lục~\ref{app:examples}, ví dụ mã bệnh ``I10'' bị đọc thành ``110''}
+Tinh chỉnh giảm CER từ \num{0.0864} xuống \num{0.0329}, tức khoảng 62\%, và tăng tỉ lệ vùng đọc đúng nguyên chuỗi từ \num{0.816} lên \num{0.923}.
+Mức giảm đến chủ yếu từ dòng chẩn đoán (CER từ \num{0.2325} xuống \num{0.0625}) và dòng cách dùng (từ \num{0.0123} xuống \num{0.0038}), còn tên thuốc và số lượng gần như không còn lỗi.
+Tesseract có CER tổng thấp hơn C2 vì đọc dòng chẩn đoán tốt hơn (\num{0.0811} so với \num{0.2325}), nhưng đọc cách dùng kém hơn nhiều (\num{0.1039} so với \num{0.0123}) nên WER và tỉ lệ đọc đúng nguyên chuỗi đều thua C2.
+Nhị phân hóa Sauvola (C1) không đổi CER tổng và làm CER của số lượng tăng từ \num{0.0016} lên \num{0.0168}, nên không giúp ích.
+Lỗi còn lại của C3 tập trung ở dòng chẩn đoán, trong đó có cả lỗi do nhãn sai (Hình~\ref{fig:c3err}, Phụ lục~\ref{app:examples}).

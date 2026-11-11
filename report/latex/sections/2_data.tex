@@ -1,11 +1,10 @@
 % Mục 2. Dữ liệu (khoảng 0,6 trang gồm bảng). Người viết: Hiếu.
 Đồ án dùng phần đơn thuốc của bộ VAIPE~\cite{vaipe}, gồm ảnh đơn thuốc bảo hiểm y tế in máy, đã được nguồn che thông tin cá nhân.
 Mỗi ảnh có nhãn là danh sách vùng chữ ở mức cụm chữ, mỗi vùng gồm khung bao $[x_0,y_0,x_1,y_1]$, chữ chuẩn và một trong sáu lớp ở Bảng~\ref{tab:data}.
-Khung chữ cao trung vị 22~px.
+Khung chữ cao trung vị 20~px ở ảnh $760\times1070$ và $770\times1420$, và 32~px ở ảnh $1150\times1600$.
 
 Tập kiểm tra gốc (172 ảnh) không có nhãn nên nhóm chia lại \num{1172} ảnh có nhãn thành 820 ảnh huấn luyện, 176 ảnh kiểm định và 176 ảnh kiểm tra (seed 42), sau khi loại một ảnh trùng byte với tập kiểm tra gốc.
-Các ảnh của cùng một bệnh nhân luôn nằm trong cùng một tập để tránh rò rỉ dữ liệu.
-Hai ảnh được xem là của cùng một bệnh nhân khi hệ số Jaccard giữa chữ trong nhãn đạt từ \num{0.85} trở lên, cách này cho \num{1030} nhóm.
+Để tránh rò rỉ dữ liệu, các ảnh của cùng một bệnh nhân luôn nằm trong cùng một tập, với hai ảnh được xem là cùng bệnh nhân khi hệ số Jaccard giữa chữ trong nhãn đạt từ \num{0.85} trở lên (\num{1030} nhóm).
 Tham số được chọn trên tập kiểm định, còn tập kiểm tra chỉ chạy một lần sau khi chốt cấu hình \chuong{8}.
 
 \begin{table}[H]
@@ -18,7 +17,6 @@ Tham số được chọn trên tập kiểm định, còn tập kiểm tra ch�
 \textbf{Mục} & \textbf{Nội dung} & \textbf{Huấn luyện} & \textbf{Kiểm định} & \textbf{Kiểm tra} & \textbf{Tổng} \\
 \midrule
 Số ảnh & Ảnh đơn thuốc có nhãn & \num{820} & \num{176} & \num{176} & \num{1172} \\
-Số vùng chữ & Tổng số vùng của mọi lớp & \num{28836} & \num{6258} & \num{6086} & \num{41180} \\
 \midrule
 \texttt{drugname} & Tên thuốc & \num{1995} & \num{405} & \num{443} & \num{2843} \\
 \texttt{quantity} & Số lượng thuốc & \num{1995} & \num{405} & \num{443} & \num{2843} \\
@@ -33,13 +31,13 @@ Số vùng chữ & Tổng số vùng của mọi lớp & \num{28836} & \num{6258
 \bottomrule
 \end{tabularx}
 \endgroup
-\par\smallskip{\footnotesize Số liệu đếm từ nhãn gốc bằng \path{code/src/vaipe/dataset.py}.}
 \end{table}
 
-Nhãn VAIPE chưa có đáp án ở mức khoản thuốc, nên nhóm dẫn xuất đáp án này bằng chính luật ghép của khối D (Mục~\ref{sec:m-assemble}) áp lên khung và chữ chuẩn, rồi soát bằng mắt \KQ{số ảnh soát} ảnh.
-Mỗi vùng \texttt{drugname} mở một khoản, nên tập kiểm tra có 443 khoản thuốc, trong đó 2 khoản (0,5\%) có tên không nằm trong từ điển dựng từ tập huấn luyện.
+Nhãn VAIPE chưa có đáp án ở mức khoản thuốc, nên nhóm dẫn xuất đáp án này bằng chính luật ghép của khối D (Mục~\ref{sec:m-assemble}) áp lên khung và chữ chuẩn, rồi soát bằng mắt toàn bộ 176 ảnh kiểm tra.
+Mỗi vùng \texttt{drugname} mở một khoản, nên tập kiểm tra có 443 khoản thuốc, trong đó 2 khoản (0,5\%), tương ứng 1 tên thuốc, có tên không nằm trong từ điển dựng từ tập huấn luyện.
 
 Để đo độ bền, 176 ảnh kiểm tra được làm suy giảm thành hai mức L2 và L4 (seed 42, \path{code/tools/make_degraded.py}), còn L0 là ảnh gốc.
 Mức L2 gồm xoay $\pm2^\circ$, mờ Gauss $\sigma$ từ 0,8 đến 1,2, bóng nhẹ và nén JPEG chất lượng 60 đến 80.
 Mức L4 xoay đến $\pm5^\circ$, thêm biến dạng phối cảnh, mờ chuyển động dài 9~px, bóng đậm và nén JPEG chất lượng 25 đến 40.
+Mờ Gauss và mờ chuyển động là các phép lọc không gian \chuong{3}, còn xoay và phối cảnh chỉ dùng để mô phỏng ảnh chụp lệch.
 Ảnh suy giảm hình học không còn khớp khung gốc nên chỉ dùng cho độ đo đầu-cuối.

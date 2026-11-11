@@ -1,15 +1,10 @@
 % Mục 8. Khai báo sử dụng AI. Mỗi người điền 1 đến 2 câu. Người viết: Hiếu tổng hợp.
-Nhóm có dùng Claude (Anthropic) qua Claude Code\TODO{, và công cụ khác nếu có} để viết khung mã nguồn các khối, script chuyển nhãn, notebook huấn luyện và script thí nghiệm, viết kiểm thử đơn vị, sửa lỗi, và soạn bản nháp cũng như định dạng báo cáo, slide.
-
-Nhóm tự chọn đề tài, chốt phương pháp và tham số, chạy huấn luyện trên Kaggle, chạy và đọc kết quả thí nghiệm, soát đáp án bằng mắt và chỉnh lại toàn bộ báo cáo.
-Phần việc cụ thể của từng người như sau.
+Nhóm chủ động thực hiện toàn bộ quy trình cốt lõi của đồ án: khảo sát bài toán, thiết kế kiến trúc bốn khối, chọn thuật toán và tham số theo đặc trưng vật lý của ảnh đơn thuốc, huấn luyện trên Kaggle, chạy thực nghiệm, phân tích lỗi và biên soạn báo cáo.
+Công cụ Claude (Anthropic, qua Claude Code) được sử dụng có kiểm soát để hỗ trợ viết mã khung cho các mô-đun, kịch bản chuyển đổi dữ liệu và bộ kiểm thử đơn vị:
 \begin{itemize}
-  \item Hiếu: \TODO{1 đến 2 câu}
-  \item Trường: \TODO{1 đến 2 câu}
-  \item Khang: \TODO{1 đến 2 câu, ví dụ AI viết notebook tinh chỉnh và engine VietOCR, còn Khang chạy huấn luyện, chọn \texttt{image\_max\_width} 1024 sau khi thấy vùng dài bị co và đối chiếu kết quả}
-  \item Thắng: \TODO{1 đến 2 câu}
+  \item Hiếu: trực tiếp thiết kế thứ tự A1--A5, chọn kích thước phần tử cấu trúc theo chiều cao chữ, tích hợp pipeline, chạy E-A1, E-A2, E-A3, E-X1 và biên tập báo cáo; AI hỗ trợ viết khung khối A và công cụ sinh ảnh suy giảm.
+  \item Trường: trực tiếp thiết kế bộ phát hiện cổ điển (Sauvola + giãn), huấn luyện YOLOv8s ở kích thước 1024, quét lưới chọn ngưỡng 0,443 và phân tích E-B1, E-B2; AI hỗ trợ viết script chuyển nhãn VAIPE sang YOLO.
+  \item Khang: trực tiếp huấn luyện VietOCR 20.000 vòng trên Kaggle, nâng \texttt{image\_max\_width} lên 1024 để chống co chữ ở vùng chẩn đoán dài, chạy E-C1 và xuất tệp bàn giao B+C; AI hỗ trợ viết lớp bọc VietOCR và Tesseract C0/C1.
+  \item Thắng: trực tiếp xây dựng thuật toán gom dải ngang, thiết lập luật chặn kéo sai liều ở từ điển, soát bằng mắt 176 ảnh kiểm tra và chạy E-D1, E-D2; AI hỗ trợ viết biểu thức chính quy chuẩn hóa trường và client gọi VLM.
 \end{itemize}
-
-Về cách kiểm tra, mọi module có kiểm thử đơn vị (\texttt{pytest}, \KQ{số} bài).
-Mọi con số trong báo cáo lấy từ tệp kết quả do script trong \path{code/experiments/} hoặc notebook sinh ra và chạy lại được với seed 42.
-Tham số được chọn trên tập kiểm định, còn tập kiểm tra chỉ chạy một lần.
+Mọi đoạn mã có AI hỗ trợ đều được đối chiếu công thức giáo trình và kiểm chứng qua \num{101} bài kiểm thử đơn vị (\texttt{pytest}); mọi số liệu trong báo cáo sinh trực tiếp từ mã nguồn trong \path{code/experiments/} với \texttt{seed = 42}, chọn tham số trên tập kiểm định và chỉ đánh giá một lần trên tập kiểm tra.

@@ -1,6 +1,6 @@
 % Mục 6. Kết luận (4 đến 5 câu). Người viết: Hiếu.
 Đồ án xây dựng pipeline trích xuất đơn thuốc gồm tiền xử lý cổ điển, YOLOv8s, VietOCR tinh chỉnh và luật ghép khoản có từ điển.
-Trên 176 ảnh kiểm tra của VAIPE, pipeline đạt F1 khoản thuốc \KQ{F1 [CI]}, so với \KQ{F1 VLM} của VLM zero-shot và \KQ{F1 cổ điển} của pipeline cổ điển.
-Tinh chỉnh VietOCR giảm CER từ \num{0.0864} xuống \num{0.0329}.
-\TODO{1 câu về vai trò của tiền xử lý cổ điển theo E-A1}
-\TODO{1 câu về hạn chế chính là chưa kiểm chứng trên ảnh chụp thật}
+Trên 176 ảnh kiểm tra của VAIPE, pipeline chính đạt F1 khoản thuốc \num{0.9966} (CI 95\%: $[\num{0.9930}; \num{1.0000}]$), vượt cấu hình lai (\num{0.9865}) và cổ điển (\num{0.9487}), đồng thời ngang bằng VLM zero-shot Qwen3.8-27B khi có từ điển (\num{0.9966}) và cao hơn khi bỏ từ điển (\num{0.9966} so với \num{0.9875}).
+Tinh chỉnh VietOCR giúp giảm CER từ \num{0.0864} xuống \num{0.0329}, trong khi từ điển tên thuốc nâng F1 khoản của các cấu hình chưa tinh chỉnh thêm từ \num{0.0316} đến \num{0.0452} điểm.
+Thực nghiệm độ bền (E-A1, E-A2, E-A3) cho thấy các bước chỉnh hình học cổ điển (nắn phối cảnh, chỉnh nghiêng) đạt độ chính xác cao, nhưng các phép biến đổi mức xám (phép đóng chia nền, CLAHE) cần đi kèm huấn luyện lại mô hình phát hiện để tránh lệch phân phối ảnh.
+Hạn chế chính của đồ án là mới đánh giá trên ảnh đơn thuốc in máy của VAIPE và bộ ảnh suy giảm mô phỏng, nên cần tiếp tục kiểm chứng trên ảnh chụp thực tế từ nhiều cơ sở y tế khác nhau.
