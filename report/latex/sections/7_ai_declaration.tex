@@ -1,7 +1,7 @@
 % Mục 8. Khai báo sử dụng AI. Người viết: Hiếu tổng hợp.
 Nhóm dùng Claude (Anthropic) thông qua Claude Code để viết mã khung cho các mô-đun, kịch bản chuyển đổi dữ liệu và bài kiểm thử đơn vị.
-AI cũng được dùng để viết lại và biên tập nhiều đoạn của báo cáo; nhóm kiểm tra lại số liệu và nhận định với kết quả thí nghiệm.
-Việc thiết kế pipeline, chọn thuật toán và tham số, huấn luyện, chạy thí nghiệm và phân tích kết quả do nhóm tự làm (Bảng~\ref{tab:ai}).
+AI cũng được dùng để viết lại và biên tập nhiều đoạn của báo cáo. Nhóm kiểm tra lại số liệu và nhận định với kết quả thí nghiệm.
+Việc thiết kế pipeline, chọn thuật toán và tham số, huấn luyện, chạy thí nghiệm và phân tích kết quả do nhóm tự làm, như ở Bảng~\ref{tab:ai}.
 
 \begin{table}[H]
 \centering
@@ -12,7 +12,7 @@ Việc thiết kế pipeline, chọn thuật toán và tham số, huấn luyện
 \textbf{Thành viên} & \textbf{AI hỗ trợ} & \textbf{Nhóm tự thực hiện} \\
 \midrule
 Hiếu & Mã khung bước tiền xử lý, công cụ sinh ảnh suy giảm & Thứ tự năm bước tiền xử lý, chọn kích thước phần tử cấu trúc theo chiều cao chữ, tích hợp pipeline, các thí nghiệm về tiền xử lý, ghép và biên tập báo cáo \\
-Trường & Kịch bản chuyển nhãn VAIPE sang định dạng YOLO & Bộ phát hiện cổ điển (Sauvola và phép giãn), huấn luyện YOLOv8s ở kích thước 1024, quét lưới chọn ngưỡng \num{0.443} \\
+Trường & Kịch bản chuyển nhãn VAIPE sang định dạng YOLO & Bộ phát hiện cổ điển gồm Sauvola và phép giãn, huấn luyện YOLOv8s ở kích thước 1024, quét lưới chọn ngưỡng \num{0.443} \\
 Khang & Lớp bọc VietOCR và Tesseract & Huấn luyện VietOCR \num{20000} vòng trên Kaggle, nâng chiều rộng ảnh vào lên 1024 để không co chữ ở dòng chẩn đoán dài, xuất tệp bàn giao kết quả phát hiện và nhận dạng \\
 Thắng & Biểu thức chính quy chuẩn hóa trường, mã gọi VLM & Thuật toán gom dải ngang, luật chặn kéo sai liều ở từ điển, soát bằng mắt 176 ảnh kiểm tra \\
 \bottomrule

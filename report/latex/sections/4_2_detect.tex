@@ -26,8 +26,10 @@ Cộng dồn mọi vùng & \num{0.991} & \num{0.995} & \num{0.993} & \num{0.995}
 \end{table}
 
 YOLOv8s tìm vùng chữ tốt hơn rõ rệt, với F1 \num{0.993} so với \num{0.818} của bộ phát hiện cổ điển: bộ cổ điển bỏ sót 1364 trong 6086 vùng và tạo thêm 744 khung thừa, còn YOLOv8s chỉ bỏ sót 30 vùng.
-Theo lớp, tên thuốc, số lượng, cách dùng và ngày đạt F1 từ \num{0.999} trở lên; hai lớp yếu hơn là \texttt{other} (\num{0.990}) và \texttt{diagnose} (\num{0.994}).
-Ma trận nhầm lẫn ở Hình~\ref{fig:confusion} cho thấy lỗi chủ yếu là bỏ sót 29 vùng \texttt{other} và dự đoán thừa 51 khung \texttt{other}, chỉ 4 vùng bị nhầm sang lớp khác, nên các lớp dùng để ghép khoản gần như không bị ảnh hưởng.
+Theo lớp, tên thuốc, số lượng, cách dùng và ngày đạt F1 từ \num{0.999} trở lên.
+Hai lớp yếu hơn là \texttt{other} với \num{0.990} và \texttt{diagnose} với \num{0.994}.
+Ma trận nhầm lẫn ở Hình~\ref{fig:confusion} cho thấy lỗi chủ yếu là bỏ sót 29 vùng \texttt{other} và dự đoán thừa 51 khung \texttt{other}.
+Chỉ 4 vùng bị nhầm sang lớp khác, nên các lớp dùng để ghép khoản gần như không bị ảnh hưởng.
 
 \begin{figure}[H]
 \centering

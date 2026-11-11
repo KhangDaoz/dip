@@ -45,14 +45,14 @@ Dưới đây là ví dụ về dạng đầu ra, lấy từ đơn ở Hình~\re
 
 Bài toán có ba khó khăn chính:
 \begin{itemize}
-  \item Chữ nhỏ, khung chữ chỉ cao trung vị 20 đến 32~px tức 1,4 đến 2\% chiều cao ảnh, và có dấu tiếng Việt, trong khi nhiều thuốc chỉ khác nhau ở hàm lượng như ``CEPHALEXIN 250MG'' và ``CEPHALEXIN PMP 500'', nên sai một chữ số là thành thuốc khác liều.
+  \item Chữ nhỏ và có dấu tiếng Việt. Khung chữ chỉ cao trung vị 20 đến 32~px, tức 1,4 đến 2\% chiều cao ảnh. Nhiều thuốc chỉ khác nhau ở hàm lượng, như ``CEPHALEXIN 250MG'' và ``CEPHALEXIN PMP 500'', nên sai một chữ số là thành thuốc khác liều.
   \item Các trường của một khoản thuốc nằm rời nhau nên phải xác định vùng chữ nào thuộc khoản nào.
   \item Ảnh chụp có thể bị nghiêng, mờ, đổ bóng hoặc nén mạnh.
 \end{itemize}
 
 \subsection{Hướng tiếp cận và đóng góp}\label{sec:approach}
 Đồ án làm theo lựa chọn~2 của học phần, tức là xây dựng một pipeline nhiều bước, trong đó mỗi bước có phương pháp đối chứng và độ đo định lượng.
-Ảnh đầu vào có thể được tiền xử lý bằng các kỹ thuật cổ điển của học phần; pipeline đề xuất chạy trên ảnh gốc vì tiền xử lý chưa cải thiện kết quả (Mục~\ref{sec:e-ablation}).
+Ảnh đầu vào có thể được tiền xử lý bằng các kỹ thuật cổ điển của học phần. Tuy nhiên pipeline đề xuất chạy trên ảnh gốc vì tiền xử lý chưa cải thiện kết quả, như trình bày ở Mục~\ref{sec:e-ablation}.
 Sau đó YOLOv8 phát hiện và phân lớp vùng chữ, VietOCR đã tinh chỉnh đọc chữ trong từng vùng, và một bộ luật kết hợp từ điển tên thuốc ghép các vùng thành khoản thuốc.
 Đóng góp của nhóm gồm:
 \begin{enumerate}

@@ -21,10 +21,14 @@ VietOCR tinh chỉnh & \textbf{\num{0.0329}} & \textbf{\num{0.0437}} & \textbf{\
 \par\smallskip{\footnotesize Thời gian không so trực tiếp được vì Tesseract chạy trên CPU còn VietOCR chạy trên GPU.}
 \end{table}
 
-Tinh chỉnh là yếu tố quyết định: CER giảm khoảng 62\%, từ \num{0.0864} xuống \num{0.0329}, và tỉ lệ vùng đọc đúng nguyên chuỗi tăng từ \num{0.816} lên \num{0.923}, chủ yếu nhờ dòng chẩn đoán (CER từ \num{0.2325} xuống \num{0.0625}) và dòng cách dùng (từ \num{0.0123} xuống \num{0.0038}).
-Tesseract có CER tổng thấp hơn VietOCR gốc vì đọc dòng chẩn đoán tốt hơn (\num{0.0811} so với \num{0.2325}), nhưng đọc cách dùng kém hơn nhiều (\num{0.1039} so với \num{0.0123}), nên WER và tỉ lệ đọc đúng nguyên chuỗi đều thua.
-Nhị phân hóa Sauvola không giúp ích: CER tổng không đổi và CER của số lượng tăng từ \num{0.0016} lên \num{0.0168}.
-Lỗi còn lại của VietOCR tinh chỉnh tập trung ở dòng chẩn đoán, trong đó có cả lỗi do nhãn sai (Hình~\ref{fig:c3err}).
+Tinh chỉnh là yếu tố quyết định.
+CER giảm khoảng 62\%, từ \num{0.0864} xuống \num{0.0329}, và tỉ lệ vùng đọc đúng nguyên chuỗi tăng từ \num{0.816} lên \num{0.923}.
+Mức cải thiện chủ yếu đến từ dòng chẩn đoán, với CER giảm từ \num{0.2325} xuống \num{0.0625}, và dòng cách dùng, với CER giảm từ \num{0.0123} xuống \num{0.0038}.
+Tesseract có CER tổng thấp hơn VietOCR gốc vì đọc dòng chẩn đoán tốt hơn, với \num{0.0811} so với \num{0.2325}.
+Tuy nhiên Tesseract đọc cách dùng kém hơn nhiều, với \num{0.1039} so với \num{0.0123}, nên WER và tỉ lệ đọc đúng nguyên chuỗi đều thua.
+Nhị phân hóa Sauvola không giúp ích.
+CER tổng không đổi và CER của số lượng tăng từ \num{0.0016} lên \num{0.0168}.
+Lỗi còn lại của VietOCR tinh chỉnh tập trung ở dòng chẩn đoán, trong đó có cả lỗi do nhãn sai, như ở Hình~\ref{fig:c3err}.
 
 \begin{figure}[H]
 \centering

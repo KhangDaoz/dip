@@ -17,4 +17,5 @@ YOLOv8s & VietOCR tinh chỉnh & \num{0.9966} & \num{0.9966} & \num{1.0000} & \n
 \end{tabular}
 \end{table}
 
-Khi thay riêng khung Ground Truth đi cùng VietOCR tinh chỉnh hoặc khung YOLOv8s đi cùng chữ Ground Truth, F1 khoản đều đạt \num{1.0000}; mức giảm \num{0.0034} điểm ở pipeline chính, ứng với 173/176 đơn đúng hoàn toàn hay \num{0.9830}, chỉ xuất hiện khi ghép đồng thời khung dự đoán YOLOv8s với chữ VietOCR tinh chỉnh.
+Khi dùng khung chuẩn với chữ do VietOCR tinh chỉnh đọc, hoặc khung YOLOv8s với chữ chuẩn, F1 khoản đều đạt \num{1.0000}.
+Mức giảm \num{0.0034} điểm ở pipeline chính, ứng với 173/176 đơn đúng hoàn toàn, chỉ xuất hiện khi ghép đồng thời khung dự đoán của YOLOv8s với chữ của VietOCR tinh chỉnh.

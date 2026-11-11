@@ -1,6 +1,17 @@
-% Mục 4.1. Môi trường và cài đặt. Người viết: Hiếu.
-Quá trình huấn luyện chạy trên Kaggle với GPU T4, còn suy luận và đánh giá chạy trên máy cá nhân có CPU Intel Core i7-12700H, GPU RTX~3050 4~GB và Python 3.13; mọi bước ngẫu nhiên dùng \texttt{seed} bằng 42.
-Cài đặt gồm tạo môi trường ảo Python, cài PyTorch bản GPU hoặc CPU, cài các thư viện của đồ án (Ultralytics cho YOLO, VietOCR, OpenCV, rapidfuzz) cùng Tesseract 5 với gói ngôn ngữ tiếng Việt, rồi cài mã nguồn dưới dạng gói và tải hai bộ trọng số đã huấn luyện.
-Bộ kiểm thử đơn vị giúp kiểm tra môi trường; phần nào thiếu dữ liệu hoặc trọng số thì được bỏ qua.
-Mã nguồn chia theo bốn bước của pipeline, mỗi bước một thư mục con, mỗi thí nghiệm là một kịch bản riêng và kết quả được ghi ra thư mục \texttt{results}.
+% Mục 4.1. Thiết lập thực nghiệm: môi trường và cài đặt. Người viết: Hiếu.
+Phần này mô tả môi trường chạy, cách chuẩn bị dữ liệu và cấu hình của từng bước trong pipeline.
+
+\subsubsection{Môi trường và cài đặt}
+Quá trình huấn luyện chạy trên Kaggle với GPU T4.
+Suy luận và đánh giá chạy trên máy cá nhân có CPU Intel Core i7-12700H, GPU RTX~3050 4~GB và Python 3.13.
+Mọi bước ngẫu nhiên dùng \texttt{seed} bằng 42.
+
+Cài đặt gồm bốn việc.
+Trước hết tạo môi trường ảo Python và cài PyTorch bản GPU hoặc CPU.
+Tiếp theo cài các thư viện gồm Ultralytics cho YOLO, VietOCR, OpenCV và rapidfuzz, cùng Tesseract 5 với gói ngôn ngữ tiếng Việt.
+Sau đó cài mã nguồn dưới dạng gói và tải hai bộ trọng số đã huấn luyện của YOLOv8s và VietOCR.
+Bộ kiểm thử đơn vị giúp kiểm tra môi trường, và phần nào thiếu dữ liệu hoặc trọng số thì được bỏ qua.
+
+Mã nguồn chia theo bốn bước của pipeline, mỗi bước một thư mục con.
+Mỗi thí nghiệm là một kịch bản riêng và kết quả được ghi ra thư mục \texttt{results}.
 Nhóm cũng làm một giao diện demo bằng Gradio để tải ảnh lên, chọn cấu hình pipeline và xem kết quả JSON cùng ảnh vùng chữ.

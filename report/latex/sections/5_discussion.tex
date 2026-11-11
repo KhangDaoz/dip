@@ -1,18 +1,25 @@
 % Mục 5. Thảo luận. Người viết: Hiếu và Thắng. Hạn chế và hướng phát triển nằm ở Mục 6.
 \subsection{Phân tích kết quả}
 Học sâu cải thiện kết quả ở cả phát hiện và nhận dạng.
-Bộ phát hiện cổ điển không phân lớp, nên phải đoán lớp của vùng từ chữ và chỉ đúng \num{0.9187} số lượng ở pipeline cổ điển; YOLOv8s phân lớp ngay khi phát hiện.
-Ở nhận dạng, Tesseract và VietOCR gốc mạnh yếu khác nhau (Tesseract đọc chẩn đoán tốt, VietOCR gốc đọc cách dùng tốt), và chỉ sau khi tinh chỉnh VietOCR mới tốt hơn ở mọi mặt.
+Bộ phát hiện cổ điển không phân lớp, nên phải đoán lớp của vùng từ chữ và chỉ đúng \num{0.9187} số lượng ở pipeline cổ điển.
+YOLOv8s phân lớp ngay khi phát hiện.
+Ở nhận dạng, Tesseract và VietOCR gốc mạnh yếu khác nhau: Tesseract đọc chẩn đoán tốt, còn VietOCR gốc đọc cách dùng tốt.
+Chỉ sau khi tinh chỉnh, VietOCR mới tốt hơn ở mọi mặt.
 
-Từ điển tên thuốc tăng F1 khoản của các cấu hình chưa tinh chỉnh thêm \num{0.0316} đến \num{0.0452} điểm, nhưng không ảnh hưởng tới pipeline đề xuất vì CER tên thuốc chỉ còn \num{0.0003}.
-Ba đơn còn sai của pipeline đề xuất chỉ xuất hiện khi ghép khung YOLOv8s với chữ VietOCR tinh chỉnh (Bảng~\ref{tab:EX1}): một vùng \texttt{other} trong đoạn ``Cận lâm sàng'' có chữ đọc được bắt đầu bằng ``1)'' hoặc ``2)'', nên bị luật xác định lớp ở bước ghép khoản đổi thành tên thuốc.
+Từ điển tên thuốc tăng F1 khoản của các cấu hình chưa tinh chỉnh thêm từ \num{0.0316} đến \num{0.0452} điểm, nhưng không ảnh hưởng tới pipeline đề xuất vì CER tên thuốc chỉ còn \num{0.0003}.
+Ba đơn còn sai của pipeline đề xuất chỉ xuất hiện khi ghép khung của YOLOv8s với chữ của VietOCR tinh chỉnh, như ở Bảng~\ref{tab:EX1}.
+Nguyên nhân là một vùng \texttt{other} trong đoạn ``Cận lâm sàng'' có chữ đọc được bắt đầu bằng ``1)'' hoặc ``2)'', nên luật xác định lớp ở bước ghép khoản đổi nó thành tên thuốc.
 
-Hai bước hình học hoạt động tốt: nắn phối cảnh tìm đúng tờ giấy trên 47/50 ảnh suy giảm nặng, chỉnh nghiêng có sai số trung vị $0{,}063^\circ$.
-Ngược lại, phép chia nền và CLAHE để lại vệt nền (Hình~\ref{fig:shadow}) mà YOLOv8s, vốn chỉ được huấn luyện trên ảnh gốc, có thể nhận nhầm thành chữ, làm F1 khoản trên ảnh suy giảm nhẹ giảm từ \num{0.9585} xuống \num{0.7692}; vì vậy kết quả chính dùng ảnh gốc.
+Hai bước hình học của tiền xử lý hoạt động tốt.
+Nắn phối cảnh tìm đúng tờ giấy trên 47/50 ảnh suy giảm nặng, và chỉnh nghiêng có sai số trung vị $0{,}063^\circ$.
+Ngược lại, phép chia nền và CLAHE để lại vệt nền, như ở Hình~\ref{fig:shadow}.
+YOLOv8s vốn chỉ được huấn luyện trên ảnh gốc nên có thể nhận nhầm vệt này thành chữ, làm F1 khoản trên ảnh suy giảm nhẹ giảm từ \num{0.9585} xuống \num{0.7692}, và vì vậy kết quả chính dùng ảnh gốc.
 Ngay cả khi không tiền xử lý, F1 khoản trên ảnh suy giảm nặng chỉ còn \num{0.1264}, nên pipeline cần được huấn luyện thêm trên ảnh suy giảm.
 
-Qwen3.8-27B đạt cùng F1 khoản \num{0.9966} với pipeline đề xuất khi có từ điển và có tỉ lệ đơn đúng hoàn toàn cao hơn (\num{0.9943} so với \num{0.9830}); khi bỏ từ điển, pipeline đề xuất cao hơn (\num{0.9966} so với \num{0.9875}).
-Các khoảng tin cậy chồng nhau nên chưa thể kết luận bên nào chính xác hơn; ưu điểm rõ của pipeline đề xuất là chạy cục bộ, không gửi ảnh y tế ra ngoài và không lỗi định dạng JSON (VLM lỗi trên 1/176 ảnh).
+Qwen3.8-27B đạt cùng F1 khoản \num{0.9966} với pipeline đề xuất khi có từ điển, và có tỉ lệ đơn đúng hoàn toàn cao hơn, với \num{0.9943} so với \num{0.9830}.
+Khi bỏ từ điển, pipeline đề xuất cao hơn, với \num{0.9966} so với \num{0.9875}.
+Các khoảng tin cậy chồng nhau nên chưa thể kết luận bên nào chính xác hơn.
+Ưu điểm rõ của pipeline đề xuất là chạy cục bộ, không gửi ảnh y tế ra ngoài và không lỗi định dạng JSON, trong khi VLM lỗi trên 1/176 ảnh.
 
 \subsection{Hạn chế}
 \begin{enumerate}[label=(\arabic*), leftmargin=2em, itemsep=0.15em, topsep=0.3em]

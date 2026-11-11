@@ -6,7 +6,7 @@ Kết quả chính của đồ án trong thí nghiệm đầu-cuối E-D2 nằm 
 
 \begin{table}[H]
 \centering
-\caption{Kết quả đầu-cuối (E-D2). F1 khoản đòi hỏi tên đúng với CER $\le0{,}1$ và số lượng đúng; ngoặc vuông là khoảng tin cậy 95\%.}\label{tab:ED2}
+\caption{Kết quả đầu-cuối (E-D2). F1 khoản đòi hỏi tên đúng với CER $\le0{,}1$ và số lượng đúng. Ngoặc vuông là khoảng tin cậy 95\%.}\label{tab:ED2}
 \footnotesize
 \begin{tabularx}{\linewidth}{@{}Lcccccc@{}}
 \toprule
@@ -24,9 +24,13 @@ VLM zero-shot Qwen3.8-27B                   & \textbf{\num{0.9966}} [\num{0.9892
 \par\smallskip{\footnotesize Bỏ từ điển: F1 khoản khi tắt bước sửa tên bằng từ điển. s/ảnh: thời gian phát hiện và nhận dạng.}
 \end{table}
 
-Pipeline đề xuất đạt F1 khoản thuốc \num{0.9966} với khoảng tin cậy 95\% là $[\num{0.9930}; \num{1.0000}]$, chỉ kém \num{0.0034} điểm so với mức trần \num{1.0000} khi dùng chữ chuẩn, và đúng tuyệt đối ở số lượng và ngày kê đơn.
-Từ điển tên thuốc giúp các cấu hình chưa tinh chỉnh tăng F1 khoản từ \num{0.0091} đến \num{0.0452} điểm khi OCR còn lỗi ký tự, nhưng pipeline đề xuất không cần đến nó nhờ CER tên thuốc chỉ còn \num{0.0003}.
-So với VLM zero-shot Qwen3.8-27B, pipeline đề xuất cùng đạt \num{0.9966} khi có từ điển và cao hơn khi bỏ từ điển (\num{0.9966} so với \num{0.9875}); số lượng và ngày đúng tuyệt đối so với \num{0.9932} và \num{0.9943} của VLM, và VLM hỏng định dạng JSON ở 1/176 ảnh.
+Pipeline đề xuất đạt F1 khoản thuốc \num{0.9966}, với khoảng tin cậy 95\% là $[\num{0.9930}; \num{1.0000}]$.
+Kết quả này chỉ kém mức trần \num{1.0000} khi dùng chữ chuẩn \num{0.0034} điểm, và số lượng cùng ngày kê đơn đều đúng tuyệt đối.
+Từ điển tên thuốc giúp các cấu hình chưa tinh chỉnh tăng F1 khoản từ \num{0.0091} đến \num{0.0452} điểm khi OCR còn lỗi ký tự.
+Pipeline đề xuất không cần đến từ điển nhờ CER tên thuốc chỉ còn \num{0.0003}.
+So với VLM zero-shot Qwen3.8-27B, pipeline đề xuất cùng đạt \num{0.9966} khi có từ điển và cao hơn khi bỏ từ điển, với \num{0.9966} so với \num{0.9875}.
+Số lượng và ngày kê đơn đúng tuyệt đối, so với \num{0.9932} và \num{0.9943} của VLM.
+Ngoài ra VLM hỏng định dạng JSON ở 1/176 ảnh.
 Tuy vậy ba pipeline tốt nhất có khoảng tin cậy chồng nhau, nên khi có từ điển chưa thể nói pipeline nào chính xác hơn.
 
 Hình~\ref{fig:example} là đầu ra đầu-cuối của pipeline đề xuất trên một đơn thuốc.
