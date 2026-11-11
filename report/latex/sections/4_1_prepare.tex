@@ -1,10 +1,13 @@
-% Mục 4.2. Chuẩn bị dữ liệu. Người viết: Hiếu.
+% Mục 4.1. Chuẩn bị dữ liệu. Người viết: Hiếu.
+\subsubsection{Chuẩn bị dữ liệu}
 Ảnh và nhãn VAIPE được đặt theo ba tập huấn luyện, kiểm định và kiểm tra.
-Việc chia tập dùng seed 42, loại một ảnh trùng byte với tập kiểm tra gốc, và đặt các ảnh cùng bệnh nhân vào cùng một tập; hai ảnh được xem là cùng bệnh nhân khi hệ số Jaccard giữa tập chữ trong nhãn đạt từ \num{0.85} trở lên, cho \num{1030} nhóm.
+Việc chia tập dùng seed 42 và loại một ảnh trùng byte với tập kiểm tra gốc.
+Các ảnh cùng bệnh nhân được đặt vào cùng một tập.
+Hai ảnh được xem là cùng bệnh nhân khi hệ số Jaccard giữa tập chữ trong nhãn đạt từ \num{0.85} trở lên, và cách này cho \num{1030} nhóm.
 Từ dữ liệu đã chia, nhóm chạy bốn công cụ chuẩn bị:
 \begin{enumerate}[leftmargin=2em, itemsep=0.1em, topsep=0.2em]
   \item Chuyển nhãn sang định dạng YOLO cho bước phát hiện.
-  \item Cắt các vùng chữ có nhãn, đệm 2~px và không phóng to, làm dữ liệu cho VietOCR; vùng rỗng, khung suy biến hoặc có ký tự ngoài bảng chữ của VietOCR bị bỏ.
+  \item Cắt các vùng chữ có nhãn, đệm 2~px và không phóng to, làm dữ liệu cho VietOCR. Vùng rỗng, khung suy biến hoặc có ký tự ngoài bảng chữ của VietOCR bị bỏ.
   \item Sinh ảnh suy giảm từ tập kiểm tra. Suy giảm nhẹ xoay $\pm2^\circ$, mờ Gauss $\sigma$ từ 0,8 đến 1,2, bóng nhẹ và nén JPEG chất lượng 60 đến 80. Suy giảm nặng xoay đến $\pm5^\circ$, thêm biến dạng phối cảnh, mờ Gauss như suy giảm nhẹ cộng mờ chuyển động dài 9~px, bóng đậm và nén JPEG chất lượng 25 đến 40.
-  \item Dẫn xuất đáp án khoản thuốc bằng luật ghép trên nhãn chuẩn, rồi soát bằng mắt (Mục~\ref{sec:data}).
+  \item Dẫn xuất đáp án khoản thuốc bằng luật ghép trên nhãn chuẩn rồi soát bằng mắt, như đã nêu ở Mục~\ref{sec:data}.
 \end{enumerate}

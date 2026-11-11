@@ -1,8 +1,10 @@
 % Mục 4.4.5. Độ bền khi ảnh suy giảm (E-A1, E-A2, E-A3). Người viết: Hiếu.
 Trước hết, hai bước hình học của tiền xử lý được kiểm tra riêng.
 Với thí nghiệm chỉnh nghiêng E-A2 trên 1232 lượt thử góc $0^\circ$--$10^\circ$ cộng nhiễu $<0{,}5^\circ$ của 176 ảnh, sai số trung vị là $0{,}063^\circ$, cực đại $0{,}261^\circ$ và 100\% lượt thử sai $\le0{,}5^\circ$.
-Với thí nghiệm nắn phối cảnh E-A3 trên 50 ảnh mỗi mức, thuật toán giữ nguyên 50 ảnh gốc và 49 ảnh suy giảm nhẹ vì đơn đã chiếm trọn khung hình, và tìm được tờ giấy bằng contour trên 47/50 ảnh suy giảm nặng.
-Tiếp theo, độ bền của pipeline đề xuất trên ba mức suy giảm là ảnh gốc, suy giảm nhẹ và suy giảm nặng khi không tiền xử lý, ký hiệu \texttt{none}, và khi tiền xử lý đầy đủ, ký hiệu \texttt{full}, được trình bày ở Hình~\ref{fig:EA1}, thí nghiệm E-A1. Hình~\ref{fig:levels} minh họa ba mức ảnh này.
+Với thí nghiệm nắn phối cảnh E-A3 trên 50 ảnh mỗi mức, thuật toán giữ nguyên 50 ảnh gốc và 49 ảnh suy giảm nhẹ vì đơn đã chiếm trọn khung hình.
+Với ảnh suy giảm nặng, thuật toán tìm được tờ giấy bằng contour trên 47/50 ảnh.
+Tiếp theo, thí nghiệm E-A1 đo độ bền của pipeline đề xuất ở ba mức ảnh gốc, suy giảm nhẹ và suy giảm nặng, khi không tiền xử lý (\texttt{none}) và khi tiền xử lý đầy đủ (\texttt{full}), như ở Hình~\ref{fig:EA1}.
+Hình~\ref{fig:levels} minh họa ba mức ảnh này.
 
 \begin{figure}[H]
 \centering
@@ -16,8 +18,15 @@ Tiếp theo, độ bền của pipeline đề xuất trên ba mức suy giảm l
 \caption{F1 khoản thuốc theo mức suy giảm, có và không có tiền xử lý.}\label{fig:EA1}
 \end{figure}
 
-Kết quả chưa như kỳ vọng: bật tiền xử lý đầy đủ \texttt{full} cho F1 khoản thấp hơn ở cả ba mức: từ \num{0.9966} xuống \num{0.9955} ở ảnh gốc, từ \num{0.9585} xuống \num{0.7692} ở ảnh suy giảm nhẹ kéo đơn đúng từ \num{0.9091} xuống \num{0.4886}, và từ \num{0.1264} xuống \num{0.0470} ở ảnh suy giảm nặng.
-Một lý do có thể là phép đóng $81\times81$ ở bước khử bóng và CLAHE ở bước tăng tương phản để lại vài mảng xám ở rìa vùng bóng và làm nét chữ nhạt hơn, trong khi YOLOv8s chỉ huấn luyện trên ảnh gốc nên dễ nhận nhầm vệt nền thành chữ. Số khung trên mỗi ảnh phù hợp với giải thích này, khi nó tăng từ \num{34.5} lên \num{50.5} ở ảnh suy giảm nhẹ và từ \num{33.3} lên \num{54.5} ở ảnh suy giảm nặng, đồng thời sót vùng \texttt{date} khi chỉ thấy trên 58/176 ảnh suy giảm nhẹ và 21/176 ảnh suy giảm nặng, kéo tỷ lệ ngày đúng ở ảnh suy giảm nhẹ từ \num{1.0000} xuống \num{0.6932}. Việc tách riêng đóng góp của từng bước tiền xử lý được để cho các nghiên cứu tiếp theo.
+Kết quả chưa như kỳ vọng vì tiền xử lý đầy đủ cho F1 khoản thấp hơn ở cả ba mức.
+F1 khoản giảm từ \num{0.9966} xuống \num{0.9955} ở ảnh gốc, từ \num{0.9585} xuống \num{0.7692} ở ảnh suy giảm nhẹ, và từ \num{0.1264} xuống \num{0.0470} ở ảnh suy giảm nặng.
+Ở ảnh suy giảm nhẹ, tỉ lệ đơn đúng hoàn toàn cũng giảm từ \num{0.9091} xuống \num{0.4886}.
+Một lý do có thể là phép đóng $81\times81$ ở bước khử bóng và CLAHE ở bước tăng tương phản để lại vài mảng xám ở rìa vùng bóng và làm nét chữ nhạt hơn.
+YOLOv8s chỉ huấn luyện trên ảnh gốc nên dễ nhận nhầm vệt nền thành chữ.
+Số liệu phù hợp với giải thích này.
+Số khung trên mỗi ảnh tăng từ \num{34.5} lên \num{50.5} ở ảnh suy giảm nhẹ và từ \num{33.3} lên \num{54.5} ở ảnh suy giảm nặng.
+Vùng \texttt{date} chỉ còn thấy trên 58/176 ảnh suy giảm nhẹ và 21/176 ảnh suy giảm nặng, nên tỉ lệ ngày đúng ở ảnh suy giảm nhẹ giảm từ \num{1.0000} xuống \num{0.6932}.
+Việc tách riêng đóng góp của từng bước tiền xử lý được để cho các nghiên cứu tiếp theo.
 
 Hình~\ref{fig:shadow} minh họa bước khử bóng và Hình~\ref{fig:asteps} là một ảnh suy giảm nặng qua đủ năm bước tiền xử lý.
 
