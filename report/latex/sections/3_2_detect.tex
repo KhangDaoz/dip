@@ -8,7 +8,7 @@ Phép lật ngang bị tắt vì làm ngược chữ.
 Ngưỡng tin cậy được chọn trên tập kiểm định sao cho F1 trung bình của sáu lớp lớn nhất.
 
 Phương pháp đối chứng là bộ phát hiện cổ điển, không phân lớp.
-Ảnh xám được nhị phân hóa bằng Sauvola, ngưỡng cục bộ mở rộng từ Otsu, rồi phép mở loại các chấm nhiễu nhỏ.
+Ảnh xám được nhị phân hóa bằng Sauvola, một phương pháp ngưỡng cục bộ: ngưỡng tại mỗi điểm được tính từ trung bình và độ lệch chuẩn mức xám trong cửa sổ quanh điểm đó, tức là mở rộng phân ngưỡng toàn cục sang từng vùng nhỏ của ảnh để chịu được nền sáng không đều. Sau đó phép mở loại các chấm nhiễu nhỏ.
 Chiều cao chữ được ước lượng bằng trung vị chiều cao các thành phần liên thông, khái niệm vùng liên thông của phần phân vùng ảnh.
-Ảnh nhị phân sau đó được giãn theo phương ngang để nối các ký tự bị đứt thành cụm mà không nối qua khoảng trống giữa hai cột, rồi lấy khung bao của các thành phần liên thông còn lại sau khi lọc theo kích thước.
+Ảnh nhị phân sau đó được giãn theo phương ngang để nối các ký tự rời nhau trong cùng một cụm thành một vùng, nhưng không nối qua khoảng trống giữa hai cột, rồi lấy khung bao của các thành phần liên thông còn lại sau khi lọc theo kích thước.
 Mức giãn theo hai phương được chọn trên tập kiểm định.
