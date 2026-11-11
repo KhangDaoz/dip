@@ -1,0 +1,19 @@
+% ===== Mục 4.6 — Thời gian chạy (≈ 0,25 trang) =====
+% Viết gì: giây/ảnh từng khối, trung bình 176 ảnh test. Người: Hiếu.
+% Tham khảo: lần chạy thử 2 ảnh mẫu (11/11, RTX 3050) cho A ≈ 0,1 s, B ≈ 0,1–0,4 s, C ≈ 2,6 s, D ≈ 0,01 s.
+Bảng~\ref{tab:runtime} cho thời gian trung bình mỗi ảnh trên \TODO{CPU / RTX 3050}.
+
+\begin{table}[H]
+\centering
+\caption{Thời gian trung bình mỗi ảnh (giây), 176 ảnh kiểm tra.}\label{tab:runtime}
+\small
+\begin{tabular}{cccc|c}
+\toprule
+\textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} & \textbf{Tổng} \\
+\midrule
+\KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Khối C chiếm phần lớn thời gian vì VietOCR đọc mọi vùng, kể cả \KQ{tỉ lệ}\% vùng lớp \texttt{other} mà \khoi{D} không dùng; bỏ qua các vùng này sẽ giảm thời gian khối C tương ứng.

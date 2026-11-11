@@ -1,0 +1,16 @@
+% ===== Mục 3.1 — Khối A (≈ 0,5 trang) =====
+% Viết gì: 5 bước, công thức chính, tham số + lý do, các preset dùng trong E-A1. Người: Hiếu.
+\Khoi{A} gồm năm bước theo thứ tự cố định; mỗi bước là một hàm ảnh $\to$ ảnh và bật/tắt được (\texttt{code/src/enhance/}).
+\begin{enumerate}[label=A\arabic*.]
+  \item \textbf{Nắn phối cảnh} \chuong{5; 2}: Canny (ngưỡng 50/150) $\to$ tìm tứ giác lớn nhất chiếm $\ge20\%$ ảnh (contour, dự phòng Hough và hình chữ nhật bao nhỏ nhất) $\to$ \texttt{warpPerspective} nội suy bậc ba. Không tìm được tờ giấy thì giữ ảnh gốc.
+  \item \textbf{Chỉnh nghiêng} \chuong{5}: nhị phân Sauvola (cửa sổ 31, $k=0{,}2$), chọn góc
+  \begin{equation}\label{eq:deskew}
+    \theta^*=\arg\max_{\theta\in[-10^\circ,10^\circ]}\operatorname{Var}\bigl(P_\theta\bigr),\qquad P_\theta(y)=\sum_x b_\theta(x,y),
+  \end{equation}
+  tìm thô bước $1^\circ$ rồi tinh bước $0{,}25^\circ$. Khi dòng chữ nằm ngang, mỗi hàng hoặc đầy mực hoặc trống nên phương sai lược đồ chiếu lớn nhất.
+  \item \textbf{Khử bóng} \chuong{7; 3}: ước lượng nền $\hat B=f\bullet B$ bằng phép đóng với phần tử cấu trúc vuông $81\times81$ (lớn hơn nhiều lần chiều cao chữ nên nét chữ bị lấp), rồi chia nền $g=\min\bigl(255,\;255\,f/\hat B\bigr)$ trên kênh V.
+  \item \textbf{Khử nhiễu} \chuong{3}: lọc trung vị $3\times3$.
+  \item \textbf{Tăng tương phản} \chuong{3}: CLAHE~\cite{zuiderveld1994clahe} trên kênh L, giới hạn cắt 2,0, lưới $8\times8$.
+\end{enumerate}
+Thí nghiệm E-A1 dùng ba cấu hình: \texttt{none} (tắt hết), \texttt{light} (A2 + A3) và \texttt{full} (A1--A5).
+\TODO{Hiếu: lý do chọn từng tham số, nếu đã thử trên valid thì ghi khoảng đã thử (đưa bảng đầy đủ vào Phụ lục~\ref{app:params})}

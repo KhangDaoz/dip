@@ -1,0 +1,18 @@
+% ===== Mục 3.3 — Khối C (≈ 0,5 trang) =====
+% Viết gì: VietOCR, dữ liệu tinh chỉnh, cấu hình + lý do, cách cắt vùng, đối chứng. Người: Khang.
+\textbf{Mô hình.}
+Mỗi vùng chữ được cắt theo khung (đệm 2~px, kẹp trong ảnh, không phóng) rồi đưa vào VietOCR~\cite{vietocr} kiến trúc \texttt{vgg\_transformer}.
+Bộ mã hóa là VGG19-BN~\cite{simonyan2015vgg} biến ảnh dòng chữ cao 32~px thành chuỗi đặc trưng.
+Bộ giải mã Transformer~\cite{vaswani2017attention} sinh từng ký tự trong bảng chữ tiếng Việt có dấu.
+Giải mã tham lam (không dùng beam search) để giữ tốc độ.
+
+\textbf{Tinh chỉnh (C3, phương án chính).}
+Dữ liệu là toàn bộ vùng chữ có nhãn của tập huấn luyện, cắt bằng cùng quy tắc khi suy luận (\texttt{code/tools/to\_vietocr.py}); gồm cả lớp \texttt{other} để mô hình gặp đủ kiểu chữ.
+Huấn luyện từ trọng số công bố, \num{20000} vòng, batch 32, tốc độ học cực đại $3\cdot10^{-4}$ (lịch one-cycle), có tăng cường ảnh của VietOCR, seed 42, trên Kaggle T4.
+Trọng số được chọn theo độ chính xác khớp nguyên chuỗi trên tập kiểm định.
+Chiều rộng tối đa của ảnh vào được nâng từ 512 lên 1024~px: với 512, khoảng 5\% vùng dài (dòng chẩn đoán) bị co ngang và mất chữ \chuong{2}.
+Giá trị này giữ nguyên khi suy luận.
+
+\textbf{Đối chứng.}
+C2 là VietOCR với trọng số công bố, không tinh chỉnh, cùng cách cắt vùng.
+\TODO{Khang: nếu kịp chạy Tesseract~5 \texttt{vie}: C0 = vùng cắt phóng $\times2$ nội suy bậc ba \chuong{2}, \texttt{--psm 7}; C1 = như C0 nhưng đầu vào nhị phân Otsu~\cite{otsu1979threshold} / Sauvola~\cite{sauvola2000binarization} \chuong{5}. Nếu không kịp: xóa câu này, ghi vào Thảo luận}

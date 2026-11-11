@@ -1,0 +1,37 @@
+% ===== Phụ lục A — Bảng tham số đầy đủ =====
+% Viết gì: mọi tham số, giá trị chọn, khoảng đã thử (nếu có), lý do. Mỗi người điền dòng của khối mình.
+\begin{table}[H]
+\centering
+\caption{Tham số của pipeline. ``---'': không dò, dùng giá trị mặc định hoặc theo lý do.}\label{tab:params}
+\small
+\begin{tabularx}{\linewidth}{llllX}
+\toprule
+\textbf{Khối} & \textbf{Tham số} & \textbf{Giá trị} & \textbf{Đã thử} & \textbf{Lý do} \\
+\midrule
+A1 & Ngưỡng Canny & 50 / 150 & --- & \TODO{} \\
+A1 & Diện tích tứ giác tối thiểu & 20\% ảnh & --- & Loại tứ giác nhỏ (bảng, ô) \\
+A2 & Khoảng góc, bước & $\pm10^\circ$, $0{,}25^\circ$ & --- & Nghiêng chụp tay thường $<10^\circ$ \\
+A2 & Sauvola cửa sổ, $k$ & 31, 0,2 & --- & \TODO{} \\
+A3 & Phần tử cấu trúc phép đóng & $81\times81$ & \KQ{} & Lớn hơn nhiều lần chiều cao chữ \\
+A4 & Lọc trung vị & $3\times3$ & --- & \TODO{} \\
+A5 & CLAHE giới hạn cắt, lưới & 2,0; $8\times8$ & --- & \TODO{} \\
+\midrule
+B & Mô hình, kích thước ảnh & YOLOv8s, 1024 & --- & Chữ cao 15--25~px \\
+B & Epoch, batch, dừng sớm & 50, 16, 15 & --- & Vừa thời gian Kaggle \\
+B & \texttt{fliplr}, mosaic & 0; 0,5 & --- & Lật ngang làm hỏng chữ \\
+B & Ngưỡng tin cậy & 0,443 & quét trên tập kiểm định & F1 trung bình 6 lớp lớn nhất \\
+B & Ngưỡng NMS & 0,7 & --- & Mặc định Ultralytics \\
+\midrule
+C & Kiến trúc & \texttt{vgg\_transformer} & --- & Trọng số tiếng Việt có sẵn \\
+C & Số vòng, batch, lr & \num{20000}, 32, $3\cdot10^{-4}$ & --- & Vừa thời gian Kaggle T4 \\
+C & Chiều rộng ảnh tối đa & 1024~px & 512 & 512 làm co $\approx5\%$ vùng dài \\
+C & Đệm vùng cắt & 2~px & --- & Giữ dấu, nét sát khung \\
+C & Giải mã & tham lam & --- & Nhanh; \TODO{beam search có giúp không} \\
+\midrule
+D & Ngưỡng tin cậy hỏi lại bằng luật & 0,5 & --- & \TODO{} \\
+D & IoU trùng & 0,7 & --- & \TODO{} \\
+D & Từ điển $\tau_{\text{cao}}$, $\tau_{\text{thấp}}$, lề & 90, 80, 5 & trên tập kiểm định & Chặn kéo sai liều; xem Mục~\ref{sec:m-assemble} \\
+D & Khớp tên khi chấm & CER $\le0{,}1$ & --- & Cho phép lỗi nhỏ không đổi nghĩa \\
+\bottomrule
+\end{tabularx}
+\end{table}

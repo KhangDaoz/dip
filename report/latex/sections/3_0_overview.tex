@@ -1,37 +1,47 @@
-% ===== Mở đầu chương 3 =====
-Pipeline đề xuất gồm bốn bước nối tiếp.
-Trong Mục~\ref{sec:method}, $f(x,y)$ là ảnh xám đầu vào của một bước và $g(x,y)$ là ảnh kết quả.
-Ảnh nhị phân được ký hiệu $b(x,y)\in\{0,1\}$, với giá trị 1 là pixel mực.
-Trong các phép hình thái, $A$ là tập pixel mực và $B$ là phần tử cấu trúc (structuring element, SE).
-
-Các bước trao đổi dữ liệu qua các hợp đồng dữ liệu JSON (\texttt{code/src/common/contracts.py}).
-Tọa độ ở các bước (2), (3) và (4) đều tính trên ảnh đã nắn của bước (1).
-\begin{enumerate}[label=(\arabic*)]
-  \item Tiền xử lý và phân loại: trả về ảnh đã nắn, ma trận biến đổi $H$ và loại tài liệu.
-  \item Làm sạch: trả về ảnh xám sạch, ảnh nhị phân và mặt nạ dấu, nét bút, chữ đỏ.
-  \item Dựng bảng (với phiếu xét nghiệm): trả về khung bao từng dòng chỉ số.
-  \item Tách khoản thuốc (với đơn thuốc): trả về khung bao từng khoản thuốc.
+% ===== Mở đầu mục 3 — Tổng quan pipeline (≈ 0,5 trang) =====
+% Viết gì: sơ đồ, hợp đồng dữ liệu giữa các khối, bảng chương học phần. Người: Hiếu.
+Pipeline gồm bốn khối nối tiếp (Hình~\ref{fig:pipeline}), theo khung Dữ liệu $\to$ Tiền xử lý $\to$ Xử lý chính $\to$ Hậu xử lý $\to$ Đánh giá của học phần.
+Các khối trao đổi dữ liệu qua hợp đồng chung \texttt{code/src/common/contracts.py}:
+khung bao dạng $[x_0,y_0,x_1,y_1]$ (pixel) và lớp thuộc sáu lớp VAIPE.
+\begin{enumerate}[label=(\Alph*)]
+  \item Tiền xử lý: ảnh BGR $\to$ ảnh đã nắn, chỉnh nghiêng, khử bóng, khử nhiễu, tăng tương phản. Mỗi bước bật/tắt được.
+  \item Phát hiện: ảnh $\to$ danh sách vùng chữ (khung, lớp, độ tin cậy).
+  \item Nhận dạng: điền chữ và độ tin cậy cho từng vùng.
+  \item Ghép khoản (hậu xử lý): danh sách vùng $\to$ bản ghi \texttt{PrescriptionResult} (JSON).
 \end{enumerate}
-Tài liệu thuộc lớp ``khác'' dừng sau bước (1).
-Theo khung pipeline của học phần, mỗi bước kết thúc bằng một bước hậu xử lý.
-Bảng~\ref{tab:chapters} liệt kê kiến thức học phần dùng trong từng bước.
+Mỗi khối có một phương pháp đối chứng; toàn pipeline được đối chứng với mô hình thị giác--ngôn ngữ (VLM) zero-shot.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.45cm, every node/.style={font=\small},
+  blk/.style={draw, rounded corners, align=center, minimum height=1.05cm, text width=2.2cm},
+  io/.style={align=center, text width=1.3cm}, >={Stealth[length=2mm]}]
+  \node[io] (in) {Ảnh\\đơn thuốc};
+  \node[blk, right=of in] (a) {\textbf{A} Tiền xử lý\\[-1pt]{\footnotesize cổ điển, Ch.\,2,3,5,7}};
+  \node[blk, right=of a] (b) {\textbf{B} Phát hiện\\[-1pt]{\footnotesize YOLOv8s, 6 lớp}};
+  \node[blk, right=of b] (c) {\textbf{C} Nhận dạng\\[-1pt]{\footnotesize VietOCR tinh chỉnh}};
+  \node[blk, right=of c] (d) {\textbf{D} Ghép khoản\\[-1pt]{\footnotesize luật + từ điển}};
+  \node[io, below=0.5cm of d] (out) {JSON};
+  \draw[->] (in) -- (a); \draw[->] (a) -- (b); \draw[->] (b) -- (c); \draw[->] (c) -- (d); \draw[->] (d) -- (out);
+  \node[draw, dashed, rounded corners, align=center, text width=4.6cm, below=0.5cm of b, xshift=0.6cm] (vlm)
+       {Đối chứng đầu-cuối: VLM zero-shot\\[-1pt]{\footnotesize Qwen2.5-VL, cùng chuẩn hóa ở D}};
+\end{tikzpicture}
+\caption{Pipeline đề xuất. Nét đứt: phương pháp đối chứng đầu-cuối.}\label{fig:pipeline}
+\end{figure}
 
 \begin{table}[H]
 \centering
-\caption{Kiến thức học phần dùng trong từng bước ($\bullet$: phương pháp chính, $\circ$: đối chứng, đánh giá hoặc sinh \bo{5}).}\label{tab:chapters}
+\caption{Kiến thức học phần dùng trong từng khối ($\bullet$: phương pháp chính, $\circ$: đối chứng hoặc đánh giá).}\label{tab:chapters}
 \small
 \begin{tabularx}{\linewidth}{cXcccc}
 \toprule
-\textbf{Chương} & \textbf{Kỹ thuật chính (slide)} & \textbf{(1)} & \textbf{(2)} & \textbf{(3)} & \textbf{(4)} \\
+\textbf{Chương} & \textbf{Kỹ thuật} & \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} \\
 \midrule
-1 & Các giai đoạn xử lý ảnh (S27--34) & $\circ$ & $\circ$ & $\circ$ & $\circ$ \\
-2 & Lấy mẫu, độ phân giải, nắn phối cảnh (S23--26) & $\bullet$ & $\circ$ & $\circ$ & $\circ$ \\
-3 & Histogram, kéo giãn tương phản, lọc trung vị, lọc Max / Min (S21--33, S47--75) & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ \\
-4 & Không gian màu HSV: lóa, mực đỏ, mực xanh (S37--41) & $\bullet$ & $\bullet$ & $\circ$ & $\circ$ \\
-5 & Laplacian, Canny, Otsu, ISODATA, tam giác, thành phần liên thông, tách và hợp vùng & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ \\
-6 & Đánh giá chất lượng RMS, PSNR; nén JPEG (S37--54) & $\circ$ & $\circ$ & --- & $\circ$ \\
-7 & Phép giãn, phép co, phép mở, phép đóng, tách biên, làm đầy vùng (S5--45) & $\circ$ & $\bullet$ & $\bullet$ & $\bullet$ \\
-8 & HOG, GLCM, histogram màu, kNN, ma trận nhầm lẫn, F1 (S12--49) & $\bullet$ & $\circ$ & $\circ$ & $\circ$ \\
+2 & Nội suy khi xoay, nắn phối cảnh, phóng vùng cắt & $\bullet$ & --- & $\circ$ & --- \\
+3 & Lọc trung vị, CLAHE, toán tử điểm chia nền; tích chập Gauss để sinh ảnh suy giảm & $\bullet$ & --- & $\circ$ & --- \\
+5 & Canny, lược đồ chiếu, Otsu, Sauvola, thành phần liên thông & $\bullet$ & $\circ$ & $\circ$ & --- \\
+7 & Phép đóng ước lượng nền, phép giãn nối ký tự & $\bullet$ & $\circ$ & --- & --- \\
+8 & P/R/F1, ma trận nhầm lẫn, chia tập huấn luyện/kiểm định/kiểm tra & $\circ$ & $\circ$ & $\circ$ & $\circ$ \\
 \bottomrule
 \end{tabularx}
 \end{table}

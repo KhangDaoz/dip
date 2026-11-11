@@ -1,15 +1,48 @@
-% ===== khối tiêu đề (không tách trang riêng để tiết kiệm số trang) =====
-\begin{center}
-  {\small HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG --- KHOA TRÍ TUỆ NHÂN TẠO}\\[0.4em]
-  {\small ĐỒ ÁN MÔN XỬ LÝ ẢNH \quad·\quad Giảng viên: PGS.TS.\ Phạm Văn Cường}\\[0.8em]
-  {\Large\bfseries Pipeline tiền xử lý, phân loại và bóc tách cấu trúc\\[0.2em]
-   tài liệu y tế từ ảnh chụp điện thoại}\\[0.8em]
-  {\small Lớp \TODO{XX} \quad·\quad Nhóm \TODO{YY}}\\[0.3em]
-  \begin{tabular}{ll}
-    Hiếu (nhóm trưởng) & \TODO{MSSV} \\
-    Trường & \TODO{MSSV} \\
-    Khang  & \TODO{MSSV} \\
-    Thắng  & \TODO{MSSV} \\
+% ===== Trang bìa (trang riêng, không đánh số) =====
+% Theo mẫu trang bìa PTIT: khung đôi, logo, tên học viện / khoa / môn, tên đề tài, bảng thông tin.
+% Người: Hiếu — điền lớp, nhóm, MSSV.
+\begin{titlepage}
+  \begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1.5pt]
+      ($(current page.north west)+(2.5cm,-1.5cm)$) rectangle ($(current page.south east)+(-1.5cm,1.5cm)$);
+    \draw[line width=0.5pt]
+      ($(current page.north west)+(2.65cm,-1.65cm)$) rectangle ($(current page.south east)+(-1.65cm,1.65cm)$);
+  \end{tikzpicture}
+  \centering
+  \setstretch{1.25}
+  {\large\bfseries HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG}\\[0.3em]
+  {\large\bfseries KHOA TRÍ TUỆ NHÂN TẠO}\\[0.3em]
+  {\large\bfseries MÔN XỬ LÝ ẢNH}\\[0.3em]
+  \rule{0.35\linewidth}{0.6pt}
+
+  \vspace{1.2cm}
+  \includegraphics[width=4.2cm]{common/logo_ptit.png}
+
+  \vspace{1.4cm}
+  {\LARGE\bfseries BÁO CÁO ĐỒ ÁN}\\[0.8em]
+  {\Large\bfseries TRÍCH XUẤT THÔNG TIN ĐƠN THUỐC TỪ ẢNH:\\[0.2em]
+   HỌC SÂU KẾT HỢP XỬ LÝ ẢNH CỔ ĐIỂN}
+
+  \vspace{1.4cm}
+  \begin{tabular}{p{4.2cm} l}
+    \textbf{GIẢNG VIÊN} & : PGS.TS. PHẠM VĂN CƯỜNG \\[0.25cm]
+    \textbf{LỚP}        & : E23TTNT01 \\[0.25cm]
+    \textbf{NHÓM}       & : 01 \\[0.25cm]
+    \textbf{SINH VIÊN}  & : \\[0.1cm]
   \end{tabular}
-\end{center}
-\vspace{0.5em}
+
+  \vspace{0.1cm}
+  \begin{tabular}{l l}
+    \toprule
+    \textbf{Họ và tên} & \textbf{Mã sinh viên} \\
+    \midrule
+    Trần Trung Hiếu (nhóm trưởng) & B23DCCN312 \\
+    Nguyễn Anh Trường             & B23DCCE094 \\
+    Đào Văn Khang                    & B23DCVT218 \\
+    Nguyễn Tiến Thắng              & B23DCCE088 \\
+    \bottomrule
+  \end{tabular}
+
+  \vfill
+  {\large\bfseries HÀ NỘI -- 2026}
+\end{titlepage}
