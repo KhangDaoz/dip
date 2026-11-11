@@ -1,6 +1,13 @@
 % ===== Mục 4.2 — Kết quả khối B (≈ 0,5 trang) =====
 % Viết gì: bảng E-B1 (không phân lớp, so cổ điển), bảng E-B2 (từng lớp), 2–3 câu nhận xét có số. Người: Trường.
 % Nguồn số: results/E-B1/table.csv, results/E-B2/table.csv (hoặc test_metrics.json của notebook train_yolo).
+YOLOv8s được huấn luyện 50 epoch trên 820 ảnh bằng notebook \path{code/notebooks/train_yolo.ipynb} trên Kaggle với 2 GPU T4, kích thước ảnh 1024, batch 16, dừng sớm nếu 15 epoch không cải thiện, seed 42.
+Ảnh $770\times1420$ thu về 1024 chỉ còn khoảng 14~px chiều cao chữ nên nhóm không thu nhỏ hơn.
+Các cài đặt khác gồm \texttt{fliplr}=0, mosaic 0,5 và ngưỡng NMS mặc định 0,7.
+Ngưỡng tin cậy 0,443 là giá trị cho F1 trung bình sáu lớp lớn nhất khi quét từ 0,05 đến 0,85 trên tập kiểm định.
+Bộ phát hiện cổ điển trong \path{code/src/detect/classical.py} dùng Sauvola cửa sổ 31 với $k=0{,}2$, phép mở với phần tử $2\times2$, rồi giãn với phần tử chữ nhật rộng $a\cdot h$ và cao $v\cdot h$ theo chiều cao chữ trung vị $h$.
+Quét lưới trên tập kiểm định chọn $a=2{,}5$ trong khoảng 0,5 đến 4 và $v=0{,}2$ trong khoảng 0 đến 0,5.
+
 Bảng~\ref{tab:EB} so sánh khả năng tìm vùng chữ khi bỏ qua lớp trong E-B1 và độ đúng từng lớp của YOLOv8s trong E-B2.
 
 \begin{table}[H]
@@ -26,7 +33,7 @@ Cộng dồn mọi vùng & \num{0.991} & \num{0.995} & \num{0.993} & \num{0.995}
 \par\smallskip{\footnotesize Nguồn: \path{result/e_b_detection/}. Ngưỡng tin cậy 0,443 chọn trên tập kiểm định.}
 \end{table}
 
-YOLOv8s tìm được hầu hết vùng chữ với F1 \num{0.993}, cao hơn phương pháp cổ điển \num{0.175} điểm so với \num{0.818} và nhanh hơn với \num{0.031} so với \num{0.061} giây mỗi ảnh.
+YOLOv8s tìm được hầu hết vùng chữ với F1 \num{0.993}, cao hơn phương pháp cổ điển \num{0.175} điểm so với \num{0.818} và nhanh hơn với \num{0.031} so với \num{0.061} giây mỗi ảnh khi đo riêng bước phát hiện (thời gian trong pipeline ở Bảng~\ref{tab:runtime} gồm cả nạp ảnh và xử lý đầu ra nên cao hơn).
 Phương pháp cổ điển bỏ sót 1364 trong 6086 vùng và tạo thêm 744 khung thừa, còn YOLOv8s chỉ bỏ sót 30 vùng.
 Theo lớp, tên thuốc, số lượng, cách dùng và ngày đạt F1 từ \num{0.999} trở lên, còn lớp yếu nhất là \texttt{other} đạt \num{0.990} và \texttt{diagnose} đạt \num{0.994}.
 Ma trận nhầm lẫn ở Hình~\ref{fig:confusion}, Phụ lục~\ref{app:examples} cho thấy lỗi chủ yếu là bỏ sót 29 vùng \texttt{other} và dự đoán thừa 51 khung \texttt{other}, chỉ 4 vùng bị nhầm sang lớp khác.

@@ -2,28 +2,32 @@
 % Nguồn số: results/E-D1, results/E-D2/table.csv (code/experiments/e_d1.py, e_d2.py).
 Khi chạy khối D trên khung và chữ chuẩn của tập kiểm tra trong E-D1, F1 khoản thuốc đạt \num{1.000}.
 Kết quả này chỉ cho thấy luật ghép nhất quán khi đầu vào đúng, chưa phải đánh giá độc lập, vì đáp án khoản thuốc cũng được dẫn xuất từ chính luật đó.
+Cấu hình khối D trong \path{code/src/assemble/} gồm ngưỡng tin cậy hỏi lại lớp 0,5, ngưỡng IoU loại trùng 0,7 và từ điển 138 tên với ngưỡng thay $\tau_{\text{cao}}=90$, $\tau_{\text{thấp}}=80$ và lề 5, cố định trước khi chạy trên tập kiểm tra.
+Độ đo F1 khoản thuốc được cài trong \path{code/src/metrics/items.py}.
+VLM được gọi qua giao diện API tương thích OpenAI trong \path{code/src/assemble/vlm.py}, với nhiệt độ 0, ảnh nén JPEG và cạnh dài tối đa 1600~px, và câu trả lời thô được lưu đệm để không gọi lại.
 Kết quả chính của đồ án trong E-D2 nằm ở Bảng~\ref{tab:ED2}.
 
 \begin{table}[H]
 \centering
 \caption{Kết quả đầu-cuối trên 176 ảnh kiểm tra trong E-D2. F1 khoản đòi hỏi tên đúng với CER $\le0{,}1$ và số lượng đúng; ngoặc vuông là khoảng tin cậy 95\% theo bootstrap.}\label{tab:ED2}
 \footnotesize
-\begin{tabularx}{\linewidth}{@{}Lcccccc@{}}
+\begin{tabularx}{\linewidth}{@{}Lccccccc@{}}
 \toprule
-\textbf{Pipeline} & \textbf{F1 khoản [CI 95\%]} & \textbf{Bỏ từ điển} & \textbf{F1 tên} & \textbf{SL đúng} & \textbf{Đơn đúng} & \textbf{s/ảnh} \\
+\textbf{Pipeline} & \textbf{F1 khoản [CI 95\%]} & \textbf{Bỏ từ điển} & \textbf{F1 tên} & \textbf{SL đúng} & \textbf{Ngày đúng} & \textbf{Đơn đúng} & \textbf{s/ảnh} \\
 \midrule
-Chữ chuẩn, khung YOLO                       & \num{1.0000} & \num{1.0000} & \num{1.0000} & \num{1.0000} & \num{1.0000} & --- \\
+Chữ chuẩn, khung YOLO                       & \num{1.0000} & \num{1.0000} & \num{1.0000} & \num{1.0000} & \num{1.0000} & \num{1.0000} & ---  \\
 \midrule
-(i) Cổ điển: B cổ điển, Tesseract, D        & \num{0.9487} [\num{0.9316}; \num{0.9647}] & \num{0.9161} & \num{0.9580} & \num{0.9187} & \num{0.8011} & \textbf{\num{1.16}} \\
-(ii) Lai: YOLO, Tesseract, D                & \num{0.9865} [\num{0.9736}; \num{0.9977}] & \num{0.9549} & \num{0.9955} & \num{0.9865} & \num{0.9716} & \num{1.38} \\
-(iv) YOLO, VietOCR công bố C2, D            & \textbf{\num{0.9966}} [\num{0.9895}; \num{1.0000}] & \num{0.9514} & \textbf{\num{0.9966}} & \num{0.9955} & \textbf{\num{0.9943}} & \num{3.77} \\
-(iii) YOLO, VietOCR tinh chỉnh C3, D        & \textbf{\num{0.9966}} [\num{0.9930}; \num{1.0000}] & \textbf{\num{0.9966}} & \textbf{\num{0.9966}} & \textbf{\num{1.0000}} & \num{0.9830} & \num{3.37} \\
-(v) VLM zero-shot Qwen3.8-27B               & \textbf{\num{0.9966}} [\num{0.9892}; \num{1.0000}] & \num{0.9875} & \textbf{\num{0.9966}} & \num{0.9932} & \textbf{\num{0.9943}} & --- \\
+(i) Cổ điển: B cổ điển, Tesseract, D        & \num{0.9487} [\num{0.9316}; \num{0.9647}] & \num{0.9161} & \num{0.9580} & \num{0.9187} & \num{0.8693} & \num{0.8011} & \textbf{\num{1.16}} \\
+(ii) Lai: YOLO, Tesseract, D                & \num{0.9865} [\num{0.9736}; \num{0.9977}] & \num{0.9549} & \num{0.9955} & \num{0.9865} & \num{0.7784} & \num{0.9716} & \num{1.38} \\
+(iii) YOLO, VietOCR tinh chỉnh C3, D        & \textbf{\num{0.9966}} [\num{0.9930}; \num{1.0000}] & \textbf{\num{0.9966}} & \textbf{\num{0.9966}} & \textbf{\num{1.0000}} & \textbf{\num{1.0000}} & \num{0.9830} & \num{3.37} \\
+(iv) YOLO, VietOCR công bố C2, D            & \textbf{\num{0.9966}} [\num{0.9895}; \num{1.0000}] & \num{0.9514} & \textbf{\num{0.9966}} & \num{0.9955} & \textbf{\num{1.0000}} & \textbf{\num{0.9943}} & \num{3.77} \\
+(v) VLM zero-shot Qwen3.8-27B               & \textbf{\num{0.9966}} [\num{0.9892}; \num{1.0000}] & \num{0.9875} & \textbf{\num{0.9966}} & \num{0.9932} & \num{0.9943} & \textbf{\num{0.9943}} & --- \\
 \bottomrule
 \end{tabularx}
 \par\smallskip{\footnotesize Nguồn: \path{result/e_d2_endtoend/}, \path{result/runtime/}. Cột ``Bỏ từ điển'' là F1 khoản khi tắt bước D4; cột ``s/ảnh'' là thời gian khối B+C. Mô hình VLM gọi qua API từ xa và có 1/176 ảnh lỗi định dạng JSON.}
 \end{table}
 
-Pipeline chính (iii) đạt F1 khoản thuốc \num{0.9966} với khoảng tin cậy 95\% là $[\num{0.9930}; \num{1.0000}]$, đúng 100\% số lượng và ngày kê đơn với điểm \num{1.0000}, chỉ kém \num{0.0034} điểm so với mức trần \num{1.0000} dùng chữ chuẩn.
+Pipeline chính (iii) đạt F1 khoản thuốc \num{0.9966} với khoảng tin cậy 95\% là $[\num{0.9930}; \num{1.0000}]$, đúng tuyệt đối ở số lượng và ngày kê đơn với điểm \num{1.0000}, chỉ kém \num{0.0034} điểm so với mức trần \num{1.0000} dùng chữ chuẩn.
 Từ điển tên thuốc D4 giúp tăng mạnh F1 khoản khi OCR còn lỗi ký tự: VietOCR công bố (iv) tăng \num{0.0452} điểm từ \num{0.9514} lên \num{0.9966}, bản lai (ii) tăng \num{0.0316} điểm từ \num{0.9549} lên \num{0.9865}, bản cổ điển (i) tăng \num{0.0326} điểm từ \num{0.9161} lên \num{0.9487} và VLM (v) tăng \num{0.0091} điểm từ \num{0.9875} lên \num{0.9966}, trong khi VietOCR tinh chỉnh (iii) giữ nguyên \num{0.9966} cả khi bỏ từ điển nhờ CER tên thuốc chỉ còn \num{0.0003}.
 So với VLM zero-shot Qwen3.8-27B (v), pipeline chính (iii) đạt cùng F1 khoản \num{0.9966} khi có từ điển nhưng cao hơn khi bỏ từ điển với \num{0.9966} so với \num{0.9875}, đạt độ chính xác tuyệt đối \num{1.0000} ở số lượng và ngày kê đơn so với \num{0.9932} và \num{0.9943} của VLM, và không lỗi cú pháp đầu ra khi VLM có 1/176 ảnh hỏng định dạng JSON.
+Cần lưu ý rằng ba pipeline (iii), (iv) và (v) cùng đạt F1 khoản \num{0.9966} và các khoảng tin cậy chồng nhau, nên khi có từ điển chưa thể nói pipeline nào tốt hơn; ưu thế của (iii) nằm ở chỗ không phụ thuộc từ điển và chạy cục bộ.

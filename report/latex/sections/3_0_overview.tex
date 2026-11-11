@@ -1,6 +1,6 @@
 % ===== Mở đầu mục 3 — Tổng quan pipeline (≈ 0,5 trang) =====
 % Viết gì: sơ đồ, hợp đồng dữ liệu giữa các khối, bảng chương học phần. Người: Hiếu.
-Pipeline gồm bốn khối nối tiếp như minh họa ở Hình~\ref{fig:pipeline} và trao đổi dữ liệu qua hợp đồng chung \path{code/src/common/contracts.py}, trong đó khung bao có dạng $[x_0,y_0,x_1,y_1]$ tính theo pixel.
+Pipeline gồm bốn khối nối tiếp như minh họa ở Hình~\ref{fig:pipeline}, trong đó các khối trao đổi dữ liệu qua khung bao chữ nhật theo tọa độ pixel.
 Khối D là bước hậu xử lý, ghép các vùng chữ thành bản ghi JSON.
 Mỗi khối có một phương pháp đối chứng, và toàn pipeline được so với một VLM zero-shot.
 Bảng~\ref{tab:chapters} cho biết kiến thức của học phần được dùng ở đâu.

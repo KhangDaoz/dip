@@ -1,11 +1,11 @@
 % Mục 2. Dữ liệu (khoảng 0,6 trang gồm bảng). Người viết: Hiếu.
 Đồ án dùng phần đơn thuốc của bộ VAIPE~\cite{vaipe}, gồm ảnh đơn thuốc bảo hiểm y tế in máy, đã được nguồn che thông tin cá nhân.
-Mỗi ảnh có nhãn là danh sách vùng chữ ở mức cụm chữ, mỗi vùng gồm khung bao $[x_0,y_0,x_1,y_1]$, chữ chuẩn và một trong sáu lớp ở Bảng~\ref{tab:data}.
-Khung chữ cao trung vị 20~px ở ảnh $760\times1070$ và $770\times1420$, và 32~px ở ảnh $1150\times1600$.
+Mỗi ảnh có nhãn là danh sách vùng chữ ở mức cụm chữ, mỗi vùng gồm khung bao, nội dung chữ chuẩn và một trong sáu lớp ở Bảng~\ref{tab:data}.
+Chữ trong ảnh rất nhỏ, chỉ cao khoảng 20 đến 32~px, nên đây là điểm khó chính của bài toán.
 
-Tập kiểm tra gốc có 172 ảnh không nhãn nên nhóm chia lại \num{1172} ảnh có nhãn thành 820 ảnh huấn luyện, 176 ảnh kiểm định và 176 ảnh kiểm tra theo seed 42, sau khi loại một ảnh trùng byte với tập kiểm tra gốc.
-Để tránh rò rỉ dữ liệu, các ảnh của cùng một bệnh nhân luôn nằm trong cùng một tập, với hai ảnh được xem là cùng bệnh nhân khi hệ số Jaccard giữa chữ trong nhãn đạt từ \num{0.85} trở lên, gồm \num{1030} nhóm.
-Tham số được chọn trên tập kiểm định, còn tập kiểm tra chỉ chạy một lần sau khi chốt cấu hình \chuong{8}.
+Tập kiểm tra gốc của VAIPE không có nhãn, nên nhóm chia lại \num{1172} ảnh có nhãn thành 820 ảnh huấn luyện, 176 ảnh kiểm định và 176 ảnh kiểm tra.
+Các ảnh của cùng một bệnh nhân luôn nằm trong cùng một tập để mô hình không được thấy trước đáp án.
+Tham số được chọn trên tập kiểm định, còn tập kiểm tra chỉ dùng một lần ở cuối.
 
 \begin{table}[H]
 \centering
@@ -33,11 +33,12 @@ Số ảnh & Ảnh đơn thuốc có nhãn & \num{820} & \num{176} & \num{176} &
 \endgroup
 \end{table}
 
-Nhãn VAIPE chưa có đáp án ở mức khoản thuốc, nên nhóm dẫn xuất đáp án này bằng chính luật ghép của khối D ở Mục~\ref{sec:m-assemble} áp lên khung và chữ chuẩn, rồi soát bằng mắt toàn bộ 176 ảnh kiểm tra.
-Mỗi vùng \texttt{drugname} mở một khoản, nên tập kiểm tra có 443 khoản thuốc, trong đó 2 khoản chiếm 0,5\%, tương ứng 1 tên thuốc, có tên không nằm trong từ điển dựng từ tập huấn luyện.
+VAIPE chưa có đáp án ở mức khoản thuốc, tức là chưa biết tên thuốc nào đi với số lượng và cách dùng nào.
+Nhóm dẫn xuất đáp án này bằng chính luật ghép của khối D (Mục~\ref{sec:m-assemble}) áp lên nhãn chuẩn, rồi soát bằng mắt toàn bộ 176 ảnh kiểm tra.
+Kết quả là 443 khoản thuốc, trong đó chỉ 2 khoản (0,5\%) có tên không nằm trong từ điển dựng từ tập huấn luyện.
 
-Để đo độ bền, 176 ảnh kiểm tra được làm suy giảm thành hai mức L2 và L4 bằng \path{code/tools/make_degraded.py} với seed 42, còn L0 là ảnh gốc.
-Mức L2 gồm xoay $\pm2^\circ$, mờ Gauss $\sigma$ từ 0,8 đến 1,2, bóng nhẹ và nén JPEG chất lượng 60 đến 80.
-Mức L4 xoay đến $\pm5^\circ$, thêm biến dạng phối cảnh, mờ chuyển động dài 9~px, bóng đậm và nén JPEG chất lượng 25 đến 40.
-Mờ Gauss và mờ chuyển động là các phép lọc không gian \chuong{3}, còn xoay và phối cảnh chỉ dùng để mô phỏng ảnh chụp lệch.
-Ảnh suy giảm hình học không còn khớp khung gốc nên chỉ dùng cho độ đo đầu-cuối.
+Để đo độ bền, ảnh kiểm tra được làm suy giảm để mô phỏng ảnh chụp bằng điện thoại ở hai mức, còn mức L0 là ảnh gốc.
+Mức L2 là suy giảm nhẹ gồm xoay nhẹ, mờ nhẹ, bóng nhẹ và nén JPEG vừa phải.
+Mức L4 là suy giảm nặng gồm xoay mạnh hơn, méo phối cảnh, mờ do rung tay, bóng đậm và nén JPEG mạnh.
+Mờ là phép lọc không gian \chuong{3}, còn xoay và phối cảnh chỉ để mô phỏng ảnh chụp lệch.
+Vì khung chuẩn không còn khớp sau khi ảnh bị biến đổi hình học, ảnh suy giảm chỉ dùng để đo kết quả đầu-cuối.

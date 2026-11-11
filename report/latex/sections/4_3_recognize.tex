@@ -2,6 +2,13 @@
 % Viết gì: bảng E-C1 trên vùng cắt theo KHUNG CHUẨN của test (cô lập khối C), nhận xét, 1 ca lỗi. Người: Khang.
 % Nguồn số: C2/C3 toàn tập = lần chạy Kaggle (notebooks/finetune_vietocr.ipynb, ô kiểm tra cuối: C2 (0.0864, 0.1097, 0.8156),
 % C3 (0.0329, 0.0437, 0.9229) = (CER, WER, khớp nguyên chuỗi)). Cột theo lớp + thời gian: chạy lại cục bộ.
+VietOCR được tinh chỉnh bằng \path{code/notebooks/finetune_vietocr.ipynb} trên Kaggle T4 với \num{20000} vòng, batch 32, tốc độ học cực đại $3\cdot10^{-4}$ theo lịch one-cycle, tăng cường ảnh có sẵn của VietOCR và seed 42.
+Dữ liệu là các vùng chữ có nhãn hợp lệ của tập huấn luyện (bỏ vùng rỗng, khung suy biến hoặc có ký tự ngoài bảng chữ của VietOCR), được cắt bằng \path{code/tools/to_vietocr.py} giống lúc suy luận, đệm 2~px và không phóng to.
+Trọng số được chọn theo độ chính xác khớp nguyên chuỗi trên tập kiểm định.
+Tham số \texttt{image\_max\_width} được nâng từ 512 lên 1024 vì với 512 khoảng 5\% vùng dài bị co chữ.
+Hai bộ nhận dạng được bọc trong \path{code/src/recognize/vietocr_engine.py} và \path{code/src/recognize/tesseract_engine.py}.
+Tesseract chạy với \texttt{--psm 7}, tức chế độ một dòng chữ.
+
 Để tách riêng khối C, mọi phương án đọc cùng 6086 vùng cắt theo khung chuẩn của tập kiểm tra, và kết quả E-C1 được trình bày ở Bảng~\ref{tab:EC1}.
 
 \begin{table}[H]

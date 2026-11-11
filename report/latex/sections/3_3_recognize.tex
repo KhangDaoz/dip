@@ -1,15 +1,12 @@
-% Mục 3.3. Khối C (khoảng 0,5 trang). Người viết: Khang.
-Mỗi vùng chữ được cắt theo khung bao, đệm 2~px và không phóng to, rồi đưa vào VietOCR~\cite{vietocr} kiến trúc \texttt{vgg\_transformer}.
-Bộ mã hóa VGG19-BN~\cite{simonyan2015vgg} biến ảnh dòng chữ cao 32~px thành chuỗi đặc trưng, và bộ giải mã Transformer~\cite{vaswani2017attention} sinh từng ký tự trong bảng chữ tiếng Việt có dấu.
+% Mục 3.3. Khối C. Người viết: Khang. Chi tiết huấn luyện nằm ở Mục 4.3.
+Mỗi vùng chữ được cắt theo khung bao, đệm thêm một chút viền, rồi đưa vào VietOCR~\cite{vietocr} kiến trúc \texttt{vgg\_transformer}.
+Bộ mã hóa VGG19-BN~\cite{simonyan2015vgg} biến ảnh dòng chữ thành chuỗi đặc trưng, và bộ giải mã Transformer~\cite{vaswani2017attention} sinh từng ký tự trong bảng chữ tiếng Việt có dấu.
 Nhóm giải mã tham lam, không dùng beam search, để giữ tốc độ.
 
-Phương án chính C3 là tinh chỉnh VietOCR từ trọng số đã công bố.
-Dữ liệu gồm toàn bộ vùng chữ có nhãn của tập huấn luyện, cắt bằng kịch bản \path{code/tools/to_vietocr.py} giống lúc suy luận, kể cả lớp \texttt{other} để mô hình gặp đủ các kiểu chữ.
-Quá trình huấn luyện chạy \num{20000} vòng với batch 32, tốc độ học cực đại $3\cdot10^{-4}$ theo lịch one-cycle, có tăng cường ảnh của VietOCR, seed 42, trên Kaggle T4.
-Trọng số được chọn theo độ chính xác khớp nguyên chuỗi trên tập kiểm định.
-Chiều rộng tối đa của ảnh vào được nâng từ 512 lên 1024~px và giữ nguyên khi suy luận, vì với 512 khoảng 5\% vùng chữ dài như dòng chẩn đoán bị giảm độ phân giải theo chiều ngang và mất chữ \chuong{2}.
+Phương án chính C3 là tinh chỉnh VietOCR từ trọng số đã công bố trên chính các vùng chữ đơn thuốc, gồm cả lớp \texttt{other} để mô hình gặp đủ các kiểu chữ.
+Nhóm cũng nâng chiều rộng tối đa của ảnh vào từ 512 lên 1024~px, vì với 512 những vùng chữ dài như dòng chẩn đoán bị thu nhỏ theo chiều ngang và mất chữ \chuong{2}.
 
 Có ba phương án đối chứng.
-C2 là VietOCR với trọng số đã công bố, không tinh chỉnh, cùng cách cắt vùng.
-C0 và C1 dùng Tesseract 5~\cite{smith2007tesseract} với gói ngôn ngữ \texttt{vie} ở chế độ một dòng chữ \texttt{--psm 7}.
-C0 nhận ảnh xám của vùng cắt, phóng lớn hai lần bằng nội suy bậc ba, tức thay đổi độ phân giải không gian của vùng cắt \chuong{2}, còn C1 giống C0 nhưng đầu vào là ảnh nhị phân Sauvola \chuong{5}, nhằm kiểm tra xem nhị phân hóa có giúp nhận dạng hay không.
+C2 là VietOCR với trọng số đã công bố, không tinh chỉnh.
+C0 và C1 dùng Tesseract 5~\cite{smith2007tesseract} với gói ngôn ngữ tiếng Việt, đọc từng vùng như một dòng chữ.
+C0 nhận ảnh xám phóng lớn hai lần bằng nội suy bậc ba, tức thay đổi độ phân giải không gian của vùng cắt \chuong{2}, còn C1 giống C0 nhưng đầu vào là ảnh nhị phân Sauvola \chuong{5}, nhằm kiểm tra xem nhị phân hóa có giúp nhận dạng hay không.
