@@ -27,3 +27,7 @@ __pycache__/
 .ipynb_checkpoints/
 .agents/
 /message.txt
+# Trọng số mô hình (chia sẻ qua Drive)
+*.pt
+code/weights/
+runs/
