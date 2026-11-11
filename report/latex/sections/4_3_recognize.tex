@@ -2,18 +2,11 @@
 % Viết gì: bảng E-C1 trên vùng cắt theo KHUNG CHUẨN của test (cô lập khối C), nhận xét, 1 ca lỗi. Người: Khang.
 % Nguồn số: C2/C3 toàn tập = lần chạy Kaggle (notebooks/finetune_vietocr.ipynb, ô kiểm tra cuối: C2 (0.0864, 0.1097, 0.8156),
 % C3 (0.0329, 0.0437, 0.9229) = (CER, WER, khớp nguyên chuỗi)). Cột theo lớp + thời gian: chạy lại cục bộ.
-VietOCR được tinh chỉnh bằng \path{code/notebooks/finetune_vietocr.ipynb} trên Kaggle T4 với \num{20000} vòng, batch 32, tốc độ học cực đại $3\cdot10^{-4}$ theo lịch one-cycle, tăng cường ảnh có sẵn của VietOCR và seed 42.
-Dữ liệu là các vùng chữ có nhãn hợp lệ của tập huấn luyện (bỏ vùng rỗng, khung suy biến hoặc có ký tự ngoài bảng chữ của VietOCR), được cắt bằng \path{code/tools/to_vietocr.py} giống lúc suy luận, đệm 2~px và không phóng to.
-Trọng số được chọn theo độ chính xác khớp nguyên chuỗi trên tập kiểm định.
-Tham số \texttt{image\_max\_width} được nâng từ 512 lên 1024 vì với 512 khoảng 5\% vùng dài bị co chữ.
-Hai bộ nhận dạng được bọc trong \path{code/src/recognize/vietocr_engine.py} và \path{code/src/recognize/tesseract_engine.py}.
-Tesseract chạy với \texttt{--psm 7}, tức chế độ một dòng chữ.
-
 Để tách riêng bước nhận dạng, mọi phương án đọc cùng 6086 vùng cắt theo khung chuẩn của tập kiểm tra, và kết quả thí nghiệm E-C1 được trình bày ở Bảng~\ref{tab:EC1}.
 
 \begin{table}[H]
 \centering
-\caption{Nhận dạng chữ trên vùng cắt theo khung chuẩn, 176 ảnh kiểm tra trong E-C1. Khớp: tỉ lệ vùng đọc đúng nguyên chuỗi.}\label{tab:EC1}
+\caption{Nhận dạng chữ trên vùng cắt theo khung chuẩn (E-C1). Khớp là tỉ lệ vùng đọc đúng nguyên chuỗi.}\label{tab:EC1}
 \small
 \begin{tabular}{lcccccc}
 \toprule
@@ -25,11 +18,16 @@ VietOCR gốc & \num{0.0864} & \num{0.1097} & \num{0.816} & \num{0.0275} & \num{
 VietOCR tinh chỉnh & \textbf{\num{0.0329}} & \textbf{\num{0.0437}} & \textbf{\num{0.923}} & \textbf{\num{0.0003}} & \textbf{\num{0.0004}} & \num{18.9} \\
 \bottomrule
 \end{tabular}
-\par\smallskip{\footnotesize Nguồn: \path{result/e_c1_ocr/}. Tesseract chạy 8 luồng CPU, VietOCR chạy trên GPU RTX 3050 nên thời gian không so trực tiếp được.}
+\par\smallskip{\footnotesize Thời gian không so trực tiếp được vì Tesseract chạy trên CPU còn VietOCR chạy trên GPU.}
 \end{table}
 
-Tinh chỉnh giảm CER từ \num{0.0864} xuống \num{0.0329}, tức khoảng 62\%, và tăng tỉ lệ vùng đọc đúng nguyên chuỗi từ \num{0.816} lên \num{0.923}.
-Mức giảm đến chủ yếu từ dòng chẩn đoán với CER từ \num{0.2325} xuống \num{0.0625} và dòng cách dùng từ \num{0.0123} xuống \num{0.0038}, còn tên thuốc và số lượng gần như không còn lỗi.
-Tesseract có CER tổng thấp hơn VietOCR gốc vì đọc dòng chẩn đoán tốt hơn ở mức \num{0.0811} so với \num{0.2325}, nhưng đọc cách dùng kém hơn nhiều với \num{0.1039} so với \num{0.0123} nên WER và tỉ lệ đọc đúng nguyên chuỗi đều thua VietOCR gốc.
-Nhị phân hóa Sauvola ở Tesseract nhị phân không đổi CER tổng và làm CER của số lượng tăng từ \num{0.0016} lên \num{0.0168}, nên không giúp ích.
-Lỗi còn lại của VietOCR tinh chỉnh tập trung ở dòng chẩn đoán, trong đó có cả lỗi do nhãn sai ở Hình~\ref{fig:c3err}, Phụ lục~\ref{app:examples}.
+Tinh chỉnh là yếu tố quyết định: CER giảm khoảng 62\%, từ \num{0.0864} xuống \num{0.0329}, và tỉ lệ vùng đọc đúng nguyên chuỗi tăng từ \num{0.816} lên \num{0.923}, chủ yếu nhờ dòng chẩn đoán (CER từ \num{0.2325} xuống \num{0.0625}) và dòng cách dùng (từ \num{0.0123} xuống \num{0.0038}).
+Tesseract có CER tổng thấp hơn VietOCR gốc vì đọc dòng chẩn đoán tốt hơn (\num{0.0811} so với \num{0.2325}), nhưng đọc cách dùng kém hơn nhiều (\num{0.1039} so với \num{0.0123}), nên WER và tỉ lệ đọc đúng nguyên chuỗi đều thua.
+Nhị phân hóa Sauvola không giúp ích: CER tổng không đổi và CER của số lượng tăng từ \num{0.0016} lên \num{0.0168}.
+Lỗi còn lại của VietOCR tinh chỉnh tập trung ở dòng chẩn đoán, trong đó có cả lỗi do nhãn sai (Hình~\ref{fig:c3err}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\linewidth]{e_c1_ocr/c3_errors.png}
+\caption{Ba vùng VietOCR tinh chỉnh đọc khác nhãn: (a) nhãn sai; (b) sai dấu ``Gẫy'' thành ``Gắy'' và ``vai'' thành ``vài''; (c) nhãn ghi ``110'' thay vì ``I10''.}\label{fig:c3err}
+\end{figure}

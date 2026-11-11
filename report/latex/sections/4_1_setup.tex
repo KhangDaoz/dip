@@ -1,27 +1,6 @@
-% Mục 4.1. Thiết lập và độ đo (khoảng 0,5 trang). Người viết: Hiếu.
-Quá trình huấn luyện chạy trên GPU T4 của Kaggle, còn suy luận và đánh giá chạy trên máy cá nhân dùng CPU Intel Core i7-12700H, GPU RTX~3050 4~GB, Python 3.13 và \texttt{seed} bằng 42, theo các thư viện trong \path{code/requirements-dl.txt}.
-Mọi số liệu được tính trên 176 ảnh kiểm tra bằng mã trong \path{code/experiments/}, mỗi thí nghiệm một kịch bản.
-Mã của bốn bước nằm lần lượt ở \path{code/src/enhance/}, \path{code/src/detect/}, \path{code/src/recognize/} và \path{code/src/assemble/}, và các bước trao đổi dữ liệu qua hợp đồng chung \path{code/src/common/contracts.py}, trong đó khung bao có dạng $[x_0,y_0,x_1,y_1]$ tính theo pixel.
-
-Việc chia tập dùng seed 42 và loại một ảnh trùng byte với tập kiểm tra gốc của VAIPE.
-Hai ảnh được xem là cùng bệnh nhân khi hệ số Jaccard giữa tập chữ trong nhãn đạt từ \num{0.85} trở lên, cho \num{1030} nhóm, và mỗi nhóm nằm trọn trong một tập.
-Ảnh suy giảm được sinh bằng \path{code/tools/make_degraded.py} với seed 42.
-Suy giảm nhẹ xoay $\pm2^\circ$, mờ Gauss $\sigma$ từ 0,8 đến 1,2, bóng nhẹ và nén JPEG chất lượng 60 đến 80.
-Suy giảm nặng xoay đến $\pm5^\circ$, thêm biến dạng phối cảnh, mờ Gauss như suy giảm nhẹ cộng mờ chuyển động dài 9~px, bóng đậm và nén JPEG chất lượng 25 đến 40.
-
-Với bài toán phát hiện, dự đoán và nhãn chuẩn được ghép tham lam theo IoU giảm dần, mỗi nhãn chuẩn ghép tối đa một lần.
-Cặp có IoU từ 0,5 trở lên, đồng thời cùng lớp khi đánh giá theo lớp, được tính là dương tính đúng, và P, R, F1 tính theo công thức của Chương~8:
-\begin{equation}\label{eq:prf}
-  \mathrm{IoU}(K_1,K_2)=\frac{|K_1\cap K_2|}{|K_1\cup K_2|},\qquad
-  P=\frac{TP}{TP+FP},\quad R=\frac{TP}{TP+FN},\quad F_1=\frac{2PR}{P+R}.
-\end{equation}
-$TP$, $FP$ và $FN$ được cộng dồn trên toàn tập chứ không lấy trung bình theo ảnh.
-mAP50 do Ultralytics tính và chỉ báo cáo kèm.
-
-Với nhận dạng, độ đo là tỉ lệ lỗi ký tự $\mathrm{CER}=\sum_i d(\hat s_i,s_i)\,/\sum_i|s_i|$, với $d$ là khoảng cách Levenshtein~\cite{levenshtein1966} giữa chuỗi dự đoán $\hat s_i$ và chuỗi chuẩn $s_i$, còn WER được tính tương tự nhưng trên từ.
-Hai chuỗi được chuẩn hóa Unicode NFC và gộp khoảng trắng trước khi so, có phân biệt hoa thường.
-
-Độ đo chính của đồ án là F1 khoản thuốc.
-Một khoản dự đoán khớp một khoản chuẩn khi CER của tên không quá 0,1 và số lượng bằng nhau, và việc ghép được làm tham lam theo CER tên tăng dần.
-Ngoài ra nhóm báo cáo F1 tên thuốc khi chỉ xét trường tên, tỉ lệ đúng số lượng và tỉ lệ đơn đúng hoàn toàn, tức mọi khoản khớp và không thừa khoản nào.
-Khoảng tin cậy 95\% của F1 khoản thuốc lấy bằng bootstrap \num{1000} lần theo ảnh~\cite{efron1993bootstrap}.
+% Mục 4.1. Môi trường và cài đặt. Người viết: Hiếu.
+Quá trình huấn luyện chạy trên Kaggle với GPU T4, còn suy luận và đánh giá chạy trên máy cá nhân có CPU Intel Core i7-12700H, GPU RTX~3050 4~GB và Python 3.13; mọi bước ngẫu nhiên dùng \texttt{seed} bằng 42.
+Cài đặt gồm tạo môi trường ảo Python, cài PyTorch bản GPU hoặc CPU, cài các thư viện của đồ án (Ultralytics cho YOLO, VietOCR, OpenCV, rapidfuzz) cùng Tesseract 5 với gói ngôn ngữ tiếng Việt, rồi cài mã nguồn dưới dạng gói và tải hai bộ trọng số đã huấn luyện.
+Bộ kiểm thử đơn vị giúp kiểm tra môi trường; phần nào thiếu dữ liệu hoặc trọng số thì được bỏ qua.
+Mã nguồn chia theo bốn bước của pipeline, mỗi bước một thư mục con, mỗi thí nghiệm là một kịch bản riêng và kết quả được ghi ra thư mục \texttt{results}.
+Nhóm cũng làm một giao diện demo bằng Gradio để tải ảnh lên, chọn cấu hình pipeline và xem kết quả JSON cùng ảnh vùng chữ.

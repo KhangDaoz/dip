@@ -97,21 +97,28 @@
 \input{sections/3_3_recognize}
 \subsection{Ghép khoản thuốc}\label{sec:m-assemble}
 \input{sections/3_4_assemble}
+\subsection{Độ đo đánh giá}\label{sec:m-metrics}
+\input{sections/3_5_metrics}
 
 % Thứ tự: thiết lập → từng khối → đầu-cuối (bảng chính) → ablation, độ bền → thời gian
 \section{Thực nghiệm}\label{sec:exp}
-\subsection{Thiết lập và độ đo}\label{sec:setup}
+\subsection{Thiết lập thực nghiệm}\label{sec:setup}
 \input{sections/4_1_setup}
-\subsection{Phát hiện vùng chữ}\label{sec:e-detect}
+\input{sections/4_1_prepare}
+\input{sections/4_1_train}
+\subsection{Danh mục thí nghiệm}\label{sec:experiments}
+\input{sections/4_1_experiments}
+\subsection{Kết quả}\label{sec:results}
+\subsubsection{Phát hiện vùng chữ}\label{sec:e-detect}
 \input{sections/4_2_detect}
-\subsection{Nhận dạng chữ}\label{sec:e-recognize}
+\subsubsection{Nhận dạng chữ}\label{sec:e-recognize}
 \input{sections/4_3_recognize}
-\subsection{So sánh đầu-cuối}\label{sec:e-endtoend}
+\subsubsection{So sánh đầu-cuối và thời gian chạy}\label{sec:e-endtoend}
 \input{sections/4_4_endtoend}
-\subsection{Phân tích lỗi và độ bền}\label{sec:e-ablation}
-\input{sections/4_5_ablation}
-\subsection{Thời gian chạy}\label{sec:e-runtime}
 \input{sections/4_6_runtime}
+\subsubsection{Phân tích lỗi và độ bền}\label{sec:e-ablation}
+\input{sections/4_5_ablation}
+\input{sections/4_5_robust}
 
 \section{Thảo luận}\label{sec:discussion}
 \input{sections/5_discussion}
@@ -130,10 +137,6 @@
 \appendix
 \section{Kiến thức học phần được sử dụng}\label{app:chapters}
 \input{appendix/K_chapters}
-\section{Bảng tham số đầy đủ}\label{app:params}
-\input{appendix/A_params}
-\section{Ví dụ kết quả và ca lỗi}\label{app:examples}
-\input{appendix/B_examples}
 
 % Danh mục tài liệu tham khảo đặt cuối bài, bắt đầu ở trang mới
 \clearpage

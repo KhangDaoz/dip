@@ -1,0 +1,16 @@
+% Phần của Mục 4.1: huấn luyện và cấu hình, theo thứ tự pipeline. Tham số chọn trên tập kiểm định, tập kiểm tra chỉ chạy một lần.
+Các tham số dưới đây được chọn trên tập kiểm định và cố định trước khi chạy trên tập kiểm tra.
+
+Tiền xử lý dùng ngưỡng Canny 50 và 150, tứ giác giấy tối thiểu 20\% diện tích ảnh; góc chỉnh nghiêng trong khoảng $\pm10^\circ$ với bước tinh $0{,}25^\circ$ sau khi nhị phân hóa Sauvola cửa sổ 31 và $k=0{,}2$; phép đóng $81\times81$ kèm lọc trung vị $21\times21$ để ước lượng nền; lọc trung vị $3\times3$ để khử nhiễu; CLAHE với ngưỡng cắt 2,0 trên lưới $8\times8$.
+
+YOLOv8s được khởi tạo từ trọng số COCO và huấn luyện 50 epoch trên 820 ảnh bằng notebook Kaggle với 2 GPU T4, ảnh vào 1024 (ảnh $770\times1420$ thu về 1024 chỉ còn khoảng 14~px chiều cao chữ nên không thu nhỏ hơn), batch 16, dừng sớm sau 15 epoch không cải thiện, tắt lật ngang, mosaic 0,5, NMS 0,7. Ngưỡng tin cậy 0,443 cho F1 trung bình sáu lớp lớn nhất khi quét từ 0,05 đến 0,85 trên tập kiểm định.
+
+Bộ phát hiện cổ điển không cần huấn luyện, gồm nhị phân hóa Sauvola cửa sổ 31 với $k=0{,}2$, phép mở $2\times2$, rồi giãn với phần tử rộng $a\cdot h$ và cao $v\cdot h$ theo chiều cao chữ trung vị $h$. Quét lưới trên tập kiểm định chọn $a=2{,}5$ và $v=0{,}2$.
+
+VietOCR được tinh chỉnh từ trọng số đã công bố bằng notebook Kaggle với một GPU T4, \num{20000} vòng, batch 32, tốc độ học cực đại $3\cdot10^{-4}$ theo lịch one-cycle và các phép tăng cường ảnh có sẵn; chiều rộng ảnh vào tối đa 1024~px; trọng số được chọn theo tỉ lệ khớp nguyên chuỗi trên tập kiểm định.
+
+Tesseract không cần huấn luyện và chạy ở chế độ một dòng chữ.
+
+Bước ghép khoản hỏi lại lớp bằng biểu thức chính quy khi độ tin cậy dưới 0,5; loại hai khung trùng nhau khi IoU lớn hơn 0,7; từ điển 138 tên với ngưỡng thay 90 và 80 cùng lề 5 điểm.
+
+Qwen3.8-27B được gọi qua giao diện API tương thích OpenAI, nhiệt độ 0, ảnh nén JPEG cạnh dài tối đa 1600~px, một lời nhắc cố định.

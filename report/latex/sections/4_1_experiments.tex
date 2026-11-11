@@ -1,0 +1,25 @@
+% Mục 4.4. Danh mục thí nghiệm. Người viết: Hiếu.
+Bảng~\ref{tab:expl} liệt kê các thí nghiệm của đồ án, mã dùng để gọi chúng trong phần kết quả, mục đích và mục trình bày kết quả của từng thí nghiệm.
+Các thí nghiệm chạy tuần tự: chuẩn bị dữ liệu, huấn luyện, chạy từng pipeline để lấy kết quả phát hiện và nhận dạng, rồi mới chạy thí nghiệm.
+Mọi số liệu tính trên 176 ảnh kiểm tra, và các bảng trong báo cáo được sinh trực tiếp từ kết quả mà các thí nghiệm ghi ra.
+
+\begin{table}[H]
+\centering
+\caption{Danh mục thí nghiệm.}\label{tab:expl}
+\small
+\begin{tabularx}{\linewidth}{@{}l L L c@{}}
+\toprule
+\textbf{Mã} & \textbf{Tên thí nghiệm} & \textbf{Mục đích} & \textbf{Kết quả} \\
+\midrule
+E-B1 & Phát hiện không phân lớp & So YOLOv8s với bộ phát hiện cổ điển & Mục~\ref{sec:e-detect} \\
+E-B2 & Phát hiện theo lớp & Độ đúng từng lớp của YOLOv8s & Mục~\ref{sec:e-detect} \\
+E-C1 & Nhận dạng chữ & So bốn phương án OCR trên vùng cắt theo khung chuẩn & Mục~\ref{sec:e-recognize} \\
+E-D1 & Ghép khoản trên nhãn chuẩn & Kiểm tra tính nhất quán của luật ghép & Mục~\ref{sec:e-endtoend} \\
+E-D2 & So sánh đầu-cuối & So năm pipeline, gồm cả VLM, trên toàn đơn & Mục~\ref{sec:e-endtoend} \\
+E-X1 & Tách nguồn lỗi & Thay lần lượt phát hiện và nhận dạng bằng nhãn chuẩn & Mục~\ref{sec:e-ablation} \\
+E-A1 & Độ bền khi ảnh suy giảm & Tác dụng của tiền xử lý ở ba mức ảnh & Mục~\ref{sec:e-ablation} \\
+E-A2 & Chỉnh nghiêng & Sai số góc của bước chỉnh nghiêng & Mục~\ref{sec:e-ablation} \\
+E-A3 & Nắn phối cảnh và thời gian & Tỉ lệ tìm được tờ giấy và thời gian tiền xử lý & Mục~\ref{sec:e-ablation} \\
+\bottomrule
+\end{tabularx}
+\end{table}

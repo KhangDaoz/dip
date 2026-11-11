@@ -1,4 +1,4 @@
-% Mục 3.4. Ghép khoản thuốc. Người viết: Thắng. Ngưỡng số cụ thể nằm ở Phụ lục A và Mục 4.4.
+% Mục 3.4. Ghép khoản thuốc. Người viết: Thắng. Ngưỡng số cụ thể nằm ở Mục 4.3.
 Ghép khoản thuốc là bước hậu xử lý, biến danh sách vùng chữ đã đọc thành bản ghi đơn thuốc qua bốn bước.
 \begin{enumerate}[label=\arabic*.]
   \item Xác định lớp. Lớp của mỗi vùng trước hết lấy từ YOLO. Chỉ khi YOLO gán \texttt{other} hoặc không đủ tin cậy thì lớp mới được xét lại bằng biểu thức chính quy trên chữ, ví dụ tên thuốc bắt đầu bằng ``$N$)'' và số lượng bắt đầu bằng ``SL''. Hai vùng chồng nhau nhiều thì chỉ giữ vùng có độ tin cậy cao hơn.

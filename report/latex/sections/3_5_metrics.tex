@@ -1,0 +1,31 @@
+% Mục 3.5. Độ đo đánh giá. Người viết: Hiếu.
+Bảng~\ref{tab:metrics} liệt kê các độ đo chuẩn dùng trong đồ án.
+
+\begin{table}[H]
+\centering
+\caption{Các độ đo chuẩn dùng trong đồ án.}\label{tab:metrics}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.8cm} L >{\raggedright\arraybackslash}p{2.4cm}@{}}
+\toprule
+\textbf{Độ đo} & \textbf{Ý nghĩa} & \textbf{Đánh giá} \\
+\midrule
+IoU & Tỉ lệ diện tích giao trên diện tích hợp giữa khung dự đoán và khung chuẩn & Phát hiện \\
+Precision & Tỉ lệ dự đoán đúng trong tất cả dự đoán & Phát hiện \\
+Recall & Tỉ lệ vùng chuẩn được tìm thấy & Phát hiện \\
+F1-score & Trung bình điều hòa của Precision và Recall & Phát hiện \\
+mAP@0.5 & Độ chính xác trung bình trên các lớp ở ngưỡng IoU 0,5 & Phát hiện \\
+CER & Tỉ lệ lỗi ký tự, tính từ khoảng cách Levenshtein~\cite{levenshtein1966} giữa chuỗi dự đoán và chuỗi chuẩn & Nhận dạng \\
+WER & Tỉ lệ lỗi từ, tính như CER nhưng trên từ & Nhận dạng \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Với phát hiện, dự đoán được ghép tham lam với nhãn chuẩn theo IoU giảm dần, mỗi nhãn ghép tối đa một lần, và cặp có IoU từ 0,5 trở lên, cùng lớp khi xét theo lớp, là dương tính đúng.
+Số dương tính đúng, dương tính giả và âm tính giả được cộng dồn trên toàn tập kiểm tra, không lấy trung bình theo ảnh.
+Với nhận dạng, hai chuỗi được chuẩn hóa Unicode NFC và gộp khoảng trắng trước khi so, có phân biệt hoa thường; nhóm còn báo cáo tỉ lệ vùng chữ đọc đúng nguyên chuỗi.
+
+Ở mức đầu-cuối, nhóm dùng thêm các độ đo riêng cho bài toán.
+Một khoản thuốc dự đoán khớp khoản chuẩn khi CER của tên không quá 0,1 và số lượng bằng nhau; các cặp được ghép tham lam theo CER tên tăng dần, và F1 khoản thuốc tính trên các cặp này là độ đo chính của đồ án.
+Ngoài ra nhóm báo cáo F1 chỉ xét tên thuốc, tỉ lệ khoản khớp tên có số lượng đúng, tỉ lệ đơn có ngày kê đơn đúng và tỉ lệ đơn đúng hoàn toàn, tức mọi khoản khớp và không thừa khoản nào.
+Khoảng tin cậy 95\% của F1 khoản thuốc lấy bằng bootstrap \num{1000} lần theo ảnh~\cite{efron1993bootstrap}.

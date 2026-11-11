@@ -1,4 +1,4 @@
-% Mục 3.1. Tiền xử lý ảnh. Người viết: Hiếu. Chỉ nêu phương pháp, không nêu mã nguồn; tham số đầy đủ ở Phụ lục A.
+% Mục 3.1. Tiền xử lý ảnh. Người viết: Hiếu. Chỉ nêu phương pháp, không nêu mã nguồn; tham số nằm ở Mục 4.3.
 Tiền xử lý đưa ảnh chụp về gần với ảnh quét: tờ giấy phẳng, dòng chữ nằm ngang và ánh sáng đều.
 Quy trình gồm năm bước chạy theo thứ tự cố định, mỗi bước nhận một ảnh và trả về một ảnh, có thể tắt riêng.
 \begin{enumerate}[label=\arabic*.]
@@ -13,4 +13,3 @@ Quy trình gồm năm bước chạy theo thứ tự cố định, mỗi bước
   \item Tăng tương phản. CLAHE~\cite{zuiderveld1994clahe} là mở rộng của cân bằng lược đồ xám. Ảnh được chia thành lưới ô nhỏ, mỗi ô được cân bằng riêng và độ dốc của hàm biến đổi bị giới hạn để không làm nổi nhiễu nền.
 \end{enumerate}
 Thí nghiệm độ bền dùng hai cấu hình là không tiền xử lý, ký hiệu \texttt{none}, và tiền xử lý đủ năm bước, ký hiệu \texttt{full}.
-Bảng tham số đầy đủ cùng lý do lựa chọn nằm ở Phụ lục~\ref{app:params}.
