@@ -1,9 +1,16 @@
 % Mục 4.1. Thiết lập và độ đo (khoảng 0,5 trang). Người viết: Hiếu.
-Huấn luyện chạy trên Kaggle (GPU T4), còn suy luận và đánh giá chạy trên máy cá nhân (CPU Intel Core i7-12700H, GPU RTX~3050 4~GB), Python 3.13, seed 42, theo các thư viện trong \path{code/requirements-dl.txt}.
-Mọi số liệu được tính trên 176 ảnh kiểm tra bằng mã trong \path{code/experiments/}.
+Quá trình huấn luyện chạy trên GPU T4 của Kaggle, còn suy luận và đánh giá chạy trên máy cá nhân dùng CPU Intel Core i7-12700H, GPU RTX~3050 4~GB, Python 3.13 và \texttt{seed} bằng 42, theo các thư viện trong \path{code/requirements-dl.txt}.
+Mọi số liệu được tính trên 176 ảnh kiểm tra bằng mã trong \path{code/experiments/}, mỗi thí nghiệm một kịch bản.
+Mã của bốn khối nằm lần lượt ở \path{code/src/enhance/}, \path{code/src/detect/}, \path{code/src/recognize/} và \path{code/src/assemble/}, và các khối trao đổi dữ liệu qua hợp đồng chung \path{code/src/common/contracts.py}, trong đó khung bao có dạng $[x_0,y_0,x_1,y_1]$ tính theo pixel.
+
+Việc chia tập dùng seed 42 và loại một ảnh trùng byte với tập kiểm tra gốc của VAIPE.
+Hai ảnh được xem là cùng bệnh nhân khi hệ số Jaccard giữa tập chữ trong nhãn đạt từ \num{0.85} trở lên, cho \num{1030} nhóm, và mỗi nhóm nằm trọn trong một tập.
+Ảnh suy giảm được sinh bằng \path{code/tools/make_degraded.py} với seed 42.
+Mức L2 xoay $\pm2^\circ$, mờ Gauss $\sigma$ từ 0,8 đến 1,2, bóng nhẹ và nén JPEG chất lượng 60 đến 80.
+Mức L4 xoay đến $\pm5^\circ$, thêm biến dạng phối cảnh, mờ Gauss như L2 cộng mờ chuyển động dài 9~px, bóng đậm và nén JPEG chất lượng 25 đến 40.
 
 Với bài toán phát hiện, dự đoán và nhãn chuẩn được ghép tham lam theo IoU giảm dần, mỗi nhãn chuẩn ghép tối đa một lần.
-Cặp có IoU từ 0,5 trở lên (và cùng lớp, nếu đo có lớp) được tính là dương tính đúng, và P, R, F1 tính theo công thức của Chương~8:
+Cặp có IoU từ 0,5 trở lên, đồng thời cùng lớp khi đánh giá theo lớp, được tính là dương tính đúng, và P, R, F1 tính theo công thức của Chương~8:
 \begin{equation}\label{eq:prf}
   \mathrm{IoU}(K_1,K_2)=\frac{|K_1\cap K_2|}{|K_1\cup K_2|},\qquad
   P=\frac{TP}{TP+FP},\quad R=\frac{TP}{TP+FN},\quad F_1=\frac{2PR}{P+R}.
@@ -16,5 +23,5 @@ Hai chuỗi được chuẩn hóa Unicode NFC và gộp khoảng trắng trướ
 
 Độ đo chính của đồ án là F1 khoản thuốc.
 Một khoản dự đoán khớp một khoản chuẩn khi CER của tên không quá 0,1 và số lượng bằng nhau, và việc ghép được làm tham lam theo CER tên tăng dần.
-Ngoài ra nhóm báo cáo F1 tên thuốc (chỉ xét tên), tỉ lệ đúng số lượng và tỉ lệ đơn đúng hoàn toàn, tức mọi khoản khớp và không thừa khoản nào.
+Ngoài ra nhóm báo cáo F1 tên thuốc khi chỉ xét trường tên, tỉ lệ đúng số lượng và tỉ lệ đơn đúng hoàn toàn, tức mọi khoản khớp và không thừa khoản nào.
 Khoảng tin cậy 95\% của F1 khoản thuốc lấy bằng bootstrap \num{1000} lần theo ảnh~\cite{efron1993bootstrap}.

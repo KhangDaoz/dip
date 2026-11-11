@@ -3,19 +3,19 @@
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.6\linewidth]{common/pipeline_example.png}
-\caption{Kết quả đầu-cuối trên một ảnh mẫu VAIPE (sau \khoi{A}). Khung màu theo lớp YOLO gồm đỏ (\texttt{drugname}), xanh lá (\texttt{quantity}), xanh dương (\texttt{usage}), cam (\texttt{diagnose}), tím (\texttt{date}) và xám (\texttt{other}). Khung vàng \#1 đến \#3 là ba khoản thuốc sau khối D. Cả ba khoản đúng tên, số lượng và cách dùng, lỗi duy nhất là mã bệnh ``I10'' bị đọc thành ``110'', cùng kiểu lỗi với Hình~\ref{fig:c3err}(c).}\label{fig:example}
+\caption{Kết quả đầu-cuối trên một ảnh mẫu VAIPE sau \khoi{A}. Khung màu theo lớp YOLO gồm đỏ (\texttt{drugname}), xanh lá (\texttt{quantity}), xanh dương (\texttt{usage}), cam (\texttt{diagnose}), tím (\texttt{date}) và xám (\texttt{other}). Khung vàng \#1 đến \#3 là ba khoản thuốc sau khối D. Cả ba khoản đúng tên, số lượng và cách dùng, lỗi duy nhất là mã bệnh ``I10'' bị đọc thành ``110'', cùng kiểu lỗi với Hình~\ref{fig:c3err}(c).}\label{fig:example}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.5\linewidth]{e_b_detection/b2_confusion.png}
-\caption{Ma trận nhầm lẫn của YOLOv8s trên 176 ảnh kiểm tra (IoU $\ge0{,}5$). Hàng \texttt{bg} là khung dự đoán thừa, cột \texttt{bg} là vùng chuẩn bị bỏ sót.}\label{fig:confusion}
+\caption{Ma trận nhầm lẫn của YOLOv8s trên 176 ảnh kiểm tra với IoU $\ge0{,}5$. Hàng \texttt{bg} là khung dự đoán thừa, cột \texttt{bg} là vùng chuẩn bị bỏ sót.}\label{fig:confusion}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{e_c1_ocr/c3_errors.png}
-\caption{Ba vùng C3 đọc khác nhãn. (a) Nhãn sai, C3 đọc đúng. (b) C3 sai dấu (``Gẫy'' thành ``Gắy'', ``vai'' thành ``vài''). (c) Nhãn huấn luyện ghi ``110'' thay vì ``I10'' và C3 đọc theo nhãn.}\label{fig:c3err}
+\caption{Ba vùng C3 đọc khác nhãn. (a) Nhãn sai, C3 đọc đúng. (b) C3 sai dấu từ ``Gẫy'' thành ``Gắy'' và từ ``vai'' thành ``vài''. (c) Nhãn huấn luyện ghi ``110'' thay vì ``I10'' và C3 đọc theo nhãn.}\label{fig:c3err}
 \end{figure}
 
 \begin{figure}[H]

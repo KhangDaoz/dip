@@ -1,17 +1,17 @@
 % Mục 4.5. Phân tích lỗi (E-X1) và độ bền (E-A1) (khoảng 0,7 trang). Người viết: Hiếu.
 % Nguồn số: results/E-X1/table.csv, results/E-A1/table.csv.
 Trước hết, hai bước hình học của khối A được kiểm tra riêng.
-Với chỉnh nghiêng (E-A2, 1232 lượt thử góc $0^\circ$--$10^\circ$ cộng nhiễu $<0{,}5^\circ$ trên 176 ảnh), sai số trung vị là $0{,}063^\circ$, cực đại $0{,}261^\circ$ và 100\% lượt thử sai $\le0{,}5^\circ$.
-Với nắn phối cảnh (E-A3, 50 ảnh mỗi mức), thuật toán giữ nguyên 50 ảnh L0 và 49 ảnh L2 vì đơn đã chiếm trọn khung hình, và tìm được tờ giấy bằng contour trên 47/50 ảnh L4.
-Tiếp theo, nhóm thay lần lượt khối B và C bằng nhãn gốc (\textit{Ground Truth}) để tách nguồn lỗi (E-X1, Bảng~\ref{tab:EX1}).
+Với chỉnh nghiêng E-A2 trên 1232 lượt thử góc $0^\circ$--$10^\circ$ cộng nhiễu $<0{,}5^\circ$ của 176 ảnh, sai số trung vị là $0{,}063^\circ$, cực đại $0{,}261^\circ$ và 100\% lượt thử sai $\le0{,}5^\circ$.
+Với nắn phối cảnh E-A3 trên 50 ảnh mỗi mức, thuật toán giữ nguyên 50 ảnh L0 và 49 ảnh L2 vì đơn đã chiếm trọn khung hình, và tìm được tờ giấy bằng contour trên 47/50 ảnh L4.
+Tiếp theo, nhóm thay lần lượt khối B và C bằng nhãn chuẩn Ground Truth để tách nguồn lỗi trong E-X1 ở Bảng~\ref{tab:EX1}.
 
 \begin{table}[H]
 \centering
-\caption{Kết quả cắt bỏ (E-X1) khi thay từng khối bằng nhãn gốc (\textit{Ground Truth}) trên 176 ảnh kiểm tra.}\label{tab:EX1}
+\caption{Kết quả cắt bỏ E-X1 khi thay từng khối bằng nhãn chuẩn Ground Truth trên 176 ảnh kiểm tra.}\label{tab:EX1}
 \footnotesize
 \begin{tabular}{llcccc}
 \toprule
-\textbf{B (khung)} & \textbf{C (chữ)} & \textbf{F1 khoản} & \textbf{F1 tên} & \textbf{SL đúng} & \textbf{Đơn đúng} \\
+\textbf{Khối B} & \textbf{Khối C} & \textbf{F1 khoản} & \textbf{F1 tên} & \textbf{SL đúng} & \textbf{Đơn đúng} \\
 \midrule
 Ground Truth & Ground Truth & \num{1.0000} & \num{1.0000} & \num{1.0000} & \num{1.0000} \\
 Ground Truth & VietOCR C3 & \num{1.0000} & \num{1.0000} & \num{1.0000} & \num{1.0000} \\
@@ -22,14 +22,14 @@ YOLOv8s & VietOCR C3 & \num{0.9966} & \num{0.9966} & \num{1.0000} & \num{0.9830}
 \par\smallskip{\footnotesize Nguồn: \path{result/e_x1_ablation/}.}
 \end{table}
 
-Khi thay riêng khung Ground Truth (B Ground Truth + C3) hoặc chữ Ground Truth (YOLO + C Ground Truth), F1 khoản đều đạt \num{1.0000}; mức giảm \num{0.0034} điểm ở pipeline chính (173/176 đơn đúng hoàn toàn, \num{0.9830}) chỉ xuất hiện khi ghép đồng thời khung dự đoán YOLOv8s với chữ VietOCR C3.
-Độ bền của pipeline (iii) trên ba mức suy giảm L0, L2, L4 khi tắt (\texttt{none}) và bật toàn bộ khối A (\texttt{full}) được trình bày ở Hình~\ref{fig:EA1} (E-A1).
+Khi thay riêng khung Ground Truth đi cùng VietOCR C3 hoặc khung YOLOv8s đi cùng chữ Ground Truth, F1 khoản đều đạt \num{1.0000}; mức giảm \num{0.0034} điểm ở pipeline chính, ứng với 173/176 đơn đúng hoàn toàn hay \num{0.9830}, chỉ xuất hiện khi ghép đồng thời khung dự đoán YOLOv8s với chữ VietOCR C3.
+Độ bền của pipeline (iii) trên ba mức suy giảm L0, L2, L4 khi tắt khối A với \texttt{none} và bật toàn bộ khối A với \texttt{full} được trình bày ở Hình~\ref{fig:EA1} của E-A1.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.38\linewidth]{e_a1_robustness/robustness.png}
-\caption{F1 khoản thuốc theo mức suy giảm, có và không có tiền xử lý cổ điển khối A (176 ảnh kiểm tra mỗi mức).}\label{fig:EA1}
+\caption{F1 khoản thuốc theo mức suy giảm trên 176 ảnh kiểm tra mỗi mức, có và không có tiền xử lý khối A.}\label{fig:EA1}
 \end{figure}
 
-Trái với kỳ vọng, bật toàn bộ khối A (\texttt{full}) làm giảm F1 khoản ở cả ba mức: từ \num{0.9966} xuống \num{0.9955} ở L0, từ \num{0.9585} xuống \num{0.7692} ở L2 (đơn đúng từ \num{0.9091} xuống \num{0.4886}), và từ \num{0.1264} xuống \num{0.0470} ở L4.
-Thống kê chẩn đoán (\path{result/e_a1_robustness/diagnostics.csv}) chỉ ra bước chia nền dùng phép đóng $81\times81$ (A3) và CLAHE (A5) để lại mảng xám hình khối ở rìa vùng bóng và làm nét chữ nhạt hơn; vì YOLOv8s chỉ huấn luyện trên ảnh gốc L0, sự lệch phân phối này khiến mô hình bắt nhầm vệt nền thành chữ (số khung/ảnh tăng từ \num{34.5} lên \num{50.5} ở L2 và từ \num{33.3} lên \num{54.5} ở L4) và bỏ sót vùng \texttt{date} (chỉ còn thấy trên 58/176 ảnh L2 và 21/176 ảnh L4, kéo tỷ lệ ngày đúng ở L2 từ \num{1.0000} xuống \num{0.6932}).
+Kết quả chưa như kỳ vọng: bật toàn bộ khối A với \texttt{full} cho F1 khoản thấp hơn ở cả ba mức: từ \num{0.9966} xuống \num{0.9955} ở L0, từ \num{0.9585} xuống \num{0.7692} ở L2 kéo đơn đúng từ \num{0.9091} xuống \num{0.4886}, và từ \num{0.1264} xuống \num{0.0470} ở L4.
+Một lý do có thể là phép đóng $81\times81$ ở A3 và CLAHE ở A5 để lại vài mảng xám ở rìa vùng bóng và làm nét chữ nhạt hơn, trong khi YOLOv8s chỉ huấn luyện trên ảnh gốc L0 nên dễ nhận nhầm vệt nền thành chữ. Thống kê ở \path{result/e_a1_robustness/diagnostics.csv} phù hợp với giải thích này, khi số khung/ảnh tăng từ \num{34.5} lên \num{50.5} ở L2 và từ \num{33.3} lên \num{54.5} ở L4, đồng thời sót vùng \texttt{date} khi chỉ thấy trên 58/176 ảnh L2 và 21/176 ảnh L4, kéo tỷ lệ ngày đúng ở L2 từ \num{1.0000} xuống \num{0.6932}. Việc tách riêng đóng góp của từng bước A1 đến A5 được để cho các nghiên cứu tiếp theo.
