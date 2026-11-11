@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trích xuất thông tin đơn thuốc từ ảnh</title>
+<!--
+  CÁCH DÙNG (Chrome / Edge):
+    →  Space  PageDown  cuộn chuột  vuốt : slide sau        ←  PageUp : slide trước
+    Home / End : slide đầu / cuối        F : toàn màn hình
+    N : bật/tắt ghi chú người nói       E : chế độ sửa chữ (Ctrl+S tải file HTML đã sửa)
+  XUẤT PDF: Ctrl+P → Lưu thành PDF, Khổ giấy: tùy chỉnh 1920×1080 hoặc A4 ngang, Lề: Không, bật "Đồ họa nền".
+  ĐỔI MÀU: sửa biến trong :root.   ĐỔI FONT: sửa thẻ <link> Google Fonts.
+  Phong cách: MedTrack Capsule (figure/FRAME.md). Số liệu: report/latex/result/ (176 ảnh kiểm tra).
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ===========================================
+   THEME — MedTrack Capsule (figure/FRAME.md)
+   Change these to change the whole look.
+   =========================================== */
+:root{
+  --stage-bg:#dfe7f7;           /* letterbox around the stage */
+  --slide-bg:#F5F8FF;           /* canvas: hospital-clean blue-white */
+  --ink:#142B4D;                /* navy: all type + 2px outlines */
+  --white:#FFFFFF;
+  --blue:#2260FF;               /* lead accent: stat numerals, key bars */
+  --teal:#26CAD3; --dteal:#008588; --mint:#A8E6CF;
+  --sky:#8CAFFF; --ice:#EBF1FF;
+  --amber:#FFD27A;              /* single warm note per slide */
+  --peach:#FFB4A2;
+  --muted:#5b6b85;
+  --shadow:rgba(20,43,77,.10);
+  --line:2px solid var(--ink);
+  --f-display:'Be Vietnam Pro',sans-serif;
+  --f-body:'Space Grotesk',sans-serif;
+  --f-mono:'JetBrains Mono',monospace;
+  --pad:120px;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+
+/* ===========================================
+   BASE
+   =========================================== */
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* --- viewport-base.css (frontend-slides, mandatory) --- */
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--stage-bg,#000)}
+.deck-viewport{position:fixed;inset:0;overflow:hidden;background:var(--stage-bg,#000)}
+.deck-stage{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;transform-origin:0 0;background:var(--slide-bg,#fff)}
+.slide{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;display:block;visibility:hidden;opacity:0;pointer-events:none;background:var(--slide-bg,#fff)}
+.slide.active,.slide.visible{visibility:visible;opacity:1;pointer-events:auto;z-index:1}
+img,video,canvas,svg{max-width:100%;max-height:100%}
+.deck-controls{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:1000}
+@media print{
+  html,body{width:1920px;height:auto;overflow:visible;background:#fff}
+  .deck-viewport{position:static;overflow:visible;background:#fff}
+  .deck-stage{position:static;width:auto;height:auto;transform:none!important;background:none}
+  .slide{position:relative;display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;width:1920px;height:1080px;break-after:page;page-break-after:always}
+  .slide:last-child{break-after:auto;page-break-after:auto}
+  .deck-controls{display:none!important}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.2s!important}}
+/* --- end viewport-base.css --- */
+
+body{font-family:var(--f-body);color:var(--ink);-webkit-font-smoothing:antialiased}
+b,strong{font-weight:700}
+
+/* ===========================================
+   ATMOSPHERE — glows + grain on every slide
+   =========================================== */
+.slide::before{content:"";position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(circle at 10% 12%,rgba(34,96,255,.10),transparent 36%),
+  radial-gradient(circle at 92% 88%,rgba(38,202,211,.12),transparent 40%),
+  radial-gradient(circle at 82% 8%,rgba(168,230,207,.16),transparent 28%)}
+.slide::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.045;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.slide>*{z-index:1}
+
+/* ===========================================
+   SLIDE HEADER + CHROME (content slides)
+   =========================================== */
+.head{position:absolute;left:var(--pad);right:var(--pad);top:76px}
+.tag{display:inline-flex;align-items:center;gap:12px;padding:10px 24px;border:var(--line);border-radius:9999px;background:var(--ice);font:600 18px var(--f-body);letter-spacing:.14em;text-transform:uppercase}
+.tag .n{font-family:var(--f-display);font-weight:800;letter-spacing:0}
+h2{margin-top:22px;font:700 68px/1.06 var(--f-display);letter-spacing:-.02em}
+.lead{margin-top:18px;font:400 30px/1.4 var(--f-body);color:var(--muted);max-width:1500px}
+.foot{position:absolute;left:var(--pad);right:var(--pad);bottom:40px;display:flex;justify-content:space-between;align-items:center;font:500 16px var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.foot .pg{font-family:var(--f-display);font-weight:700;letter-spacing:0;font-size:20px;color:var(--ink)}
+.foot .src{text-transform:none;letter-spacing:.02em}
+
+/* ===========================================
+   COMPONENTS — every container is a pill
+   =========================================== */
+.card{position:absolute;background:var(--white);border:var(--line);border-radius:32px;box-shadow:8px 8px 0 var(--shadow);padding:36px 40px}
+.card h3{font:700 36px/1.15 var(--f-display);letter-spacing:-.01em}
+.card .k{display:inline-block;margin-bottom:16px;padding:6px 16px;border:var(--line);border-radius:9999px;font:600 15px var(--f-body);letter-spacing:.12em;text-transform:uppercase}
+.card ul{list-style:none;margin-top:20px}
+.card li{position:relative;padding-left:30px;font:400 27px/1.42 var(--f-body);margin-top:10px}
+.card li::before{content:"";position:absolute;left:0;top:15px;width:14px;height:8px;border-radius:9999px;background:var(--blue)}
+.card p{font:400 27px/1.45 var(--f-body);margin-top:14px}
+.icon{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border:var(--line);border-radius:50%;font:800 26px var(--f-display);margin-right:18px;vertical-align:middle;flex:none}
+.chip{display:inline-flex;align-items:center;gap:10px;padding:10px 22px;border:var(--line);border-radius:9999px;background:var(--white);font:500 24px var(--f-body);white-space:nowrap}
+.stat{position:absolute;background:var(--white);border:var(--line);border-radius:32px;box-shadow:6px 6px 0 var(--shadow);padding:36px 40px 34px}
+.stat .v{font:800 92px/1 var(--f-display);letter-spacing:-.03em;color:var(--blue)}
+.stat .bar{width:40px;height:6px;border-radius:9999px;background:var(--blue);margin:22px 0 18px}
+.stat .l{font:500 26px/1.35 var(--f-body)}
+.stat .s{margin-top:12px;font:400 18px/1.4 var(--f-body);color:var(--muted)}
+.frame{position:absolute;background:var(--white);border:var(--line);border-radius:32px;box-shadow:12px 12px 0 var(--shadow);overflow:hidden}
+.frame img{display:block}
+.mono{font-family:var(--f-mono)}
+.hl{display:inline-block;padding:2px 18px 4px;margin:0 4px;border:var(--line);border-radius:9999px;background:var(--mint);line-height:1.2}
+
+/* bars: pill-shaped track + fill */
+.track{position:relative;height:40px;border:var(--line);border-radius:9999px;background:var(--slide-bg);overflow:hidden}
+.fill{position:absolute;left:0;top:0;bottom:0;width:0;border-right:var(--line);border-radius:9999px;background:var(--c,var(--sky));transition:width 1s var(--ease) .3s}
+.slide.visible .fill{width:var(--w)}
+.mark{position:absolute;top:-2px;bottom:-2px;width:0;border-left:3px dashed var(--ink);left:var(--m)}
+.brow{display:grid;align-items:center;gap:24px}
+.brow .nm{font:500 25px/1.25 var(--f-body)}
+.brow .val{font:800 34px var(--f-display);letter-spacing:-.02em;text-align:right}
+
+/* floating decorative pills (cover + closing only, flat, no shadow) */
+.fp{position:absolute;border:var(--line);border-radius:9999px;font:600 18px var(--f-body);letter-spacing:.12em;display:flex;align-items:center;justify-content:center;transform:rotate(var(--rot,0))}
+.cross{position:absolute;width:56px;height:56px;transform:rotate(var(--rot,0))}
+.cross::before,.cross::after{content:"";position:absolute;background:var(--c);border:var(--line);border-radius:9999px}
+.cross::before{left:18px;top:0;width:16px;height:52px}.cross::after{top:18px;left:0;height:16px;width:52px}
+
+/* ===========================================
+   ANIMATION — reveal on .visible, staggered
+   =========================================== */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.slide.visible .reveal{opacity:1;transform:none}
+.slide.visible .reveal.d1{transition-delay:.08s}.slide.visible .reveal.d2{transition-delay:.18s}
+.slide.visible .reveal.d3{transition-delay:.28s}.slide.visible .reveal.d4{transition-delay:.38s}
+.slide.visible .reveal.d5{transition-delay:.48s}.slide.visible .reveal.d6{transition-delay:.58s}
+.pop{opacity:0;transform:rotate(var(--rot,0)) scale(.6);transition:opacity .5s,transform .6s cubic-bezier(.3,1.4,.5,1)}
+.slide.visible .pop{opacity:1;transform:rotate(var(--rot,0)) scale(1);transition-delay:.3s}
+@media print{.reveal,.pop{opacity:1!important;transform:rotate(var(--rot,0))!important}.fill{width:var(--w)!important;transition:none}}
+
+/* ===========================================
+   SPEAKER NOTES, PROGRESS, EDIT (outside stage)
+   =========================================== */
+aside.notes{display:none}
+.progress{position:fixed;left:0;top:0;height:4px;background:var(--blue);z-index:1001;transition:width .4s var(--ease)}
+.notes-panel{position:fixed;left:24px;right:24px;bottom:24px;max-height:38vh;overflow:auto;z-index:1002;display:none;padding:22px 28px;border:var(--line);border-radius:24px;background:rgba(255,255,255,.97);box-shadow:6px 6px 0 var(--shadow);font:400 19px/1.55 var(--f-body);color:var(--ink)}
+.notes-panel.show{display:block}
+.notes-panel .t{font:600 13px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.edit-hotzone{position:fixed;top:0;left:0;width:80px;height:80px;z-index:10000;cursor:pointer}
+.edit-toggle{position:fixed;top:16px;left:16px;z-index:10001;padding:10px 18px;border:var(--line);border-radius:9999px;background:var(--amber);font:600 15px var(--f-body);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s}
+.edit-toggle.show,.edit-toggle.active{opacity:1;pointer-events:auto}
+[contenteditable="true"]{outline:2px dashed rgba(34,96,255,.5);outline-offset:4px}
+@media print{.progress,.notes-panel,.edit-hotzone,.edit-toggle{display:none!important}}
+</style>
+</head>
+<body>
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage">
+
+<!-- ============================================================
+     01 · COVER
+     ============================================================ -->
+<section class="slide" data-title="Bìa">
+  <div class="fp pop" style="left:-40px;top:420px;width:200px;height:72px;background:var(--mint);--rot:-18deg">OCR</div>
+  <div class="fp pop" style="left:150px;top:740px;width:150px;height:62px;background:var(--sky);--rot:22deg">RX</div>
+  <div class="fp pop" style="right:-30px;top:330px;width:220px;height:76px;background:var(--teal);--rot:16deg">JSON</div>
+  <div class="fp pop" style="right:170px;top:700px;width:120px;height:56px;background:var(--ice);--rot:-24deg"></div>
+  <div class="fp pop" style="left:260px;top:240px;width:110px;height:48px;background:var(--ice);--rot:30deg"></div>
+  <div class="cross pop" style="--c:var(--blue);right:320px;top:250px;--rot:12deg"></div>
+  <div class="cross pop" style="--c:var(--mint);left:90px;top:610px;--rot:-10deg"></div>
+
+  <div class="reveal d1" style="position:absolute;left:64px;top:64px;display:flex;align-items:center;gap:22px;padding:12px 30px;border:var(--line);border-radius:9999px;background:#fff;box-shadow:4px 4px 0 var(--shadow)">
+    <img src="img/logo_ptit.png" alt="PTIT" style="height:58px">
+    <span style="font:500 18px/1.35 var(--f-body);letter-spacing:.1em;text-transform:uppercase">Học viện Công nghệ<br>Bưu chính Viễn thông</span>
+  </div>
+  <div class="reveal d1" style="position:absolute;right:64px;top:64px;padding:6px 28px;border:var(--line);border-radius:9999px;background:#fff;box-shadow:4px 4px 0 var(--shadow)">
+    <img src="img/logo_medtrack.png" alt="MedTrack AI" style="height:84px;display:block">
+  </div>
+
+  <div style="position:absolute;left:0;right:0;top:250px;text-align:center">
+    <div class="reveal d2"><span class="tag" style="background:var(--amber);box-shadow:6px 6px 0 var(--shadow);padding:14px 34px;font-size:20px">Báo cáo đồ án · Môn Xử lý ảnh</span></div>
+    <h1 class="reveal d3" style="margin:34px auto 0;font:800 112px/1.02 var(--f-display);letter-spacing:-.03em">Trích xuất thông tin<br><em style="font-style:italic;color:var(--blue)">đơn thuốc</em> từ ảnh</h1>
+    <div class="reveal d4" style="margin-top:30px;font:500 24px var(--f-body);letter-spacing:.18em;text-transform:uppercase">Học sâu kết hợp xử lý ảnh cổ điển</div>
+    <div class="reveal d4" style="width:80px;height:5px;border-radius:9999px;background:var(--blue);margin:34px auto 0"></div>
+  </div>
+
+  <div class="reveal d5" style="position:absolute;left:0;right:0;bottom:150px;text-align:center;font-size:24px">Giảng viên: <b style="font-family:var(--f-display)">PGS.TS. Phạm Văn Cường</b> · Lớp E23TTNT01 · Nhóm 01</div>
+  <div class="reveal d6" style="position:absolute;left:0;right:0;bottom:72px;display:flex;justify-content:center;gap:16px">
+    <span class="chip" style="box-shadow:4px 4px 0 var(--shadow)"><b style="font-family:var(--f-display)">Trần Trung Hiếu</b><span style="font-size:16px;opacity:.6">B23DCCN312</span></span>
+    <span class="chip" style="box-shadow:4px 4px 0 var(--shadow)"><b style="font-family:var(--f-display)">Nguyễn Anh Trường</b><span style="font-size:16px;opacity:.6">B23DCCE094</span></span>
+    <span class="chip" style="box-shadow:4px 4px 0 var(--shadow)"><b style="font-family:var(--f-display)">Đào Văn Khang</b><span style="font-size:16px;opacity:.6">B23DCVT218</span></span>
+    <span class="chip" style="box-shadow:4px 4px 0 var(--shadow)"><b style="font-family:var(--f-display)">Nguyễn Tiến Thắng</b><span style="font-size:16px;opacity:.6">B23DCCE088</span></span>
+  </div>
+  <aside class="notes">Kính chào thầy cô và các bạn. Nhóm 01 xin trình bày đồ án "Trích xuất thông tin đơn thuốc từ ảnh bằng học sâu kết hợp xử lý ảnh cổ điển", thuộc lựa chọn 2 — dự án xử lý ảnh thực tế. Nhóm gồm bốn thành viên, mỗi người phụ trách một bước của pipeline.</aside>
+</section>
+
+<!-- ============================================================
+     02 · BỐI CẢNH VÀ ĐỘNG CƠ — stat grid
+     ============================================================ -->
+<section class="slide" data-title="Bối cảnh và động cơ">
+  <div class="head">
+    <span class="tag reveal"><span class="n">01</span> Đặt vấn đề</span>
+    <h2 class="reveal d1">Bối cảnh và động cơ</h2>
+    <p class="lead reveal d2">Đơn thuốc giấy là nguồn thông tin dùng thuốc đầy đủ nhất mà người bệnh có, nhưng nằm rời rạc và khó tra cứu.</p>
+  </div>
+  <div class="stat reveal d2" style="left:120px;top:390px;width:540px;height:330px"><div class="v">14,2 tr</div><div class="bar"></div><div class="l">người Việt Nam từ 60 tuổi trở lên</div><div class="s">Điều tra dân số giữa kỳ 2024</div></div>
+  <div class="stat reveal d3" style="left:690px;top:390px;width:540px;height:330px"><div class="v" style="color:var(--dteal)">26,2%</div><div class="bar" style="background:var(--dteal)"></div><div class="l">người 18–69 tuổi bị tăng huyết áp</div><div class="s">Điều tra STEPS 2021</div></div>
+  <div class="stat reveal d4" style="left:1260px;top:390px;width:540px;height:330px"><div class="v">41,6%</div><div class="bar"></div><div class="l">bệnh nhân tăng huyết áp quên uống thuốc trong 2 tuần</div><div class="s">BV Quân y 354, 2023 (n = 380)</div></div>
+  <div class="reveal d5" style="position:absolute;left:120px;right:120px;top:790px;display:flex;align-items:center;gap:16px;flex-wrap:nowrap">
+    <span class="chip" style="background:var(--ice)">Chụp đơn</span><span style="font-size:30px">→</span>
+    <span class="chip" style="background:var(--amber);font-weight:700;box-shadow:4px 4px 0 var(--shadow)">Đọc ảnh thành dữ liệu có cấu trúc</span><span style="font-size:30px">→</span>
+    <span class="chip" style="background:var(--ice)">Người dùng xác nhận</span><span style="font-size:30px">→</span>
+    <span class="chip" style="background:var(--ice)">Lịch uống thuốc, hồ sơ khám</span>
+  </div>
+  <div class="reveal d6" style="position:absolute;left:120px;top:874px;font:400 24px var(--f-body);color:var(--muted)">Định hướng ứng dụng MedTrack AI · <b style="color:var(--ink)">Phạm vi đồ án: khâu đọc ảnh đơn thuốc</b></div>
+  <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">02 / 16</span></div>
+  <aside class="notes">Việt Nam có khoảng 14,2 triệu người từ 60 tuổi; 26,2% người 18–69 tuổi bị tăng huyết áp; và trong một nghiên cứu, 41,6% bệnh nhân tăng huyết áp quên thuốc trong hai tuần. Hồ sơ bệnh án chưa được tập trung, nên tờ đơn giấy vẫn là nguồn đầy đủ nhất. Nhóm hướng tới ứng dụng MedTrack AI; trong môn học, đồ án chỉ làm khâu lõi: đọc ảnh đơn thuốc thành dữ liệu có cấu trúc.</aside>
+</section>
+
+<!-- ============================================================
+     03 · PHÁT BIỂU BÀI TOÁN — image → JSON + 3 challenges
+     ============================================================ -->
+<section class="slide" data-title="Phát biểu bài toán">
+  <div class="head">
+    <span class="tag reveal"><span class="n">01</span> Đặt vấn đề</span>
+    <h2 class="reveal d1">Phát biểu bài toán</h2>
+  </div>
+  <div class="frame reveal d2" style="left:120px;top:250px;width:520px;height:732px"><img src="img/rx_test_VAIPE_P_TRAIN_139.png" alt="Ảnh đơn thuốc đầu vào" style="width:516px;height:auto"></div>
+  <div class="reveal d2" style="position:absolute;left:120px;top:224px;z-index:2"><span class="chip" style="background:var(--amber);font-size:18px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;padding:6px 16px">Đầu vào · ảnh đơn thuốc</span></div>
+  <div class="reveal d3" style="position:absolute;left:668px;top:560px;font:700 64px var(--f-display);color:var(--blue)">→</div>
+  <div class="card reveal d3" style="left:760px;top:250px;width:1040px;height:370px;padding:30px 40px">
+    <span class="k" style="background:var(--mint)">Đầu ra · JSON</span>
+    <pre class="mono" style="font-size:23px;line-height:1.5;white-space:pre">{ <span style="color:var(--blue)">"items"</span>: [
+    { <span style="color:var(--blue)">"name"</span>: "CEFADROXIL 0,5g",  <span style="color:var(--blue)">"quantity"</span>: 28,  <span style="color:var(--blue)">"unit"</span>: "Viên",
+      <span style="color:var(--blue)">"usage"</span>: ["Sáng 2 Viên", "Tối 2 Viên"] },
+    … 4 khoản thuốc nữa ],
+  <span style="color:var(--blue)">"diagnose"</span>: "J20 - Viêm phế quản cấp",
+  <span style="color:var(--blue)">"date"</span>: "27/04/2018" }</pre>
+  </div>
+  <div class="reveal d4" style="position:absolute;left:760px;top:662px;font:600 18px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Ba thách thức chính</div>
+  <div class="card reveal d4" style="left:760px;top:702px;width:330px;height:280px;padding:26px 28px"><span class="icon" style="background:var(--sky);width:48px;height:48px;font-size:22px">1</span><p style="margin-top:14px;font-size:24px;line-height:1.35">Chữ nhỏ (cao 20–32 px); sai một chữ số dẫn đến <b>khác hàm lượng</b></p></div>
+  <div class="card reveal d5" style="left:1115px;top:702px;width:330px;height:280px;padding:26px 28px"><span class="icon" style="background:var(--mint);width:48px;height:48px;font-size:22px">2</span><p style="margin-top:14px;font-size:24px;line-height:1.35">Các trường của một khoản thuốc <b>nằm rời nhau</b></p></div>
+  <div class="card reveal d6" style="left:1470px;top:702px;width:330px;height:280px;padding:26px 28px"><span class="icon" style="background:var(--teal);width:48px;height:48px;font-size:22px">3</span><p style="margin-top:14px;font-size:24px;line-height:1.35">Ảnh chụp <b>nghiêng, mờ, đổ bóng</b>, nén JPEG mạnh</p></div>
+  <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">03 / 16</span></div>
+  <aside class="notes">Đầu vào là một ảnh đơn thuốc; đầu ra là bản ghi JSON gồm danh sách khoản thuốc, chẩn đoán và ngày kê đơn. Ví dụ bên phải là đầu ra thật của hệ thống trên ảnh này. Ba khó khăn: chữ nhỏ và nhiều thuốc chỉ khác hàm lượng, như CEPHALEXIN 250MG và CEPHALEXIN PMP 500; các trường của một khoản nằm rời nhau; và ảnh chụp thật có thể nghiêng, mờ, đổ bóng.</aside>
+</section>
+
+<!-- ============================================================
+     04 · DỮ LIỆU — stat grid + class share bar
+     ============================================================ -->
+<section class="slide" data-title="Dữ liệu">
+  <div class="head">
+    <span class="tag reveal"><span class="n">02</span> Dữ liệu</span>
+    <h2 class="reveal d1">Dữ liệu: bộ VAIPE và phân chia tập</h2>
+  </div>
+  <div class="stat reveal d2" style="left:120px;top:270px;width:520px;height:290px"><div class="v">1.172</div><div class="bar"></div><div class="l">ảnh đơn thuốc BHYT in máy, có nhãn vùng chữ</div></div>
+  <div class="stat reveal d3" style="left:680px;top:270px;width:660px;height:290px"><div class="v" style="color:var(--dteal);font-size:72px;padding-top:10px;padding-bottom:10px">820 · 176 · 176</div><div class="bar" style="background:var(--dteal)"></div><div class="l">huấn luyện · kiểm định · kiểm tra</div></div>
+  <div class="stat reveal d4" style="left:1380px;top:270px;width:420px;height:290px"><div class="v">6</div><div class="bar"></div><div class="l">lớp vùng chữ</div></div>
+  <div class="reveal d5" style="position:absolute;left:120px;right:120px;top:610px">
+    <div style="display:flex;justify-content:space-between;font:600 18px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px"><span>Tỉ lệ 41.180 vùng chữ theo lớp</span><span>trung vị chiều cao chữ 20–32 px</span></div>
+    <div style="display:flex;height:64px;border:var(--line);border-radius:9999px;overflow:hidden;background:#fff">
+      <div style="width:6.9%;background:var(--blue);border-right:var(--line)"></div>
+      <div style="width:6.9%;background:var(--teal);border-right:var(--line)"></div>
+      <div style="width:9.7%;background:var(--sky);border-right:var(--line)"></div>
+      <div style="width:4.0%;background:var(--amber);border-right:var(--line)"></div>
+      <div style="width:2.8%;background:var(--peach);border-right:var(--line)"></div>
+      <div style="flex:1;background:var(--ice)"></div>
+    </div>
+    <div style="display:flex;gap:14px;margin-top:20px;flex-wrap:wrap">
+      <span class="chip" style="font-size:21px"><i style="width:18px;height:18px;border-radius:50%;border:var(--line);background:var(--blue)"></i>Tên thuốc 6,9%</span>
+      <span class="chip" style="font-size:21px"><i style="width:18px;height:18px;border-radius:50%;border:var(--line);background:var(--teal)"></i>Số lượng 6,9%</span>
+      <span class="chip" style="font-size:21px"><i style="width:18px;height:18px;border-radius:50%;border:var(--line);background:var(--sky)"></i>Cách dùng 9,7%</span>
+      <span class="chip" style="font-size:21px"><i style="width:18px;height:18px;border-radius:50%;border:var(--line);background:var(--amber)"></i>Chẩn đoán 4,0%</span>
+      <span class="chip" style="font-size:21px"><i style="width:18px;height:18px;border-radius:50%;border:var(--line);background:var(--peach)"></i>Ngày 2,8%</span>
+      <span class="chip" style="font-size:21px"><i style="width:18px;height:18px;border-radius:50%;border:var(--line);background:var(--ice)"></i>Khác 69,6%</span>
+    </div>
+  </div>
+  <div class="reveal d6" style="position:absolute;left:120px;right:120px;top:880px;display:flex;gap:16px">
+    <span class="chip" style="background:var(--ice)">Chia theo bệnh nhân (Jaccard ≥ 0,85), tránh rò rỉ dữ liệu</span>
+    <span class="chip" style="background:var(--ice)">Tập kiểm tra chỉ chạy một lần (Ch. 8)</span>
+    <span class="chip" style="background:var(--ice)">Ảnh suy giảm hai mức (vừa, nặng) để đo độ bền</span>
+  </div>
+  <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">04 / 16</span></div>
+  <aside class="notes">Nhóm dùng phần đơn thuốc của bộ VAIPE, gồm 1.172 ảnh có nhãn, chia lại 820/176/176. Ảnh của cùng một bệnh nhân luôn nằm trong cùng một tập để tránh rò rỉ. Mỗi vùng chữ thuộc một trong sáu lớp, gần 70% là lớp "khác". Tham số chọn trên tập kiểm định; tập kiểm tra chỉ chạy một lần. Để đo độ bền, ảnh kiểm tra được làm suy giảm thành hai mức vừa và nặng.</aside>
+</section>
+
+<!-- ============================================================
+     05 · TỔNG QUAN PHƯƠNG PHÁP — pipeline nodes
+     ============================================================ -->
+<section class="slide" data-title="Tổng quan phương pháp">
+  <div class="head">
+    <span class="tag reveal"><span class="n">03</span> Phương pháp</span>
+    <h2 class="reveal d1">Tổng quan phương pháp</h2>
+    <p class="lead reveal d2">Chuỗi xử lý (pipeline) gồm bốn bước nối tiếp; mỗi bước có phương pháp đối chứng và độ đo riêng.</p>
+  </div>
+  <!-- stage labels from the course pipeline template -->
+  <div class="reveal d2" style="position:absolute;left:298px;top:372px;width:1324px;display:grid;grid-template-columns:repeat(4,1fr);gap:28px;text-align:center;font:600 17px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">
+    <span>Tiền xử lý</span><span>Xử lý chính</span><span>Xử lý chính</span><span>Hậu xử lý</span>
+  </div>
+  <div class="reveal d3" style="position:absolute;left:120px;top:410px;width:1680px;display:grid;grid-template-columns:150px repeat(4,1fr) 150px;gap:28px;align-items:stretch">
+    <div class="chip" style="justify-content:center;border-radius:32px;font-weight:600;background:var(--ice)">Ảnh</div>
+    <div class="card" style="position:relative;padding:28px 26px;border-radius:32px"><h3 style="font-size:31px;min-height:72px">Tiền xử lý ảnh</h3><p style="font-size:23px;margin-top:10px">5 bước cổ điển</p><span class="chip" style="margin-top:16px;font-size:18px;background:var(--mint)">Ch. 2 · 3 · 5 · 7</span></div>
+    <div class="card" style="position:relative;padding:28px 26px;border-radius:32px"><h3 style="font-size:31px;min-height:72px">Phát hiện vùng chữ</h3><p style="font-size:23px;margin-top:10px">YOLOv8s, 6 lớp</p><span class="chip" style="margin-top:16px;font-size:18px;background:var(--sky)">Học sâu</span></div>
+    <div class="card" style="position:relative;padding:28px 26px;border-radius:32px"><h3 style="font-size:31px;min-height:72px">Nhận dạng chữ</h3><p style="font-size:23px;margin-top:10px">VietOCR tinh chỉnh</p><span class="chip" style="margin-top:16px;font-size:18px;background:var(--sky)">Học sâu</span></div>
+    <div class="card" style="position:relative;padding:28px 26px;border-radius:32px;background:var(--amber)"><h3 style="font-size:31px;min-height:72px">Ghép khoản thuốc</h3><p style="font-size:23px;margin-top:10px">Luật vị trí + từ điển</p><span class="chip" style="margin-top:16px;font-size:18px">Luật</span></div>
+    <div class="chip" style="justify-content:center;border-radius:32px;font-weight:600;background:var(--mint)">JSON</div>
+  </div>
+  <!-- baselines per step -->
+  <div class="reveal d4" style="position:absolute;left:298px;top:700px;width:1324px;display:grid;grid-template-columns:repeat(4,1fr);gap:28px">
+    <div style="font:400 22px/1.4 var(--f-body)"><b style="font:600 15px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Đối chứng</b><br>Tắt toàn bộ tiền xử lý</div>
+    <div style="font:400 22px/1.4 var(--f-body)"><b style="font:600 15px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Đối chứng</b><br>Hình thái học (Sauvola + phép giãn)</div>
+    <div style="font:400 22px/1.4 var(--f-body)"><b style="font:600 15px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Đối chứng</b><br>VietOCR công bố, Tesseract 5</div>
+    <div style="font:400 22px/1.4 var(--f-body)"><b style="font:600 15px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Đối chứng</b><br>Bỏ bước so khớp từ điển</div>
+  </div>
+  <div class="reveal d5" style="position:absolute;left:298px;top:850px;width:1324px;padding:20px 32px;border:2px dashed var(--ink);border-radius:9999px;text-align:center;font:500 25px var(--f-body);background:rgba(255,255,255,.6)">Đối chứng đầu-cuối: mô hình thị giác–ngôn ngữ <b>Qwen3.8-27B</b> (zero-shot) sinh JSON trực tiếp từ ảnh</div>
+  <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">05 / 16</span></div>
+  <aside class="notes">Chuỗi xử lý gồm bốn bước theo khung của học phần. Tiền xử lý dùng kỹ thuật cổ điển chương 2, 3, 5, 7. Xử lý chính gồm YOLOv8s phát hiện và phân lớp vùng chữ, rồi VietOCR tinh chỉnh đọc chữ. Hậu xử lý ghép vùng thành khoản thuốc bằng luật vị trí và từ điển. Mỗi bước có đối chứng, và toàn bộ chuỗi được so với một VLM zero-shot sinh JSON trực tiếp từ ảnh.</aside>
+</section>
+
+<!-- ============================================================
+     06 · TIỀN XỬ LÝ ẢNH — step strip (image titles cropped off)
+     ============================================================ -->
+<section class="slide" data-title="Tiền xử lý ảnh">
+  <div class="head">
+    <span class="tag reveal"><span class="n">03</span> Phương pháp</span>
+    <h2 class="reveal d1">Tiền xử lý ảnh</h2>
+    <p class="lead reveal d2">Năm phép biến đổi cổ điển áp dụng tuần tự; mỗi bước có thể bật hoặc tắt độc lập.</p>
+  </div>
+  <div class="frame reveal d2" style="left:120px;top:330px;width:1680px;height:456px">
+    <div style="width:1676px;height:452px;overflow:hidden"><img src="img/a_steps.png" alt="Ảnh suy giảm nặng qua các bước tiền xử lý" style="width:1676px;max-width:none;max-height:none;margin-top:-62px"></div>
+  </div>
+  <div class="reveal d3" style="position:absolute;left:134px;top:812px;width:1652px;display:grid;grid-template-columns:repeat(5,1fr);gap:18px">
+    <div class="card" style="position:relative;padding:20px 22px;border-radius:24px;background:var(--ice);box-shadow:none"><h3 style="font-size:24px">Ảnh suy giảm nặng</h3><p style="font-size:19px;margin-top:6px;color:var(--muted)">đầu vào minh họa</p></div>
+    <div class="card" style="position:relative;padding:20px 22px;border-radius:24px"><h3 style="font-size:24px">Nắn phối cảnh</h3><p style="font-size:19px;margin-top:6px">Canny, tứ giác lớn nhất · <b>Ch. 5</b></p></div>
+    <div class="card" style="position:relative;padding:20px 22px;border-radius:24px"><h3 style="font-size:24px">Chỉnh nghiêng</h3><p style="font-size:19px;margin-top:6px">lược đồ chiếu, ±10° · <b>Ch. 3, 5</b></p></div>
+    <div class="card" style="position:relative;padding:20px 22px;border-radius:24px"><h3 style="font-size:24px">Khử bóng</h3><p style="font-size:19px;margin-top:6px">phép đóng 81×81, chia nền · <b>Ch. 2, 3, 7</b></p></div>
+    <div class="card" style="position:relative;padding:20px 22px;border-radius:24px"><h3 style="font-size:24px">Khử nhiễu, CLAHE</h3><p style="font-size:19px;margin-top:6px">trung vị 3×3, CLAHE · <b>Ch. 3</b></p></div>
+  </div>
+  <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">06 / 16</span></div>
+  <aside class="notes">Hình là một ảnh suy giảm nặng qua các bước. Nắn phối cảnh dùng biên Canny để tìm tứ giác tờ giấy. Chỉnh nghiêng chọn góc làm cực đại phương sai lược đồ chiếu ngang, vì khi dòng chữ nằm ngang các hàng hoặc nhiều mực hoặc gần trống. Khử bóng ước lượng nền bằng phép đóng 81×81, lớn gấp 2,5–4 lần chiều cao chữ nên xóa nét chữ, rồi chia ảnh cho nền. Cuối cùng là lọc trung vị và CLAHE.</aside>
+</section>
+
+<!-- ============================================================
+     07 · PHÁT HIỆN VÙNG CHỮ — pillar cards
+     ============================================================ -->
+<section class="slide" data-title="Phát hiện vùng chữ">
+  <div class="head">
+    <span class="tag reveal"><span class="n">03</span> Phương pháp</span>
+    <h2 class="reveal d1">Phát hiện vùng chữ: YOLOv8s và đối chứng hình thái học</h2>
+  </div>
+  <div class="card reveal d2" style="left:120px;top:350px;width:820px;height:500px">
+    <span class="k" style="background:var(--sky)">Phương pháp chính</span>
+    <h3>YOLOv8s: phát hiện và phân loại 6 lớp vùng chữ</h3>
+    <ul>
+      <li style="font-size:34px;margin-top:16px">Khởi tạo COCO, 50 epoch, 2 × T4</li>
+      <li style="font-size:34px;margin-top:16px">Ảnh vào 1024 px giữ chữ nhỏ</li>
+      <li style="font-size:34px;margin-top:16px">Tắt lật ngang; ghép khảm 0,5</li>
+      <li style="font-size:34px;margin-top:16px">Ngưỡng tin cậy 0,443</li>
+    </ul>
+  </div>
+  <div class="card reveal d3" style="left:980px;top:350px;width:820px;height:500px">
+    <span class="k" style="background:var(--mint)">Đối chứng hình thái học · Ch. 5, 7</span>
+    <h3>Nhị phân hóa, phép hình thái và vùng liên thông</h3>
+    <ul>
+      <li style="font-size:34px;margin-top:16px">Nhị phân hóa Sauvola</li>
+      <li style="font-size:34px;margin-top:16px">Phép mở 2×2 khử nhiễu</li>
+      <li style="font-size:34px;margin-top:16px">Phép giãn <b>2,5h × 0,2h</b> nối ký tự</li>
+      <li style="font-size:34px;margin-top:16px">Vùng liên thông, <b>không phân lớp</b></li>
+    </ul>
+  </div>
+  <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">07 / 16</span></div>
+  <aside class="notes">Phương pháp chính là YOLOv8s, vừa phát hiện vừa phân loại vùng chữ theo sáu lớp. Kích thước đầu vào giữ 1024 px vì chữ cao 20–32 px. Lật ngang làm ngược chữ nên được tắt. Đối chứng là bộ phát hiện hình thái học: nhị phân hóa Sauvola, phép mở loại nhiễu, rồi phép giãn với phần tử cấu trúc rộng 2,5h, cao 0,2h để nối ký tự thành cụm. Bộ này không phân lớp được.</aside>
+</section>
+
+<!-- ============================================================
+     08 · NHẬN DẠNG CHỮ — main card + 3 baselines
+     ============================================================ -->
+<section class="slide" data-title="Nhận dạng chữ">
+  <div class="head">
+    <span class="tag reveal"><span class="n">03</span> Phương pháp</span>
+    <h2 class="reveal d1">Nhận dạng chữ: tinh chỉnh VietOCR</h2>
+  </div>
+  <div class="card reveal d2" style="left:120px;top:320px;width:960px;height:470px">
+    <span class="k" style="background:var(--sky)">Phương pháp chính</span>
+    <h3>VietOCR <span class="mono" style="font-size:28px">vgg_transformer</span> tinh chỉnh trên VAIPE</h3>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:26px">
+      <span class="chip" style="background:var(--ice);font-size:20px;padding:8px 16px">Vùng cắt, đệm 2 px</span><span style="font-size:22px">→</span>
+      <span class="chip" style="background:var(--mint);font-size:20px;padding:8px 16px">VGG19-BN</span><span style="font-size:22px">→</span>
+      <span class="chip" style="background:var(--teal);font-size:20px;padding:8px 16px">Transformer</span><span style="font-size:22px">→</span>
+      <span class="chip" style="font-size:20px;padding:8px 16px">chuỗi ký tự có dấu</span>
+    </div>
+    <ul style="margin-top:22px">
+      <li style="font-size:32px;margin-top:14px">20.000 vòng lặp, lô 32 ảnh</li>
+      <li style="font-size:32px;margin-top:14px">Toàn bộ vùng chữ tập huấn luyện</li>
+      <li style="font-size:32px;margin-top:14px">Rộng tối đa 1024 px cho dòng dài</li>
+    </ul>
+  </div>
+  <div class="reveal d3" style="position:absolute;left:1120px;top:320px;font:600 18px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Đối chứng</div>
+  <div class="card reveal d3" style="left:1120px;top:360px;width:680px;height:130px;padding:24px 32px"><h3 style="font-size:28px">VietOCR công bố</h3><p style="font-size:23px;margin-top:8px">Không tinh chỉnh</p></div>
+  <div class="card reveal d4" style="left:1120px;top:510px;width:680px;height:130px;padding:24px 32px"><h3 style="font-size:28px">Tesseract 5 · <span class="mono" style="font-size:24px">vie</span></h3><p style="font-size:23px;margin-top:8px">Phóng 2× nội suy bậc ba · Ch. 2</p></div>
+  <div class="card reveal d5" style="left:1120px;top:660px;width:680px;height:130px;padding:24px 32px"><h3 style="font-size:28px">Tesseract + nhị phân Sauvola</h3><p style="font-size:23px;margin-top:8px">Đầu vào nhị phân · Ch. 5</p></div>
+  <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">08 / 16</span></div>
+  <aside class="notes">Mỗi vùng chữ được cắt theo khung và đưa vào VietOCR: VGG19-BN trích đặc trưng, Transformer sinh từng ký tự có dấu. Nhóm tinh chỉnh từ trọng số công bố trên toàn bộ vùng chữ của tập huấn luyện. Chiều rộng tối đa nâng lên 1024 px vì với 512 px khoảng 5% vùng dài bị nén ngang và mất chữ. Ba đối chứng: VietOCR công bố, Tesseract trên ảnh xám phóng hai lần, và Tesseract trên ảnh nhị phân Sauvola.</aside>
+</section>
+
+<!-- ============================================================
+     09 · HẬU XỬ LÝ — image + 4 rule steps
+     ============================================================ -->
+<section class="slide" data-title="Hậu xử lý">
+  <div class="head">
+    <span class="tag reveal"><span class="n">03</span> Phương pháp</span>
+    <h2 class="reveal d1">Hậu xử lý: ghép khoản thuốc theo luật và từ điển</h2>
+  </div>
+  <div class="frame reveal d2" style="left:120px;top:250px;width:640px;height:734px"><img src="img/pipeline_example.png" alt="Vùng chữ được gom thành khoản thuốc" style="width:636px;height:auto"></div>
+  <div class="reveal d3" style="position:absolute;left:820px;top:270px;width:980px;display:flex;flex-direction:column;gap:22px">
+    <div class="card" style="position:relative;display:flex;align-items:flex-start;padding:26px 32px"><span class="icon" style="background:var(--sky)">1</span><div><h3 style="font-size:30px">Chọn lớp</h3><p style="font-size:23px;margin-top:6px">Theo YOLOv8s; xét lại bằng biểu thức chính quy khi tin cậy &lt; 0,5</p></div></div>
+    <div class="card" style="position:relative;display:flex;align-items:flex-start;padding:26px 32px"><span class="icon" style="background:var(--amber)">2</span><div><h3 style="font-size:30px">Gom theo dải ngang</h3><p style="font-size:23px;margin-top:6px">Mỗi tên thuốc mở một dải tới tên kế tiếp</p></div></div>
+    <div class="card" style="position:relative;display:flex;align-items:flex-start;padding:26px 32px"><span class="icon" style="background:var(--mint)">3</span><div><h3 style="font-size:30px">Chuẩn hóa</h3><p style="font-size:23px;margin-top:6px">Tách số lượng, đơn vị, cách dùng, ngày</p></div></div>
+    <div class="card" style="position:relative;display:flex;align-items:flex-start;padding:26px 32px"><span class="icon" style="background:var(--teal)">4</span><div><h3 style="font-size:30px">So khớp từ điển 138 tên</h3><p style="font-size:23px;margin-top:6px">Levenshtein ≥ 90; không thay nếu đổi hàm lượng</p></div></div>
+  </div>
+  <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">09 / 16</span></div>
+  <aside class="notes">Hậu xử lý gồm bốn bước. Lớp lấy từ YOLOv8s, chỉ xét lại bằng biểu thức chính quy khi lớp là "khác" hoặc độ tin cậy thấp. Trong hình, mỗi tên thuốc mở một dải ngang tới tên kế tiếp; số lượng và cách dùng trong dải thuộc khoản đó. Tên thuốc được so khớp với từ điển 138 tên; nhóm không thay khi hai ứng viên sát nhau mà khác dãy số, hoặc khi liều đọc được không có ở ứng viên. Chỉ 2/443 khoản kiểm tra nằm ngoài từ điển.</aside>
+</section>
+
+<!-- ============================================================
+     10 · THIẾT LẬP THỰC NGHIỆM VÀ ĐỘ ĐO — pillar cards
+     ============================================================ -->
+<section class="slide" data-title="Thiết lập thực nghiệm">
+  <div class="head">
+    <span class="tag reveal"><span class="n">04</span> Thực nghiệm</span>
+    <h2 class="reveal d1">Thiết lập thực nghiệm và độ đo</h2>
+  </div>
+  <div class="reveal d2" style="position:absolute;left:120px;right:120px;top:250px;display:flex;gap:16px">
+    <span class="chip" style="background:var(--ice)">176 ảnh kiểm tra</span>
+    <span class="chip" style="background:var(--ice)">Huấn luyện: Kaggle T4</span>
+    <span class="chip" style="background:var(--ice)">Suy luận: i7-12700H + RTX 3050</span>
+    
+  </div>
+  <div class="card reveal d3" style="left:120px;top:370px;width:530px;height:420px">
+    <span class="icon" style="background:var(--sky)">1</span><h3 style="display:inline;vertical-align:middle">Phát hiện</h3>
+    <p class="mono" style="font-size:24px;margin-top:30px;padding:18px 22px;border:var(--line);border-radius:24px;background:var(--ice)">IoU ≥ 0,5<br>P = TP/(TP+FP)<br>R = TP/(TP+FN)<br>F1 = 2PR/(P+R)</p>
+    <p style="font-size:23px">Cộng dồn trên toàn tập · Ch. 8</p>
+  </div>
+  <div class="card reveal d4" style="left:695px;top:370px;width:530px;height:420px">
+    <span class="icon" style="background:var(--mint)">2</span><h3 style="display:inline;vertical-align:middle">Nhận dạng</h3>
+    <p class="mono" style="font-size:24px;margin-top:30px;padding:18px 22px;border:var(--line);border-radius:24px;background:var(--ice)">CER = Σ d(ŝ, s) / Σ |s|<br>d: Levenshtein</p>
+    <p style="font-size:23px">WER tính tương tự trên từ</p>
+  </div>
+  <div class="card reveal d5" style="left:1270px;top:370px;width:530px;height:420px;background:var(--amber)">
+    <span class="icon" style="background:var(--white)">3</span><h3 style="display:inline;vertical-align:middle">Đầu-cuối</h3>
+    <p style="font-size:26px;margin-top:30px"><b>F1 khoản thuốc</b>: một khoản khớp khi</p>
+    <ul style="margin-top:6px"><li style="font-size:25px">CER tên ≤ 0,1</li><li style="font-size:25px">số lượng đúng</li></ul>
+    <p style="font-size:23px">CI 95% bằng bootstrap</p>
+  </div>
+  <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">10 / 16</span></div>
+  <aside class="notes">Mọi số liệu tính trên 176 ảnh kiểm tra. Phát hiện: cặp khung có IoU từ 0,5 là dương tính đúng, P, R, F1 theo chương 8, cộng dồn toàn tập. Nhận dạng: tỉ lệ lỗi ký tự CER dựa trên khoảng cách Levenshtein. Độ đo chính là F1 khoản thuốc: một khoản khớp khi tên có CER không quá 0,1 và số lượng đúng, kèm khoảng tin cậy 95% bằng bootstrap.</aside>
+</section>
+
+<!-- ============================================================
+     11 · KẾT QUẢ PHÁT HIỆN VÀ NHẬN DẠNG — pill bars
+     ============================================================ -->
+<section class="slide" data-title="Kết quả phát hiện và nhận dạng">
+  <div class="head">
+    <span class="tag reveal"><span class="n">05</span> Kết quả</span>
+    <h2 class="reveal d1">Kết quả phát hiện và nhận dạng</h2>
+  </div>
+  <div class="card reveal d2" style="left:120px;top:250px;width:820px;height:520px">
+    <span class="k" style="background:var(--sky)">Phát hiện vùng chữ · F1, IoU ≥ 0,5 ↑</span>
+    <div class="brow" style="grid-template-columns:200px 1fr 130px;margin-top:34px"><span class="nm"><b>YOLOv8s</b></span><div class="track"><div class="fill" style="--w:99.3%;--c:var(--blue)"></div></div><span class="val" style="color:var(--blue)">0,993</span></div>
+    <div class="brow" style="grid-template-columns:200px 1fr 130px;margin-top:26px"><span class="nm">Hình thái học</span><div class="track"><div class="fill" style="--w:81.8%;--c:var(--sky)"></div></div><span class="val">0,818</span></div>
+    <div style="display:flex;gap:16px;margin-top:44px">
+      <div style="flex:1;padding:20px 24px;border:var(--line);border-radius:24px;background:var(--ice)"><div style="font:800 44px var(--f-display);color:var(--blue)">30</div><div style="font-size:21px">vùng bị sót / 6.086 (YOLOv8s)</div></div>
+      <div style="flex:1;padding:20px 24px;border:var(--line);border-radius:24px;background:var(--ice)"><div style="font:800 44px var(--f-display)">1.364</div><div style="font-size:21px">vùng bị sót (hình thái học), kèm 744 khung thừa</div></div>
+    </div>
+  </div>
+  <div class="card reveal d3" style="left:980px;top:250px;width:820px;height:520px">
+    <span class="k" style="background:var(--mint)">Nhận dạng chữ · CER ↓ · vùng cắt theo khung chuẩn</span>
+    <div class="brow" style="grid-template-columns:260px 1fr 120px;margin-top:30px"><span class="nm"><b>VietOCR tinh chỉnh</b></span><div class="track"><div class="fill" style="--w:32.9%;--c:var(--blue)"></div></div><span class="val" style="color:var(--blue)">0,033</span></div>
+    <div class="brow" style="grid-template-columns:260px 1fr 120px;margin-top:22px"><span class="nm">Tesseract + Sauvola</span><div class="track"><div class="fill" style="--w:68.4%;--c:var(--sky)"></div></div><span class="val">0,068</span></div>
+    <div class="brow" style="grid-template-columns:260px 1fr 120px;margin-top:22px"><span class="nm">Tesseract</span><div class="track"><div class="fill" style="--w:68.9%;--c:var(--sky)"></div></div><span class="val">0,069</span></div>
+    <div class="brow" style="grid-template-columns:260px 1fr 120px;margin-top:22px"><span class="nm">VietOCR công bố</span><div class="track"><div class="fill" style="--w:86.4%;--c:var(--sky)"></div></div><span class="val">0,086</span></div>
+    <p style="font-size:22px;margin-top:28px;color:var(--muted)">Đọc đúng nguyên chuỗi: 0,816 → <b style="color:var(--ink)">0,923</b> sau tinh chỉnh</p>
+  </div>
+  <div class="reveal d4" style="position:absolute;left:120px;right:120px;top:810px;padding:24px 36px;border:var(--line);border-radius:9999px;background:var(--white);box-shadow:6px 6px 0 var(--shadow);display:flex;align-items:center;gap:24px">
+    <span class="chip" style="background:var(--amber);font-weight:700;font-size:20px;letter-spacing:.1em;text-transform:uppercase">Lỗi còn lại</span>
+    <span style="font-size:24px">Lỗi cao nhất ở dòng chẩn đoán, một phần do <b>nhãn sai</b></span>
+  </div>
+  <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="src">Nguồn: result/e_b_detection, result/e_c1_ocr · 176 ảnh kiểm tra</span><span class="pg">11 / 16</span></div>
+  <aside class="notes">YOLOv8s đạt F1 0,993, cao hơn bộ hình thái học 0,175 điểm; bộ hình thái học sót 1.364 trên 6.086 vùng, YOLOv8s chỉ sót 30. Nhận dạng được đo trên vùng cắt theo khung chuẩn để tách riêng bước này. Tinh chỉnh giảm CER từ 0,086 xuống 0,033, giảm mạnh nhất ở dòng chẩn đoán và các vùng "khác"; tên thuốc gần như hết lỗi. Nhị phân hóa Sauvola không giúp Tesseract. Ví dụ nhãn sai: ảnh in "Telmisartan +", nhãn ghi "%", mô hình đọc đúng.</aside>
+</section>
+
+<!-- ============================================================
+     12 · KẾT QUẢ ĐẦU-CUỐI VÀ SO SÁNH VỚI VLM — bars + stats
+     ============================================================ -->
+<section class="slide" data-title="Kết quả đầu-cuối">
+  <div class="head">
+    <span class="tag reveal"><span class="n">05</span> Kết quả</span>
+    <h2 class="reveal d1">Kết quả đầu-cuối và so sánh với VLM</h2>
+  </div>
+  <div class="card reveal d2" style="left:120px;top:250px;width:1160px;height:700px;padding:32px 40px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><span class="k" style="background:var(--sky);margin:0">F1 khoản thuốc · trục từ 0,90</span>
+      <span style="display:flex;gap:22px;font-size:19px;align-items:center"><span style="display:inline-flex;align-items:center;gap:8px"><i style="width:34px;height:16px;border:var(--line);border-radius:9999px;background:var(--blue)"></i>có từ điển</span><span style="display:inline-flex;align-items:center;gap:8px"><i style="width:0;height:22px;border-left:3px dashed var(--ink)"></i>bỏ từ điển</span></span></div>
+    <div class="brow" style="grid-template-columns:400px 1fr 120px;margin-top:30px"><span class="nm">Hình thái học + Tesseract</span><div class="track"><div class="fill" style="--w:48.7%;--c:var(--sky)"></div><i class="mark" style="--m:16.1%"></i></div><span class="val">0,9487</span></div>
+    <div class="brow" style="grid-template-columns:400px 1fr 120px;margin-top:24px"><span class="nm">YOLOv8s + Tesseract</span><div class="track"><div class="fill" style="--w:86.5%;--c:var(--sky)"></div><i class="mark" style="--m:54.9%"></i></div><span class="val">0,9865</span></div>
+    <div class="brow" style="grid-template-columns:400px 1fr 120px;margin-top:24px"><span class="nm">YOLOv8s + VietOCR công bố</span><div class="track"><div class="fill" style="--w:96.6%;--c:var(--sky)"></div><i class="mark" style="--m:51.4%"></i></div><span class="val">0,9966</span></div>
+    <div class="brow" style="grid-template-columns:400px 1fr 120px;margin-top:20px;padding:12px 0;border-top:2px dashed rgba(20,43,77,.25);border-bottom:2px dashed rgba(20,43,77,.25)"><span class="nm"><b>YOLOv8s + VietOCR tinh chỉnh</b><br><small style="font-size:18px;color:var(--muted)">phương pháp đề xuất</small></span><div class="track"><div class="fill" style="--w:96.6%;--c:var(--blue)"></div><i class="mark" style="--m:96.6%"></i></div><span class="val" style="color:var(--blue)">0,9966</span></div>
+    <div class="brow" style="grid-template-columns:400px 1fr 120px;margin-top:20px"><span class="nm">VLM zero-shot Qwen3.8-27B<br><small style="font-size:18px;color:var(--muted)">gọi qua API</small></span><div class="track"><div class="fill" style="--w:96.6%;--c:var(--teal)"></div><i class="mark" style="--m:87.5%"></i></div><span class="val">0,9966</span></div>
+    
+  </div>
+  <div class="stat reveal d3" style="left:1320px;top:250px;width:480px;height:216px;padding:26px 34px"><div class="v" style="font-size:66px">0,9966</div><div class="bar" style="margin:16px 0 12px"></div><div class="l" style="font-size:21px">F1 khoản, CI 95% [0,993; 1,000]</div></div>
+  <div class="stat reveal d4" style="left:1320px;top:488px;width:480px;height:216px;padding:26px 34px"><div class="v" style="font-size:52px;color:var(--dteal);white-space:nowrap">0,951 → 0,997</div><div class="bar" style="background:var(--dteal);margin:16px 0 12px"></div><div class="l" style="font-size:21px">bỏ từ điển: trước → sau tinh chỉnh</div></div>
+  <div class="stat reveal d5" style="left:1320px;top:726px;width:480px;height:216px;padding:26px 34px;background:var(--amber)"><div class="v" style="font-size:66px;color:var(--ink)">173/176</div><div class="bar" style="background:var(--ink);margin:16px 0 12px"></div><div class="l" style="font-size:21px">đơn đúng hoàn toàn (VLM: 175/176)</div></div>
+  <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="src">Nguồn: result/e_d2_endtoend · 176 ảnh kiểm tra</span><span class="pg">12 / 16</span></div>
+  <aside class="notes">Thay bộ phát hiện hình thái học bằng YOLOv8s nâng F1 khoản từ 0,9487 lên 0,9865. Dùng VietOCR, cả bản công bố và bản tinh chỉnh đều đạt 0,9966 khi có từ điển, ngang VLM. Khác biệt nằm ở vạch nét đứt: khi bỏ từ điển, bản công bố giảm còn 0,951, còn bản tinh chỉnh giữ 0,997 và đúng 100% số lượng. Bù lại, phương pháp đề xuất đúng hoàn toàn 173/176 đơn, thấp hơn hai cấu hình kia hai đơn. VLM gọi qua API nên không so được thời gian. Khi có từ điển ba cấu hình cuối đạt cùng F1; tinh chỉnh giúp F1 không phụ thuộc từ điển.</aside>
+</section>
+
+<!-- ============================================================
+     13 · PHÂN TÍCH CẮT BỎ VÀ ĐỘ BỀN — table + SVG chart
+     ============================================================ -->
+<section class="slide" data-title="Cắt bỏ và độ bền">
+  <div class="head">
+    <span class="tag reveal"><span class="n">05</span> Kết quả</span>
+    <h2 class="reveal d1">Phân tích cắt bỏ và độ bền với ảnh suy giảm</h2>
+  </div>
+  <div class="card reveal d2" style="left:120px;top:250px;width:760px;height:700px">
+    <span class="k" style="background:var(--sky)">Cắt bỏ · thay từng bước bằng nhãn gốc</span>
+    <table style="width:100%;border-collapse:separate;border-spacing:0 10px;margin-top:6px;font-size:24px">
+      <tr style="font:600 16px var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)"><td>Khung chữ</td><td>Chữ</td><td style="text-align:right">F1 khoản</td></tr>
+      <tr><td>Nhãn gốc</td><td>Nhãn gốc</td><td style="text-align:right;font:700 28px var(--f-display)">1,0000</td></tr>
+      <tr><td>Nhãn gốc</td><td>VietOCR tinh chỉnh</td><td style="text-align:right;font:700 28px var(--f-display)">1,0000</td></tr>
+      <tr><td>YOLOv8s</td><td>Nhãn gốc</td><td style="text-align:right;font:700 28px var(--f-display)">1,0000</td></tr>
+      <tr style="background:var(--amber)"><td style="padding:10px 0 10px 18px;border:var(--line);border-right:0;border-radius:9999px 0 0 9999px"><b>YOLOv8s</b></td><td style="border-top:var(--line);border-bottom:var(--line)"><b>VietOCR tinh chỉnh</b></td><td style="text-align:right;padding-right:18px;border:var(--line);border-left:0;border-radius:0 9999px 9999px 0;font:800 28px var(--f-display)">0,9966</td></tr>
+    </table>
+    <p style="font-size:24px;margin-top:18px;line-height:1.42">Lỗi chỉ xuất hiện khi kết hợp cả hai (3/176 đơn).</p>
+    <p style="font-size:20px;margin-top:12px;line-height:1.42;color:var(--muted)">* Đáp án dẫn xuất từ luật ghép nên dòng nhãn gốc luôn đạt 1,0000.</p>
+    <p style="font-size:24px;margin-top:22px;line-height:1.42">Chỉnh nghiêng: sai số trung vị <b>0,063°</b></p>
+  </div>
+  <div class="card reveal d3" style="left:920px;top:250px;width:880px;height:700px">
+    <span class="k" style="background:var(--mint)">Độ bền · F1 khoản theo mức suy giảm</span>
+    <svg viewBox="0 0 800 430" width="800" height="430" style="display:block;margin-top:10px;font-family:'Space Grotesk'">
+      <g stroke="rgba(20,43,77,.15)" stroke-width="1.5"><line x1="70" y1="30" x2="780" y2="30"/><line x1="70" y1="110" x2="780" y2="110"/><line x1="70" y1="190" x2="780" y2="190"/><line x1="70" y1="270" x2="780" y2="270"/><line x1="70" y1="350" x2="780" y2="350"/></g>
+      <g font-size="20" fill="#5b6b85" text-anchor="end"><text x="58" y="37">1,0</text><text x="58" y="117">0,75</text><text x="58" y="197">0,5</text><text x="58" y="277">0,25</text><text x="58" y="357">0</text></g>
+      <g font-size="22" font-weight="600" fill="#142B4D" text-anchor="middle"><text x="130" y="395">Ảnh gốc</text><text x="425" y="395">Suy giảm vừa</text><text x="720" y="395">Suy giảm nặng</text></g>
+      <!-- y = 350 - v*320 -->
+      <polyline points="130,31.1 425,43.3 720,309.6" fill="none" stroke="#2260FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <polyline points="130,31.4 425,103.9 720,335" fill="none" stroke="#008588" stroke-width="6" stroke-dasharray="14 10" stroke-linecap="round" stroke-linejoin="round"/>
+      <g stroke="#142B4D" stroke-width="2.5"><circle cx="130" cy="31.1" r="10" fill="#2260FF"/><circle cx="425" cy="43.3" r="10" fill="#2260FF"/><circle cx="720" cy="309.6" r="10" fill="#2260FF"/><circle cx="425" cy="103.9" r="10" fill="#26CAD3"/><circle cx="720" cy="335" r="10" fill="#26CAD3"/></g>
+      <g font-size="22" font-weight="700" fill="#142B4D"><text x="445" y="36">0,959</text><text x="405" y="132" text-anchor="end">0,769</text><text x="738" y="304">0,126</text><text x="738" y="346">0,047</text></g>
+    </svg>
+    <div style="display:flex;gap:16px;margin-top:4px">
+      <span class="chip" style="font-size:20px"><i style="width:30px;height:6px;border-radius:9999px;background:var(--blue)"></i>Tắt tiền xử lý</span>
+      <span class="chip" style="font-size:20px"><i style="width:30px;height:0;border-top:5px dashed var(--dteal)"></i>Bật đủ 5 bước</span>
+    </div>
+    <p style="font-size:23px;margin-top:18px;line-height:1.42"><b>Giả thuyết:</b> vệt nền sau khử bóng làm YOLOv8s nhận thêm vùng giả (34,5 → 50,5 khung/ảnh).</p>
+  </div>
+  <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="src">Nguồn: result/e_x1_ablation, e_a1_robustness, e_a2_deskew, e_a3_runtime</span><span class="pg">13 / 16</span></div>
+  <aside class="notes">Bảng trái thay từng bước bằng nhãn gốc: lỗi chỉ xuất hiện khi kết hợp khung YOLO với chữ OCR. Vì đáp án khoản dẫn xuất từ luật ghép, dòng nhãn gốc bằng 1 là hiển nhiên. Biểu đồ phải cho kết quả trái kỳ vọng: bật đủ tiền xử lý làm F1 giảm, ở mức vừa từ 0,959 xuống 0,769. Nhóm cho rằng khử bóng và CLAHE để lại vệt nền khiến YOLO nhận thêm vùng giả, nhưng chưa tách riêng từng bước. Ở mức nặng, cả hai cấu hình đều giảm mạnh. Nắn phối cảnh tìm được tứ giác tờ giấy bằng đường bao ở 47/50 ảnh suy giảm nặng.</aside>
+</section>
+
+<!-- ============================================================
+     14 · THẢO LUẬN VÀ KẾT LUẬN — pull quote + 3 cards
+     ============================================================ -->
+<section class="slide" data-title="Thảo luận và kết luận">
+  <div class="head">
+    <span class="tag reveal"><span class="n">06</span> Thảo luận</span>
+    <h2 class="reveal d1">Thảo luận và kết luận</h2>
+  </div>
+  <p class="reveal d2" style="position:absolute;left:120px;right:120px;top:240px;font:600 40px/1.75 var(--f-display);letter-spacing:-.01em">Học sâu đạt <span class="hl">F1 khoản 0,9966</span>, ngang VLM zero-shot; xử lý ảnh cổ điển là <span class="hl" style="background:var(--sky)">đối chứng có đo đạc</span>.</p>
+  <div class="card reveal d3" style="left:120px;top:500px;width:530px;height:440px">
+    <span class="k" style="background:var(--mint)">Kết luận</span>
+    <ul><li>Phát hiện vùng chữ: F1 0,993 so với 0,818</li><li>Tinh chỉnh VietOCR giảm CER 62%</li><li>Từ điển bù lỗi OCR</li></ul>
+  </div>
+  <div class="card reveal d4" style="left:695px;top:500px;width:530px;height:440px">
+    <span class="k" style="background:var(--peach)">Hạn chế</span>
+    <ul><li>Ảnh in máy, cùng một mẫu đơn</li><li>Đáp án khoản dẫn xuất từ luật ghép</li><li>Tiền xử lý chưa cải thiện độ bền</li></ul>
+  </div>
+  <div class="card reveal d5" style="left:1270px;top:500px;width:530px;height:440px">
+    <span class="k" style="background:var(--sky)">Hướng phát triển</span>
+    <ul><li>Ảnh chụp thật, nhiều bệnh viện</li><li>Huấn luyện lại kèm ảnh suy giảm</li><li>Bỏ vùng "khác" trước khi nhận dạng</li></ul>
+  </div>
+  <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">14 / 16</span></div>
+  <aside class="notes">Chuỗi xử lý học sâu đạt F1 khoản 0,9966, vượt cấu hình hình thái học và cấu hình dùng Tesseract, tương đương VLM zero-shot và vượt VLM khi bỏ từ điển. Hạn chế: dữ liệu là ảnh in máy cùng mẫu; đáp án khoản dẫn xuất từ chính luật ghép; tiền xử lý chưa giúp được ảnh suy giảm. Hướng tiếp theo: đánh giá trên ảnh chụp thật, huấn luyện lại kèm ảnh suy giảm, và lọc vùng "khác" trước khi nhận dạng vì bước nhận dạng chiếm phần lớn thời gian. Từ điển tăng F1 khoản 0,03–0,045 cho các cấu hình chưa tinh chỉnh; bỏ vùng "khác" ước tính giảm khoảng hai phần ba thời gian nhận dạng.</aside>
+</section>
+
+<!-- ============================================================
+     15 · PHÂN CÔNG CÔNG VIỆC — 4 member cards
+     ============================================================ -->
+<section class="slide" data-title="Phân công công việc">
+  <div class="head">
+    <span class="tag reveal"><span class="n">07</span> Phân công</span>
+    <h2 class="reveal d1">Phân công công việc</h2>
+    <p class="lead reveal d2">Mỗi thành viên phụ trách một bước của chuỗi xử lý và đóng góp 25% khối lượng công việc.</p>
+  </div>
+  <div class="reveal d3" style="position:absolute;left:120px;right:120px;top:400px;display:grid;grid-template-columns:repeat(4,1fr);gap:28px">
+    <div class="card" style="position:relative;height:400px;padding:34px 34px"><span class="icon" style="background:var(--sky)">H</span><span class="k" style="display:block;width:max-content;margin:22px 0 0;background:var(--amber)">Nhóm trưởng</span><h3 style="font-size:32px;margin-top:16px">Trần Trung Hiếu</h3><p style="font-size:18px;color:var(--muted);margin-top:4px">B23DCCN312</p><ul style="margin-top:14px"><li style="font-size:25px">Tiền xử lý, ảnh suy giảm</li><li style="font-size:25px">Tích hợp, báo cáo, slide</li></ul></div>
+    <div class="card" style="position:relative;height:400px;padding:34px 34px"><span class="icon" style="background:var(--mint)">T</span><span class="k" style="display:block;width:max-content;margin:22px 0 0;background:var(--ice)">Phát hiện</span><h3 style="font-size:32px;margin-top:16px">Nguyễn Anh Trường</h3><p style="font-size:18px;color:var(--muted);margin-top:4px">B23DCCE094</p><ul style="margin-top:14px"><li style="font-size:25px">Huấn luyện YOLOv8s</li><li style="font-size:25px">Đối chứng hình thái học</li></ul></div>
+    <div class="card" style="position:relative;height:400px;padding:34px 34px"><span class="icon" style="background:var(--teal)">K</span><span class="k" style="display:block;width:max-content;margin:22px 0 0;background:var(--ice)">Nhận dạng</span><h3 style="font-size:32px;margin-top:16px">Đào Văn Khang</h3><p style="font-size:18px;color:var(--muted);margin-top:4px">B23DCVT218</p><ul style="margin-top:14px"><li style="font-size:25px">Tinh chỉnh VietOCR</li><li style="font-size:25px">Đối chứng Tesseract</li></ul></div>
+    <div class="card" style="position:relative;height:400px;padding:34px 34px"><span class="icon" style="background:var(--amber)">T</span><span class="k" style="display:block;width:max-content;margin:22px 0 0;background:var(--ice)">Hậu xử lý</span><h3 style="font-size:32px;margin-top:16px">Nguyễn Tiến Thắng</h3><p style="font-size:18px;color:var(--muted);margin-top:4px">B23DCCE088</p><ul style="margin-top:14px"><li style="font-size:25px">Luật ghép khoản, từ điển</li><li style="font-size:25px">Đối chứng VLM</li></ul></div>
+  </div>
+  <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">15 / 16</span></div>
+  <aside class="notes">Mỗi thành viên phụ trách một bước của chuỗi xử lý và đóng góp 25% khối lượng công việc.</aside>
+</section>
+
+<!-- ============================================================
+     16 · CẢM ƠN VÀ HỎI ĐÁP — closing plate
+     ============================================================ -->
+<section class="slide" data-title="Cảm ơn và hỏi đáp">
+  <div class="fp pop" style="left:-50px;top:300px;width:220px;height:76px;background:var(--mint);--rot:-16deg">OCR</div>
+  <div class="fp pop" style="left:170px;top:760px;width:150px;height:62px;background:var(--sky);--rot:22deg">RX</div>
+  <div class="fp pop" style="right:-40px;top:360px;width:230px;height:78px;background:var(--teal);--rot:18deg">JSON</div>
+  <div class="fp pop" style="left:280px;top:170px;width:120px;height:52px;background:var(--ice);--rot:28deg"></div>
+  <div class="fp pop" style="right:200px;top:740px;width:130px;height:58px;background:var(--ice);--rot:-22deg"></div>
+  <div class="cross pop" style="--c:var(--blue);right:330px;top:190px;--rot:12deg"></div>
+  <div class="cross pop" style="--c:var(--mint);left:110px;top:560px;--rot:-10deg"></div>
+  <div style="position:absolute;left:0;right:0;top:260px;text-align:center">
+    <div class="reveal d1"><span class="tag" style="background:var(--amber);box-shadow:6px 6px 0 var(--shadow);padding:14px 34px;font-size:20px">Hỏi đáp</span></div>
+    <h1 class="reveal d2" style="margin-top:30px;font:800 150px/1 var(--f-display);letter-spacing:-.03em">Xin <em style="font-style:italic;color:var(--blue)">cảm ơn</em></h1>
+    <div class="reveal d3" style="margin-top:34px;font:500 26px var(--f-body);letter-spacing:.18em;text-transform:uppercase">đã lắng nghe</div>
+    <div class="reveal d3" style="width:80px;height:5px;border-radius:9999px;background:var(--blue);margin:34px auto 0"></div>
+  </div>
+  <div class="reveal d4" style="position:absolute;left:0;right:0;bottom:80px;display:flex;justify-content:center;align-items:center;gap:22px">
+    <span style="display:flex;align-items:center;gap:22px;padding:12px 30px;border:var(--line);border-radius:9999px;background:#fff;box-shadow:4px 4px 0 var(--shadow)"><img src="img/logo_ptit.png" alt="PTIT" style="height:52px"><span style="font:500 18px/1.35 var(--f-body);letter-spacing:.1em;text-transform:uppercase">Nhóm 01 · E23TTNT01<br>Môn Xử lý ảnh</span></span>
+    <span style="padding:6px 28px;border:var(--line);border-radius:9999px;background:#fff;box-shadow:4px 4px 0 var(--shadow)"><img src="img/logo_medtrack.png" alt="MedTrack AI" style="height:76px;display:block"></span>
+  </div>
+  <aside class="notes">Phần trình bày của nhóm đến đây là hết. Xin cảm ơn thầy cô và các bạn đã lắng nghe; nhóm sẵn sàng trả lời câu hỏi.</aside>
+</section>
+
+</main>
+</div>
+
+<!-- presentation chrome (outside the stage) -->
+<div class="progress" id="progress"></div>
+<div class="notes-panel" id="notesPanel"><div class="t" id="notesTitle"></div><div id="notesBody"></div></div>
+<div class="edit-hotzone" id="editHotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Chế độ sửa (E)">✎ Sửa chữ</button>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   =========================================== */
+class SlidePresentation{
+  constructor(){
+    this.slides=[...document.querySelectorAll('.slide')];
+    this.stage=document.getElementById('deckStage');
+    this.progress=document.getElementById('progress');
+    this.notes=document.getElementById('notesPanel');
+    const h=parseInt(location.hash.slice(1),10);
+    this.current=Number.isFinite(h)?h-1:0;
+    this.setupStageScale();this.setupKeyboardNav();this.setupWheelNav();this.setupTouchNav();
+    this.show(this.current);
+  }
+  /* scale the 1920×1080 stage as a whole, letterboxed */
+  setupStageScale(){
+    const fit=()=>{const f=Math.min(innerWidth/1920,innerHeight/1080);
+      this.stage.style.transform=`translate(${(innerWidth-1920*f)/2}px,${(innerHeight-1080*f)/2}px) scale(${f})`};
+    fit();addEventListener('resize',fit);
+  }
+  setupKeyboardNav(){
+    document.addEventListener('keydown',e=>{
+      if(e.target.isContentEditable)return;
+      const k=e.key;
+      if(['ArrowRight','ArrowDown',' ','PageDown','Enter'].includes(k)){e.preventDefault();this.go(1)}
+      else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(k)){e.preventDefault();this.go(-1)}
+      else if(k==='Home')this.show(0);
+      else if(k==='End')this.show(this.slides.length-1);
+      else if(k==='f'||k==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+      else if(k==='n'||k==='N'){this.notes.classList.toggle('show')}
+    });
+  }
+  setupWheelNav(){
+    let lock=false;
+    addEventListener('wheel',e=>{if(lock||Math.abs(e.deltaY)<20||document.body.classList.contains('editing'))return;lock=true;this.go(e.deltaY>0?1:-1);setTimeout(()=>lock=false,700)},{passive:true});
+  }
+  setupTouchNav(){
+    let x0=null;
+    addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});
+    addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>50)this.go(dx<0?1:-1);x0=null});
+  }
+  go(d){this.show(this.current+d)}
+  show(i){
+    this.current=Math.max(0,Math.min(i,this.slides.length-1));
+    this.slides.forEach((s,j)=>{s.classList.toggle('active',j===this.current);s.classList.toggle('visible',j===this.current)});
+    this.progress.style.width=((this.current+1)/this.slides.length*100)+'%';
+    const s=this.slides[this.current],n=s.querySelector('aside.notes');
+    document.getElementById('notesTitle').textContent=`${this.current+1} / ${this.slides.length} · ${s.dataset.title||''}`;
+    document.getElementById('notesBody').textContent=n?n.textContent.trim():'';
+    history.replaceState(null,'','#'+(this.current+1));
+  }
+}
+const deck=new SlidePresentation();
+
+/* ===========================================
+   INLINE EDITING — E key / top-left hotzone
+   Edits auto-save to localStorage; Ctrl+S downloads the edited HTML.
+   =========================================== */
+const EDIT_KEY='medtrack-deck-v2';
+const EDITABLE='.slide h1,.slide h2,.slide h3,.slide p,.slide li,.slide .chip,.slide .tag,.slide .l,.slide .v,.slide .s,.slide .nm,.slide .val,.slide td,.slide pre';
+const editor={
+  isActive:false,
+  toggleEditMode(){
+    this.isActive=!this.isActive;
+    document.body.classList.toggle('editing',this.isActive);
+    document.querySelectorAll(EDITABLE).forEach(el=>el.contentEditable=this.isActive?'true':'false');
+    document.getElementById('editToggle').classList.toggle('active',this.isActive);
+    if(!this.isActive)this.save();
+  },
+  save(){try{localStorage.setItem(EDIT_KEY,deck.stage.innerHTML)}catch(e){}},
+  restore(){try{const h=localStorage.getItem(EDIT_KEY);if(h){deck.stage.innerHTML=h;deck.slides=[...document.querySelectorAll('.slide')];deck.show(deck.current)}}catch(e){}},
+  download(){
+    if(this.isActive)this.toggleEditMode();
+    const clone=document.documentElement.cloneNode(true);
+    clone.querySelectorAll('.slide').forEach(s=>s.classList.remove('active','visible'));
+    clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+    const blob=new Blob(['<!doctype html>\n'+clone.outerHTML],{type:'text/html'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='index.html';a.click();
+  }
+};
+editor.restore();
+document.addEventListener('input',()=>editor.save());
+const hot=document.getElementById('editHotzone'),tog=document.getElementById('editToggle');let hideT=null;
+tog.addEventListener('click',()=>editor.toggleEditMode());
+hot.addEventListener('click',()=>editor.toggleEditMode());
+hot.addEventListener('mouseenter',()=>{clearTimeout(hideT);tog.classList.add('show')});
+hot.addEventListener('mouseleave',()=>{hideT=setTimeout(()=>{if(!editor.isActive)tog.classList.remove('show')},400)});
+tog.addEventListener('mouseenter',()=>clearTimeout(hideT));
+tog.addEventListener('mouseleave',()=>{hideT=setTimeout(()=>{if(!editor.isActive)tog.classList.remove('show')},400)});
+document.addEventListener('keydown',e=>{
+  if((e.key==='e'||e.key==='E')&&!e.target.isContentEditable){editor.toggleEditMode()}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();editor.download()}
+});
+</script>
+</body>
+</html>
