@@ -27,13 +27,14 @@ def load_model(weights: Path | str = YOLO_WEIGHTS):
 
 
 def detect_yolo(img: np.ndarray, weights: Path | str = YOLO_WEIGHTS, conf: float = 0.25, iou: float = 0.5,
-                imgsz: int = 1024, device=None, class_agnostic: bool = False) -> list:
+                imgsz: int | None = None, device=None, class_agnostic: bool = False) -> list:
     """Ảnh BGR → list[TextBox] (box xyxy pixel ảnh gốc, label 6 lớp, score = conf).
 
     conf chọn trên valid (tối đa F1); class_agnostic=True bỏ nhãn lớp (dùng cho E-B1).
     """
     model = load_model(weights)
-    res = model.predict(img, conf=conf, iou=iou, imgsz=imgsz, device=device, verbose=False)[0]
+    kw = {"imgsz": imgsz} if imgsz else {}   # None → dùng imgsz lúc train (lưu trong file .pt)
+    res = model.predict(img, conf=conf, iou=iou, device=device, verbose=False, **kw)[0]
     out = []
     if res.boxes is None:
         return out
