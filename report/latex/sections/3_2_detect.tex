@@ -1,7 +1,7 @@
 % Mục 3.2. Phát hiện vùng chữ. Người viết: Trường. Chi tiết huấn luyện nằm ở Mục 4.3.
 Bước phát hiện dùng YOLOv8s~\cite{yolov8} để vừa tìm vừa phân lớp vùng chữ theo sáu lớp của VAIPE.
 YOLO là bộ phát hiện một giai đoạn: mạng nhìn toàn ảnh một lần và dự đoán luôn khung bao cùng lớp của từng vùng, nên nhanh và không cần bước phân lớp riêng.
-Mô hình khởi tạo từ trọng số tiền huấn luyện trên COCO rồi được huấn luyện tiếp trên ảnh đơn thuốc.
+Mô hình khởi tạo từ trọng số tiền huấn luyện trên COCO~\cite{lin2014coco} rồi được huấn luyện tiếp trên ảnh đơn thuốc.
 
 Vì chữ rất nhỏ, nhóm giữ ảnh vào ở độ phân giải cao thay vì thu nhỏ mạnh, để nét chữ không bị mất đi khi đổi kích thước ảnh.
 Phép lật ngang bị tắt vì làm ngược chữ.
