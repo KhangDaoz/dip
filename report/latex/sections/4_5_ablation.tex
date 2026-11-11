@@ -1,0 +1,35 @@
+% ===== Mục 4.5 — Ablation (E-X1) và độ bền (E-A1) (≈ 0,75 trang) =====
+% Viết gì: bảng 3–4 dòng thay khối bằng đáp án; hình F1 theo mức suy giảm × cấu hình tiền xử lý. Người: Hiếu.
+% Nguồn số: results/E-X1/table.csv, results/E-A1/table.csv.
+\textbf{Lỗi đến từ khối nào (E-X1).}
+Bảng~\ref{tab:EX1} thay lần lượt khối B và C bằng đáp án chuẩn, giữ \khoi{D}.
+
+\begin{table}[H]
+\centering
+\caption{F1 khoản thuốc khi thay khối bằng đáp án chuẩn, 176 ảnh kiểm tra (E-X1).}\label{tab:EX1}
+\small
+\begin{tabular}{llc}
+\toprule
+\textbf{B (khung)} & \textbf{C (chữ)} & \textbf{F1 khoản} \\
+\midrule
+chuẩn & chuẩn & \num{1.000} \\
+chuẩn & VietOCR C3 & \KQ{} \\
+YOLOv8s & chuẩn & \KQ{} \\
+YOLOv8s & VietOCR C3 & \KQ{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\TODO{Hiếu: 1--2 câu — khối nào làm mất nhiều điểm nhất}
+
+\textbf{Độ bền khi ảnh xấu đi (E-A1).}
+Hình~\ref{fig:EA1} cho F1 khoản thuốc của pipeline (iii) trên ba mức suy giảm với ba cấu hình \khoi{A}.
+
+\begin{figure}[H]
+\centering
+% \includegraphics[width=0.75\linewidth]{enhance/EA1_robustness.pdf}
+\fbox{\parbox[c][3.5cm][c]{0.7\linewidth}{\centering\KQ{Hình: F1 khoản (trục tung) theo mức L0/L2/L4 (trục hoành),\\3 đường: none / light / full}}}
+\caption{F1 khoản thuốc theo mức suy giảm, có và không có tiền xử lý cổ điển (E-A1, 176 ảnh kiểm tra mỗi mức).}\label{fig:EA1}
+\end{figure}
+
+\TODO{Hiếu: 2--3 câu có số — ở L0 tiền xử lý giúp hay hại; ở L4 bước nào giúp nhiều nhất. Kết quả ngược giả thuyết vẫn báo cáo trung thực}

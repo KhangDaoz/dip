@@ -1,0 +1,11 @@
+% ===== Mục 3.2 — Khối B (≈ 0,5 trang) =====
+% Viết gì: YOLOv8s, cấu hình huấn luyện + lý do, chọn ngưỡng trên valid, đối chứng cổ điển. Người: Trường.
+\textbf{Phương pháp chính.}
+YOLOv8s~\cite{yolov8} phát hiện và phân lớp đồng thời các vùng chữ theo sáu lớp VAIPE.
+Mô hình khởi tạo từ trọng số COCO và huấn luyện 50 epoch trên 820 ảnh (Kaggle, $2\times$T4), kích thước ảnh 1024, batch 16, dừng sớm sau 15 epoch không cải thiện, seed 42.
+Ảnh huấn luyện không lật ngang (\texttt{fliplr}=0) vì lật làm hỏng chữ; mosaic giảm còn 0,5.
+Kích thước 1024 được chọn vì chữ VAIPE chỉ cao khoảng 15--25~px, thu về 640 làm mất vùng nhỏ.
+Ngưỡng tin cậy $0{,}443$ là ngưỡng cho F1 trung bình sáu lớp lớn nhất trên tập kiểm định; ngưỡng NMS giữ mặc định $0{,}7$.
+
+\textbf{Đối chứng cổ điển.}
+\TODO{Trường: nếu có detect/classical.py — Sauvola (cửa sổ 31, $k$ 0,2) $\to$ ước lượng chiều cao chữ $h$ = trung vị chiều cao thành phần liên thông $\to$ giãn với phần tử cấu trúc $0{,}5h\times1{,}5h$ nối ký tự thành cụm \chuong{7} $\to$ thành phần liên thông $\to$ lọc theo diện tích, tỉ lệ. Nếu cắt: xóa đoạn này và ghi vào Thảo luận}
