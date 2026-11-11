@@ -6,6 +6,6 @@ Ghép khoản thuốc là bước hậu xử lý, biến danh sách vùng chữ 
   \item Chuẩn hóa chữ. Nhóm bỏ tiền tố ``$N$)'', tách số lượng và đơn vị từ chuỗi như ``SL: 28 Viên'', chuẩn hóa cách dùng, đọc ngày và kiểm tra ngày hợp lệ. Các luật chịu được một số lỗi OCR thường gặp như ``)'' thành ``]'' hay ``S'' thành ``5'', còn trường hợp không chắc chắn thì giữ nguyên hoặc để trống.
   \item Sửa tên thuốc bằng từ điển. Tên thuốc được so với từ điển gồm 138 tên của tập huấn luyện bằng độ tương tự chuỗi trên thang 0 đến 100, tính từ khoảng cách chỉnh sửa kiểu Levenshtein~\cite{levenshtein1966} chỉ với phép chèn và xóa. Tên chỉ được thay khi ứng viên tốt nhất rất giống, hoặc khá giống và hơn hẳn ứng viên thứ hai. Nếu hai ứng viên sát nhau mà khác dãy số, nhóm chỉ thay khi dãy số của ứng viên tốt nhất trùng với tên OCR. Ở mức khá giống, nhóm cũng không thay nếu tên OCR có liều đọc rõ như ``250MG'' mà ứng viên không có, vì như vậy dễ kéo tên sang thuốc khác liều.
 \end{enumerate}
-Phương pháp đối chứng là một mô hình thị giác--ngôn ngữ (VLM) thuộc họ Qwen-VL~\cite{bai2025qwen25vl}, cụ thể là Qwen3.8-27B.
+Phương pháp đối chứng là mô hình thị giác--ngôn ngữ (VLM) Qwen3.8-27B~\cite{qwen38}, nhận được cả ảnh và văn bản.
 Mô hình nhận nguyên ảnh cùng một lời nhắc cố định và trả về JSON theo đúng lược đồ trên.
 Kết quả của VLM đi qua cùng bước chuẩn hóa chữ và bước sửa tên bằng từ điển để việc so sánh công bằng.

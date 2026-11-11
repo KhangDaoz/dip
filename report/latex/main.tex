@@ -51,6 +51,10 @@
 \DeclareQuoteAlias{english}{vietnamese}               % csquotes không có kiểu ngoặc tiếng Việt → dùng “…” kiểu Anh
 \usepackage[style=ieee,backend=biber,language=english]{biblatex}   % biblatex chưa hỗ trợ tiếng Việt; nguồn trích đều tiếng Anh
 \DeclareLanguageMapping{vietnamese}{english}           % không có vietnamese.lbx → dùng chuỗi tiếng Anh (vol., no., pp.)
+\DefineBibliographyStrings{vietnamese}{%                % chuỗi riêng của kiểu IEEE (ieee.bbx chỉ định nghĩa cho english)
+  artno = Art\adddot\addspace no\adddot, editor = Ed\adddot, editors = Eds\adddot,
+  url = [Online]\adddot\addspace Available, urlseen = Accessed\addcolon,
+  june = Jun\adddot, july = Jul\adddot, september = Sep\adddot}
 \addbibresource{refs/common.bib}
 \addbibresource{refs/preprocessing.bib}
 \addbibresource{refs/cleaning.bib}

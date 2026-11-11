@@ -1,5 +1,6 @@
 % Mục 8. Khai báo sử dụng AI. Người viết: Hiếu tổng hợp.
-Nhóm dùng Claude (Anthropic) thông qua Claude Code để viết mã khung cho các mô-đun, kịch bản chuyển đổi dữ liệu và bài kiểm thử đơn vị, và để rà soát câu chữ báo cáo.
+Nhóm dùng Claude (Anthropic) thông qua Claude Code để viết mã khung cho các mô-đun, kịch bản chuyển đổi dữ liệu và bài kiểm thử đơn vị.
+AI cũng được dùng để rà soát câu chữ báo cáo.
 Việc thiết kế pipeline, chọn thuật toán và tham số, huấn luyện, chạy thí nghiệm và phân tích kết quả do nhóm tự làm (Bảng~\ref{tab:ai}).
 
 \begin{table}[H]
@@ -10,14 +11,10 @@ Việc thiết kế pipeline, chọn thuật toán và tham số, huấn luyện
 \toprule
 \textbf{Thành viên} & \textbf{AI hỗ trợ} & \textbf{Nhóm tự thực hiện} \\
 \midrule
-Hiếu & Mã khung bước tiền xử lý, công cụ sinh ảnh suy giảm & Thứ tự năm bước tiền xử lý, chọn kích thước phần tử cấu trúc theo chiều cao chữ, tích hợp pipeline, các thí nghiệm về tiền xử lý, biên tập báo cáo \\
+Hiếu & Mã khung bước tiền xử lý, công cụ sinh ảnh suy giảm & Thứ tự năm bước tiền xử lý, chọn kích thước phần tử cấu trúc theo chiều cao chữ, tích hợp pipeline, các thí nghiệm về tiền xử lý, ghép và biên tập báo cáo \\
 Trường & Kịch bản chuyển nhãn VAIPE sang định dạng YOLO & Bộ phát hiện cổ điển (Sauvola và phép giãn), huấn luyện YOLOv8s ở kích thước 1024, quét lưới chọn ngưỡng \num{0.443} \\
 Khang & Lớp bọc VietOCR và Tesseract & Huấn luyện VietOCR \num{20000} vòng trên Kaggle, nâng chiều rộng ảnh vào lên 1024 để không co chữ ở dòng chẩn đoán dài, xuất tệp bàn giao kết quả phát hiện và nhận dạng \\
 Thắng & Biểu thức chính quy chuẩn hóa trường, mã gọi VLM & Thuật toán gom dải ngang, luật chặn kéo sai liều ở từ điển, soát bằng mắt 176 ảnh kiểm tra \\
 \bottomrule
 \end{tabularx}
 \end{table}
-
-\textbf{Cách kiểm tra.}
-Mọi đoạn mã có AI hỗ trợ đều được đối chiếu với công thức trong giáo trình và kiểm tra bằng \num{101} bài kiểm thử đơn vị (\texttt{pytest}).
-Mọi số liệu trong báo cáo được sinh từ mã thí nghiệm của nhóm với seed 42; tham số được chọn trên tập kiểm định và kết quả báo cáo trên tập kiểm tra.

@@ -1,17 +1,18 @@
-% ===== Phụ lục A — Bảng tham số đầy đủ =====
-% Viết gì: mọi tham số, giá trị chọn, khoảng đã thử (nếu có), lý do. Mỗi người điền dòng của khối mình.
+% ===== Phụ lục — Bảng tham số đầy đủ =====
+% Viết gì: mọi tham số, giá trị chọn, khoảng đã thử (nếu có), lý do. Mỗi người điền dòng của bước mình.
 \begin{table}[H]
 \centering
 \caption{Tham số của pipeline. Dấu ``---'' nghĩa là không dò, dùng giá trị mặc định hoặc theo lý do ghi bên cạnh.}\label{tab:params}
 \footnotesize
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{1.3cm} >{\raggedright\arraybackslash}p{3.1cm} >{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{1.6cm} L@{}}
+\renewcommand{\arraystretch}{1.05}\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{2.3cm} >{\raggedright\arraybackslash}p{2.0cm} L@{}}
 \toprule
 \textbf{Bước} & \textbf{Tham số} & \textbf{Giá trị} & \textbf{Đã thử} & \textbf{Lý do} \\
 \midrule
 Nắn phối cảnh & Ngưỡng Canny & 50 / 150 & --- & Tỉ lệ 1:3 chuẩn Canny, giữ biên tờ giấy \\
 Nắn phối cảnh & Diện tích tứ giác tối thiểu & 20\% ảnh & --- & Loại tứ giác nhỏ như bảng hoặc ô \\
-Chỉnh nghiêng & Khoảng góc, bước & $\pm10^\circ$, $0{,}25^\circ$ & --- & Nghiêng chụp tay thường $<10^\circ$ \\
-Chỉnh nghiêng & Sauvola cửa sổ, $k$ & 31; 0,2 & --- & Cửa sổ lớn hơn chữ cao 20--32~px, $k$ theo bài gốc \\
+Chỉnh nghiêng & Khoảng góc; bước tìm & $\pm10^\circ$; thô $1^\circ$, tinh $0{,}25^\circ$ & --- & Nghiêng chụp tay thường $<10^\circ$ \\
+Chỉnh nghiêng & Sauvola cửa sổ, $k$ & 31; 0,2 & --- & Cửa sổ xấp xỉ chiều cao chữ (20--32~px), $k$ theo bài gốc \\
 Khử bóng & Phép đóng, lọc trơn nền & $81\times81$; $21\times21$ & --- & Lớn gấp 2,5--4 lần chiều cao chữ để xóa nét mực \\
 Khử nhiễu & Lọc trung vị & $3\times3$ & --- & Khử nhiễu điểm, không làm mất dấu tiếng Việt \\
 Tăng tương phản & CLAHE giới hạn cắt, lưới & 2,0; $8\times8$ & --- & Tăng tương phản vừa phải, tránh nổi nhiễu nền \\
@@ -21,7 +22,8 @@ Phát hiện & Epoch, batch, dừng sớm & 50, 16, 15 & --- & Vừa thời gian
 Phát hiện & \texttt{fliplr}, mosaic & 0; 0,5 & --- & Lật ngang làm hỏng chữ \\
 Phát hiện & Ngưỡng tin cậy & 0,443 & 0,05 đến 0,85 & F1 trung bình 6 lớp lớn nhất trên tập kiểm định \\
 Phát hiện & Ngưỡng NMS & 0,7 & --- & Mặc định Ultralytics \\
-Phát hiện & Giãn cổ điển ($a\cdot h,\;v\cdot h$) & $2{,}5h;\;0{,}2h$ & $a$: 0,5--4; $v$: 0--0,5 & Nối ký tự thành cụm, F1 đạt 0,810 trên kiểm định \\
+Phát hiện cổ điển & Phép mở; lọc vùng theo chiều cao & $2\times2$; $0{,}5h$--$3h$ & --- & Bỏ chấm nhiễu; loại vùng quá nhỏ hoặc quá lớn so với chữ \\
+Phát hiện cổ điển & Giãn ($a\cdot h,\;v\cdot h$) & $2{,}5h;\;0{,}2h$ & $a$: 0,5--4; $v$: 0--0,5; có/không xóa kẻ & Nối ký tự thành cụm, F1 đạt 0,810 trên 60 ảnh kiểm định \\
 \midrule
 Nhận dạng & Kiến trúc & \texttt{vgg\_transformer} & --- & Trọng số tiếng Việt có sẵn \\
 Nhận dạng & Số vòng, batch, lr & \num{20000}, 32, $3\cdot10^{-4}$ & --- & Vừa thời gian Kaggle T4 \\
@@ -32,10 +34,11 @@ Tesseract & Chế độ Tesseract; phóng ảnh & \texttt{-{}-psm 7}; $\times2$ 
 \midrule
 Xác định lớp & Ngưỡng tin cậy hỏi lại & 0,5 & --- & Chỉ dùng biểu thức chính quy khi lớp YOLO kém tin cậy \\
 Xác định lớp & IoU trùng & 0,7 & --- & Loại khung dự đoán chồng lấp trên cùng cụm chữ \\
-Từ điển & Từ điển $\tau_{\text{cao}}$, $\tau_{\text{thấp}}$, lề & 90, 80, 5 & --- & Cố định trước khi chạy tập kiểm tra; chặn kéo sai liều, xem Mục~\ref{sec:m-assemble} \\
+Từ điển & $\tau_{\text{cao}}$, $\tau_{\text{thấp}}$, lề & 90, 80, 5 & --- & Cố định trước khi chạy tập kiểm tra; chặn kéo sai liều, xem Mục~\ref{sec:m-assemble} \\
 VLM & Nhiệt độ & 0 & --- & Kết quả lặp lại được \\
-Ghép khoản & Khớp tên khi chấm & CER $\le0{,}1$ & --- & Cho phép lỗi nhỏ không đổi nghĩa \\
 \midrule
+Đánh giá & IoU khi chấm phát hiện & $\ge0{,}5$ & --- & Ngưỡng thông dụng cho phát hiện đối tượng \\
+Đánh giá & Khớp tên khi chấm & CER $\le0{,}1$ & --- & Cho phép lỗi nhỏ không đổi nghĩa \\
 Đánh giá & Bootstrap theo ảnh & \num{1000} lần & --- & Ước lượng khoảng tin cậy 95\% \\
 Chung & Seed & 42 & --- & Lặp lại được việc chia tập, sinh ảnh suy giảm, huấn luyện \\
 \bottomrule

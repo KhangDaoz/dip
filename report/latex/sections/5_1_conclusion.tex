@@ -1,17 +1,22 @@
-% Mục 6. Kết luận: kết quả đạt được, hạn chế, hướng phát triển. Người viết: Hiếu.
+% Mục 6. Kết luận: kết quả, hạn chế, hướng phát triển. Người viết: Hiếu.
 \textbf{Kết quả đạt được.}
-Đồ án xây dựng pipeline trích xuất đơn thuốc gồm YOLOv8s, VietOCR tinh chỉnh và luật ghép khoản có từ điển, kèm một bước tiền xử lý cổ điển tùy chọn.
-Trên 176 ảnh kiểm tra của VAIPE, pipeline chính đạt F1 khoản thuốc \num{0.9966} (khoảng tin cậy 95\%: $[\num{0.9930}; \num{1.0000}]$), cao hơn bản lai (\num{0.9865}) và bản cổ điển (\num{0.9487}).
-So với VLM zero-shot Qwen3.8-27B, hai bên ngang nhau khi có từ điển; khi bỏ từ điển pipeline cao hơn (\num{0.9966} so với \num{0.9875}), nhưng chênh lệch chỉ ứng với vài khoản thuốc.
-Tinh chỉnh VietOCR giảm CER từ \num{0.0864} xuống \num{0.0329}, còn từ điển tên thuốc nâng F1 khoản của các cấu hình chưa tinh chỉnh thêm \num{0.0316} đến \num{0.0452} điểm.
-Thực nghiệm độ bền cho thấy hai bước hình học (nắn phối cảnh, chỉnh nghiêng) đạt độ chính xác cao, còn phép đóng chia nền và CLAHE cần đi kèm huấn luyện lại mô hình phát hiện để tránh lệch phân phối ảnh.
+Đồ án xây dựng pipeline đọc ảnh đơn thuốc thành bản ghi JSON, gồm YOLOv8s, VietOCR tinh chỉnh và luật ghép khoản có từ điển, kèm một bước tiền xử lý cổ điển tùy chọn.
+Trên 176 ảnh kiểm tra của VAIPE, pipeline đề xuất đạt F1 khoản thuốc \num{0.9966} (khoảng tin cậy 95\%: $[\num{0.9930}; \num{1.0000}]$), cao hơn bản lai (\num{0.9865}) và bản cổ điển (\num{0.9487}), và ngang VLM zero-shot trong phạm vi khoảng tin cậy.
+Tinh chỉnh VietOCR giảm CER từ \num{0.0864} xuống \num{0.0329}; các bước hình học của tiền xử lý hoạt động chính xác, còn phép chia nền và CLAHE chưa giúp ích khi mô hình phát hiện chỉ được huấn luyện trên ảnh gốc.
 
 \textbf{Hạn chế.}
-Đồ án mới đánh giá trên ảnh đơn thuốc in máy của VAIPE và bộ ảnh suy giảm mô phỏng, nên cần kiểm chứng thêm trên ảnh chụp thực tế từ nhiều cơ sở y tế.
+\begin{enumerate}[label=(\arabic*), leftmargin=2em, itemsep=0.15em, topsep=0.3em]
+  \item VAIPE là ảnh in máy theo cùng mẫu đơn, nên kết quả chưa phản ánh ảnh chụp thật từ nhiều bệnh viện.
+  \item Tập kiểm tra gần bão hòa: ba pipeline tốt nhất chỉ sai vài khoản trong 443, nên chưa phân biệt được chúng.
+  \item Đáp án khoản thuốc được dẫn xuất từ chính luật ghép khoản rồi soát tay, nên chưa phải đánh giá độc lập cho bước ghép khoản.
+  \item Ngưỡng $\text{CER}\le0{,}1$ có thể bỏ qua lỗi liều, ví dụ ``DIAMICRON MR TAB 30MG'' và ``60MG'' chỉ cách nhau CER \num{0.097}.
+  \item Chỉ 2/443 khoản kiểm tra nằm ngoài từ điển, và việc bỏ tiền xử lý được quyết định từ kết quả trên tập kiểm tra.
+\end{enumerate}
 
 \textbf{Hướng phát triển.}
-Nhóm dự định
-(1) thu thập ảnh đơn chụp thật từ nhiều bệnh viện;
-(2) huấn luyện lại YOLOv8s và VietOCR có tăng cường suy giảm, đồng thời khảo sát riêng ảnh hưởng của từng bước tiền xử lý;
-(3) bỏ qua các vùng \texttt{other}, chiếm khoảng 68\% số vùng, trước khi nhận dạng để giảm thời gian chạy;
-(4) thay từ điển dựng từ tập huấn luyện bằng danh mục thuốc quốc gia.
+\begin{enumerate}[label=(\arabic*), leftmargin=2em, itemsep=0.15em, topsep=0.3em]
+  \item Thu thập ảnh đơn chụp thật từ nhiều bệnh viện và gán nhãn tay độc lập ở mức khoản thuốc.
+  \item Huấn luyện lại YOLOv8s và VietOCR trên ảnh suy giảm, đồng thời khảo sát riêng từng bước tiền xử lý.
+  \item Sửa luật xác định lớp ở bước ghép khoản để loại khoản thuốc thừa, và thay từ điển huấn luyện bằng danh mục thuốc quốc gia.
+  \item Bỏ qua vùng \texttt{other}, chiếm khoảng 68\% số vùng, trước khi nhận dạng để giảm thời gian chạy.
+\end{enumerate}

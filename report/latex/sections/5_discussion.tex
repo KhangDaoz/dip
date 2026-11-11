@@ -1,26 +1,18 @@
-% Mục 5. Thảo luận (khoảng 0,6 trang). Mỗi ý có số lấy từ mục 4. Người viết: Hiếu và Thắng.
-% Hướng phát triển nằm ở Mục 6 (Kết luận).
-\textbf{Hiệu quả theo từng bước và đầu-cuối.}
-Ở bước phát hiện, YOLOv8s đạt F1 \num{0.993}, cao hơn bộ phát hiện cổ điển (\num{0.818}), và nhanh hơn (\num{0.031} so với \num{0.061} giây mỗi ảnh; YOLOv8s chạy GPU, bộ cổ điển chạy CPU).
-Ở bước nhận dạng, Tesseract đọc dòng chẩn đoán tốt hơn VietOCR công bố nhưng kém xa ở dòng cách dùng; VietOCR chỉ tốt hơn ở mọi mặt sau khi tinh chỉnh, với CER \num{0.0329}.
-Ở mức đầu-cuối, thay bộ phát hiện cổ điển bằng YOLOv8s nâng F1 khoản từ \num{0.9487} lên \num{0.9865} và tỉ lệ đơn đúng từ \num{0.8011} lên \num{0.9716}, một phần vì bộ cổ điển không phân lớp nên số lượng đúng chỉ đạt \num{0.9187}.
-Thay tiếp Tesseract bằng VietOCR tinh chỉnh đưa F1 khoản lên \num{0.9966} và tỉ lệ ngày đúng từ \num{0.7784} lên \num{1.0000}.
+% Mục 5. Thảo luận. Người viết: Hiếu và Thắng. Hạn chế và hướng phát triển nằm ở Mục 6.
+\textbf{Học sâu và phương pháp cổ điển.}
+Học sâu cải thiện kết quả ở cả bước phát hiện và bước nhận dạng.
+YOLOv8s đạt F1 \num{0.993} so với \num{0.818} của bộ phát hiện cổ điển; bộ cổ điển lại không phân lớp, nên bản cổ điển chỉ đúng \num{0.9187} số lượng.
+Ở bước nhận dạng, VietOCR gốc đọc dòng chẩn đoán kém hơn Tesseract (CER \num{0.2325} so với \num{0.0811}) và chỉ tốt hơn ở mọi mặt sau khi tinh chỉnh (CER \num{0.0329}).
 
-\textbf{Vai trò của tiền xử lý.}
-Hai bước hình học hoạt động hiệu quả: nắn phối cảnh tìm đúng tờ giấy trên 47/50 ảnh suy giảm nặng, chỉnh nghiêng có sai số trung vị $0{,}063^\circ$.
-Ngược lại, phép đóng chia nền và CLAHE có thể tạo thêm vệt nền, khiến YOLOv8s, vốn chỉ được huấn luyện trên ảnh gốc, kém ổn định hơn (Mục~\ref{sec:e-ablation}).
-Vì vậy kết quả chính ở Mục~\ref{sec:e-endtoend} dùng ảnh gốc, không qua tiền xử lý; ảnh hưởng riêng của từng bước cần được khảo sát thêm.
+\textbf{Từ điển và nguồn lỗi còn lại.}
+Từ điển tên thuốc tăng F1 khoản của các cấu hình chưa tinh chỉnh thêm \num{0.0316} đến \num{0.0452} điểm, nhưng không ảnh hưởng tới pipeline đề xuất vì CER tên thuốc chỉ còn \num{0.0003}.
+Ba đơn còn sai của pipeline đề xuất chỉ xuất hiện khi ghép khung YOLOv8s với chữ VietOCR tinh chỉnh (Bảng~\ref{tab:EX1}): một vùng \texttt{other} trong đoạn ``Cận lâm sàng'' có chữ đọc được bắt đầu bằng ``1)'' hoặc ``2)'', nên bị luật xác định lớp ở bước ghép khoản đổi thành tên thuốc.
 
-\textbf{Đối chiếu với VLM zero-shot Qwen3.8-27B.}
-Pipeline đề xuất đạt cùng F1 khoản \num{0.9966} với VLM khi có từ điển, và cao hơn khi bỏ từ điển (\num{0.9966} so với \num{0.9875}).
-Pipeline đúng toàn bộ số lượng và ngày kê đơn (\num{1.0000} so với \num{0.9932} và \num{0.9943} của VLM), nhưng VLM có tỉ lệ đơn đúng hoàn toàn cao hơn (\num{0.9943} so với \num{0.9830}).
-Các khoảng tin cậy chồng nhau và chênh lệch chỉ ứng với vài khoản thuốc, nên chưa thể kết luận bên nào chính xác hơn.
-Ưu điểm rõ ràng của pipeline là chạy cục bộ, không gửi ảnh y tế ra dịch vụ bên ngoài, và không bị lỗi định dạng JSON (VLM lỗi trên 1/176 ảnh).
+\textbf{Tiền xử lý và độ bền.}
+Hai bước hình học hoạt động tốt: nắn phối cảnh tìm đúng tờ giấy trên 47/50 ảnh suy giảm nặng, chỉnh nghiêng có sai số trung vị $0{,}063^\circ$.
+Ngược lại, phép chia nền và CLAHE để lại vệt nền (Hình~\ref{fig:shadow}) mà YOLOv8s, vốn chỉ được huấn luyện trên ảnh gốc, có thể nhận nhầm thành chữ, làm F1 khoản trên ảnh suy giảm nhẹ giảm từ \num{0.9585} xuống \num{0.7692}; vì vậy kết quả chính dùng ảnh gốc.
+Ngay cả khi không tiền xử lý, F1 khoản trên ảnh suy giảm nặng chỉ còn \num{0.1264}, nên pipeline cần được huấn luyện thêm trên ảnh suy giảm.
 
-\textbf{Hạn chế.}
-\begin{enumerate}[label=(\arabic*), leftmargin=2em, itemsep=0.15em, topsep=0.3em]
-  \item VAIPE là ảnh in máy theo cùng mẫu đơn, nên điểm số chưa phản ánh ảnh chụp thật từ nhiều bệnh viện.
-  \item Đáp án khoản thuốc được dẫn xuất từ chính luật ghép khoản, nên việc chạy luật trên khung và chữ chuẩn cho F1 \num{1.000} chủ yếu phản ánh tính nhất quán của luật, dù đã soát tay 176 ảnh.
-  \item Ngưỡng $\text{CER}\le0{,}1$ có thể bỏ qua lỗi liều ở tên dài: trong 141 tên thuốc của bộ dữ liệu có 5 cặp tên cách nhau $\text{CER}\le0{,}1$, trong đó có cặp khác liều ``DIAMICRON MR TAB 30MG'' và ``60MG'' (CER \num{0.097}).
-  \item Từ điển lấy từ tập huấn luyện và chỉ 2/443 khoản kiểm tra (0,5\%) nằm ngoài từ điển; ngoài ra nhóm đã lược bỏ một số thí nghiệm phụ do giới hạn thời gian.
-\end{enumerate}
+\textbf{So với VLM zero-shot.}
+Qwen3.8-27B đạt cùng F1 khoản \num{0.9966} với pipeline đề xuất khi có từ điển và có tỉ lệ đơn đúng hoàn toàn cao hơn (\num{0.9943} so với \num{0.9830}); khi bỏ từ điển, pipeline đề xuất cao hơn (\num{0.9966} so với \num{0.9875}).
+Các khoảng tin cậy chồng nhau nên chưa thể kết luận bên nào chính xác hơn; ưu điểm rõ của pipeline đề xuất là chạy cục bộ, không gửi ảnh y tế ra ngoài và không lỗi định dạng JSON (VLM lỗi trên 1/176 ảnh).
