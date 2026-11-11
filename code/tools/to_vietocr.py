@@ -1,77 +1,115 @@
-"""Cắt crops cho VietOCR từ nhãn VAIPE (plan §5.3).
+"""Cắt vùng chữ VAIPE → bộ dữ liệu VietOCR cho khối C (plan §5.3). Cũng là tập crops cho E-C1.
 
-Mỗi vùng chữ → 1 PNG trong <out>/<split>/, đệm 2px, phóng ×2 (nội suy bicubic).
-Kèm file nhãn `<split>_label.txt` theo định dạng VietOCR: `<path>\t<text>`.
+Cùng cách với script đã dùng để fine-tune `weights/vietocr_finetuned.pth` trên Kaggle
+(UIT4meow_VAIPE/tools/prepare_vietocr_pres.py), để crops test khớp phân phối lúc train:
+* cắt theo box chuẩn, đệm 2 px, KHÔNG phóng to (VietOCR tự resize về cao 32);
+* chữ chuẩn hóa NFC + gộp khoảng trắng (`vaipe.dataset.clean_text`);
+* bỏ vùng có ký tự ngoài vocab VietOCR (configs/vietocr_vgg_transformer.yml), chữ rỗng, box < 2 px.
+Phóng ×2 cho Tesseract (C0/C1) làm ở engine, không làm ở đây.
+
+Đầu ra (mặc định data/1_vaipe/crops):
+    img/{train,valid,test}/<id>_<k>.png   k = thứ tự vùng trong file nhãn
+    {train,valid,test}.txt          "img/<split>/<file>.png<TAB><text>" (định dạng VietOCR)
+    {train,valid,test}_meta.tsv     path, label, text — để tính CER theo lớp
+    stats.json
 
 Chạy:
-    python tools/to_vietocr.py                  # cả train+valid+test
-    python tools/to_vietocr.py --split train     # một split
-    python tools/to_vietocr.py --split train --pad 3 --scale 3
+    python tools/to_vietocr.py
+    python tools/to_vietocr.py --classes drugname quantity
 """
 from __future__ import annotations
 
 import argparse
+import json
+import shutil
+from collections import Counter
 from pathlib import Path
 
 import cv2
 import numpy as np
+import yaml
 
-from common.paths import VAIPE_CROPS
-from vaipe.dataset import list_images
+from common.boxes import clip_box
+from common.contracts import BOX_LABELS
+from common.paths import CODE_DIR, VAIPE_CROPS
+from vaipe.dataset import clean_text, list_images
+
+SPLITS = ("train", "valid", "test")
+VIETOCR_CONFIG = CODE_DIR / "configs" / "vietocr_vgg_transformer.yml"
 
 
-def crop_one(img_bgr: np.ndarray, box: list, pad: int = 2, scale: float = 2.0) -> np.ndarray:
-    """Cắt vùng box xyxy (pixel) trên ảnh BGR, đệm `pad` pixel, phóng `scale` lần.
+def load_vocab(config_path: Path = VIETOCR_CONFIG) -> set:
+    with open(config_path, encoding="utf-8") as f:
+        return set(yaml.safe_load(f)["vocab"])
 
-    Nội suy bicubic (ch. 2 · S23-24). Nếu box sát mép, đệm bằng nền (giá trị biên).
-    """
+
+def crop_box(img_bgr: np.ndarray, box, pad: int = 2) -> np.ndarray:
+    """Cắt box xyxy (đã kẹp trong ảnh) với đệm `pad` px, không vượt mép ảnh."""
     h, w = img_bgr.shape[:2]
-    x0 = max(0, int(box[0]) - pad)
-    y0 = max(0, int(box[1]) - pad)
-    x1 = min(w, int(box[2]) + pad)
-    y1 = min(h, int(box[3]) + pad)
-    crop = img_bgr[y0:y1, x0:x1]
-    if scale != 1.0:
-        new_w = max(1, int(crop.shape[1] * scale))
-        new_h = max(1, int(crop.shape[0] * scale))
-        crop = cv2.resize(crop, (new_w, new_h), interpolation=cv2.INTER_CUBIC)
-    return crop
+    x0, y0, x1, y1 = clip_box(box, w, h)
+    return img_bgr[max(y0 - pad, 0):min(y1 + pad, h), max(x0 - pad, 0):min(x1 + pad, w)]
 
 
-def convert_split(split: str, out_root: Path, pad: int = 2, scale: float = 2.0) -> int:
-    """Sinh crops PNG + file nhãn VietOCR cho split. Trả về số crops."""
-    img_out = out_root / split
-    label_file = out_root / f"{split}_label.txt"
-    img_out.mkdir(parents=True, exist_ok=True)
+def convert_split(split: str, out: Path, vocab: set, classes: set, pad: int) -> dict:
+    (out / "img" / split).mkdir(parents=True)
+    lines, meta = [], []
+    per_class, skip, bad_chars = Counter(), Counter(), Counter()
     images = list_images(split)
-    rows = []
     for img in images:
         bgr = cv2.imread(str(img.image_path))
         if bgr is None:
-            continue
-        for a in img.annotations:
-            crop = crop_one(bgr, a.box, pad=pad, scale=scale)
-            if crop.size == 0:
+            raise SystemExit(f"Không đọc được {img.image_path}")
+        h, w = bgr.shape[:2]
+        # k = vị trí trong file nhãn (như bản Kaggle), KHÔNG dùng a.id vì id VAIPE có chỗ khuyết
+        for k, a in enumerate(img.annotations):
+            if a.label not in classes:
                 continue
-            name = f"{img.image_id}_{a.id}.png"
-            cv2.imwrite(str(img_out / name), crop)
-            rows.append(f"{(img_out / name).as_posix()}\t{a.text.strip()}")
-    label_file.write_text("\n".join(rows), encoding="utf-8")
-    print(f"[to_vietocr] {split}: {len(rows)} crops → {label_file}")
-    return len(rows)
+            text = clean_text(a.text)
+            x0, y0, x1, y1 = clip_box(a.box, w, h)
+            if not text:
+                skip["empty_text"] += 1
+                continue
+            if x1 - x0 < 2 or y1 - y0 < 2:
+                skip["degenerate_box"] += 1
+                continue
+            oov = [c for c in text if c not in vocab]
+            if oov:
+                bad_chars.update(oov)
+                skip["char_not_in_vocab"] += 1
+                continue
+            rel = f"img/{split}/{img.image_id}_{k:03d}.png"
+            cv2.imwrite(str(out / rel), crop_box(bgr, a.box, pad))
+            lines.append(f"{rel}\t{text}")
+            meta.append(f"{rel}\t{a.label}\t{text}")
+            per_class[a.label] += 1
+    lines.sort()
+    meta.sort()
+    (out / f"{split}.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (out / f"{split}_meta.tsv").write_text("path\tlabel\ttext\n" + "\n".join(meta) + "\n",
+                                           encoding="utf-8")
+    print(f"[to_vietocr] {split:5s}: {len(images)} ảnh, {len(lines)} crops "
+          f"({', '.join(f'{c}={per_class[c]}' for c in BOX_LABELS if c in classes)}); "
+          f"bỏ {dict(skip)}")
+    return {"images": len(images), "crops": len(lines),
+            "crops_per_class": {c: per_class[c] for c in BOX_LABELS if c in classes},
+            "skipped": dict(skip), "chars_not_in_vocab": dict(bad_chars)}
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Cắt crops cho VietOCR từ nhãn VAIPE")
-    ap.add_argument("--split", choices=["train", "valid", "test", "all"], default="all")
+    ap = argparse.ArgumentParser(description="Cắt crops VietOCR từ nhãn VAIPE")
+    ap.add_argument("--classes", nargs="+", default=list(BOX_LABELS), choices=BOX_LABELS)
     ap.add_argument("--pad", type=int, default=2, help="đệm pixel quanh box")
-    ap.add_argument("--scale", type=float, default=2.0, help="phóng to crop")
-    ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--out", type=Path, default=VAIPE_CROPS)
     args = ap.parse_args()
-    out_root = args.out or VAIPE_CROPS
-    splits = ["train", "valid", "test"] if args.split == "all" else [args.split]
-    for s in splits:
-        convert_split(s, out_root, pad=args.pad, scale=args.scale)
+    out = args.out.resolve()
+    if out.exists():
+        shutil.rmtree(out)
+    vocab, classes = load_vocab(), set(args.classes)
+    stats = {s: convert_split(s, out, vocab, classes, args.pad) for s in SPLITS}
+    (out / "stats.json").write_text(
+        json.dumps({"classes": args.classes, "pad": args.pad, **stats}, indent=1,
+                   ensure_ascii=False), encoding="utf-8")
+    print(f"[to_vietocr] xong: {out}")
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ Dùng cho:
 from __future__ import annotations
 
 import json
+import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
@@ -36,6 +37,11 @@ class VAIPEImage:
     split: str
     image_path: Path
     annotations: list    # list[VAIPEAnnotation]
+
+
+def clean_text(text) -> str:
+    """Unicode NFC + gộp khoảng trắng — cùng chuẩn hóa với độ đo CER và lúc fine-tune VietOCR."""
+    return " ".join(unicodedata.normalize("NFC", str(text)).split())
 
 
 def read_label_json(json_path: Path) -> list:

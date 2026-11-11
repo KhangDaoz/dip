@@ -36,6 +36,14 @@ def from_yolo(yolo_box, img_w: int, img_h: int) -> np.ndarray:
                      (cx + w / 2) * img_w, (cy + h / 2) * img_h])
 
 
+def clip_box(box, img_w: int, img_h: int) -> list:
+    """Kẹp box xyxy vào trong ảnh, sắp lại nếu đảo, làm tròn thành int."""
+    x0, y0, x1, y1 = (float(v) for v in box)
+    x0, x1 = sorted((min(max(x0, 0), img_w), min(max(x1, 0), img_w)))
+    y0, y1 = sorted((min(max(y0, 0), img_h), min(max(y1, 0), img_h)))
+    return [int(round(x0)), int(round(y0)), int(round(x1)), int(round(y1))]
+
+
 def iou(a, b) -> float:
     """IoU hai hộp xyxy. Trả về 0 nếu không giao."""
     a = np.asarray(a, dtype=float)
