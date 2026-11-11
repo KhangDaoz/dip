@@ -1,11 +1,3 @@
-"""Khối A — tiền xử lý cổ điển, mỗi bước bật/tắt được (plan §5.1).
-
-    from enhance.pipeline import enhance, PRESETS
-    out, info = enhance(img, steps=PRESETS["full"])
-
-Thứ tự cố định: rectify → deskew → shadow → denoise → clahe.
-Lưu ý: rectify/deskew đổi hình học → box nhãn gốc không còn khớp; chỉ dùng khi đo độ đo đầu-cuối.
-"""
 from __future__ import annotations
 
 import time
@@ -20,7 +12,6 @@ from .shadow import remove_shadows
 
 STEPS = ("rectify", "deskew", "shadow", "denoise", "clahe")
 
-# Biến thể dùng trong E-A1 / E-X2
 PRESETS = {
     "none": (),
     "geom": ("deskew",),
@@ -38,7 +29,6 @@ DEFAULT_PARAMS = {
 
 
 def enhance(img: np.ndarray, steps=PRESETS["full"], params: dict | None = None) -> tuple:
-    """Chạy các bước trong `steps` (tên thuộc STEPS hoặc tên preset). Trả về (ảnh, info)."""
     if isinstance(steps, str):
         steps = PRESETS[steps]
     unknown = set(steps) - set(STEPS)

@@ -1,11 +1,3 @@
-"""Đọc file bàn giao của khối B+C (Khang) → dict[image_id, list[TextBox]] (plan_Thang.md mục 2.2).
-
-Định dạng chưa chốt nên đọc linh hoạt:
-* mảng JSON, một object JSON, hoặc JSONL; chịu dấu "," thừa ở cuối;
-* tên trường kiểu Khang (image, class, conf, xyxy, ocr) hoặc kiểu plan_v2 §4.5 (image_id, label, score, box, text).
-
-Trường "gt" KHÔNG được dùng khi dự đoán (G4). Chỉ đọc khi use_gt_text=True (dòng kiểm "text chuẩn" của E-D2).
-"""
 from __future__ import annotations
 
 import json
@@ -23,7 +15,7 @@ def _parse_records(raw: str) -> list[dict]:
         except json.JSONDecodeError:
             continue
         return data if isinstance(data, list) else [data]
-    out = []                                  # JSONL
+    out = []
     for line in raw.splitlines():
         line = line.strip().rstrip(",")
         if line:
@@ -49,7 +41,6 @@ def _to_box(rec: dict, use_gt_text: bool) -> TextBox | None:
 
 
 def load_khang(path, use_gt_text: bool = False) -> dict[str, list[TextBox]]:
-    """Đọc file bàn giao. use_gt_text=True chỉ dùng cho dòng kiểm "text chuẩn"."""
     out: dict[str, list[TextBox]] = {}
     for rec in _parse_records(Path(path).read_text(encoding="utf-8")):
         image_id = Path(str(rec.get("image_id") or rec.get("image"))).stem

@@ -1,7 +1,3 @@
-"""Nạp 2 mô hình đã train (YOLO khối B, VietOCR C3 khối C) và chạy trên 1 ảnh mẫu VAIPE.
-
-Bỏ qua nếu thiếu thư viện học sâu hoặc chưa tải trọng số (`python tools/download_weights.py`).
-"""
 import cv2
 import pytest
 
@@ -29,7 +25,7 @@ def test_yolo_detects_prescription_fields(img):
     for b in boxes:
         b.validate()
     assert labels.count("drugname") >= 1
-    assert labels.count("drugname") == labels.count("quantity")   # mỗi thuốc một dòng SL
+    assert labels.count("drugname") == labels.count("quantity")
     assert labels.count("date") == 1
 
 

@@ -1,7 +1,3 @@
-"""Các phép làm hỏng có kiểm soát để sinh ảnh test suy giảm L0/L2/L4 (plan §2.4; tools/make_degraded.py).
-
-Mỗi hàm nhận ảnh BGR, trả về (ảnh hỏng, tham số thật dạng dict).
-"""
 from __future__ import annotations
 
 import cv2
@@ -14,7 +10,6 @@ def _paper_color(img):
 
 
 def rotate(img: np.ndarray, angle_deg: float) -> tuple:
-    """Xoay quanh tâm, giữ kích thước, vùng trống tô màu giấy (dương = ngược chiều kim đồng hồ)."""
     h, w = img.shape[:2]
     M = cv2.getRotationMatrix2D((w / 2, h / 2), angle_deg, 1.0)
     out = cv2.warpAffine(img, M, (w, h), flags=cv2.INTER_CUBIC, borderValue=_paper_color(img))
@@ -22,7 +17,6 @@ def rotate(img: np.ndarray, angle_deg: float) -> tuple:
 
 
 def perspective(img: np.ndarray, level: float, rng: np.random.Generator) -> tuple:
-    """Dịch ngẫu nhiên 4 góc level × cạnh, đặt trên nền bàn tối (khung rộng hơn để giữ đủ 4 góc giấy)."""
     h, w = img.shape[:2]
     m = int(level * max(h, w)) + 20
     src = np.float32([[0, 0], [w - 1, 0], [w - 1, h - 1], [0, h - 1]])
@@ -37,14 +31,12 @@ def perspective(img: np.ndarray, level: float, rng: np.random.Generator) -> tupl
 
 
 def gaussian_blur(img: np.ndarray, level: float) -> tuple:
-    """Tích chập nhân Gaussian (C3 · S47–53): σ = 0,8·level, cửa sổ lẻ ≈ 6σ."""
     sigma = 0.8 * level
     k = int(6 * sigma) | 1
     return cv2.GaussianBlur(img, (k, k), sigma), {"sigma": float(sigma)}
 
 
 def motion_blur(img: np.ndarray, level: int, rng: np.random.Generator) -> tuple:
-    """Tích chập nhân đường thẳng dài 4·level+1, hướng ngẫu nhiên (C3 · S47–48)."""
     length = 4 * level + 1
     angle = float(rng.uniform(0, 180))
     k = np.zeros((length, length), np.float32)
@@ -55,7 +47,6 @@ def motion_blur(img: np.ndarray, level: int, rng: np.random.Generator) -> tuple:
 
 
 def shadow(img: np.ndarray, level: int, rng: np.random.Generator) -> tuple:
-    """I' = I · M, M là mặt nạ chiếu sáng (gradient + vệt tối mờ), 3 mức (C3 · S10–11)."""
     h, w = img.shape[:2]
     strength = (0.25, 0.45, 0.65)[level - 1]
     yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
@@ -72,13 +63,11 @@ def shadow(img: np.ndarray, level: int, rng: np.random.Generator) -> tuple:
 
 
 def jpeg(img: np.ndarray, quality: int) -> tuple:
-    """Nén JPEG (C6): lượng tử hóa DCT khối 8×8 làm mất tần số cao."""
     _, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, int(quality)])
     return cv2.imdecode(buf, cv2.IMREAD_COLOR), {"jpeg_quality": int(quality)}
 
 
 def gaussian_noise(img: np.ndarray, level: int, rng: np.random.Generator) -> tuple:
-    """g = f + η, η ~ N(0, σ²), σ = 4·level (C3 · S65–66)."""
     sigma = 4.0 * level
     out = np.clip(img.astype(np.float32) + rng.normal(0, sigma, img.shape), 0, 255).astype(np.uint8)
     return out, {"noise_sigma": float(sigma)}

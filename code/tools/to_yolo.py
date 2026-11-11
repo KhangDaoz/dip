@@ -1,18 +1,3 @@
-"""Chuyển nhãn VAIPE → bộ dữ liệu YOLO cho khối B (plan §5.2), 6 lớp.
-
-Cùng cách với script đã dùng để train `weights/yolo_vaipe.pt` trên Kaggle
-(UIT4meow_VAIPE/tools/prepare_yolo_pres.py): box kẹp vào ảnh, bỏ box suy biến (≤ 1 px).
-
-Đầu ra (mặc định data/1_vaipe/yolo):
-    images/{train,valid,test}/<id>.png   symlink tới ảnh gốc (copy nếu không symlink được)
-    labels/{train,valid,test}/<id>.txt   "class cx cy w h" chuẩn hóa, mỗi box một dòng
-    data.yaml                            đường dẫn tuyệt đối, cho ultralytics
-    stats.json                           số ảnh, số box theo lớp, số box bị bỏ
-
-Chạy:
-    python tools/to_yolo.py
-    python tools/to_yolo.py --out /tmp/yolo
-"""
 from __future__ import annotations
 
 import argparse

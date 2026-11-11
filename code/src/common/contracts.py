@@ -1,20 +1,8 @@
-"""Hợp đồng dữ liệu pipeline v2 (plan.md §4.2).
-
-Quy ước mới (khác v1):
-* box = [x0, y0, x1, y1] (xyxy, pixel, số nguyên), gốc trên-trái — khớp nhãn VAIPE gốc.
-* Không còn PreprocessResult/CleaningResult/LabReportResult — pipeline đơn thuốc chỉ.
-* 6 lớp vùng chữ: drugname, quantity, usage, diagnose, date, other.
-
-    ảnh ─► [A] enhance ─► [B] detect ─► [C] recognize ─► [D] assemble ─► PrescriptionResult
-
-Muốn đổi hợp đồng: báo cả nhóm, sửa file này + test_contracts.py trong cùng commit.
-"""
 from __future__ import annotations
 
 from dataclasses import dataclass, field, asdict
 from typing import Optional
 
-# 6 lớp vùng chữ VAIPE (thứ tự dùng làm class_id YOLO)
 BOX_LABELS = ("drugname", "quantity", "usage", "diagnose", "date", "other")
 LABEL_TO_ID = {l: i for i, l in enumerate(BOX_LABELS)}
 
@@ -36,9 +24,8 @@ class _Contract:
 
 @dataclass
 class TextBox(_Contract):
-    """Đầu ra khối B, đầu vào khối C. Khối C điền `text`/`text_conf`."""
-    box: list                # [x0, y0, x1, y1] pixel
-    label: Optional[str] = None     # một trong 6 lớp, hoặc None nếu detector cổ điển
+    box: list
+    label: Optional[str] = None
     score: float = 0.0
     text: str = ""
     text_conf: float = 0.0
@@ -56,14 +43,13 @@ class TextBox(_Contract):
 
 @dataclass
 class Item(_Contract):
-    """Một khoản thuốc — đầu ra khối D."""
-    name: str                      # đã bỏ tiền tố "1) "
-    name_raw: str                  # chuỗi OCR gốc
+    name: str
+    name_raw: str
     quantity: Optional[int] = None
     unit: Optional[str] = None
     usage: list = field(default_factory=list)
     lexicon_match: Optional[str] = None
-    box: list = field(default_factory=list)   # khung bao khoản (union của các box thành phần)
+    box: list = field(default_factory=list)
 
     def validate(self):
         if self.box:
@@ -75,13 +61,12 @@ class Item(_Contract):
 
 @dataclass
 class PrescriptionResult(_Contract):
-    """Đầu ra pipeline."""
     image_id: str
-    items: list = field(default_factory=list)        # list[Item]
+    items: list = field(default_factory=list)
     diagnose: Optional[str] = None
     date: Optional[str] = None
-    boxes: list = field(default_factory=list)        # list[TextBox] để vẽ overlay
-    timing: dict = field(default_factory=dict)       # giây cho từng khối A/B/C/D
+    boxes: list = field(default_factory=list)
+    timing: dict = field(default_factory=dict)
 
     def validate(self):
         for it in self.items:

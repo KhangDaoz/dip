@@ -1,4 +1,3 @@
-"""A4 khử nhiễu (ch. 3): lọc trung vị (muối tiêu, JPEG) hoặc song phương (giữ biên)."""
 from __future__ import annotations
 
 import cv2

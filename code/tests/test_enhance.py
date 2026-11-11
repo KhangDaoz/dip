@@ -1,4 +1,3 @@
-"""Khối A — tiền xử lý (plan §5.1, §9). Dùng ảnh tổng hợp của conftest, không cần data."""
 import numpy as np
 import pytest
 
@@ -37,10 +36,10 @@ def test_deskew_straightens(page):
 def test_shadow_flattens_background(page_gray):
     from enhance.shadow import remove_shadows
     h, w = page_gray.shape
-    ramp = np.linspace(0.5, 1.0, w)[None, :]            # bóng: trái tối dần sang phải
+    ramp = np.linspace(0.5, 1.0, w)[None, :]
     shaded = (page_gray * ramp).astype(np.uint8)
     flat = remove_shadows(shaded)
-    bg = flat[:40, :]                                   # dải nền phía trên, không có chữ
+    bg = flat[:40, :]
     assert bg[:, :50].mean() > 200 and abs(bg[:, :50].mean() - bg[:, -50:].mean()) < 15
 
 

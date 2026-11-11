@@ -1,15 +1,3 @@
-"""E-B0 / E-B1 / E-B2 — khối B phát hiện vùng chữ (plan §5.2).
-
-E-B0 (valid): (a) quét ngưỡng conf của YOLO; (b) lưới tham số a, v, xóa đường kẻ của detector cổ điển.
-              Chọn cấu hình tối đa F1 trên valid — test KHÔNG dùng để chọn.
-E-B1 (test):  cổ điển vs YOLO, KHÔNG xét lớp — P/R/F1 @IoU 0,5 (ghép tham lam, cộng dồn cả tập).
-E-B2 (test):  YOLO 6 lớp — P/R/F1 từng lớp, ma trận nhầm lẫn, mAP50 / mAP50-95 (ultralytics model.val).
-
-    python experiments/e_b_detection.py                  # đủ B0 + B1 + B2
-    python experiments/e_b_detection.py --skip-grid      # dùng a, v mặc định của detect/classical.py
-Kết quả: results/e_b/{b0_yolo_conf_valid.csv, b0_classical_grid_valid.csv, b1_test.csv, b2_per_class_test.csv,
-         b2_confusion_test.csv, b2_confusion.png, b2_map_test.json, config.json}
-"""
 import argparse
 import itertools
 import json
@@ -51,7 +39,6 @@ def main():
     cfg = {"iou_match": 0.5, "imgsz": IMGSZ}
     valid, test = list_images("valid"), list_images("test")
 
-    # ---- E-B0a: ngưỡng conf YOLO trên valid (dự đoán 1 lần ở conf thấp rồi lọc)
     raw, _ = run(valid, lambda im: detect_yolo(im, conf=0.05))
     gts = [im.annotations for im in valid]
     rows = []
@@ -66,7 +53,6 @@ def main():
     print(f"[E-B0a] conf tốt nhất trên valid (lưới 0,05): {best_conf}; code đang dùng CONF={CONF}")
     cfg["yolo_conf"] = CONF
 
-    # ---- E-B0b: lưới tham số cổ điển trên một phần valid
     best = {"a": C.A, "v": C.V, "lines": C.LINES}
     if not args.skip_grid:
         sub = valid[:args.grid_images]
@@ -84,7 +70,6 @@ def main():
         print(f"[E-B0b] cổ điển tốt nhất trên {len(sub)} ảnh valid: {best}, F1={top['F1']:.3f}")
     cfg["classical"] = best
 
-    # ---- E-B1: test, không xét lớp
     gts = [im.annotations for im in test]
     yolo, t_yolo = run(test, lambda im: detect_yolo(im))
     clas, t_clas = run(test, lambda im: C.detect_classical(im, **best))
@@ -97,7 +82,6 @@ def main():
     save_table(b1, EXP_ID, "b1_test")
     print("\n[E-B1] test, không xét lớp\n", b1.round(4).to_string(index=False))
 
-    # ---- E-B2: YOLO theo lớp + ma trận nhầm lẫn + mAP
     r = evaluate(gts, yolo, by_class=True)
     b2 = pd.DataFrame([{"class": l, "P": r[l][0], "R": r[l][1], "F1": r[l][2],
                         "n_gt": r["counts"].get(f"{l}/tp", 0) + r["counts"].get(f"{l}/fn", 0)} for l in BOX_LABELS]

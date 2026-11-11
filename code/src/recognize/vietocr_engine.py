@@ -1,19 +1,3 @@
-"""Khối C — VietOCR `vgg_transformer` (plan §5.3).
-
-* C3 (chính): trọng số fine-tune trên VAIPE — code/weights/vietocr_finetuned.pth
-  (notebooks/finetune_vietocr.ipynb; tải: tools/download_weights.py).
-* C2 (đối chứng): trọng số pretrained chính thức (tự tải từ vocr.vn lần đầu).
-
-Cả hai nạp bằng configs/vietocr_vgg_transformer.yml với image_max_width = 1024 — PHẢI khớp lúc
-fine-tune (mặc định VietOCR là 512, sẽ bóp méo ~5 % vùng dài như dòng chẩn đoán).
-Vùng cắt giống lúc train: box chuẩn/dự đoán + đệm 2 px, không phóng (`crop_box`).
-
-    from recognize.vietocr_engine import VietOCREngine
-    ocr = VietOCREngine("finetuned")                 # hoặc "pretrained"
-    ocr.read(crop_bgr) -> (text, prob)
-    ocr.read_batch([crop, ...]) -> [(text, prob), ...]
-    ocr.recognize(img_bgr, text_boxes)               # điền TextBox.text / text_conf tại chỗ
-"""
 from __future__ import annotations
 
 import sys
@@ -33,9 +17,8 @@ _PREDICTORS: dict = {}
 
 
 def _stub_imgaug():
-    """vietocr import imgaug ở mức module nhưng chỉ dùng albumentations; imgaug 0.4 hỏng với NumPy 2."""
     try:
-        import imgaug  # noqa: F401
+        import imgaug
     except Exception:
         stub = types.ModuleType("imgaug")
         stub.augmenters = types.ModuleType("imgaug.augmenters")
@@ -52,7 +35,6 @@ def _device(device):
 
 def load_predictor(weights: Path | str = VIETOCR_FINETUNED, device=None, max_width: int = MAX_WIDTH,
                    config: Path | str = VIETOCR_CONFIG):
-    """Nạp (và cache) vietocr Predictor. weights: đường dẫn .pth, hoặc PRETRAINED_URL cho C2."""
     weights = str(weights)
     device = _device(device)
     key = (weights, device, max_width)
@@ -62,7 +44,7 @@ def load_predictor(weights: Path | str = VIETOCR_FINETUNED, device=None, max_wid
         raise FileNotFoundError(f"không thấy {weights} — chạy: python tools/download_weights.py")
     _stub_imgaug()
     import os
-    os.environ.setdefault("TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD", "1")   # torch>=2.6 + vietocr torch.load
+    os.environ.setdefault("TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD", "1")
     from vietocr.tool.config import Cfg
     from vietocr.tool.predictor import Predictor
     cfg = Cfg.load_config_from_file(str(config))
@@ -76,7 +58,6 @@ def load_predictor(weights: Path | str = VIETOCR_FINETUNED, device=None, max_wid
 
 
 def crop_box(img_bgr: np.ndarray, box, pad: int = PAD) -> np.ndarray:
-    """Cắt box xyxy với đệm `pad` px, kẹp trong ảnh — giống lúc tạo dữ liệu train (tools/to_vietocr.py)."""
     h, w = img_bgr.shape[:2]
     x0, y0, x1, y1 = clip_box(box, w, h)
     return img_bgr[max(y0 - pad, 0):min(y1 + pad, h), max(x0 - pad, 0):min(x1 + pad, w)]
@@ -89,7 +70,6 @@ def _pil(crop: np.ndarray):
 
 
 class VietOCREngine:
-    """variant: 'finetuned' (C3, mặc định) | 'pretrained' (C2). `weights` ghi đè đường dẫn."""
 
     def __init__(self, variant: str = "finetuned", weights: Path | str | None = None, device=None,
                  batch_size: int = 64):
@@ -102,14 +82,12 @@ class VietOCREngine:
         self.predictor = load_predictor(weights, device=device)
 
     def read(self, crop: np.ndarray) -> tuple:
-        """Một vùng BGR → (text, prob)."""
         if crop.size == 0:
             return "", 0.0
         text, prob = self.predictor.predict(_pil(crop), return_prob=True)
         return text, float(prob)
 
     def read_batch(self, crops: list) -> list:
-        """Nhiều vùng → [(text, prob)]. Gom theo tỉ lệ rộng/cao để mỗi batch ít kích thước (nhanh hơn)."""
         out = [("", 0.0)] * len(crops)
         idx = sorted((i for i, c in enumerate(crops) if c.size),
                      key=lambda i: crops[i].shape[1] / crops[i].shape[0])
@@ -121,7 +99,6 @@ class VietOCREngine:
         return out
 
     def recognize(self, img_bgr: np.ndarray, text_boxes: list, pad: int = PAD) -> list:
-        """Điền `text`, `text_conf` cho list[TextBox] (sửa tại chỗ) và trả về chính list đó."""
         results = self.read_batch([crop_box(img_bgr, tb.box, pad) for tb in text_boxes])
         for tb, (text, prob) in zip(text_boxes, results):
             tb.text, tb.text_conf = text, min(max(prob, 0.0), 1.0)

@@ -1,22 +1,3 @@
-"""Cắt vùng chữ VAIPE → bộ dữ liệu VietOCR cho khối C (plan §5.3). Cũng là tập crops cho E-C1.
-
-Cùng cách với script đã dùng để fine-tune `weights/vietocr_finetuned.pth` trên Kaggle
-(UIT4meow_VAIPE/tools/prepare_vietocr_pres.py), để crops test khớp phân phối lúc train:
-* cắt theo box chuẩn, đệm 2 px, KHÔNG phóng to (VietOCR tự resize về cao 32);
-* chữ chuẩn hóa NFC + gộp khoảng trắng (`vaipe.dataset.clean_text`);
-* bỏ vùng có ký tự ngoài vocab VietOCR (configs/vietocr_vgg_transformer.yml), chữ rỗng, box < 2 px.
-Phóng ×2 cho Tesseract (C0/C1) làm ở engine, không làm ở đây.
-
-Đầu ra (mặc định data/1_vaipe/crops):
-    img/{train,valid,test}/<id>_<k>.png   k = thứ tự vùng trong file nhãn
-    {train,valid,test}.txt          "img/<split>/<file>.png<TAB><text>" (định dạng VietOCR)
-    {train,valid,test}_meta.tsv     path, label, text — để tính CER theo lớp
-    stats.json
-
-Chạy:
-    python tools/to_vietocr.py
-    python tools/to_vietocr.py --classes drugname quantity
-"""
 from __future__ import annotations
 
 import argparse
@@ -44,7 +25,6 @@ def load_vocab(config_path: Path = VIETOCR_CONFIG) -> set:
 
 
 def crop_box(img_bgr: np.ndarray, box, pad: int = 2) -> np.ndarray:
-    """Cắt box xyxy (đã kẹp trong ảnh) với đệm `pad` px, không vượt mép ảnh."""
     h, w = img_bgr.shape[:2]
     x0, y0, x1, y1 = clip_box(box, w, h)
     return img_bgr[max(y0 - pad, 0):min(y1 + pad, h), max(x0 - pad, 0):min(x1 + pad, w)]
@@ -60,7 +40,6 @@ def convert_split(split: str, out: Path, vocab: set, classes: set, pad: int) -> 
         if bgr is None:
             raise SystemExit(f"Không đọc được {img.image_path}")
         h, w = bgr.shape[:2]
-        # k = vị trí trong file nhãn (như bản Kaggle), KHÔNG dùng a.id vì id VAIPE có chỗ khuyết
         for k, a in enumerate(img.annotations):
             if a.label not in classes:
                 continue

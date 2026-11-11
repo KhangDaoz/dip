@@ -1,4 +1,3 @@
-"""Hàm dùng chung cho E-X1, E-A1: chấm F1 khoản thuốc ĐÚNG như E-D2 (assemble.scoring của khối D)."""
 from __future__ import annotations
 
 import json
@@ -18,7 +17,6 @@ def load_gt(split: str = "test") -> dict:
 
 
 def score(name: str, results: dict, gt: dict) -> dict:
-    """results = {image_id: (items, diagnose, date)} → một dòng bảng, cùng cột với E-D2."""
     gt_items = {k: v["items"] for k, v in gt.items()}
     preds = {k: results.get(k, ([], None, None))[0] for k in gt}
     agg, counts = evaluate_d(gt_items, preds, use_lexicon=True)
@@ -35,5 +33,4 @@ def score(name: str, results: dict, gt: dict) -> dict:
 
 
 def assemble_handoff(path: Path, lexicon, use_gt_text: bool = False) -> dict:
-    """File bàn giao B+C → {image_id: (items, diagnose, date)} qua khối D."""
     return {k: assemble(v, lexicon=lexicon) for k, v in load_khang(path, use_gt_text=use_gt_text).items()}

@@ -1,4 +1,3 @@
-"""Độ đo (plan §9): CER/WER ví dụ biết trước; F1 khoản: khớp hoàn hảo, thiếu 1, thừa 1; detection; bootstrap."""
 import pytest
 
 from common.contracts import Item, TextBox
@@ -32,8 +31,8 @@ def test_items_missing_and_extra():
 
 
 def test_items_ocr_tolerance_and_quantity():
-    c = image_counts(GT, [{"name": "RENAPRIL 5MG 5mq", "quantity": 28},   # 1 lỗi / 16 ký tự ≤ 0,1
-                          {"name": "Amlodipin 5mg", "quantity": 10}])     # tên đúng, SL sai
+    c = image_counts(GT, [{"name": "RENAPRIL 5MG 5mq", "quantity": 28},
+                          {"name": "Amlodipin 5mg", "quantity": 10}])
     assert c["tp"] == 1 and c["name_tp"] == 2 and c["qty_ok"] == 1
 
 

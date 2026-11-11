@@ -1,15 +1,3 @@
-"""E-C1 — bộ OCR nào tốt nhất trên vùng chữ chuẩn? (plan §5.3)
-
-Đọc vùng cắt theo box CHUẨN (data/1_vaipe/crops, sinh bởi tools/to_vietocr.py) để cô lập khối C khỏi lỗi khối B.
-So C0 Tesseract xám · C1 Tesseract Sauvola · C2 VietOCR pretrained · C3 VietOCR fine-tune.
-Độ đo: CER, WER toàn tập (tổng lỗi / tổng ký tự), CER riêng từng lớp, giây/vùng. Chữ GT đã chuẩn hóa NFC.
-
-    python experiments/e_c1_ocr.py                          # 4 engine trên toàn bộ test (~6 nghìn vùng)
-    python experiments/e_c1_ocr.py --engines C2 C3          # bỏ Tesseract (máy chưa cài)
-    python experiments/e_c1_ocr.py --split valid --limit 500
-Engine không chạy được (thiếu Tesseract / trọng số) thì bỏ qua và báo, không dừng cả thí nghiệm.
-Kết quả: results/e_c1/{table.csv, preds_<engine>.csv, config.json}
-"""
 import argparse
 import csv
 import time
@@ -45,7 +33,7 @@ def make_engine(name: str):
 def load_crops(split: str, limit, seed: int):
     with open(VAIPE_CROPS / f"{split}_meta.tsv", encoding="utf-8") as f:
         rows = list(csv.DictReader(f, delimiter="\t"))
-    if limit and limit < len(rows):      # lấy mẫu ngẫu nhiên có seed, giữ tỉ lệ các lớp
+    if limit and limit < len(rows):
         idx = np.sort(np.random.default_rng(seed).choice(len(rows), limit, replace=False))
         rows = [rows[i] for i in idx]
     crops = [read_image(VAIPE_CROPS / r["path"]) for r in rows]
@@ -71,7 +59,7 @@ def main():
     for name in args.engines:
         try:
             engine = make_engine(name)
-            engine.read_batch(crops[:4])                      # khởi động (nạp mô hình), không tính giờ
+            engine.read_batch(crops[:4])
         except Exception as e:
             print(f"! bỏ qua {name}: {type(e).__name__}: {e}")
             continue

@@ -1,13 +1,3 @@
-"""Sinh file bàn giao B+C (vùng chữ + chữ OCR) cho khối D / thí nghiệm E-D2 (plan §5.4).
-
-Mỗi preset một file JSONL, mỗi dòng một ảnh: {"image_id", "boxes": [{class, conf, xyxy, ocr, ocr_conf, gt}]}
-— định dạng assemble/load.py đọc được. Trường "gt" (chữ chuẩn của box đáp án ghép IoU ≥ 0,5) chỉ phục vụ dòng
-kiểm "text chuẩn" của E-D2 (--check), không dùng khi dự đoán.
-
-    python tools/make_handoff.py --preset dl_c3 dl_c2 hybrid classical      # 176 ảnh test
-    python tools/make_handoff.py --preset dl_c3 --limit 5                    # thử nhanh
-Chạy tiếp được: ảnh đã có trong file thì bỏ qua. Ra: results/handoff/<preset>.jsonl + <preset>_timing.json
-"""
 from __future__ import annotations
 
 import argparse

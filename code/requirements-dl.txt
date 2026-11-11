@@ -1,9 +1,4 @@
-# Học sâu + API (plan §3). Python 3.11 khuyến nghị (đã thử: 3.11 local, 3.13 trên Kaggle).
-# Thứ tự cài:
-#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121   # GPU (RTX 3050); CPU: .../whl/cpu
-#   pip install -r requirements-dl.txt
-#   pip install --no-deps -r requirements-vietocr.txt     # vietocr ghim pillow/imgaug cũ → cài KHÔNG kèm phụ thuộc
-#   python tools/download_weights.py                       # trọng số YOLO + VietOCR từ Drive nhóm
+# Cài theo thứ tự trong README.md
 -r requirements.txt
 torch>=2.2
 torchvision>=0.17

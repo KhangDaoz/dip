@@ -1,14 +1,3 @@
-"""Prescription OCR — giao diện demo Gradio cho pipeline A → B → C → D.
-
-    cd code
-    .venv\\Scripts\\python app.py              # mở http://127.0.0.1:7860
-    .venv\\Scripts\\python app.py --share      # tạo link công khai tạm thời của Gradio
-
-Bố cục: header + trạng thái (Ready / Processing / Completed / Error), dải pipeline
-Image Input → Preprocessing → Detection → OCR → Structured JSON (kèm thời gian thật của từng khối),
-cột trái: ảnh vào + ảnh detection, cột phải: JSON PrescriptionResult, danh sách thuốc, văn bản OCR.
-Giao diện chỉ hiển thị kết quả thật của pipeline; không đổi mô hình, tiền xử lý hay suy luận.
-"""
 from __future__ import annotations
 
 import argparse
@@ -27,14 +16,13 @@ from common.paths import SAMPLES_DIR
 from pipeline import PRESETS, Pipeline, draw_overlay
 from pipeline.core import COLORS
 
-# ---------------------------------------------------------------- nhãn hiển thị
-MODES = [  # (nhãn, preset của pipeline)
+MODES = [
     ("YOLOv8 + VietOCR tinh chỉnh (khuyên dùng)", "dl_c3"),
     ("YOLOv8 + VietOCR gốc", "dl_c2"),
     ("YOLOv8 + Tesseract", "hybrid"),
     ("Cổ điển: Sauvola + Tesseract", "classical"),
 ]
-ENHANCE = [  # (nhãn, mức tiền xử lý khối A)
+ENHANCE = [
     ("Không", "none"),
     ("Chỉnh nghiêng", "geom"),
     ("Chỉnh nghiêng + khử bóng", "light"),
@@ -45,7 +33,6 @@ FIELD_VI = {"drugname": "Tên thuốc", "quantity": "Số lượng", "usage": "C
 DETECTOR_SUB = {"yolo": "YOLOv8 · 6 lớp", "classical": "Sauvola + phép giãn"}
 OCR_SUB = {"C0": "Tesseract", "C1": "Tesseract", "C2": "VietOCR", "C3": "VietOCR tinh chỉnh"}
 
-# ---------------------------------------------------------------- icon (Lucide, nhúng SVG nội tuyến)
 _ICONS = {
     "image": '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/>'
              '<path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
@@ -83,7 +70,6 @@ def _hex(bgr) -> str:
     return f"#{r:02x}{g:02x}{b:02x}"
 
 
-# ---------------------------------------------------------------- pipeline (nạp một lần cho mỗi cấu hình)
 _PIPES: dict = {}
 
 
@@ -94,7 +80,6 @@ def get_pipe(preset: str, enhance: str, use_lexicon: bool) -> Pipeline:
     return _PIPES[key]
 
 
-# ---------------------------------------------------------------- các khối HTML
 STATUS_TEXT = {"ready": "Ready", "processing": "Processing", "completed": "Completed", "error": "Error"}
 
 
@@ -114,7 +99,6 @@ HEADER = f"""<div class='hdr'>
 
 
 def stages_html(state: str = "idle", mode: str = "dl_c3", enhance: str = "none", timing: dict | None = None) -> str:
-    """state: idle | processing | completed | error. Thời gian lấy từ PrescriptionResult.timing (giây)."""
     p = PRESETS.get(mode, PRESETS["dl_c3"])
     timing = timing or {}
     steps = [
@@ -187,7 +171,6 @@ def drugs_html(res, use_lexicon: bool) -> str:
     return "".join(rows)
 
 
-# ---------------------------------------------------------------- sự kiện
 def on_image_change(image, mode, enhance):
     msg = "Ảnh đã sẵn sàng. Bấm “Nhận diện & Trích xuất”" if image is not None else "Tải ảnh phiếu thuốc lên để bắt đầu"
     return header_html("ready", msg), stages_html("idle", mode, enhance)
@@ -208,10 +191,10 @@ def run(image, mode: str, enhance: str, use_lexicon: bool):
         if image.ndim == 3 else cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
     try:
         pipe = get_pipe(mode, enhance, use_lexicon)
-        img_a, boxes, timing = pipe.read(img)                     # A → B → C
+        img_a, boxes, timing = pipe.read(img)
         t = time.perf_counter()
         from assemble.group import assemble_result
-        res = assemble_result("upload", boxes, lexicon=pipe.lexicon)   # D
+        res = assemble_result("upload", boxes, lexicon=pipe.lexicon)
         timing["D"] = time.perf_counter() - t
         res.timing = timing
     except Exception as e:
@@ -220,7 +203,6 @@ def run(image, mode: str, enhance: str, use_lexicon: bool):
         return (header_html("error", msg), stages_html("error", mode, enhance),
                 summary_html(), EMPTY_DRUGS, None, None, None, None, gr.update(value=None, interactive=False))
 
-    # Box ở hệ tọa độ của ảnh sau tiền xử lý → vẽ lên ảnh đó.
     overlay = cv2.cvtColor(draw_overlay(img_a, res), cv2.COLOR_BGR2RGB)
     enhanced = cv2.cvtColor(img_a, cv2.COLOR_BGR2RGB)
     ocr_rows = [[i, FIELD_VI.get(b.label, "—"), b.text, f"{b.score:.0%}", f"{b.text_conf:.0%}"]
@@ -239,7 +221,6 @@ def clear(mode, enhance):
             None, None, None, None, gr.update(value=None, interactive=False))
 
 
-# ---------------------------------------------------------------- giao diện
 CSS = """
 :root {--ink:#0f172a; --ink2:#475569; --ink3:#94a3b8; --line:#e6eaf0; --soft:#f8fafc; --blue:#2563eb;
   --blue-50:#eff6ff; --blue-100:#dbeafe}
@@ -338,7 +319,6 @@ button.secondary {border:1px solid #e2e8f0 !important}
   .summary {grid-template-columns:1fr 1fr} .kv.wide {grid-column:1 / -1} .status .msg {display:none}}
 """
 
-# Giao diện thiết kế cho nền sáng: luôn mở ở chế độ sáng.
 FORCE_LIGHT = """() => {
   const u = new URL(window.location.href);
   if (u.searchParams.get('__theme') !== 'light') { u.searchParams.set('__theme', 'light'); window.location.replace(u.href); }
@@ -373,7 +353,6 @@ def build_ui() -> gr.Blocks:
         stages = gr.HTML(stages_html(), padding=False, elem_id="stages-box")
 
         with gr.Row(equal_height=False):
-            # ---------------- cột trái: đầu vào + detection
             with gr.Column(scale=5, elem_id="left-panel"):
                 gr.HTML(section("image", "Ảnh phiếu thuốc"), padding=False)
                 inp = gr.Image(type="numpy", height=340, show_label=False, sources=["upload", "clipboard"],
@@ -398,7 +377,6 @@ def build_ui() -> gr.Blocks:
                         enhanced = gr.Image(show_label=False, height=520, interactive=False,
                                             buttons=["download", "fullscreen"])
 
-            # ---------------- cột phải: kết quả có cấu trúc
             with gr.Column(scale=5, elem_id="right-panel"):
                 with gr.Row(equal_height=True):
                     gr.HTML(section("braces", "Kết quả trích xuất"), padding=False, scale=1)

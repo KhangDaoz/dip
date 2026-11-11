@@ -1,4 +1,3 @@
-"""P/R/F1 phát hiện @IoU (plan §6): ghép tham lam, cộng dồn TP/FP/FN cả tập."""
 from __future__ import annotations
 
 from collections import Counter
@@ -16,7 +15,6 @@ def _label(o):
 
 
 def match_counts(gt: list, pred: list, iou_threshold: float = 0.5, by_class: bool = False) -> Counter:
-    """Đếm TP/FP/FN một ảnh. by_class=True: chỉ ghép cùng lớp, trả thêm khóa '<lớp>/tp' ..."""
     c = Counter()
     groups = BOX_LABELS if by_class else (None,)
     for lab in groups:
@@ -35,7 +33,6 @@ def match_counts(gt: list, pred: list, iou_threshold: float = 0.5, by_class: boo
 
 
 def evaluate(gts: list, preds: list, iou_threshold: float = 0.5, by_class: bool = False) -> dict:
-    """gts, preds: list (theo ảnh) các list box/TextBox. Trả về {'all': (P,R,F1), '<lớp>': (P,R,F1), 'counts'}."""
     total = Counter()
     for g, p in zip(gts, preds):
         total += match_counts(g, p, iou_threshold, by_class)
@@ -47,8 +44,6 @@ def evaluate(gts: list, preds: list, iou_threshold: float = 0.5, by_class: bool 
 
 
 def confusion_matrix(gts: list, preds: list, iou_threshold: float = 0.5):
-    """Ma trận nhầm lẫn 7×7 (6 lớp + 'bg'): ghép không phân lớp rồi đếm (lớp GT, lớp dự đoán).
-    GT không ghép được → cột bg; dự đoán thừa → hàng bg."""
     import numpy as np
     names = list(BOX_LABELS) + ["bg"]
     idx = {n: i for i, n in enumerate(names)}

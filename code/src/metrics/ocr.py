@@ -1,5 +1,3 @@
-"""CER / WER (plan §6). Chuẩn hóa NFC + gộp khoảng trắng (tiếng Việt có thể mã hóa dấu theo 2 cách);
-phân biệt hoa/thường. Báo cáo cả tập dùng corpus_cer (tổng lỗi / tổng ký tự), không lấy trung bình từng mẫu."""
 from __future__ import annotations
 
 import unicodedata
@@ -10,7 +8,6 @@ def _norm(s: str) -> str:
 
 
 def edit_distance(a, b) -> int:
-    """Khoảng cách Levenshtein (chèn / xóa / thay), quy hoạch động O(len(a)·len(b)). a, b: chuỗi hoặc list từ."""
     if len(a) < len(b):
         a, b = b, a
     prev = list(range(len(b) + 1))
@@ -23,7 +20,6 @@ def edit_distance(a, b) -> int:
 
 
 def cer(pred: str, gt: str) -> float:
-    """Character Error Rate = số lỗi ký tự / số ký tự của đáp án."""
     pred, gt = _norm(pred), _norm(gt)
     if not gt:
         return 0.0 if not pred else 1.0
@@ -31,7 +27,6 @@ def cer(pred: str, gt: str) -> float:
 
 
 def wer(pred: str, gt: str) -> float:
-    """Word Error Rate = số lỗi từ / số từ của đáp án."""
     p, g = _norm(pred).split(), _norm(gt).split()
     if not g:
         return 0.0 if not p else 1.0
@@ -51,7 +46,6 @@ def corpus_wer(preds: list, gts: list) -> float:
 
 
 def cer_by_label(preds: list, gts: list, labels: list) -> dict:
-    """CER toàn tập theo từng lớp vùng chữ (drugname, quantity, ...) + 'all'."""
     out = {"all": corpus_cer(preds, gts)}
     for lab in sorted(set(labels)):
         idx = [i for i, l in enumerate(labels) if l == lab]

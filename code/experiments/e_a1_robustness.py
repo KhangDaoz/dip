@@ -1,14 +1,3 @@
-"""E-A1 — tiền xử lý cổ điển (khối A) có giúp pipeline chính khi ảnh xấu đi? (plan §5.1, E-X2)
-
-Pipeline chính (YOLO + C3 + D) trên ảnh test suy giảm L0 / L2 / L4, có / không khối A. Chấm F1 khoản thuốc như E-D2.
-Ảnh suy giảm lệch hình học so với nhãn → chỉ đo đầu-cuối (không cần box).
-L0 + none trùng dòng dl_c3 của E-D2 → dùng lại results/handoff/dl_c3.jsonl nếu có.
-Mỗi tổ hợp ~3,5 s/ảnh trên RTX 3050 (VietOCR là phần chậm) → 176 ảnh ≈ 10 phút / tổ hợp.
-
-    python experiments/e_a1_robustness.py                                   # L0 L2 L4 × none full
-    python experiments/e_a1_robustness.py --levels L0 L4 --enhance none full # cắt theo plan §8.4
-Kết quả: results/e_a1/{table.csv, robustness.png, config.json}; cache results/e_a1/<mức>_<A>.jsonl
-"""
 import argparse
 import json
 import time
@@ -26,7 +15,6 @@ EXP_ID = "e_a1"
 
 
 def run_combo(level, enh, ids, path):
-    """Chạy A → B → C trên ảnh mức `level`, lưu bàn giao (cache, chạy tiếp được). Trả về giây/ảnh."""
     done = set()
     if path.exists():
         done = {json.loads(l)["image_id"] for l in path.read_text(encoding="utf-8").splitlines() if l.strip()}
@@ -62,7 +50,7 @@ def main():
             path = out / f"{lv}_{enh}.jsonl"
             reuse = RESULTS_DIR / "handoff" / "dl_c3.jsonl"
             if lv == "L0" and enh == "none" and reuse.exists() and not path.exists():
-                path = reuse                                  # ảnh L0 = ảnh gốc → trùng dl_c3 của E-D2
+                path = reuse
                 print(f"[{lv}/{enh}] dùng lại {reuse}")
             else:
                 print(f"[{lv}/{enh}]")

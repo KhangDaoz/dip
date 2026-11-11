@@ -1,16 +1,3 @@
-"""E-D2 — bảng chính đầu-cuối trên 176 ảnh test (plan_Thang.md mục 6.2).
-
-Mỗi dòng là một file bàn giao B+C (định dạng Khang hoặc plan_v2 §4.5), cộng dòng VLM và dòng kiểm "text chuẩn".
-
-Chạy (từ code/), ví dụ:
-    python experiments/e_d2.py --variant dl_c3=../results/handoff/yolo_c3.json \
-                               --check dl_c3 --vlm --workers 4
-    --variant TÊN=ĐƯỜNG_DẪN   lặp lại cho từng dòng (cổ điển, lai, dl_c3, dl_c2 ...)
-    --check TÊN               thêm dòng "text chuẩn": cùng file của TÊN nhưng lấy trường gt thay cho ocr
-    --vlm                     chạy VLM trên ảnh test (cache results/E-D2/vlm_raw/, cần VLM_API_KEY, VLM_MODEL)
-
-Ra: results/E-D2/{config.json, table.csv, preds/<dòng>.jsonl, prompt.txt, vlm_raw/}
-"""
 from __future__ import annotations
 
 import argparse
@@ -39,7 +26,6 @@ def commit_hash() -> str:
 
 
 def score_row(name: str, results: dict, gt: dict, extra: dict | None = None):
-    """results = {image_id: (items, diagnose, date)}. Một lần dự đoán, chấm 2 cách: có / không từ điển."""
     gt_items = {k: v["items"] for k, v in gt.items()}
     preds = {k: v[0] for k, v in results.items()}
     agg, counts = evaluate_d(gt_items, preds, use_lexicon=True)
@@ -82,7 +68,7 @@ def run_vlm(gt: dict, lex: Lexicon, workers: int):
     jobs = [(k, str(vaipe_images(SPLIT) / f"{k}.png")) for k in gt]
     recs = V.run_many(jobs, cache, workers=workers)
     api_errors = sum(bool(r.get("error")) for r in recs.values())
-    fails = sum(r["parsed"] is None and not r.get("error") for r in recs.values())   # JSON hỏng thật
+    fails = sum(r["parsed"] is None and not r.get("error") for r in recs.values())
     if api_errors:
         print(f"[{EXP}] ⚠️ VLM lỗi API ở {api_errors} ảnh (không cache) — chạy lại lệnh để gọi tiếp")
     results = {k: V.vlm_to_items(recs[k]["parsed"], lex) for k in gt}

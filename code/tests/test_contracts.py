@@ -1,4 +1,3 @@
-"""Test common.contracts — validate TextBox, Item, PrescriptionResult (plan §9)."""
 import pytest
 
 from common.contracts import TextBox, Item, PrescriptionResult, BOX_LABELS, LABEL_TO_ID
@@ -26,7 +25,6 @@ def test_textbox_invalid_label():
 
 
 def test_textbox_label_none_ok():
-    # cổ điển detection không có lớp
     TextBox(box=[10, 20, 30, 40], label=None, score=0.5).validate()
 
 

@@ -1,17 +1,3 @@
-"""Dựng đáp án khoản thuốc v2 từ đáp án v1 đã soát tay (plan_Thang.md mục 2.3).
-
-Nguồn: results/s0/gt_items_<split>.json (v1, Thắng soát 176/176 ảnh test). KHÔNG có trong git (results/ bị
-.gitignore), lấy từ máy Thắng hoặc Drive nhóm.
-
-⚠️ Tên thuốc lấy từ phần tử `lines` có label == "drugname", KHÔNG lấy trường `name` của v1 (trường đó là box đầu
-tiên sau khi sắp theo y, sai ở 3 ảnh: thành "SL: 10 Viên").
-
-diagnose và date không có trong v1 → lấy từ nhãn gốc bằng chính hàm của khối D (cần soát tay 10 ảnh).
-
-Ra: data/1_vaipe/<split>/items_gt.json = {image_id: {items: [...], diagnose, date, reviewed}}
-
-Chạy (từ code/):  python tools/build_items_gt.py --split test
-"""
 from __future__ import annotations
 
 import argparse
@@ -62,7 +48,7 @@ def main():
     out, bad = {}, []
     for image_id, g in sorted(v1.items()):
         rec = convert_image(g, vaipe_labels(args.split) / f"{image_id}.json")
-        if rec.pop("_n_drug_labels") != len(rec["items"]):      # bất biến S3
+        if rec.pop("_n_drug_labels") != len(rec["items"]):
             bad.append(image_id)
         if any(it["quantity"] is None for it in rec["items"]):
             bad.append(image_id)

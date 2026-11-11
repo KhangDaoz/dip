@@ -1,35 +1,25 @@
-"""Hình minh hoạ khối A cho báo cáo / slide.
-
-Hình 1 (a_steps.png): ảnh test L4 qua từng bước A1–A5 (gốc L4 → nắn phối cảnh → chỉnh nghiêng → khử bóng → CLAHE).
-Hình 2 (a_levels.png): cùng một ảnh ở 3 mức suy giảm L0 / L2 / L4.
-Hình 3 (a_shadow.png): khử bóng — ảnh có bóng, nền ước lượng bằng phép đóng, kết quả chia nền.
-
-    python experiments/fig_a_enhance.py                        # ảnh mặc định
-    python experiments/fig_a_enhance.py --image VAIPE_P_TRAIN_129
-Kết quả: results/fig_a/*.png (dpi 200)
-"""
 import argparse
 
 import cv2
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
+import matplotlib.pyplot as plt
 
-from common.experiment import results_dir, save_figure  # noqa: E402
-from common.io import read_image, to_gray  # noqa: E402
-from common.paths import VAIPE_DEGRADED  # noqa: E402
-from enhance.clahe import clahe  # noqa: E402
-from enhance.deskew import deskew  # noqa: E402
-from enhance.rectify import rectify  # noqa: E402
-from enhance.shadow import background_closing, remove_shadows  # noqa: E402
+from common.experiment import results_dir, save_figure
+from common.io import read_image, to_gray
+from common.paths import VAIPE_DEGRADED
+from enhance.clahe import clahe
+from enhance.deskew import deskew
+from enhance.rectify import rectify
+from enhance.shadow import background_closing, remove_shadows
 
 EXP_ID = "fig_a"
 
 
 def show(ax, img, title):
     if img.ndim == 2:
-        ax.imshow(img, cmap="gray", vmin=0, vmax=255)   # thang cố định: không tự kéo giãn tương phản
+        ax.imshow(img, cmap="gray", vmin=0, vmax=255)
     else:
         ax.imshow(img[:, :, ::-1])
     ax.set_title(title, fontsize=9)
@@ -47,7 +37,6 @@ def main():
     name = f"{args.image}.png" if args.image else paths[0].name
     levels = {lv: read_image(VAIPE_DEGRADED / lv / name) for lv in ("L0", "L2", "L4")}
 
-    # Hình 1: các bước trên ảnh L4
     a0 = levels["L4"]
     a1, method = rectify(a0)
     a2, ang = deskew(a1)
@@ -61,14 +50,12 @@ def main():
     fig.tight_layout()
     save_figure(fig, EXP_ID, "a_steps")
 
-    # Hình 2: 3 mức suy giảm
     fig, axs = plt.subplots(1, 3, figsize=(8.5, 4.2))
     for ax, (lv, im) in zip(axs, levels.items()):
         show(ax, im, lv)
     fig.tight_layout()
     save_figure(fig, EXP_ID, "a_levels")
 
-    # Hình 3: khử bóng trên kênh xám của ảnh L4 đã nắn + chỉnh nghiêng
     g = to_gray(a2)
     bg = background_closing(g, kernel=81)
     flat = remove_shadows(g)

@@ -1,14 +1,3 @@
-"""Sinh ảnh test suy biến 3 mức L0/L2/L4 (plan §2.4).
-
-Các phép biến đổi ở `src/vaipe/degrade.py`: rotate, perspective, gaussian_blur, motion_blur, shadow, jpeg.
-
-L0: ảnh gốc (không biến đổi).
-L2: xoay ±2°, Gauss blur σ=1-1.5, bóng nhẹ, JPEG q=60-80.
-L4: xoay ±5°, phối cảnh nhẹ, bóng đậm, motion blur, JPEG q=25-40, noise σ=5-10.
-
-Kết quả: data/1_vaipe/test_degraded/<L0|L2|L4>/<image_id>.png + params.csv.
-Seed cố định 42 để tái lập.
-"""
 from __future__ import annotations
 
 import argparse
@@ -25,11 +14,9 @@ from vaipe.degrade import (
 
 
 def make_level(img: np.ndarray, level: int, rng: np.random.Generator) -> np.ndarray:
-    """Áp chuỗi biến đổi theo mức. L0 = ảnh gốc."""
     if level == 0:
         return img
     if level == 2:
-        # L2: nhẹ
         ang = rng.uniform(-2, 2)
         img, _ = rotate(img, ang)
         sigma = rng.uniform(1.0, 1.5)
@@ -39,7 +26,6 @@ def make_level(img: np.ndarray, level: int, rng: np.random.Generator) -> np.ndar
         img, _ = jpeg(img, q)
         return img
     if level == 4:
-        # L4: nặng — L2 + phối cảnh + motion blur + bóng nặng + noise
         ang = rng.uniform(-5, 5)
         img, _ = rotate(img, ang)
         img, _ = perspective(img, 0.05, rng)
@@ -77,7 +63,6 @@ def main():
             params_log.append({"image_id": p.stem, "level": lv})
             n_done += 1
         print(f"[make_degraded] L{lv}: {len(paths)} ảnh → {out_dir}")
-    # ghi params.csv
     import csv
     with open(out_root / "params.csv", "w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=["image_id", "level"])

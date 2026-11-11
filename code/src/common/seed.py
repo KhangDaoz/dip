@@ -1,4 +1,3 @@
-"""Cố định seed để mọi thí nghiệm chạy lại ra cùng kết quả."""
 import os
 import random
 

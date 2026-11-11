@@ -1,11 +1,3 @@
-"""Gom kết quả cuối cùng cần cho báo cáo vào report/latex/result/ (bảng CSV, hình PNG, SUMMARY.md).
-
-Chạy lại bất cứ lúc nào (từ code/): thí nghiệm chưa có thì ghi "chưa có" trong SUMMARY.md, có rồi thì chép đè.
-
-    python tools/export_report_results.py
-
-Nguồn: results/<mã>/ (do code/experiments/*.py sinh). Không chép dự đoán từng ảnh (preds_*, raw.csv, handoff/).
-"""
 from __future__ import annotations
 
 import csv
@@ -20,7 +12,6 @@ from common.paths import REPO_DIR, RESULTS_DIR, vaipe_split
 
 DEST = REPO_DIR / "report" / "latex" / "result"
 
-# (thư mục đích, thư mục nguồn trong results/, các file cần chép)
 FILES = [
     ("data", "s0", []),
     ("e_a2_deskew", "e_a2", ["table.csv", "error_by_angle.png", "config.json"]),
@@ -48,7 +39,7 @@ def fmt(v, nd=4):
         x = float(v)
     except (TypeError, ValueError):
         return str(v)
-    if x.is_integer():                                 # số đếm giữ nguyên; 1.0 / 0.0 giữ một chữ số thập phân
+    if x.is_integer():
         return str(int(x)) if "." not in str(v) else f"{x:.1f}"
     return f"{x:.{nd}f}" if abs(x) < 1000 else f"{x:.0f}"
 
@@ -63,7 +54,6 @@ def md_table(rows: list[dict], cols: list[str] | None = None, nd: int = 4) -> st
 
 
 def data_stats() -> dict | None:
-    """Số khoản, số tên thuốc, % ngoài từ điển (OOV) của tập kiểm tra."""
     path = vaipe_split("test") / "items_gt.json"
     if not path.exists():
         return None
@@ -80,9 +70,8 @@ def data_stats() -> dict | None:
 
 
 def c1_exact_match() -> list[dict]:
-    """Bảng E-C1 + cột tỉ lệ khớp nguyên chuỗi (tính từ preds_C*.csv)."""
     src = RESULTS_DIR / "e_c1"
-    norm = lambda s: " ".join(unicodedata.normalize("NFC", s or "").split())   # noqa: E731
+    norm = lambda s: " ".join(unicodedata.normalize("NFC", s or "").split())
     rows = read_csv(src / "table.csv")
     for r in rows:
         key = {"C0_tesseract": "C0", "C1_tesseract_sauvola": "C1", "C2_pretrained": "C2", "C3_finetune": "C3"}.get(r["engine"])
@@ -112,7 +101,6 @@ def main():
                 shutil.copy2(RESULTS_DIR / src / f, DEST / dst / f)
         status[dst] = bool(found) or dst == "data"
 
-    # --- Dữ liệu
     st = data_stats()
     md.append("## Dữ liệu (đáp án khoản thuốc, từ điển)\n")
     if st:

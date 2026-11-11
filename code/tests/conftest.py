@@ -1,18 +1,10 @@
-"""Ảnh tài liệu tổng hợp dùng chung cho test — biết trước ground truth, không cần tải dữ liệu.
-
-Fixture:
-    page        ảnh BGR "tờ giấy" thẳng: nền 225, N_LINES dòng chữ đen
-    page_gray   ảnh xám của page
-    text_mask   ground truth mực của page (mực = 255)
-    photo       dict {"img", "corners" (TL,TR,BR,BL), "H"}: page dán lên nền bàn tối với phối cảnh đã biết
-"""
 import cv2
 import numpy as np
 import pytest
 
 PAGE_H, PAGE_W = 800, 600
 N_LINES = 12
-PAPER = 225          # giấy trong ảnh chụp thật hiếm khi trắng 255
+PAPER = 225
 INK = 30
 LINE_Y0, LINE_STEP = 70, 55
 
@@ -59,7 +51,6 @@ def make_photo(page: np.ndarray) -> dict:
 
 
 def rotate_ccw(img: np.ndarray, angle_deg: float, border=PAPER) -> np.ndarray:
-    """Xoay ngược chiều kim đồng hồ bằng OpenCV — độc lập với code đang được test."""
     h, w = img.shape[:2]
     M = cv2.getRotationMatrix2D((w / 2, h / 2), angle_deg, 1.0)
     value = (border,) * 3 if img.ndim == 3 else border

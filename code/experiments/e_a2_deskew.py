@@ -1,13 +1,3 @@
-"""E-A2 — chỉnh nghiêng (A2) ước lượng góc đúng không? (plan §5.1)
-
-Xoay ảnh test một góc biết trước, ước lượng lại bằng lược đồ chiếu ngang. Góc thật = (góc danh nghĩa a + u) với
-u ~ U[0; 0,5), dấu ngẫu nhiên — góc lẻ, không trùng lưới tìm 0,25° (nếu lấy đúng số nguyên thì sai số luôn 0).
-Độ đo: sai số góc tuyệt đối — trung vị, P90, max, % ảnh sai ≤ 0,5°. Không cần trọng số.
-
-    python experiments/e_a2_deskew.py               # 176 ảnh test × 7 góc
-    python experiments/e_a2_deskew.py --limit 30    # thử nhanh
-Kết quả: results/e_a2/{raw.csv, table.csv, error_by_angle.png, config.json}
-"""
 import argparse
 import time
 

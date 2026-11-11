@@ -1,12 +1,3 @@
-"""E-A3 — thời gian chạy từng bước khối A trên CPU (plan §5.1), kèm thống kê nắn phối cảnh trên ảnh suy giảm.
-
-Chạy preset "full" (rectify → deskew → shadow → denoise → clahe) trên N ảnh ở mỗi mức L0/L2/L4.
-Độ đo: giây/ảnh từng bước (trung bình, trung vị); tỉ lệ phương pháp tìm góc giấy (contour/hough/minrect/full_image).
-Cần ảnh suy giảm: python tools/make_degraded.py
-
-    python experiments/e_a3_runtime.py --limit 50
-Kết quả: results/e_a3/{raw.csv, table.csv, rectify_methods.csv, config.json}
-"""
 import argparse
 import platform
 import time
@@ -46,7 +37,7 @@ def main():
         paths = sorted((VAIPE_DEGRADED / lv).glob("*.png"))[:args.limit]
         if not paths:
             raise SystemExit(f"Thiếu {VAIPE_DEGRADED / lv} — chạy tools/make_degraded.py")
-        enhance(read_image(paths[0]), "full")       # khởi động (cache OpenCV), không tính giờ
+        enhance(read_image(paths[0]), "full")
         for p in paths:
             img = read_image(p)
             t = time.perf_counter()

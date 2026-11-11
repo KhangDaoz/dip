@@ -1,10 +1,3 @@
-"""Trích xuất đơn thuốc từ ảnh: A → B → C → D (plan §4).
-
-    python run_pipeline.py samples/                          # pipeline chính dl_c3 (YOLO + VietOCR fine-tune)
-    python run_pipeline.py samples/ --preset classical       # đối chứng cổ điển (Sauvola + giãn + Tesseract)
-    python run_pipeline.py anh.png --enhance full            # bật tiền xử lý khối A
-Ghi out/<image_id>.json (PrescriptionResult) + out/<image_id>_overlay.png.
-"""
 import argparse
 import time
 from pathlib import Path
@@ -46,7 +39,7 @@ def main():
                 for i, it in enumerate(res.items, 1):
                     print(f"  {i}. {it.lexicon_match or it.name} | SL: {it.quantity} {it.unit or ''} | {' / '.join(it.usage)}")
                 print(f"  Chẩn đoán: {res.diagnose}\n  Ngày: {res.date}")
-        except Exception as e:                       # một ảnh lỗi không chặn ảnh khác
+        except Exception as e:
             print(f"\n{p.stem}  LỖI: {type(e).__name__}: {e}")
     print(f"\nXong {n_ok}/{len(paths)} ảnh trong {time.perf_counter() - t0:.1f}s → {args.out}")
     return 0 if n_ok == len(paths) else 1

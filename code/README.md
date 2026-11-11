@@ -1,110 +1,110 @@
-# Code — Trích xuất thông tin đơn thuốc VAIPE
+# Trích xuất thông tin đơn thuốc tiếng Việt (VAIPE)
 
-Kế hoạch: [plan.md](../plan.md). Pipeline 4 khối, mỗi người một khối:
+Đồ án Xử lý ảnh số. Đầu vào là ảnh đơn thuốc, đầu ra là JSON gồm danh sách thuốc (tên, số lượng, đơn vị, cách dùng), chẩn đoán và ngày kê đơn.
 
 ```
-ảnh ─► [A] enhance/ ─► [B] detect/ ─► [C] recognize/ ─► [D] assemble/ ─► PrescriptionResult (JSON)
-       Hiếu             Trường          Khang              Thắng
-       tiền xử lý       YOLOv8 6 lớp    VietOCR            ghép khoản thuốc
-       cổ điển          (+ cổ điển)     (+ Tesseract)      (+ VLM đối chứng)
+ảnh ─► [A] enhance ─► [B] detect ─► [C] recognize ─► [D] assemble ─► JSON
+       tiền xử lý     YOLOv8s       VietOCR          luật + từ điển
+       cổ điển        6 lớp         (Tesseract)      ghép khoản thuốc
 ```
 
-Hợp đồng dữ liệu giữa các khối: [`src/common/contracts.py`](src/common/contracts.py) — box `[x0, y0, x1, y1]` (xyxy,
-pixel, giống nhãn VAIPE), 6 lớp `drugname, quantity, usage, diagnose, date, other`. Đổi hợp đồng phải báo cả nhóm và
-sửa test trong cùng commit.
+| Khối | Việc làm | Kỹ thuật (chương học phần) |
+| :-: | :--- | :--- |
+| A | nắn phối cảnh, chỉnh nghiêng, khử bóng, khử nhiễu, CLAHE | Canny, Hough, biến đổi hình học (ch. 2, 3, 5, 7) |
+| B | phát hiện và phân loại vùng chữ: `drugname`, `quantity`, `usage`, `diagnose`, `date`, `other` | YOLOv8s; đối chứng cổ điển Sauvola + hình thái học (ch. 5, 7, 8) |
+| C | nhận dạng chữ trên từng vùng | VietOCR fine-tune (chính), VietOCR gốc, Tesseract (đối chứng) |
+| D | ghép vùng chữ thành từng khoản thuốc, sửa lỗi OCR, khớp từ điển tên thuốc | luật trên chuỗi + rapidfuzz; VLM zero-shot để đối chứng |
+
+Dữ liệu: bộ VAIPE Prescription (train 820 / valid 176 / test 176 ảnh). Báo cáo và slide nằm ngoài thư mục này.
+
+## Chạy nhanh trên ảnh mẫu
+
+Cần Python 3.11 (3.10 đến 3.13 đều được). Thư mục `weights/` phải có `yolo_vaipe.pt` và `vietocr_finetuned.pth`.
+
+```bash
+cd code
+python -m venv .venv
+source .venv/bin/activate                  # Windows: .venv\Scripts\activate
+pip install torch torchvision              # GPU: thêm --index-url https://download.pytorch.org/whl/cu121
+pip install -r requirements-dl.txt
+pip install --no-deps -r requirements-vietocr.txt
+pip install -e .
+
+python run_pipeline.py samples/            # kết quả ở out/<tên ảnh>.json và out/<tên ảnh>_overlay.png
+```
+
+10 ảnh mẫu chạy hết khoảng 46 giây trên máy phát triển.
+
+Nếu `weights/` trống, chạy `python tools/download_weights.py` để tải từ Drive của nhóm và kiểm tra SHA-256 (`--check` chỉ kiểm tra mã băm).
+
+Tùy chọn của `run_pipeline.py`:
+
+```bash
+python run_pipeline.py anh.png --enhance full          # bật khối A: none | geom | light | full
+python run_pipeline.py samples/ --preset classical     # đối chứng cổ điển, cần Tesseract 5 + gói vie
+python run_pipeline.py samples/ --no-lexicon           # tắt khớp từ điển tên thuốc
+```
+
+Preset: `dl_c3` (mặc định, YOLO + VietOCR fine-tune), `dl_c2` (VietOCR gốc), `hybrid` (YOLO + Tesseract), `classical` (cổ điển hoàn toàn).
+
+## Giao diện demo
+
+```bash
+python app.py              # mở http://127.0.0.1:7860
+```
+
+Tải ảnh lên để xem overlay vùng chữ, ảnh sau tiền xử lý, bảng khoản thuốc và JSON. Giao diện cho chọn preset, mức tiền xử lý và bật/tắt từ điển.
+
+## Ảnh mẫu
+
+`samples/` có 10 ảnh: 6 ảnh gốc từ tập test, 2 ảnh suy giảm (`rx_L2_*`, `rx_L4_*`: nghiêng, mờ, bóng, nhiễu) và 2 ảnh VAIPE khác (`rx_vaipe_*`).
 
 ## Cấu trúc
 
 ```
 code/
+├── run_pipeline.py   CLI
+├── app.py            demo Gradio
 ├── src/
-│   ├── common/      boxes (IoU, đổi định dạng, ghép tham lam), contracts, io, paths, seed, experiment
-│   ├── vaipe/       đọc nhãn VAIPE 6 lớp (train 820 / valid 176 / test 176); degrade (phép làm hỏng ảnh)
-│   ├── enhance/     A — nắn phối cảnh, chỉnh nghiêng, khử bóng, khử nhiễu, CLAHE (+ binarize: Sauvola, Otsu)
-│   ├── detect/      B — yolo.py (YOLOv8s 6 lớp), classical.py (đối chứng: Sauvola + giãn + thành phần liên thông)
-│   ├── recognize/   C — vietocr_engine.py (C2 gốc, C3 tinh chỉnh), tesseract_engine.py (C0 xám, C1 Sauvola)
-│   ├── assemble/    D — rules, group (ghép khoản), lexicon (từ điển), vlm (đối chứng), load, scoring
-│   ├── metrics/     P/R/F1 @IoU + ma trận nhầm lẫn, CER/WER, F1 khoản thuốc + bootstrap CI
-│   └── pipeline/    ghép A → B → C → D, 4 preset: classical, hybrid, dl_c2, dl_c3 (chính)
-├── run_pipeline.py  CLI: ảnh / thư mục → out/<ảnh>.json + out/<ảnh>_overlay.png
-├── experiments/     thí nghiệm E-* (mục "Thí nghiệm" bên dưới)
-├── tools/           to_yolo, to_vietocr, make_degraded (L0/L2/L4), download_weights, build_items_gt, make_handoff
-├── notebooks/       train_yolo, finetune_vietocr (Kaggle)
-├── configs/         vietocr_vgg_transformer.yml (image_max_width 1024 — khớp lúc fine-tune)
-├── weights/         yolo_vaipe.pt, vietocr_finetuned.pth — không commit, tải bằng tools/download_weights.py
-├── samples/         ảnh mẫu cho demo
-└── tests/
+│   ├── common/       box, hợp đồng dữ liệu, đọc/ghi ảnh, seed
+│   ├── vaipe/        đọc nhãn VAIPE, phép làm suy giảm ảnh
+│   ├── enhance/      khối A
+│   ├── detect/       khối B (yolo.py, classical.py)
+│   ├── recognize/    khối C (vietocr_engine.py, tesseract_engine.py)
+│   ├── assemble/     khối D (rules, group, lexicon, vlm)
+│   ├── metrics/      P/R/F1 phát hiện, CER/WER, F1 khoản thuốc
+│   └── pipeline/     ghép A → B → C → D
+├── experiments/      các thí nghiệm
+├── tools/            chuyển định dạng dữ liệu, tải trọng số, sinh ảnh suy giảm
+├── notebooks/        huấn luyện YOLO và fine-tune VietOCR (Kaggle)
+├── configs/          cấu hình VietOCR
+├── weights/          trọng số (không đưa lên git)
+├── samples/          ảnh mẫu
+└── tests/            pytest (phần thiếu dữ liệu tự bỏ qua)
 ```
 
-Kết quả thí nghiệm ghi vào `results/<mã>/` ở gốc repo (không commit).
+## Chạy lại thí nghiệm (tùy chọn)
 
-## Cài đặt
-
-Python 3.11 khuyến nghị (3.13 cũng chạy được).
+Cần dữ liệu VAIPE tại `data/1_vaipe/{train,valid,test}/{images,labels}` (không kèm theo bài nộp; tập VAIPE công khai trên Kaggle: `tommyngx/vaipepill2022`). Chạy từ `code/`, kết quả ghi vào `results/<mã>/`.
 
 ```bash
-cd code
-python -m venv .venv
-# Windows: .venv\Scripts\activate        macOS/Linux: source .venv/bin/activate
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130   # GPU (driver CUDA ≥ 13); CPU: .../whl/cpu
-pip install -r requirements-dl.txt
-pip install --no-deps -r requirements-vietocr.txt    # vietocr ghim thư viện cũ → cài không kèm phụ thuộc
-pip install -e .
-python tools/download_weights.py                      # trọng số từ Drive nhóm, kiểm tra SHA-256
-pytest                                                # phần thiếu data / trọng số tự SKIP
+python tools/to_yolo.py && python tools/to_vietocr.py && python tools/make_degraded.py
 ```
 
-Chỉ cần khối A và độ đo (không học sâu): `pip install -r requirements.txt && pip install -e .`.
+| Lệnh | Thí nghiệm |
+| :--- | :--- |
+| `experiments/e_a2_deskew.py`, `e_a3_runtime.py`, `fig_a_enhance.py` | A: sai số chỉnh nghiêng, thời gian chạy, hình minh họa |
+| `experiments/e_b_detection.py` | B: cổ điển so với YOLO, theo từng lớp, mAP |
+| `experiments/e_c1_ocr.py` | C: Tesseract so với VietOCR trên vùng cắt chuẩn |
+| `experiments/e_d1.py` | D: luật ghép trên đầu vào chuẩn |
+| `tools/make_handoff.py`, rồi `experiments/e_d2.py` | bảng chính đầu-cuối trên tập test |
+| `experiments/e_x1_ablation.py` | ablation: thay từng khối bằng đáp án |
+| `experiments/e_a1_robustness.py` | độ bền với ảnh suy giảm, có và không khối A |
 
-## Giao diện demo (Gradio)
+Tham số chọn trên tập valid, tập test chỉ chạy một lần sau khi chốt cấu hình. Dòng VLM của `e_d2.py` cần file `code/.env` (mẫu: `.env.example`).
+
+## Kiểm thử
 
 ```bash
-python app.py            # http://127.0.0.1:7860 — tải ảnh lên, chạy A → B → C → D
-python app.py --share    # link công khai tạm thời
+pytest
 ```
-
-Chọn được preset (dl_c3 / dl_c2 / hybrid / classical), mức tiền xử lý khối A và bật/tắt từ điển. Kết quả: overlay,
-ảnh sau khối A, bảng khoản thuốc, bảng vùng chữ B + C, JSON tải về.
-
-## Dữ liệu
-
-`data/1_vaipe/{train,valid,test}/{images,labels}` — tải từ Drive nhóm, không commit (xem [data/README.md](../data/README.md)).
-
-```bash
-python tools/to_yolo.py          # nhãn YOLO + data.yaml
-python tools/to_vietocr.py       # crops + nhãn cho VietOCR
-python tools/make_degraded.py    # ảnh test suy giảm L0/L2/L4 cho thí nghiệm độ bền
-```
-
-Kỷ luật đánh giá: chọn tham số trên **valid**, test chỉ chạy một lần khi đã chốt cấu hình.
-
-## Chạy pipeline
-
-```bash
-python run_pipeline.py samples/                       # dl_c3: YOLOv8s + VietOCR tinh chỉnh + khối D
-python run_pipeline.py samples/ --preset classical    # đối chứng cổ điển (cần Tesseract 5 + vie)
-python run_pipeline.py anh.png --enhance full         # bật tiền xử lý khối A
-```
-
-## Thí nghiệm
-
-Chạy từ `code/`, kết quả ở `results/<mã>/`. Đáp án khoản thuốc cần file đáp án v1 đã soát tay (`results/s0/gt_items_<split>.json`, Drive nhóm).
-
-| Thứ tự | Lệnh | Thí nghiệm | Cần GPU |
-| :-: | :--- | :--- | :-: |
-| 1 | `python tools/make_degraded.py` · `python tools/build_items_gt.py --split test` | ảnh suy giảm, đáp án khoản thuốc | |
-| 2 | `python experiments/e_a2_deskew.py` · `e_a3_runtime.py` · `fig_a_enhance.py` | A: sai số chỉnh nghiêng, thời gian, hình minh họa | |
-| 3 | `python experiments/e_b_detection.py` | B: chọn tham số trên valid; cổ điển vs YOLO; YOLO theo lớp + mAP | ✓ |
-| 4 | `python experiments/e_c1_ocr.py` | C: C0/C1/C2/C3 trên vùng cắt chuẩn | ✓ |
-| 5 | `python experiments/e_d1.py` | D: luật ghép trên khung + chữ chuẩn | |
-| 6 | `python tools/make_handoff.py --preset dl_c3 dl_c2 hybrid classical` | file bàn giao B+C cho E-D2 | ✓ |
-| 7 | `python experiments/e_d2.py --variant dl_c3=../results/handoff/dl_c3.jsonl ... --check dl_c3 [--vlm]` | **bảng chính** đầu-cuối (VLM cần `code/.env`) | |
-| 8 | `python experiments/e_x1_ablation.py` | ablation: thay B / C bằng đáp án | ✓ |
-| 9 | `python experiments/e_a1_robustness.py` | độ bền L0/L2/L4 × có / không khối A | ✓ |
-
-## Quy ước
-
-- Ảnh BGR `uint8`; đọc / ghi qua `common.io` (đường dẫn có dấu tiếng Việt trên Windows).
-- Mask / ảnh nhị phân: mực = 255, nền = 0.
-- Seed 42; mỗi thí nghiệm ghi `results/<mã>/{config.json, table.csv}`.
-- Mỗi người chỉ sửa module của mình; sửa `common/` phải báo cả nhóm.

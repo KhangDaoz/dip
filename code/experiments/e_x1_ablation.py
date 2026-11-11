@@ -1,16 +1,3 @@
-"""E-X1 — ablation: lỗi đầu-cuối đến từ khối nào? (plan §5.5)
-
-Thay khối B / C của pipeline chính (YOLO + C3) bằng đáp án chuẩn, chấm F1 khoản thuốc trên 176 ảnh test:
-    B chuẩn + C chuẩn    box + chữ của nhãn                           (= E-D1, kiểm tra khối D)
-    B chuẩn + C3         box nhãn (có lớp) + VietOCR fine-tune đọc   → lỗi riêng của khối C
-    YOLO    + C chuẩn    box YOLO, chữ lấy từ box đáp án ghép IoU≥0,5 → lỗi riêng của khối B
-    YOLO    + C3         pipeline chính                              (= dòng dl_c3 của E-D2)
-Cần: results/handoff/dl_c3.jsonl (python tools/make_handoff.py --preset dl_c3) và items_gt.json.
-Khối D bật từ điển (như E-D2); cột f1_item_nolex là khi tắt từ điển.
-
-    python experiments/e_x1_ablation.py
-Kết quả: results/e_x1/{table.csv, config.json}; cache results/handoff/gtbox_c3.jsonl
-"""
 import json
 import time
 
@@ -30,7 +17,6 @@ EXP_ID = "e_x1"
 
 
 def gtbox_c3(images, path):
-    """Box đáp án (giữ lớp) → VietOCR C3 đọc → file bàn giao (cache, chạy tiếp được)."""
     done = set()
     if path.exists():
         done = {json.loads(l)["image_id"] for l in path.read_text(encoding="utf-8").splitlines() if l.strip()}

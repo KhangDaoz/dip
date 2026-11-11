@@ -1,16 +1,3 @@
-"""Tải trọng số đã train trên Kaggle (Drive nhóm) về code/weights/ và kiểm tra SHA-256.
-
-    python tools/download_weights.py            # tải file còn thiếu hoặc sai mã băm
-    python tools/download_weights.py --force    # tải lại tất cả
-    python tools/download_weights.py --check    # chỉ kiểm tra, không tải
-
-| File                      | Mô hình                                   | Nguồn train                         |
-| yolo_vaipe.pt             | YOLOv8s 6 lớp vùng chữ (khối B)           | notebooks/train_yolo.ipynb          |
-| vietocr_finetuned.pth     | VietOCR vgg_transformer fine-tune (C3)    | notebooks/finetune_vietocr.ipynb    |
-
-Chỉ dùng thư viện chuẩn (không cần gdown). Nếu Drive đổi cơ chế tải, mở link trong trình duyệt,
-tải tay và đặt đúng tên vào code/weights/ — lệnh --check sẽ xác nhận file đúng.
-"""
 from __future__ import annotations
 
 import argparse

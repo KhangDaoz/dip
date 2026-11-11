@@ -1,10 +1,3 @@
-"""Khối B — YOLOv8s phát hiện + phân lớp vùng chữ, 6 lớp (plan §5.2).
-
-Trọng số: code/weights/yolo_vaipe.pt (notebooks/train_yolo.ipynb; tải: tools/download_weights.py).
-
-    from detect.yolo import detect_yolo
-    boxes = detect_yolo(img_bgr)          # list[TextBox], xyxy pixel ảnh gốc, sắp trên→dưới, trái→phải
-"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -14,25 +7,24 @@ import numpy as np
 from common.contracts import BOX_LABELS, TextBox
 from common.paths import YOLO_WEIGHTS
 
-IMGSZ = 1024          # = imgsz lúc train
-CONF = 0.443          # ngưỡng tối đa F1 trung bình 6 lớp trên VALID (test_metrics.json: conf_max_f1_on_val)
-IOU = 0.7             # NMS, mặc định ultralytics (= lúc chấm val/test)
+IMGSZ = 1024
+CONF = 0.443
+IOU = 0.7
 
 _MODELS: dict = {}
 
 
 class WeightsMissing(FileNotFoundError):
-    """Chưa có trọng số — chạy `python tools/download_weights.py`."""
+    pass
 
 
 def load_yolo(weights: Path | str = YOLO_WEIGHTS):
-    """Nạp (và cache) mô hình ultralytics YOLO."""
     weights = Path(weights)
     key = str(weights.resolve())
     if key not in _MODELS:
         if not weights.exists():
             raise WeightsMissing(f"không thấy {weights} — chạy: python tools/download_weights.py")
-        from ultralytics import YOLO      # import muộn: module khác không cần ultralytics
+        from ultralytics import YOLO
         model = YOLO(str(weights))
         names = [model.names[i] for i in range(len(model.names))]
         if tuple(names) != BOX_LABELS:
@@ -44,10 +36,6 @@ def load_yolo(weights: Path | str = YOLO_WEIGHTS):
 def detect_yolo(img: np.ndarray, weights: Path | str = YOLO_WEIGHTS, conf: float = CONF,
                 iou: float = IOU, imgsz: int = IMGSZ, device=None,
                 class_agnostic: bool = False) -> list:
-    """Ảnh BGR → list[TextBox] (box xyxy int, label 1 trong 6 lớp, score = độ tin cậy).
-
-    class_agnostic=True bỏ nhãn lớp (label=None) — để so công bằng với detector cổ điển (E-B1).
-    """
     res = load_yolo(weights).predict(img, conf=conf, iou=iou, imgsz=imgsz, device=device,
                                      verbose=False)[0]
     h, w = img.shape[:2]

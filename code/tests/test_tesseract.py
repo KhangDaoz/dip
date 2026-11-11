@@ -1,4 +1,3 @@
-"""C0/C1 Tesseract (plan §5.3). Tiền xử lý luôn chạy; phần gọi Tesseract tự SKIP nếu máy chưa cài Tesseract + `vie`."""
 import numpy as np
 import pytest
 
@@ -19,8 +18,8 @@ def test_prepare_shape_and_polarity(mode):
     out = prepare(crop, mode)
     assert out.ndim == 2 and out.dtype == np.uint8
     assert out.shape == (int(40 * SCALE) + 2 * BORDER, int(260 * SCALE) + 2 * BORDER)
-    assert out[:BORDER].min() == 255                # viền trắng
-    assert np.median(out) > 200                     # nền sáng, chữ tối (đúng cực cho Tesseract)
+    assert out[:BORDER].min() == 255
+    assert np.median(out) > 200
 
 
 def test_prepare_rejects_unknown_mode():

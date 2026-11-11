@@ -1,4 +1,3 @@
-"""A5 tăng tương phản CLAHE (ch. 3). Ảnh BGR: áp trên kênh L (Lab) để không lệch màu."""
 from __future__ import annotations
 
 import cv2

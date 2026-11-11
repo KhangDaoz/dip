@@ -1,4 +1,3 @@
-"""Test vaipe.dataset — đọc nhãn VAIPE (plan §9). Cần data/1_vaipe/."""
 import pytest
 
 from vaipe.dataset import list_images, filter_by_label, stats, read_label_json
@@ -11,7 +10,6 @@ def train_images():
 
 
 def test_train_count(train_images):
-    # plan chốt 820 ảnh train
     assert len(train_images) == 820
 
 
@@ -42,7 +40,6 @@ def test_labels_in_six_classes(train_images):
 
 
 def test_drugname_count_matches_plan(train_images):
-    # plan ghi ~1.995 drugname trong train
     dn = filter_by_label(train_images, "drugname")
     assert 1.5e3 < len(dn) < 2.5e3
 

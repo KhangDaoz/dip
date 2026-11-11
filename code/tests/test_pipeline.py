@@ -1,4 +1,3 @@
-"""Pipeline A → B → C → D (plan §9). Phần ghép nối chạy không cần mô hình; đầu-cuối SKIP nếu thiếu trọng số."""
 import json
 
 import numpy as np
@@ -54,6 +53,6 @@ def test_end_to_end_sample():
     pytest.importorskip("vietocr")
     from common.io import read_image
     res = Pipeline.preset("dl_c3")(read_image(SAMPLES_DIR / "rx_test_VAIPE_P_TRAIN_139.png"), "s")
-    assert len(res.items) == 5                               # ảnh mẫu có 5 thuốc
+    assert len(res.items) == 5
     assert all(it.quantity is not None for it in res.items)
     assert set(res.timing) == {"A", "B", "C", "D"}

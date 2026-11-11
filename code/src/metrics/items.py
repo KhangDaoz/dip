@@ -1,8 +1,3 @@
-"""F1 khoản thuốc — độ đo chính (plan §6).
-
-Khoản dự đoán khớp khoản GT khi CER(tên) ≤ 0,1 và quantity bằng nhau. Ghép tham lam theo CER tên tăng dần,
-cộng dồn TP/FP/FN cả tập. Kèm F1 tên thuốc (chỉ xét tên), đúng số lượng %, đơn đúng hoàn toàn %, bootstrap CI.
-"""
 from __future__ import annotations
 
 import numpy as np
@@ -19,14 +14,12 @@ def _get(it, k):
 
 
 def pred_name(it, use_lexicon: bool = True) -> str:
-    """Tên dùng để chấm: tên chuẩn từ điển nếu có (D3), ngược lại tên đã bỏ tiền tố."""
     lm = _get(it, "lexicon_match") if use_lexicon else None
     return lm or _get(it, "name") or ""
 
 
 def match_items(gt_items: list, pred_items: list, check_quantity: bool = True, name_cer: float = NAME_CER,
                 use_lexicon: bool = True) -> list:
-    """Trả về list[(gi, pi, cer)] các cặp khớp."""
     cands = []
     for gi, g in enumerate(gt_items):
         for pi, p in enumerate(pred_items):
@@ -47,7 +40,6 @@ def match_items(gt_items: list, pred_items: list, check_quantity: bool = True, n
 
 
 def image_counts(gt_items: list, pred_items: list, use_lexicon: bool = True) -> dict:
-    """Đếm của một ảnh: khoản (tên+SL), tên, số lượng đúng trên các cặp khớp tên, đơn đúng hoàn toàn."""
     full = match_items(gt_items, pred_items, True, use_lexicon=use_lexicon)
     name = match_items(gt_items, pred_items, False, use_lexicon=use_lexicon)
     qty_ok = sum(_get(gt_items[g], "quantity") == _get(pred_items[p], "quantity") for g, p, _ in name)
@@ -70,15 +62,12 @@ def aggregate(counts: list) -> dict:
 
 
 def evaluate(gt: dict, pred: dict, use_lexicon: bool = True) -> tuple:
-    """gt, pred: {image_id: list khoản}. Chấm trên các ảnh của gt (ảnh thiếu dự đoán = đơn rỗng).
-    Trả về (tổng hợp, list đếm theo ảnh)."""
     ids = sorted(gt)
     counts = [image_counts(gt[i], pred.get(i, []), use_lexicon) for i in ids]
     return aggregate(counts), counts
 
 
 def bootstrap_ci(counts: list, metric: str = "item_f1", n: int = 1000, alpha: float = 0.05, seed: int = 42) -> tuple:
-    """Bootstrap theo ảnh: lấy mẫu có hoàn lại n lần, trả về (giá trị gốc, cận dưới, cận trên)."""
     rng = np.random.default_rng(seed)
     base = aggregate(counts)[metric]
     if not counts:

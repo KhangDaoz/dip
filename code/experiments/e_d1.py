@@ -1,12 +1,3 @@
-"""E-D1 — luật gom khối D có đúng không khi đầu vào hoàn hảo (box + text chuẩn) (plan_Thang.md mục 6.1).
-
-Đầu vào: nhãn gốc data/1_vaipe/test/labels/*.json. Đáp án: data/1_vaipe/test/items_gt.json (tools/build_items_gt.py).
-Hai chế độ: "labels" (có nhãn lớp, score = 1) và "text_only" (label = None, gán lớp bằng text).
-Tắt từ điển để kiểm riêng luật gom. Kỳ vọng F1 = 1,000.
-
-Chạy (từ code/):  python experiments/e_d1.py
-Ra: results/E-D1/{config.json, table.csv, bad_cases.csv}
-"""
 from __future__ import annotations
 
 import json

@@ -1,13 +1,3 @@
-"""Đọc / ghi ảnh và JSON.
-
-Dùng các hàm này thay cho cv2.imread / cv2.imwrite: OpenCV trên Windows không đọc được
-đường dẫn có dấu tiếng Việt, còn np.fromfile + cv2.imdecode thì được.
-
-Quy ước ảnh trong toàn bộ code:
-* Ảnh màu: numpy uint8, shape (H, W, 3), thứ tự kênh **BGR** (như OpenCV).
-* Ảnh xám: numpy uint8, shape (H, W).
-* Ảnh nhị phân / mask: numpy uint8, shape (H, W), **mực / vùng quan tâm = 255, nền = 0**.
-"""
 import json
 from pathlib import Path
 

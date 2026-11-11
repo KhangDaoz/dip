@@ -1,16 +1,3 @@
-"""Ghép pipeline A → B → C → D (plan §4). Dùng chung cho CLI, demo và các thí nghiệm E-D2, E-X1, E-A1.
-
-    from pipeline import Pipeline
-    pipe = Pipeline.preset("dl_c3")                  # YOLO + VietOCR fine-tune + khối D (chính)
-    result = pipe(img_bgr, "VAIPE_P_TRAIN_1")        # PrescriptionResult (items, diagnose, date, boxes, timing)
-
-Preset (các dòng của bảng chính E-D2):
-    classical  B cổ điển (Sauvola + giãn) + C0 Tesseract + D phân lớp bằng chữ
-    hybrid     YOLO + C0 Tesseract
-    dl_c2      YOLO + C2 VietOCR pretrained
-    dl_c3      YOLO + C3 VietOCR fine-tune      ← pipeline chính
-`enhance` (khối A): "none" (mặc định) | "geom" | "light" | "full" — xem enhance.pipeline.
-"""
 from __future__ import annotations
 
 import time
@@ -30,7 +17,6 @@ _ENGINES: dict = {}
 
 
 def get_engine(name: str):
-    """C0/C1 Tesseract, C2/C3 VietOCR — nạp một lần rồi dùng lại."""
     if name not in _ENGINES:
         if name in ("C0", "C1"):
             from recognize.tesseract_engine import TesseractEngine
@@ -45,7 +31,6 @@ def get_engine(name: str):
 
 class Pipeline:
     def __init__(self, detector: str = "yolo", ocr: str = "C3", enhance="none", lexicon="train"):
-        """detector: yolo | classical · ocr: C0 | C1 | C2 | C3 · lexicon: "train" (từ điển train) | None | Lexicon."""
         if detector not in ("yolo", "classical"):
             raise ValueError("detector phải là 'yolo' hoặc 'classical'")
         self.detector, self.ocr, self.enhance = detector, ocr, enhance
@@ -65,7 +50,6 @@ class Pipeline:
                 "lexicon": len(self.lexicon) if self.lexicon is not None else None}
 
     def read(self, img: np.ndarray) -> tuple:
-        """A → B → C: trả về (ảnh sau khối A, list[TextBox] đã có chữ, timing)."""
         timing = {}
         t = time.perf_counter()
         if self.enhance and self.enhance != "none":
@@ -98,11 +82,6 @@ class Pipeline:
 
 
 def handoff_record(image_id: str, boxes: list, gt: list | None = None, iou_thr: float = 0.5) -> dict:
-    """Bản ghi bàn giao B+C cho khối D (định dạng assemble/load.py đọc được).
-
-    gt (list VAIPEAnnotation, tùy chọn): box dự đoán ghép tham lam với box đáp án (IoU ≥ iou_thr) nhận thêm trường
-    "gt" = chữ chuẩn — chỉ dùng cho dòng kiểm "text chuẩn" của E-D2, KHÔNG dùng khi dự đoán.
-    """
     gt_text = {}
     if gt:
         from common.boxes import greedy_match
@@ -119,7 +98,6 @@ COLORS = {"drugname": (0, 0, 220), "quantity": (0, 150, 0), "usage": (200, 80, 0
 
 
 def draw_overlay(img: np.ndarray, result: PrescriptionResult) -> np.ndarray:
-    """Box vùng chữ tô theo lớp + khung đỏ đánh số cho từng khoản thuốc."""
     vis = img.copy() if img.ndim == 3 else cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
     t = max(1, img.shape[1] // 700)
     for b in result.boxes:
