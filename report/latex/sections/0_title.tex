@@ -1,39 +1,40 @@
 % ===== Trang bìa (trang riêng, không đánh số) =====
-% Theo mẫu trang bìa PTIT: khung đôi, logo, tên học viện / khoa / môn, tên đề tài, bảng thông tin.
-% Người: Hiếu — điền lớp, nhóm, MSSV.
 \begin{titlepage}
-  \begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1.5pt]
-      ($(current page.north west)+(2.5cm,-1.5cm)$) rectangle ($(current page.south east)+(-1.5cm,1.5cm)$);
-    \draw[line width=0.5pt]
-      ($(current page.north west)+(2.65cm,-1.65cm)$) rectangle ($(current page.south east)+(-1.65cm,1.65cm)$);
-  \end{tikzpicture}
-  \centering
-  \setstretch{1.25}
-  {\large\bfseries HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG}\\[0.3em]
-  {\large\bfseries KHOA TRÍ TUỆ NHÂN TẠO}\\[0.3em]
-  {\large\bfseries MÔN XỬ LÝ ẢNH}\\[0.3em]
-  \rule{0.35\linewidth}{0.6pt}
+  \setstretch{1.5}
+  \begin{center}
+    \textbf{\Large HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG}
 
-  \vspace{1.2cm}
-  \includegraphics[width=4.2cm]{common/logo_ptit.png}
+    \vspace{0.5cm}
+    \textbf{\Large KHOA CÔNG NGHỆ THÔNG TIN 1}
 
-  \vspace{1.4cm}
-  {\LARGE\bfseries BÁO CÁO ĐỒ ÁN}\\[0.8em]
-  {\Large\bfseries TRÍCH XUẤT THÔNG TIN ĐƠN THUỐC TỪ ẢNH\\[0.2em]
-   BẰNG HỌC SÂU KẾT HỢP XỬ LÝ ẢNH CỔ ĐIỂN}
+    \vspace{0.5cm}
+    \textbf{\Large HỌC PHẦN XỬ LÝ ẢNH}
 
-  \vspace{1.4cm}
-  \begin{tabular}{@{}p{3.6cm} l l@{}}
-    \textbf{GIẢNG VIÊN} & : PGS.TS. Phạm Văn Cường & \\[0.2cm]
-    \textbf{LỚP}        & : E23TTNT01 & \\[0.2cm]
-    \textbf{NHÓM}       & : 01 & \\[0.2cm]
-    \textbf{SINH VIÊN}  & : Trần Trung Hiếu (nhóm trưởng) & B23DCCN312 \\[0.1cm]
-                        & \phantom{: }Nguyễn Anh Trường & B23DCCE094 \\[0.1cm]
-                        & \phantom{: }Đào Văn Khang & B23DCVT218 \\[0.1cm]
-                        & \phantom{: }Nguyễn Tiến Thắng & B23DCCE088 \\
-  \end{tabular}
+    \vspace{1cm}
+    \includegraphics[width=4.5cm,height=4.5cm]{common/logo_ptit.png}
+
+    \vspace{1.2cm}
+    \textbf{\LARGE BÁO CÁO ĐỒ ÁN}
+
+    \vspace{0.5cm}
+    {\Large\bfseries MEDTRACK AI: HỆ THỐNG TRÍCH XUẤT THÔNG TIN ĐƠN THUỐC TỪ ẢNH BẰNG HỌC SÂU KẾT HỢP XỬ LÝ ẢNH CỔ ĐIỂN}
+  \end{center}
+
+  \vspace{1cm}
+  \begin{center}
+    \begin{tabular}{p{3.6cm}l l}
+      \textbf{GIẢNG VIÊN} & : ThS. VÕ NGỌC BÍCH UYÊN & \\[0.3cm]
+      \textbf{LỚP}        & : E23TTNT01 & \\[0.3cm]
+      \textbf{NHÓM}       & : 01 & \\[0.3cm]
+      \textbf{SINH VIÊN}  & : TRẦN TRUNG HIẾU & B23DCCN312 \\[0.1cm]
+                         & \phantom{: }NGUYỄN ANH TRƯỜNG & B23DCCE094 \\[0.1cm]
+                         & \phantom{: }ĐÀO VĂN KHANG & B23DCVT218 \\[0.1cm]
+                         & \phantom{: }NGUYỄN TIẾN THẮNG & B23DCCE088
+    \end{tabular}
+  \end{center}
 
   \vfill
-  {\large\bfseries HÀ NỘI -- 2026}
+  \begin{center}
+    \textbf{\large HÀ NỘI -- 2026}
+  \end{center}
 \end{titlepage}
