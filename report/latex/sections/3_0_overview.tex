@@ -1,44 +1,42 @@
 % ===== Mở đầu mục 3 — Tổng quan pipeline (≈ 0,5 trang) =====
 % Viết gì: sơ đồ, hợp đồng dữ liệu giữa các khối, bảng chương học phần. Người: Hiếu.
-Pipeline gồm bốn khối nối tiếp (Hình~\ref{fig:pipeline}), theo khung Dữ liệu $\to$ Tiền xử lý $\to$ Xử lý chính $\to$ Hậu xử lý $\to$ Đánh giá của học phần.
-Các khối trao đổi dữ liệu qua hợp đồng chung \texttt{code/src/common/contracts.py}:
-khung bao dạng $[x_0,y_0,x_1,y_1]$ (pixel) và lớp thuộc sáu lớp VAIPE.
-\begin{enumerate}[label=(\Alph*)]
-  \item Tiền xử lý: ảnh BGR $\to$ ảnh đã nắn, chỉnh nghiêng, khử bóng, khử nhiễu, tăng tương phản. Mỗi bước bật/tắt được.
-  \item Phát hiện: ảnh $\to$ danh sách vùng chữ (khung, lớp, độ tin cậy).
-  \item Nhận dạng: điền chữ và độ tin cậy cho từng vùng.
-  \item Ghép khoản (hậu xử lý): danh sách vùng $\to$ bản ghi \texttt{PrescriptionResult} (JSON).
-\end{enumerate}
-Mỗi khối có một phương pháp đối chứng; toàn pipeline được đối chứng với mô hình thị giác--ngôn ngữ (VLM) zero-shot.
+Pipeline gồm bốn khối nối tiếp (Hình~\ref{fig:pipeline}).
+Khối A nhận ảnh gốc và trả về ảnh đã chuẩn hóa hình học và độ sáng.
+Khối B tìm các vùng chữ và gán lớp, khối C đọc chữ trong từng vùng, còn khối D đóng vai trò hậu xử lý, ghép các vùng thành bản ghi JSON.
+Các khối trao đổi dữ liệu qua hợp đồng chung \path{code/src/common/contracts.py}, trong đó khung bao có dạng $[x_0,y_0,x_1,y_1]$ tính theo pixel.
+Mỗi khối có một phương pháp đối chứng, và toàn pipeline được so với một VLM zero-shot.
+Bảng~\ref{tab:chapters} cho biết kiến thức của học phần được dùng ở đâu.
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[node distance=0.45cm, every node/.style={font=\small},
-  blk/.style={draw, rounded corners, align=center, minimum height=1.05cm, text width=2.2cm},
-  io/.style={align=center, text width=1.3cm}, >={Stealth[length=2mm]}]
+\begin{tikzpicture}[node distance=0.5cm, every node/.style={font=\small},
+  blk/.style={draw, rounded corners=2pt, align=center, minimum height=1.1cm, text width=2.25cm, fill=gray!6},
+  io/.style={align=center, text width=1.5cm}, >={Stealth[length=2mm]}]
   \node[io] (in) {Ảnh\\đơn thuốc};
-  \node[blk, right=of in] (a) {\textbf{A} Tiền xử lý\\[-1pt]{\footnotesize cổ điển, Ch.\,2,3,5,7}};
-  \node[blk, right=of a] (b) {\textbf{B} Phát hiện\\[-1pt]{\footnotesize YOLOv8s, 6 lớp}};
-  \node[blk, right=of b] (c) {\textbf{C} Nhận dạng\\[-1pt]{\footnotesize VietOCR tinh chỉnh}};
-  \node[blk, right=of c] (d) {\textbf{D} Ghép khoản\\[-1pt]{\footnotesize luật + từ điển}};
-  \node[io, below=0.5cm of d] (out) {JSON};
+  \node[blk, right=of in] (a) {A. Tiền xử lý\\[-1pt]{\footnotesize cổ điển}};
+  \node[blk, right=of a] (b) {B. Phát hiện\\[-1pt]{\footnotesize YOLOv8s}};
+  \node[blk, right=of b] (c) {C. Nhận dạng\\[-1pt]{\footnotesize VietOCR}};
+  \node[blk, right=of c] (d) {D. Ghép khoản\\[-1pt]{\footnotesize luật + từ điển}};
+  \node[io, right=of d] (out) {JSON};
   \draw[->] (in) -- (a); \draw[->] (a) -- (b); \draw[->] (b) -- (c); \draw[->] (c) -- (d); \draw[->] (d) -- (out);
-  \node[draw, dashed, rounded corners, align=center, text width=4.6cm, below=0.5cm of b, xshift=0.6cm] (vlm)
-       {Đối chứng đầu-cuối: VLM zero-shot\\[-1pt]{\footnotesize Qwen2.5-VL, cùng chuẩn hóa ở D}};
+  \node[draw, dashed, rounded corners=2pt, align=center, minimum height=0.8cm, text width=6.6cm]
+       (vlm) at ($(b)!0.5!(c)+(0,-1.45)$) {Đối chứng VLM zero-shot (Qwen2.5-VL)};
+  \draw[->, dashed] (in.south) |- (vlm.west);
+  \draw[->, dashed] (vlm.east) -| (out.south);
 \end{tikzpicture}
-\caption{Pipeline đề xuất. Nét đứt: phương pháp đối chứng đầu-cuối.}\label{fig:pipeline}
+\caption{Pipeline đề xuất (nét liền) và phương pháp đối chứng đầu-cuối (nét đứt).}\label{fig:pipeline}
 \end{figure}
 
 \begin{table}[H]
 \centering
 \caption{Kiến thức học phần dùng trong từng khối ($\bullet$: phương pháp chính, $\circ$: đối chứng hoặc đánh giá).}\label{tab:chapters}
 \small
-\begin{tabularx}{\linewidth}{cXcccc}
+\begin{tabularx}{\linewidth}{cLcccc}
 \toprule
 \textbf{Chương} & \textbf{Kỹ thuật} & \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} \\
 \midrule
 2 & Nội suy khi xoay, nắn phối cảnh, phóng vùng cắt & $\bullet$ & --- & $\circ$ & --- \\
-3 & Lọc trung vị, CLAHE, toán tử điểm chia nền; tích chập Gauss để sinh ảnh suy giảm & $\bullet$ & --- & $\circ$ & --- \\
+3 & Lọc trung vị, CLAHE, chia nền, tích chập Gauss (sinh ảnh suy giảm) & $\bullet$ & --- & $\circ$ & --- \\
 5 & Canny, lược đồ chiếu, Otsu, Sauvola, thành phần liên thông & $\bullet$ & $\circ$ & $\circ$ & --- \\
 7 & Phép đóng ước lượng nền, phép giãn nối ký tự & $\bullet$ & $\circ$ & --- & --- \\
 8 & P/R/F1, ma trận nhầm lẫn, chia tập huấn luyện/kiểm định/kiểm tra & $\circ$ & $\circ$ & $\circ$ & $\circ$ \\

@@ -2,8 +2,8 @@
 % Viết gì: bảng E-C1 trên vùng cắt theo KHUNG CHUẨN của test (cô lập khối C), nhận xét, 1 ca lỗi. Người: Khang.
 % Nguồn số: C2/C3 toàn tập = lần chạy Kaggle (notebooks/finetune_vietocr.ipynb, ô kiểm tra cuối: C2 (0.0864, 0.1097, 0.8156),
 % C3 (0.0329, 0.0437, 0.9229) = (CER, WER, khớp nguyên chuỗi)). Cột theo lớp + thời gian: chạy lại cục bộ.
-Để cô lập khối C, mọi phương án đọc cùng các vùng cắt theo khung chuẩn của tập kiểm tra (\KQ{số vùng} vùng).
-Bảng~\ref{tab:EC1} cho kết quả.
+Để tách riêng khối C, mọi phương án đọc cùng các vùng cắt theo khung chuẩn của tập kiểm tra (\KQ{số vùng} vùng).
+Kết quả (E-C1) ở Bảng~\ref{tab:EC1}.
 
 \begin{table}[H]
 \centering
@@ -19,9 +19,9 @@ C2 VietOCR công bố                    & \num{0.0864} & \num{0.1097} & \num{0.
 \textbf{C3 VietOCR tinh chỉnh}        & \textbf{\num{0.0329}} & \textbf{\num{0.0437}} & \textbf{\num{0.923}} & \KQ{} & \KQ{} & \KQ{} \\
 \bottomrule
 \end{tabular}
-\par\smallskip{\footnotesize Script: \texttt{code/notebooks/finetune\_vietocr.ipynb} (C2, C3 toàn tập), \texttt{code/experiments/\TODO{e\_c1.py}} (theo lớp, thời gian). Bỏ dòng C0, C1 nếu không chạy Tesseract.}
+\par\smallskip{\footnotesize Nguồn: \path{code/notebooks/finetune_vietocr.ipynb} (C2, C3 toàn tập) và \TODO{script theo lớp, thời gian}. Bỏ dòng C0, C1 nếu không chạy Tesseract.}
 \end{table}
 
-Tinh chỉnh giảm CER từ \num{0.0864} xuống \num{0.0329} (giảm \num{62}\%) và tăng tỉ lệ vùng đọc đúng nguyên chuỗi từ \num{0.816} lên \num{0.923}.
-\TODO{Khang: 1--2 câu về lỗi C2 hay gặp mà C3 sửa được (ví dụ ``SL: 60 Viên'' $\to$ ``SL. 60 ViÊn'', dấu thanh ``Sáng'' $\to$ ``Sảng''); lớp nào còn CER cao nhất và vì sao}
-\TODO{Khang: 1 ca lỗi còn lại của C3, kèm ảnh vùng cắt ở Phụ lục~\ref{app:examples} (ví dụ mã bệnh ``I10'' đọc thành ``110'')}
+Tinh chỉnh giảm CER từ \num{0.0864} xuống \num{0.0329}, tức giảm khoảng 62\%, và tăng tỉ lệ vùng đọc đúng nguyên chuỗi từ \num{0.816} lên \num{0.923}.
+\TODO{Khang: 1 đến 2 câu về lỗi C2 hay gặp mà C3 sửa được (ví dụ ``SL: 60 Viên'' đọc thành ``SL. 60 ViÊn'', ``Sáng'' thành ``Sảng''), lớp nào còn CER cao nhất và vì sao}
+\TODO{Khang: 1 ca lỗi còn lại của C3 kèm ảnh vùng cắt ở Phụ lục~\ref{app:examples}, ví dụ mã bệnh ``I10'' bị đọc thành ``110''}

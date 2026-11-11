@@ -1,31 +1,28 @@
-% ===== Mục 4.4 — Đầu-cuối: BẢNG CHÍNH (≈ 0,75 trang) =====
-% Viết gì: E-D1 (kiểm tra luật), E-D2 bảng chính 4–5 dòng, nhận xét. Người: Thắng.
-% Nguồn số: results/E-D1/, results/E-D2/table.csv (code/experiments/e_d1.py, e_d2.py).
-\textbf{Kiểm tra luật ghép (E-D1).}
-Chạy \khoi{D} trên khung và chữ chuẩn của tập kiểm tra cho F1 khoản thuốc \num{1.000}: luật ghép không gây lỗi khi đầu vào đúng, mọi lỗi đầu-cuối bên dưới đến từ các khối B, C hoặc từ điển.
-
-\textbf{So sánh đầu-cuối (E-D2).}
-Bảng~\ref{tab:ED2} là kết quả chính của đồ án.
+% Mục 4.4. So sánh đầu-cuối, bảng chính (khoảng 0,7 trang). Người viết: Thắng.
+% Nguồn số: results/E-D1, results/E-D2/table.csv (code/experiments/e_d1.py, e_d2.py).
+Khi chạy khối D trên khung và chữ chuẩn của tập kiểm tra (E-D1), F1 khoản thuốc đạt \num{1.000}.
+Kết quả này chỉ cho thấy luật ghép nhất quán khi đầu vào đúng, chưa phải đánh giá độc lập, vì đáp án khoản thuốc cũng được dẫn xuất từ chính luật đó.
+Bảng~\ref{tab:ED2} là kết quả chính của đồ án (E-D2).
 
 \begin{table}[H]
 \centering
-\caption{Kết quả đầu-cuối trên 176 ảnh kiểm tra (E-D2). F1 khoản: tên đúng (CER $\le0{,}1$) và số lượng đúng; ngoặc vuông: khoảng tin cậy 95\% bootstrap.}\label{tab:ED2}
+\caption{Kết quả đầu-cuối trên 176 ảnh kiểm tra (E-D2). F1 khoản đòi hỏi tên đúng (CER $\le0{,}1$) và số lượng đúng. Ngoặc vuông là khoảng tin cậy 95\% theo bootstrap.}\label{tab:ED2}
 \small
-\begin{tabularx}{\linewidth}{Xccccc}
+\begin{tabularx}{\linewidth}{Lccccc}
 \toprule
 \textbf{Pipeline} & \textbf{F1 khoản} & \textbf{F1 tên} & \textbf{SL đúng} & \textbf{Đơn đúng} & \textbf{s/ảnh} \\
 \midrule
-Chữ chuẩn (khung YOLO + chữ chuẩn)         & \KQ{} & \KQ{} & \KQ{} & \KQ{} & --- \\
+Chữ chuẩn (khung YOLO, chữ chuẩn)           & \KQ{} & \KQ{} & \KQ{} & \KQ{} & --- \\
 \midrule
-(i) Cổ điển: B cổ điển + Tesseract + D      & \KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
-(ii) Lai: YOLO + Tesseract + D              & \KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
-(iv) YOLO + VietOCR công bố (C2) + D        & \KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
-\textbf{(iii) YOLO + VietOCR tinh chỉnh (C3) + D} & \KQ{F1 [CI]} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
-\quad không dùng từ điển                    & \KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
+(i) Cổ điển: B cổ điển, Tesseract, D        & \KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
+(ii) Lai: YOLO, Tesseract, D                & \KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
+(iv) YOLO, VietOCR công bố (C2), D          & \KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
+(iii) YOLO, VietOCR tinh chỉnh (C3), D      & \KQ{F1 [CI]} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
+\quad bỏ từ điển                            & \KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
 (v) VLM zero-shot (Qwen2.5-VL)              & \KQ{} & \KQ{} & \KQ{} & \KQ{} & \KQ{} \\
 \bottomrule
 \end{tabularx}
-\par\smallskip{\footnotesize Script: \texttt{code/experiments/e\_d2.py}. Thời gian VLM gồm độ trễ API. Bỏ dòng (i), (ii) nếu không có B cổ điển / Tesseract.}
+\par\smallskip{\footnotesize Nguồn: \path{code/experiments/e_d2.py}. Thời gian của VLM gồm độ trễ API. Bỏ dòng (i), (ii) nếu không có khối B cổ điển hoặc Tesseract.}
 \end{table}
 
-\TODO{Thắng: 3--4 câu có số — (iii) so với (v) VLM; từ điển giúp bao nhiêu điểm; khoảng cách giữa (iii) và dòng chữ chuẩn cho biết phần lỗi do OCR; độ chính xác ngày và chẩn đoán nếu có}
+\TODO{Thắng: 3 đến 4 câu có số. So (iii) với (v), từ điển giúp bao nhiêu điểm, khoảng cách giữa (iii) và dòng chữ chuẩn cho biết phần lỗi do OCR, độ chính xác của ngày và chẩn đoán nếu có}
