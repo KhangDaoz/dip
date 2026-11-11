@@ -1,0 +1,4 @@
+# Cài KHÔNG kèm phụ thuộc:  pip install --no-deps -r requirements-vietocr.txt
+# vietocr 0.3.13 ghim pillow==10.2, einops==0.2, imgaug... xung đột với NumPy 2 / torch mới.
+# Phụ thuộc cần thiết đã nằm trong requirements-dl.txt; imgaug được stub trong src/recognize/vietocr_engine.py.
+vietocr==0.3.13

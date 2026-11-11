@@ -27,6 +27,7 @@ VAIPE_YOLO = VAIPE_DIR / "yolo"               # nhãn .txt + data.yaml
 YOLO_WEIGHTS = WEIGHTS_DIR / "yolo_vaipe.pt"
 VIETOCR_PRETRAINED = WEIGHTS_DIR / "vietocr_pretrained.pth"
 VIETOCR_FINETUNED = WEIGHTS_DIR / "vietocr_finetuned.pth"
+VIETOCR_CONFIG = CODE_DIR / "configs" / "vietocr_vgg_transformer.yml"   # config lúc fine-tune (max width 1024)
 
 
 def vaipe_split(split: str) -> Path:

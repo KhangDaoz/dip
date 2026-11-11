@@ -1,11 +1,21 @@
-# Học sâu + API (plan §3). Python 3.11 khuyến nghị (vietocr chưa chắc chạy trên 3.13+).
-# Local RTX 3050: cài torch bản CUDA trước:  pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+# Học sâu + API (plan §3). Python 3.11 khuyến nghị (đã thử: 3.11 local, 3.13 trên Kaggle).
+# Thứ tự cài:
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121   # GPU (RTX 3050); CPU: .../whl/cpu
+#   pip install -r requirements-dl.txt
+#   pip install --no-deps -r requirements-vietocr.txt     # vietocr ghim pillow/imgaug cũ → cài KHÔNG kèm phụ thuộc
+#   python tools/download_weights.py                       # trọng số YOLO + VietOCR từ Drive nhóm
 -r requirements.txt
 torch>=2.2
 torchvision>=0.17
-ultralytics>=8.2
-vietocr>=0.3.13
+ultralytics>=8.4.209      # bản đã train yolo_vaipe.pt: 8.4.209
 pytesseract>=0.3.10
 rapidfuzz>=3.6
 gradio>=4.30
 openai>=1.30
+# phụ thuộc thật sự cần của vietocr 0.3.13 (thay cho bộ ghim cũ của nó)
+einops
+lmdb
+prefetch_generator
+albumentations
+gdown
+six
