@@ -279,10 +279,10 @@ aside.notes{display:none}
   <div class="reveal d6" style="position:absolute;left:120px;right:120px;top:880px;display:flex;gap:16px">
     <span class="chip" style="background:var(--ice)">Chia theo bệnh nhân (Jaccard ≥ 0,85), tránh rò rỉ dữ liệu</span>
     <span class="chip" style="background:var(--ice)">Tập kiểm tra chỉ chạy một lần (Ch. 8)</span>
-    <span class="chip" style="background:var(--ice)">Ảnh suy giảm hai mức (vừa, nặng) để đo độ bền</span>
+    <span class="chip" style="background:var(--ice)">Ảnh suy giảm hai mức (nhẹ, nặng) để đo độ bền</span>
   </div>
   <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">04 / 16</span></div>
-  <aside class="notes">Nhóm dùng phần đơn thuốc của bộ VAIPE, gồm 1.172 ảnh có nhãn, chia lại 820/176/176. Ảnh của cùng một bệnh nhân luôn nằm trong cùng một tập để tránh rò rỉ. Mỗi vùng chữ thuộc một trong sáu lớp, gần 70% là lớp "khác". Tham số chọn trên tập kiểm định; tập kiểm tra chỉ chạy một lần. Để đo độ bền, ảnh kiểm tra được làm suy giảm thành hai mức vừa và nặng.</aside>
+  <aside class="notes">Nhóm dùng phần đơn thuốc của bộ VAIPE, gồm 1.172 ảnh có nhãn, chia lại 820/176/176. Ảnh của cùng một bệnh nhân luôn nằm trong cùng một tập để tránh rò rỉ. Mỗi vùng chữ thuộc một trong sáu lớp, gần 70% là lớp "khác". Tham số chọn trên tập kiểm định; tập kiểm tra chỉ chạy một lần. Để đo độ bền, ảnh kiểm tra được làm suy giảm thành hai mức nhẹ và nặng.</aside>
 </section>
 
 <!-- ============================================================
@@ -300,7 +300,7 @@ aside.notes{display:none}
   </div>
   <div class="reveal d3" style="position:absolute;left:120px;top:410px;width:1680px;display:grid;grid-template-columns:150px repeat(4,1fr) 150px;gap:28px;align-items:stretch">
     <div class="chip" style="justify-content:center;border-radius:32px;font-weight:600;background:var(--ice)">Ảnh</div>
-    <div class="card" style="position:relative;padding:28px 26px;border-radius:32px"><h3 style="font-size:31px;min-height:72px">Tiền xử lý ảnh</h3><p style="font-size:23px;margin-top:10px">5 bước cổ điển</p><span class="chip" style="margin-top:16px;font-size:18px;background:var(--mint)">Ch. 2 · 3 · 5 · 7</span></div>
+    <div class="card" style="position:relative;padding:28px 26px;border-radius:32px"><h3 style="font-size:31px;min-height:72px">Tiền xử lý ảnh (tùy chọn)</h3><p style="font-size:23px;margin-top:10px">5 bước cổ điển</p><span class="chip" style="margin-top:16px;font-size:18px;background:var(--mint)">Ch. 2 · 3 · 5 · 7</span></div>
     <div class="card" style="position:relative;padding:28px 26px;border-radius:32px"><h3 style="font-size:31px;min-height:72px">Phát hiện vùng chữ</h3><p style="font-size:23px;margin-top:10px">YOLOv8s, 6 lớp</p><span class="chip" style="margin-top:16px;font-size:18px;background:var(--sky)">Học sâu</span></div>
     <div class="card" style="position:relative;padding:28px 26px;border-radius:32px"><h3 style="font-size:31px;min-height:72px">Nhận dạng chữ</h3><p style="font-size:23px;margin-top:10px">VietOCR tinh chỉnh</p><span class="chip" style="margin-top:16px;font-size:18px;background:var(--sky)">Học sâu</span></div>
     <div class="card" style="position:relative;padding:28px 26px;border-radius:32px;background:var(--amber)"><h3 style="font-size:31px;min-height:72px">Ghép khoản thuốc</h3><p style="font-size:23px;margin-top:10px">Luật vị trí + từ điển</p><span class="chip" style="margin-top:16px;font-size:18px">Luật</span></div>
@@ -310,12 +310,12 @@ aside.notes{display:none}
   <div class="reveal d4" style="position:absolute;left:298px;top:700px;width:1324px;display:grid;grid-template-columns:repeat(4,1fr);gap:28px">
     <div style="font:400 22px/1.4 var(--f-body)"><b style="font:600 15px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Đối chứng</b><br>Tắt toàn bộ tiền xử lý</div>
     <div style="font:400 22px/1.4 var(--f-body)"><b style="font:600 15px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Đối chứng</b><br>Hình thái học (Sauvola + phép giãn)</div>
-    <div style="font:400 22px/1.4 var(--f-body)"><b style="font:600 15px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Đối chứng</b><br>VietOCR công bố, Tesseract 5</div>
+    <div style="font:400 22px/1.4 var(--f-body)"><b style="font:600 15px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Đối chứng</b><br>VietOCR gốc, Tesseract 5</div>
     <div style="font:400 22px/1.4 var(--f-body)"><b style="font:600 15px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Đối chứng</b><br>Bỏ bước so khớp từ điển</div>
   </div>
   <div class="reveal d5" style="position:absolute;left:298px;top:850px;width:1324px;padding:20px 32px;border:2px dashed var(--ink);border-radius:9999px;text-align:center;font:500 25px var(--f-body);background:rgba(255,255,255,.6)">Đối chứng đầu-cuối: mô hình thị giác–ngôn ngữ <b>Qwen3.8-27B</b> (zero-shot) sinh JSON trực tiếp từ ảnh</div>
   <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">05 / 16</span></div>
-  <aside class="notes">Chuỗi xử lý gồm bốn bước theo khung của học phần. Tiền xử lý dùng kỹ thuật cổ điển chương 2, 3, 5, 7. Xử lý chính gồm YOLOv8s phát hiện và phân lớp vùng chữ, rồi VietOCR tinh chỉnh đọc chữ. Hậu xử lý ghép vùng thành khoản thuốc bằng luật vị trí và từ điển. Mỗi bước có đối chứng, và toàn bộ chuỗi được so với một VLM zero-shot sinh JSON trực tiếp từ ảnh.</aside>
+  <aside class="notes">Chuỗi xử lý gồm bốn bước theo khung của học phần. Tiền xử lý dùng kỹ thuật cổ điển chương 2, 3, 5, 7 và là bước tùy chọn; kết quả chính chạy trên ảnh gốc. Xử lý chính gồm YOLOv8s phát hiện và phân lớp vùng chữ, rồi VietOCR tinh chỉnh đọc chữ. Hậu xử lý ghép vùng thành khoản thuốc bằng luật vị trí và từ điển. Mỗi bước có đối chứng, và toàn bộ chuỗi được so với một VLM zero-shot sinh JSON trực tiếp từ ảnh.</aside>
 </section>
 
 <!-- ============================================================
@@ -397,11 +397,11 @@ aside.notes{display:none}
     </ul>
   </div>
   <div class="reveal d3" style="position:absolute;left:1120px;top:320px;font:600 18px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Đối chứng</div>
-  <div class="card reveal d3" style="left:1120px;top:360px;width:680px;height:130px;padding:24px 32px"><h3 style="font-size:28px">VietOCR công bố</h3><p style="font-size:23px;margin-top:8px">Không tinh chỉnh</p></div>
-  <div class="card reveal d4" style="left:1120px;top:510px;width:680px;height:130px;padding:24px 32px"><h3 style="font-size:28px">Tesseract 5 · <span class="mono" style="font-size:24px">vie</span></h3><p style="font-size:23px;margin-top:8px">Phóng 2× nội suy bậc ba · Ch. 2</p></div>
-  <div class="card reveal d5" style="left:1120px;top:660px;width:680px;height:130px;padding:24px 32px"><h3 style="font-size:28px">Tesseract + nhị phân Sauvola</h3><p style="font-size:23px;margin-top:8px">Đầu vào nhị phân · Ch. 5</p></div>
+  <div class="card reveal d3" style="left:1120px;top:360px;width:680px;height:130px;padding:24px 32px"><h3 style="font-size:28px">VietOCR gốc</h3><p style="font-size:23px;margin-top:8px">Không tinh chỉnh</p></div>
+  <div class="card reveal d4" style="left:1120px;top:510px;width:680px;height:130px;padding:24px 32px"><h3 style="font-size:28px">Tesseract xám</h3><p style="font-size:23px;margin-top:8px">Phóng 2× nội suy bậc ba · Ch. 2</p></div>
+  <div class="card reveal d5" style="left:1120px;top:660px;width:680px;height:130px;padding:24px 32px"><h3 style="font-size:28px">Tesseract nhị phân</h3><p style="font-size:23px;margin-top:8px">Nhị phân hóa Sauvola · Ch. 5</p></div>
   <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">08 / 16</span></div>
-  <aside class="notes">Mỗi vùng chữ được cắt theo khung và đưa vào VietOCR: VGG19-BN trích đặc trưng, Transformer sinh từng ký tự có dấu. Nhóm tinh chỉnh từ trọng số công bố trên toàn bộ vùng chữ của tập huấn luyện. Chiều rộng tối đa nâng lên 1024 px vì với 512 px khoảng 5% vùng dài bị nén ngang và mất chữ. Ba đối chứng: VietOCR công bố, Tesseract trên ảnh xám phóng hai lần, và Tesseract trên ảnh nhị phân Sauvola.</aside>
+  <aside class="notes">Mỗi vùng chữ được cắt theo khung và đưa vào VietOCR: VGG19-BN trích đặc trưng, Transformer sinh từng ký tự có dấu. Nhóm tinh chỉnh từ trọng số công bố trên toàn bộ vùng chữ của tập huấn luyện. Chiều rộng tối đa nâng lên 1024 px vì với 512 px khoảng 5% vùng dài bị nén ngang và mất chữ. Ba đối chứng: VietOCR gốc, Tesseract trên ảnh xám phóng hai lần, và Tesseract trên ảnh nhị phân Sauvola.</aside>
 </section>
 
 <!-- ============================================================
@@ -477,9 +477,9 @@ aside.notes{display:none}
   <div class="card reveal d3" style="left:980px;top:250px;width:820px;height:520px">
     <span class="k" style="background:var(--mint)">Nhận dạng chữ · CER ↓ · vùng cắt theo khung chuẩn</span>
     <div class="brow" style="grid-template-columns:260px 1fr 120px;margin-top:30px"><span class="nm"><b>VietOCR tinh chỉnh</b></span><div class="track"><div class="fill" style="--w:32.9%;--c:var(--blue)"></div></div><span class="val" style="color:var(--blue)">0,033</span></div>
-    <div class="brow" style="grid-template-columns:260px 1fr 120px;margin-top:22px"><span class="nm">Tesseract + Sauvola</span><div class="track"><div class="fill" style="--w:68.4%;--c:var(--sky)"></div></div><span class="val">0,068</span></div>
-    <div class="brow" style="grid-template-columns:260px 1fr 120px;margin-top:22px"><span class="nm">Tesseract</span><div class="track"><div class="fill" style="--w:68.9%;--c:var(--sky)"></div></div><span class="val">0,069</span></div>
-    <div class="brow" style="grid-template-columns:260px 1fr 120px;margin-top:22px"><span class="nm">VietOCR công bố</span><div class="track"><div class="fill" style="--w:86.4%;--c:var(--sky)"></div></div><span class="val">0,086</span></div>
+    <div class="brow" style="grid-template-columns:260px 1fr 120px;margin-top:22px"><span class="nm">Tesseract nhị phân</span><div class="track"><div class="fill" style="--w:68.4%;--c:var(--sky)"></div></div><span class="val">0,068</span></div>
+    <div class="brow" style="grid-template-columns:260px 1fr 120px;margin-top:22px"><span class="nm">Tesseract xám</span><div class="track"><div class="fill" style="--w:68.9%;--c:var(--sky)"></div></div><span class="val">0,069</span></div>
+    <div class="brow" style="grid-template-columns:260px 1fr 120px;margin-top:22px"><span class="nm">VietOCR gốc</span><div class="track"><div class="fill" style="--w:86.4%;--c:var(--sky)"></div></div><span class="val">0,086</span></div>
     <p style="font-size:22px;margin-top:28px;color:var(--muted)">Đọc đúng nguyên chuỗi: 0,816 → <b style="color:var(--ink)">0,923</b> sau tinh chỉnh</p>
   </div>
   <div class="reveal d4" style="position:absolute;left:120px;right:120px;top:810px;padding:24px 36px;border:var(--line);border-radius:9999px;background:var(--white);box-shadow:6px 6px 0 var(--shadow);display:flex;align-items:center;gap:24px">
@@ -503,7 +503,7 @@ aside.notes{display:none}
       <span style="display:flex;gap:22px;font-size:19px;align-items:center"><span style="display:inline-flex;align-items:center;gap:8px"><i style="width:34px;height:16px;border:var(--line);border-radius:9999px;background:var(--blue)"></i>có từ điển</span><span style="display:inline-flex;align-items:center;gap:8px"><i style="width:0;height:22px;border-left:3px dashed var(--ink)"></i>bỏ từ điển</span></span></div>
     <div class="brow" style="grid-template-columns:400px 1fr 120px;margin-top:30px"><span class="nm">Hình thái học + Tesseract</span><div class="track"><div class="fill" style="--w:48.7%;--c:var(--sky)"></div><i class="mark" style="--m:16.1%"></i></div><span class="val">0,9487</span></div>
     <div class="brow" style="grid-template-columns:400px 1fr 120px;margin-top:24px"><span class="nm">YOLOv8s + Tesseract</span><div class="track"><div class="fill" style="--w:86.5%;--c:var(--sky)"></div><i class="mark" style="--m:54.9%"></i></div><span class="val">0,9865</span></div>
-    <div class="brow" style="grid-template-columns:400px 1fr 120px;margin-top:24px"><span class="nm">YOLOv8s + VietOCR công bố</span><div class="track"><div class="fill" style="--w:96.6%;--c:var(--sky)"></div><i class="mark" style="--m:51.4%"></i></div><span class="val">0,9966</span></div>
+    <div class="brow" style="grid-template-columns:400px 1fr 120px;margin-top:24px"><span class="nm">YOLOv8s + VietOCR gốc</span><div class="track"><div class="fill" style="--w:96.6%;--c:var(--sky)"></div><i class="mark" style="--m:51.4%"></i></div><span class="val">0,9966</span></div>
     <div class="brow" style="grid-template-columns:400px 1fr 120px;margin-top:20px;padding:12px 0;border-top:2px dashed rgba(20,43,77,.25);border-bottom:2px dashed rgba(20,43,77,.25)"><span class="nm"><b>YOLOv8s + VietOCR tinh chỉnh</b><br><small style="font-size:18px;color:var(--muted)">phương pháp đề xuất</small></span><div class="track"><div class="fill" style="--w:96.6%;--c:var(--blue)"></div><i class="mark" style="--m:96.6%"></i></div><span class="val" style="color:var(--blue)">0,9966</span></div>
     <div class="brow" style="grid-template-columns:400px 1fr 120px;margin-top:20px"><span class="nm">VLM zero-shot Qwen3.8-27B<br><small style="font-size:18px;color:var(--muted)">gọi qua API</small></span><div class="track"><div class="fill" style="--w:96.6%;--c:var(--teal)"></div><i class="mark" style="--m:87.5%"></i></div><span class="val">0,9966</span></div>
     
@@ -543,7 +543,7 @@ aside.notes{display:none}
     <svg viewBox="0 0 800 430" width="800" height="430" style="display:block;margin-top:10px;font-family:'Space Grotesk'">
       <g stroke="rgba(20,43,77,.15)" stroke-width="1.5"><line x1="70" y1="30" x2="780" y2="30"/><line x1="70" y1="110" x2="780" y2="110"/><line x1="70" y1="190" x2="780" y2="190"/><line x1="70" y1="270" x2="780" y2="270"/><line x1="70" y1="350" x2="780" y2="350"/></g>
       <g font-size="20" fill="#5b6b85" text-anchor="end"><text x="58" y="37">1,0</text><text x="58" y="117">0,75</text><text x="58" y="197">0,5</text><text x="58" y="277">0,25</text><text x="58" y="357">0</text></g>
-      <g font-size="22" font-weight="600" fill="#142B4D" text-anchor="middle"><text x="130" y="395">Ảnh gốc</text><text x="425" y="395">Suy giảm vừa</text><text x="720" y="395">Suy giảm nặng</text></g>
+      <g font-size="22" font-weight="600" fill="#142B4D" text-anchor="middle"><text x="130" y="395">Ảnh gốc</text><text x="425" y="395">Suy giảm nhẹ</text><text x="720" y="395">Suy giảm nặng</text></g>
       <!-- y = 350 - v*320 -->
       <polyline points="130,31.1 425,43.3 720,309.6" fill="none" stroke="#2260FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
       <polyline points="130,31.4 425,103.9 720,335" fill="none" stroke="#008588" stroke-width="6" stroke-dasharray="14 10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -557,7 +557,7 @@ aside.notes{display:none}
     <p style="font-size:23px;margin-top:18px;line-height:1.42"><b>Giả thuyết:</b> vệt nền sau khử bóng làm YOLOv8s nhận thêm vùng giả (34,5 → 50,5 khung/ảnh).</p>
   </div>
   <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="src">Nguồn: result/e_x1_ablation, e_a1_robustness, e_a2_deskew, e_a3_runtime</span><span class="pg">13 / 16</span></div>
-  <aside class="notes">Bảng trái thay từng bước bằng nhãn gốc: lỗi chỉ xuất hiện khi kết hợp khung YOLO với chữ OCR. Vì đáp án khoản dẫn xuất từ luật ghép, dòng nhãn gốc bằng 1 là hiển nhiên. Biểu đồ phải cho kết quả trái kỳ vọng: bật đủ tiền xử lý làm F1 giảm, ở mức vừa từ 0,959 xuống 0,769. Nhóm cho rằng khử bóng và CLAHE để lại vệt nền khiến YOLO nhận thêm vùng giả, nhưng chưa tách riêng từng bước. Ở mức nặng, cả hai cấu hình đều giảm mạnh. Nắn phối cảnh tìm được tứ giác tờ giấy bằng đường bao ở 47/50 ảnh suy giảm nặng.</aside>
+  <aside class="notes">Bảng trái thay từng bước bằng nhãn gốc: lỗi chỉ xuất hiện khi kết hợp khung YOLO với chữ OCR. Vì đáp án khoản dẫn xuất từ luật ghép, dòng nhãn gốc bằng 1 là hiển nhiên. Biểu đồ phải cho kết quả trái kỳ vọng: bật đủ tiền xử lý làm F1 giảm, ở mức suy giảm nhẹ từ 0,959 xuống 0,769. Nhóm cho rằng khử bóng và CLAHE để lại vệt nền khiến YOLO nhận thêm vùng giả, nhưng chưa tách riêng từng bước. Ở mức nặng, cả hai cấu hình đều giảm mạnh. Nắn phối cảnh tìm được tứ giác tờ giấy bằng đường bao ở 47/50 ảnh suy giảm nặng.</aside>
 </section>
 
 <!-- ============================================================
@@ -579,7 +579,7 @@ aside.notes{display:none}
   </div>
   <div class="card reveal d5" style="left:1270px;top:500px;width:530px;height:440px">
     <span class="k" style="background:var(--sky)">Hướng phát triển</span>
-    <ul><li>Ảnh chụp thật, nhiều bệnh viện</li><li>Huấn luyện lại kèm ảnh suy giảm</li><li>Bỏ vùng "khác" trước khi nhận dạng</li></ul>
+    <ul><li>Ảnh chụp thật, nhiều bệnh viện</li><li>Huấn luyện lại kèm ảnh suy giảm</li><li>Sửa luật xác định lớp</li><li>Bỏ vùng "khác" trước khi nhận dạng</li></ul>
   </div>
   <div class="foot"><span>Trích xuất thông tin đơn thuốc từ ảnh · Nhóm 01</span><span class="pg">14 / 16</span></div>
   <aside class="notes">Chuỗi xử lý học sâu đạt F1 khoản 0,9966, vượt cấu hình hình thái học và cấu hình dùng Tesseract, tương đương VLM zero-shot và vượt VLM khi bỏ từ điển. Hạn chế: dữ liệu là ảnh in máy cùng mẫu; đáp án khoản dẫn xuất từ chính luật ghép; tiền xử lý chưa giúp được ảnh suy giảm. Hướng tiếp theo: đánh giá trên ảnh chụp thật, huấn luyện lại kèm ảnh suy giảm, và lọc vùng "khác" trước khi nhận dạng vì bước nhận dạng chiếm phần lớn thời gian. Từ điển tăng F1 khoản 0,03–0,045 cho các cấu hình chưa tinh chỉnh; bỏ vùng "khác" ước tính giảm khoảng hai phần ba thời gian nhận dạng.</aside>
