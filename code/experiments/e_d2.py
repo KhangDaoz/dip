@@ -25,7 +25,7 @@ from assemble.load import load_khang
 from assemble import vlm as V
 from common.experiment import results_dir, save_config, save_table
 from common.paths import REPO_DIR, vaipe_images, vaipe_split
-from metrics.items import bootstrap_ci, date_accuracy, items_prf
+from assemble.scoring import bootstrap_ci, date_accuracy, evaluate_d
 
 EXP = "E-D2"
 SPLIT = "test"
@@ -38,15 +38,18 @@ def commit_hash() -> str:
         return "unknown"
 
 
-def score_row(name: str, preds_lex: dict, preds_nolex: dict, dates: dict, gt: dict, extra: dict | None = None):
+def score_row(name: str, results: dict, gt: dict, extra: dict | None = None):
+    """results = {image_id: (items, diagnose, date)}. Một lần dự đoán, chấm 2 cách: có / không từ điển."""
     gt_items = {k: v["items"] for k, v in gt.items()}
-    r = items_prf(preds_lex, gt_items)
-    lo, hi = bootstrap_ci(r["per_image"])
-    row = {"pipeline": name, "f1_item": round(r["f1"], 4), "ci_low": round(lo, 4), "ci_high": round(hi, 4),
-           "f1_item_nolex": round(items_prf(preds_nolex, gt_items)["f1"], 4),
-           "f1_name": round(items_prf(preds_lex, gt_items, name_only=True)["f1"], 4),
-           "exact_rate": round(r["exact_rate"], 4),
-           "date_acc": round(date_accuracy(dates, {k: v["date"] for k, v in gt.items()}), 4),
+    preds = {k: v[0] for k, v in results.items()}
+    agg, counts = evaluate_d(gt_items, preds, use_lexicon=True)
+    _, lo, hi = bootstrap_ci(counts, "item_f1")
+    nolex, _ = evaluate_d(gt_items, preds, use_lexicon=False)
+    row = {"pipeline": name, "f1_item": round(agg["item_f1"], 4), "ci_low": round(lo, 4), "ci_high": round(hi, 4),
+           "f1_item_nolex": round(nolex["item_f1"], 4), "f1_name": round(agg["name_f1"], 4),
+           "qty_acc": round(agg["qty_acc"], 4), "exact_rate": round(agg["exact_rate"], 4),
+           "date_acc": round(date_accuracy({k: v[2] for k, v in results.items()},
+                                           {k: v["date"] for k, v in gt.items()}), 4),
            "n_json_fail": "", "n_api_error": ""}
     row.update(extra or {})
     print(f"[{EXP}] {name:<14} F1={row['f1_item']} [{row['ci_low']}, {row['ci_high']}] "
@@ -68,11 +71,9 @@ def run_handoff(name: str, path: str, gt: dict, lex: Lexicon, use_gt_text: bool 
     missing = [k for k in gt if k not in data]
     if missing:
         print(f"[{EXP}] ⚠️ {name}: thiếu {len(missing)} ảnh trong file (tính là đơn rỗng)")
-    with_lex = {k: assemble(data.get(k, []), lexicon=lex) for k in gt}
-    no_lex = {k: assemble(data.get(k, []), lexicon=None) for k in gt}
-    dump_preds(name, with_lex)
-    to_list = lambda res: {k: [{"name": it.name, "quantity": it.quantity} for it in v[0]] for k, v in res.items()}
-    return score_row(name, to_list(with_lex), to_list(no_lex), {k: v[2] for k, v in with_lex.items()}, gt)
+    results = {k: assemble(data.get(k, []), lexicon=lex) for k in gt}
+    dump_preds(name, results)
+    return score_row(name, results, gt)
 
 
 def run_vlm(gt: dict, lex: Lexicon, workers: int):
@@ -84,13 +85,10 @@ def run_vlm(gt: dict, lex: Lexicon, workers: int):
     fails = sum(r["parsed"] is None and not r.get("error") for r in recs.values())   # JSON hỏng thật
     if api_errors:
         print(f"[{EXP}] ⚠️ VLM lỗi API ở {api_errors} ảnh (không cache) — chạy lại lệnh để gọi tiếp")
-    with_lex = {k: V.vlm_to_items(recs[k]["parsed"], lex) for k in gt}
-    no_lex = {k: V.vlm_to_items(recs[k]["parsed"], None) for k in gt}
-    dump_preds("vlm", with_lex)
-    to_list = lambda res: {k: [{"name": it.name, "quantity": it.quantity} for it in v[0]] for k, v in res.items()}
+    results = {k: V.vlm_to_items(recs[k]["parsed"], lex) for k in gt}
+    dump_preds("vlm", results)
     model = next((r.get("model") for r in recs.values() if r.get("model")), None)
-    row = score_row("vlm", to_list(with_lex), to_list(no_lex), {k: v[2] for k, v in with_lex.items()}, gt,
-                    {"n_json_fail": fails, "n_api_error": api_errors})
+    row = score_row("vlm", results, gt, {"n_json_fail": fails, "n_api_error": api_errors})
     return row, model
 
 

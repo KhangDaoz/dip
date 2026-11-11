@@ -162,10 +162,11 @@ def assemble(boxes: list[TextBox], lexicon=None, has_labels: Optional[bool] = No
     for band in split_bands(boxes):
         drug, q = band["drug"], band["quantity"]
         qty, unit = parse_quantity(q.text) if q else (None, None)
-        name = clean_name(drug.text)
-        match = None
+        name = clean_name(drug.text)          # tên OCR đã làm sạch (dùng cho cột "không từ điển")
+        match = None                          # tên chuẩn từ điển — CHỈ khi từ điển chấp nhận (khớp metrics.items)
         if lexicon is not None:
-            name, match, _, _ = lexicon.match(name)
+            _, best, _, accepted = lexicon.match(name)
+            match = best if accepted else None
         parts = [drug] + ([q] if q else []) + band["usage"]
         items.append(Item(name=name, name_raw=drug.text, quantity=qty, unit=unit,
                           usage=[clean_usage(u.text) for u in band["usage"]],

@@ -10,7 +10,8 @@ from assemble.load import load_khang
 from assemble.rules import classify_text, clean_name, clean_usage, parse_date, parse_quantity
 from assemble.vlm import parse_vlm_json, vlm_to_items
 from common.contracts import TextBox
-from metrics.items import bootstrap_ci, items_prf, match_items
+from assemble.scoring import bootstrap_ci, evaluate_d, for_scoring
+from metrics.items import image_counts
 
 SAMPLE = Path(__file__).parent / "data" / "khang_sample.json"
 
@@ -179,15 +180,31 @@ def test_vlm_parse_and_normalize():
     assert vlm_to_items(None) == ([], None, None)
 
 
-# ---------- độ đo ----------
+# ---------- độ đo: metrics.items của main (giữ nguyên) + chuẩn hóa tên ở assemble.scoring ----------
 def test_items_metrics():
     gt = [{"name": "ABC 5mg", "quantity": 10}, {"name": "XYZ 10mg", "quantity": 20}]
-    assert match_items(gt, gt) == (2, 0, 0)
-    assert match_items(gt[:1], gt) == (1, 0, 1)                                    # thiếu 1
-    assert match_items(gt + [{"name": "QQQ", "quantity": 1}], gt) == (2, 1, 0)     # thừa 1
-    assert match_items([{"name": "ABC 5mg", "quantity": 11}, gt[1]], gt) == (1, 1, 1)   # sai SL
-    assert match_items([{"name": "abc 5MG", "quantity": 10}], gt[:1]) == (1, 0, 0)    # không phân biệt hoa thường
-    r = items_prf({"a": gt, "b": gt[:1]}, {"a": gt, "b": gt})
-    assert r["tp"] == 3 and r["fn"] == 1 and r["exact_rate"] == 0.5
-    lo, hi = bootstrap_ci(r["per_image"], n=200)
-    assert 0 <= lo <= r["f1"] <= hi <= 1
+    tpfpfn = lambda pred, g=gt: (lambda c: (c["tp"], c["fp"], c["fn"]))(image_counts(for_scoring(g), for_scoring(pred)))
+    assert tpfpfn(gt) == (2, 0, 0)
+    assert tpfpfn(gt[:1]) == (1, 0, 1)                                               # thiếu 1
+    assert tpfpfn(gt + [{"name": "QQQ", "quantity": 1}]) == (2, 1, 0)                # thừa 1
+    assert tpfpfn([{"name": "ABC 5mg", "quantity": 11}, gt[1]]) == (1, 1, 1)         # sai SL
+    assert tpfpfn([{"name": "abc 5MG", "quantity": 10}], gt[:1]) == (1, 0, 0)        # không phân biệt hoa thường
+    assert tpfpfn([{"name": "1) ABC 5mg", "quantity": 10}], gt[:1]) == (1, 0, 0)     # bỏ tiền tố "1)"
+    agg, counts = evaluate_d({"a": gt, "b": gt}, {"a": gt, "b": gt[:1]})
+    assert agg["tp"] == 3 and agg["fn"] == 1 and agg["exact_rate"] == 0.5
+    base, lo, hi = bootstrap_ci(counts, n=200)
+    assert 0 <= lo <= base <= hi <= 1
+
+
+def test_lexicon_match_only_when_accepted():
+    """Item.lexicon_match chỉ có khi từ điển CHẤP NHẬN; bị chặn (sai liều) thì None → metrics dùng tên OCR."""
+    pytest.importorskip("rapidfuzz")
+    from assemble.lexicon import Lexicon
+    lex = Lexicon(["CEPHALEXIN PMP 500 0,5g", "AMOXYCILIN 250MG 0,25g", "GLUCOFAST 850 850mg"])
+    boxes = [tb([40, 100, 400, 120], "drugname", "1) CEPHALEXIN 250MG 0,25g"),
+             tb([500, 100, 600, 120], "quantity", "SL: 10 Viên"),
+             tb([40, 200, 400, 220], "drugname", "2) GLUC0FAST 850 850mg"),
+             tb([500, 200, 600, 220], "quantity", "SL: 60 Viên")]
+    items, _, _ = assemble(boxes, lexicon=lex)
+    assert items[0].lexicon_match is None and items[0].name == "CEPHALEXIN 250MG 0,25g"
+    assert items[1].lexicon_match == "GLUCOFAST 850 850mg" and items[1].name == "GLUC0FAST 850 850mg"

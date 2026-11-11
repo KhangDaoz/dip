@@ -151,7 +151,8 @@ def vlm_to_items(parsed: Optional[dict], lexicon=None) -> tuple[list[Item], Opti
         raw = str(it.get("name") or "")
         name, match = clean_name(raw), None
         if lexicon is not None and name:
-            name, match, _, _ = lexicon.match(name)
+            _, best, _, accepted = lexicon.match(name)
+            match = best if accepted else None     # chỉ khi từ điển chấp nhận
         qty = _to_int(it.get("quantity"))
         unit = normalize_unit(it.get("unit"))
         if qty is None and isinstance(it.get("quantity"), str):

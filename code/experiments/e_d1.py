@@ -18,7 +18,7 @@ from assemble.group import assemble
 from common.contracts import TextBox
 from common.experiment import save_config, save_table
 from common.paths import REPO_DIR, vaipe_labels, vaipe_split
-from metrics.items import items_prf
+from assemble.scoring import evaluate_d
 from vaipe.dataset import read_label_json
 
 EXP = "E-D1"
@@ -44,18 +44,18 @@ def main():
                      for a in anns]
             items, _, _ = assemble(boxes, lexicon=None, has_labels=(mode == "labels"))
             preds[image_id] = [{"name": it.name, "quantity": it.quantity} for it in items]
-        r = items_prf(preds, gt_items)
+        agg, counts = evaluate_d(gt_items, preds, use_lexicon=False)
         n_bad = 0
-        for k, (tp, fp, fn) in r["per_image"].items():
-            if fp or fn:
+        for k, c in zip(sorted(gt_items), counts):
+            if c["fp"] or c["fn"]:
                 n_bad += 1
-                bad.append({"mode": mode, "image_id": k, "fp": fp, "fn": fn,
+                bad.append({"mode": mode, "image_id": k, "fp": c["fp"], "fn": c["fn"],
                             "pred": json.dumps(preds[k], ensure_ascii=False),
                             "gt": json.dumps([{"name": g["name"], "quantity": g["quantity"]} for g in gt_items[k]],
                                              ensure_ascii=False)})
-        rows.append({"mode": mode, "tp": r["tp"], "fp": r["fp"], "fn": r["fn"],
-                     "f1": round(r["f1"], 4), "n_bad_images": n_bad})
-        print(f"[{EXP}] {mode:<10} TP={r['tp']} FP={r['fp']} FN={r['fn']} F1={r['f1']:.4f} ảnh sai={n_bad}")
+        rows.append({"mode": mode, "tp": agg["tp"], "fp": agg["fp"], "fn": agg["fn"],
+                     "f1": round(agg["item_f1"], 4), "n_bad_images": n_bad})
+        print(f"[{EXP}] {mode:<10} TP={agg['tp']} FP={agg['fp']} FN={agg['fn']} F1={agg['item_f1']:.4f} ảnh sai={n_bad}")
 
     save_table(pd.DataFrame(rows), EXP)
     save_table(pd.DataFrame(bad, columns=["mode", "image_id", "fp", "fn", "pred", "gt"]), EXP, "bad_cases")

@@ -1,80 +1,88 @@
-"""Độ đo khoản thuốc (plan_Thang.md mục 5.1).
+"""F1 khoản thuốc — độ đo chính (plan §6).
 
-Khoản dự đoán KHỚP khoản đáp án khi CER(tên) ≤ 0,1 và quantity bằng nhau.
-Tên so sau NFC + gộp khoảng trắng + bỏ tiền tố "N)" + casefold.
-Ghép tham lam theo CER tăng dần, mỗi khoản đáp án ghép tối đa 1 lần. Cộng TP/FP/FN cả tập (micro).
-Khoảng tin cậy: bootstrap theo ảnh.
+Khoản dự đoán khớp khoản GT khi CER(tên) ≤ 0,1 và quantity bằng nhau. Ghép tham lam theo CER tên tăng dần,
+cộng dồn TP/FP/FN cả tập. Kèm F1 tên thuốc (chỉ xét tên), đúng số lượng %, đơn đúng hoàn toàn %, bootstrap CI.
 """
 from __future__ import annotations
 
 import numpy as np
 
-from assemble.rules import clean_name
 from common.boxes import precision_recall_f1
-from legacy.ocr.metrics import cer
 
-CER_THR = 0.1
+from .ocr import cer
 
-
-def _get(it, key):
-    return it.get(key) if isinstance(it, dict) else getattr(it, key, None)
+NAME_CER = 0.1
 
 
-def norm_name(s: str) -> str:
-    return clean_name(s or "").casefold()
+def _get(it, k):
+    return getattr(it, k) if not isinstance(it, dict) else it.get(k)
 
 
-def match_items(pred: list, gt: list, cer_thr: float = CER_THR, name_only: bool = False) -> tuple[int, int, int]:
-    """→ (tp, fp, fn) cho một ảnh."""
-    pairs = []
-    for i, p in enumerate(pred):
-        pn = norm_name(_get(p, "name"))
-        for j, g in enumerate(gt):
-            gn = norm_name(_get(g, "name"))
-            c = cer(pn, gn) if gn else (0.0 if not pn else 1.0)
-            if c > cer_thr:
+def pred_name(it, use_lexicon: bool = True) -> str:
+    """Tên dùng để chấm: tên chuẩn từ điển nếu có (D3), ngược lại tên đã bỏ tiền tố."""
+    lm = _get(it, "lexicon_match") if use_lexicon else None
+    return lm or _get(it, "name") or ""
+
+
+def match_items(gt_items: list, pred_items: list, check_quantity: bool = True, name_cer: float = NAME_CER,
+                use_lexicon: bool = True) -> list:
+    """Trả về list[(gi, pi, cer)] các cặp khớp."""
+    cands = []
+    for gi, g in enumerate(gt_items):
+        for pi, p in enumerate(pred_items):
+            c = cer(pred_name(p, use_lexicon), _get(g, "name") or "")
+            if c > name_cer:
                 continue
-            if not name_only and _get(p, "quantity") != _get(g, "quantity"):
+            if check_quantity and _get(g, "quantity") != _get(p, "quantity"):
                 continue
-            pairs.append((c, i, j))
-    used_p, used_g = set(), set()
-    for _, i, j in sorted(pairs):
-        if i not in used_p and j not in used_g:
-            used_p.add(i)
-            used_g.add(j)
-    tp = len(used_p)
-    return tp, len(pred) - tp, len(gt) - tp
+            cands.append((c, gi, pi))
+    pairs, ug, up = [], set(), set()
+    for c, gi, pi in sorted(cands):
+        if gi in ug or pi in up:
+            continue
+        pairs.append((gi, pi, c))
+        ug.add(gi)
+        up.add(pi)
+    return pairs
 
 
-def items_prf(preds: dict, gts: dict, cer_thr: float = CER_THR, name_only: bool = False) -> dict:
-    """preds, gts: {image_id: list[item]} (item là dict hoặc Item). Ảnh thiếu dự đoán tính là rỗng."""
-    per_image = {}
-    for k, g in gts.items():
-        per_image[k] = match_items(preds.get(k, []), g, cer_thr, name_only)
-    tp, fp, fn = (sum(v[i] for v in per_image.values()) for i in range(3))
-    p, r, f1 = precision_recall_f1(tp, fp, fn)
-    exact = np.mean([v[1] == 0 and v[2] == 0 for v in per_image.values()]) if per_image else 0.0
-    return {"tp": tp, "fp": fp, "fn": fn, "precision": p, "recall": r, "f1": f1,
-            "exact_rate": float(exact), "per_image": per_image}
+def image_counts(gt_items: list, pred_items: list, use_lexicon: bool = True) -> dict:
+    """Đếm của một ảnh: khoản (tên+SL), tên, số lượng đúng trên các cặp khớp tên, đơn đúng hoàn toàn."""
+    full = match_items(gt_items, pred_items, True, use_lexicon=use_lexicon)
+    name = match_items(gt_items, pred_items, False, use_lexicon=use_lexicon)
+    qty_ok = sum(_get(gt_items[g], "quantity") == _get(pred_items[p], "quantity") for g, p, _ in name)
+    ng, np_ = len(gt_items), len(pred_items)
+    return {"tp": len(full), "fp": np_ - len(full), "fn": ng - len(full),
+            "name_tp": len(name), "name_fp": np_ - len(name), "name_fn": ng - len(name),
+            "qty_ok": qty_ok, "n_gt": ng, "exact": int(len(full) == ng == np_)}
 
 
-def bootstrap_ci(per_image: dict, n: int = 1000, seed: int = 42, alpha: float = 0.05) -> tuple[float, float]:
-    """Khoảng tin cậy (1 − alpha) cho F1 micro, lấy mẫu lại theo ảnh."""
-    if not per_image:
-        return 0.0, 0.0
-    arr = np.array(list(per_image.values()), dtype=float)      # (N, 3) = tp, fp, fn
+def aggregate(counts: list) -> dict:
+    s = {k: sum(c[k] for c in counts) for k in counts[0]} if counts else {}
+    if not s:
+        return {"item_p": 0.0, "item_r": 0.0, "item_f1": 0.0, "name_f1": 0.0, "qty_acc": 0.0, "exact_rate": 0.0, "n_images": 0}
+    p, r, f1 = precision_recall_f1(s["tp"], s["fp"], s["fn"])
+    _, _, nf1 = precision_recall_f1(s["name_tp"], s["name_fp"], s["name_fn"])
+    return {"item_p": p, "item_r": r, "item_f1": f1, "name_f1": nf1,
+            "qty_acc": s["qty_ok"] / s["n_gt"] if s["n_gt"] else 0.0,
+            "exact_rate": s["exact"] / len(counts), "n_images": len(counts),
+            "tp": s["tp"], "fp": s["fp"], "fn": s["fn"]}
+
+
+def evaluate(gt: dict, pred: dict, use_lexicon: bool = True) -> tuple:
+    """gt, pred: {image_id: list khoản}. Chấm trên các ảnh của gt (ảnh thiếu dự đoán = đơn rỗng).
+    Trả về (tổng hợp, list đếm theo ảnh)."""
+    ids = sorted(gt)
+    counts = [image_counts(gt[i], pred.get(i, []), use_lexicon) for i in ids]
+    return aggregate(counts), counts
+
+
+def bootstrap_ci(counts: list, metric: str = "item_f1", n: int = 1000, alpha: float = 0.05, seed: int = 42) -> tuple:
+    """Bootstrap theo ảnh: lấy mẫu có hoàn lại n lần, trả về (giá trị gốc, cận dưới, cận trên)."""
     rng = np.random.default_rng(seed)
-    f1s = []
-    for _ in range(n):
-        s = arr[rng.integers(0, len(arr), len(arr))].sum(axis=0)
-        f1s.append(precision_recall_f1(*s)[2])
-    lo, hi = np.quantile(f1s, [alpha / 2, 1 - alpha / 2])
-    return float(lo), float(hi)
-
-
-def date_accuracy(pred_dates: dict, gt_dates: dict) -> float:
-    """Tỉ lệ ảnh có ngày GT mà dự đoán trùng (chỉ xét ảnh GT có ngày)."""
-    keys = [k for k, v in gt_dates.items() if v]
-    if not keys:
-        return 0.0
-    return float(np.mean([pred_dates.get(k) == gt_dates[k] for k in keys]))
+    base = aggregate(counts)[metric]
+    if not counts:
+        return base, base, base
+    vals = [aggregate([counts[j] for j in rng.integers(0, len(counts), len(counts))])[metric] for _ in range(n)]
+    lo, hi = np.percentile(vals, [100 * alpha / 2, 100 * (1 - alpha / 2)])
+    return float(base), float(lo), float(hi)
