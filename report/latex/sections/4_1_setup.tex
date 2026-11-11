@@ -1,5 +1,5 @@
 % Mục 4.1. Thiết lập và độ đo (khoảng 0,5 trang). Người viết: Hiếu.
-Huấn luyện chạy trên Kaggle (GPU T4). Suy luận và đánh giá chạy trên máy cá nhân \TODO{CPU}, GPU RTX~3050 4~GB, Python 3.11, PyTorch \KQ{phiên bản}, Ultralytics \KQ{phiên bản}, VietOCR 0.3.13, seed 42.
+Huấn luyện chạy trên Kaggle (GPU T4), còn suy luận và đánh giá chạy trên máy cá nhân \TODO{CPU}, GPU RTX~3050 4~GB, Python 3.11, PyTorch \KQ{phiên bản}, Ultralytics \KQ{phiên bản}, VietOCR 0.3.13, seed 42.
 Mọi số liệu tính trên 176 ảnh kiểm tra và chạy lại được bằng mã trong \path{code/experiments/}.
 
 Với bài toán phát hiện, dự đoán và nhãn chuẩn được ghép tham lam theo IoU giảm dần, mỗi nhãn chuẩn ghép tối đa một lần.
@@ -11,12 +11,10 @@ Cặp có IoU từ 0,5 trở lên (và cùng lớp, nếu đo có lớp) đượ
 $TP$, $FP$ và $FN$ được cộng dồn trên toàn tập chứ không lấy trung bình theo ảnh.
 mAP50 do Ultralytics tính và chỉ báo cáo kèm.
 
-Với nhận dạng, độ đo là tỉ lệ lỗi ký tự $\mathrm{CER}=\sum_i d(\hat s_i,s_i)\,/\sum_i|s_i|$, trong đó $d$ là khoảng cách Levenshtein~\cite{levenshtein1966} giữa chuỗi dự đoán $\hat s_i$ và chuỗi chuẩn $s_i$.
-WER tính tương tự trên từ.
+Với nhận dạng, độ đo là tỉ lệ lỗi ký tự $\mathrm{CER}=\sum_i d(\hat s_i,s_i)\,/\sum_i|s_i|$, trong đó $d$ là khoảng cách Levenshtein~\cite{levenshtein1966} giữa chuỗi dự đoán $\hat s_i$ và chuỗi chuẩn $s_i$, còn WER được tính tương tự nhưng trên từ.
 Hai chuỗi được chuẩn hóa Unicode NFC và gộp khoảng trắng trước khi so, có phân biệt hoa thường.
 
 Độ đo chính của đồ án là F1 khoản thuốc.
-Một khoản dự đoán khớp một khoản chuẩn khi CER của tên không quá 0,1 và số lượng bằng nhau, việc ghép làm tham lam theo CER tên tăng dần.
-F1 tên thuốc chỉ xét tên.
-Nhóm còn báo cáo tỉ lệ đúng số lượng và tỉ lệ đơn đúng hoàn toàn, tức mọi khoản khớp và không thừa khoản nào.
+Một khoản dự đoán khớp một khoản chuẩn khi CER của tên không quá 0,1 và số lượng bằng nhau, và việc ghép được làm tham lam theo CER tên tăng dần.
+Ngoài ra nhóm báo cáo F1 tên thuốc (chỉ xét tên), tỉ lệ đúng số lượng và tỉ lệ đơn đúng hoàn toàn, tức mọi khoản khớp và không thừa khoản nào.
 Khoảng tin cậy 95\% của F1 khoản thuốc lấy bằng bootstrap \num{1000} lần theo ảnh~\cite{efron1993bootstrap}.

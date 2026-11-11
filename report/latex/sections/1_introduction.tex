@@ -7,7 +7,7 @@ Sau vài năm, những giấy tờ này thành một xấp rời rạc đến t�
 Khi bác sĩ hỏi ``lần trước dùng thuốc gì'', người bệnh phải lục lại giấy tờ hoặc trả lời theo trí nhớ.
 
 Người cao tuổi và người mắc bệnh mạn tính chịu gánh nặng lớn nhất vì họ khám định kỳ và dùng nhiều thuốc cùng lúc.
-Việt Nam có khoảng 14,2 triệu người từ 60 tuổi trở lên (Điều tra dân số giữa kỳ 2024), và 26,2\% người từ 18 đến 69 tuổi bị tăng huyết áp (STEPS 2021).
+Việt Nam có khoảng 14,2 triệu người từ 60 tuổi trở lên (điều tra dân số giữa kỳ 2024), và 26,2\% người từ 18 đến 69 tuổi bị tăng huyết áp (STEPS 2021).
 Trong một nghiên cứu trên 380 bệnh nhân tăng huyết áp tại Bệnh viện Quân y 354 (2023), 41,6\% đã quên uống thuốc trong hai tuần gần nhất.
 
 Các ứng dụng hiện có chưa giải quyết được việc này.
@@ -25,31 +25,40 @@ Phiếu xét nghiệm và giấy ra viện để lại cho giai đoạn sau.
 
 Đầu ra là một bản ghi JSON gồm ba trường:
 \begin{itemize}
-  \item danh sách khoản thuốc, mỗi khoản có tên thuốc, số lượng, đơn vị và cách dùng,
-  \item chẩn đoán,
-  \item ngày kê đơn.
+  \item Danh sách khoản thuốc, mỗi khoản gồm tên thuốc, số lượng, đơn vị và cách dùng.
+  \item Chẩn đoán của bác sĩ.
+  \item Ngày kê đơn.
 \end{itemize}
-Ví dụ, khoản thuốc đầu tiên của đơn ở Hình~\ref{fig:example} (Phụ lục~\ref{app:examples}) được trả về như sau.
-\begin{center}\small
-\texttt{\{"name": "NOVOXIM-500 0,5g", "quantity": 20, "unit": "Viên",}\\
-\texttt{\ "usage": ["Sáng 2 Viên", "Chiều 2 Viên"]\}}
-\end{center}
+Dưới đây là ví dụ về dạng đầu ra, lấy từ đơn ở Hình~\ref{fig:example} (Phụ lục~\ref{app:examples}) và rút gọn còn một khoản thuốc.
+\begin{Verbatim}[fontsize=\small, frame=single, framesep=2.5mm, xleftmargin=1cm, xrightmargin=1cm]
+{
+  "items": [
+    {
+      "name": "NOVOXIM-500 0,5g",
+      "quantity": 20,
+      "unit": "Viên",
+      "usage": ["Sáng 2 Viên", "Chiều 2 Viên"]
+    }
+  ],
+  "diagnose": "I10 - Tăng huyết áp vô căn (nguyên phát)",
+  "date": "01/10/2019"
+}
+\end{Verbatim}
 
 Bài toán có ba khó khăn chính:
 \begin{itemize}
-  \item sai một ký tự là sai thông tin, vì chữ in nhỏ (cao khoảng 15 đến 25~px), có dấu tiếng Việt, và ``250mg'' khác ``500mg'',
-  \item các trường của một khoản thuốc nằm rời nhau, nên phải xác định vùng chữ nào thuộc khoản nào,
-  \item ảnh chụp có thể bị nghiêng, mờ, đổ bóng hoặc nén mạnh.
+  \item Sai một ký tự là sai thông tin, vì chữ in nhỏ (khung chữ cao trung vị 22~px), có dấu tiếng Việt và ``250mg'' khác ``500mg''.
+  \item Các trường của một khoản thuốc nằm rời nhau nên phải xác định vùng chữ nào thuộc khoản nào.
+  \item Ảnh chụp có thể bị nghiêng, mờ, đổ bóng hoặc nén mạnh.
 \end{itemize}
 
 \subsection{Hướng tiếp cận và đóng góp}\label{sec:approach}
-Đồ án làm theo Lựa chọn~2 của học phần, tức là một pipeline nhiều bước, mỗi bước có phương pháp đối chứng và độ đo định lượng.
-Pipeline có bốn khối.
-Khối đầu tiên tiền xử lý ảnh bằng các kỹ thuật cổ điển của học phần \chuong{2, 3, 5, 7}.
-Sau đó YOLOv8 phát hiện và phân lớp vùng chữ, VietOCR đã tinh chỉnh đọc chữ, và một bộ luật kết hợp từ điển tên thuốc ghép các vùng thành khoản thuốc.
+Đồ án làm theo lựa chọn~2 của học phần, tức là xây dựng một pipeline nhiều bước, trong đó mỗi bước có phương pháp đối chứng và độ đo định lượng.
+Pipeline gồm bốn khối nối tiếp, trong đó ảnh đầu vào trước tiên được tiền xử lý bằng các kỹ thuật cổ điển của học phần \chuong{2, 3, 5, 7}.
+Sau đó YOLOv8 phát hiện và phân lớp vùng chữ, VietOCR đã tinh chỉnh đọc chữ trong từng vùng, và cuối cùng một bộ luật kết hợp từ điển tên thuốc ghép các vùng thành khoản thuốc.
 Đóng góp của nhóm gồm:
 \begin{enumerate}
-  \item xây dựng pipeline trả về JSON có cấu trúc, đạt F1 khoản thuốc \KQ{F1 khoản DL} trên 176 ảnh kiểm tra của VAIPE,
-  \item tinh chỉnh VietOCR trên vùng chữ đơn thuốc, giảm tỉ lệ lỗi ký tự (CER) từ \num{0.0864} xuống \num{0.0329},
-  \item so sánh pipeline học sâu với pipeline cổ điển và với mô hình thị giác--ngôn ngữ (VLM) zero-shot trên cùng tập kiểm tra, đồng thời đo ảnh hưởng của tiền xử lý khi ảnh suy giảm.
+  \item Xây dựng pipeline trả về JSON có cấu trúc, đạt F1 khoản thuốc \KQ{F1 khoản DL} trên 176 ảnh kiểm tra của VAIPE.
+  \item Tinh chỉnh VietOCR trên vùng chữ đơn thuốc, giảm tỉ lệ lỗi ký tự (CER) từ \num{0.0864} xuống \num{0.0329}.
+  \item So sánh pipeline học sâu với pipeline cổ điển và với mô hình thị giác--ngôn ngữ (VLM) zero-shot trên cùng tập kiểm tra, đồng thời đo ảnh hưởng của tiền xử lý khi ảnh suy giảm.
 \end{enumerate}
