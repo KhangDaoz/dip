@@ -1,6 +1,6 @@
 # Kết quả cho báo cáo
 
-Sinh bởi `code/tools/export_report_results.py` lúc 11/11/2026 18:49, commit `45be984`. Mọi số liệu trên **176 ảnh kiểm tra** trừ khi ghi khác. Chạy lại script để cập nhật.
+Sinh bởi `code/tools/export_report_results.py` lúc 11/11/2026 19:17, commit `56e3020`. Mọi số liệu trên **176 ảnh kiểm tra** trừ khi ghi khác. Chạy lại script để cập nhật.
 
 ## Dữ liệu (đáp án khoản thuốc, từ điển)
 
@@ -113,6 +113,7 @@ File: `result/e_d1_rules/`
 | dl_c2 | 0.9966 | 0.9895 | 1.0 | 0.9514 | 0.9966 | 0.9955 | 0.9943 | 1.0 |  |  |
 | dl_c3 | 0.9966 | 0.9930 | 1.0 | 0.9966 | 0.9966 | 1.0 | 0.9830 | 1.0 |  |  |
 | dl_c3_gt_text | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |  |  |
+| vlm | 0.9966 | 0.9892 | 1.0 | 0.9875 | 0.9966 | 0.9932 | 0.9943 | 0.9943 | 1 | 0 |
 
 `f1_item` có từ điển, `f1_item_nolex` không từ điển; [ci_low, ci_high] = CI 95 % bootstrap. Dòng `*_gt_text` = khung dự đoán + chữ chuẩn.
 

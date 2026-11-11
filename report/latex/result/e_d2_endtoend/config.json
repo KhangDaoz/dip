@@ -2,15 +2,15 @@
   "experiment": "E-D2",
   "split": "test",
   "n_images": 176,
-  "commit": "45be98428fd6eb5edf98b25da8f4b4b1c5dd7fa7",
+  "commit": "56e3020d6f2f7e61846d98e88f8c8644ea35dfe6",
   "variants": {
-    "classical": "../results/handoff/classical.jsonl",
-    "hybrid": "../results/handoff/hybrid.jsonl",
-    "dl_c2": "../results/handoff/dl_c2.jsonl",
-    "dl_c3": "../results/handoff/dl_c3.jsonl"
+    "classical": "E:\\Project\\dip\\results\\handoff\\classical.jsonl",
+    "hybrid": "E:\\Project\\dip\\results\\handoff\\hybrid.jsonl",
+    "dl_c2": "E:\\Project\\dip\\results\\handoff\\dl_c2.jsonl",
+    "dl_c3": "E:\\Project\\dip\\results\\handoff\\dl_c3.jsonl"
   },
   "check": "dl_c3",
-  "vlm_model": null,
+  "vlm_model": "Qwen3.8-27B",
   "lexicon": {
     "source": "train",
     "size": 138,
