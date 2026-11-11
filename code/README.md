@@ -56,6 +56,16 @@ pytest                                                # phần thiếu data / tr
 
 Chỉ cần khối A và độ đo (không học sâu): `pip install -r requirements.txt && pip install -e .`.
 
+## Giao diện demo (Gradio)
+
+```bash
+python app.py            # http://127.0.0.1:7860 — tải ảnh lên, chạy A → B → C → D
+python app.py --share    # link công khai tạm thời
+```
+
+Chọn được preset (dl_c3 / dl_c2 / hybrid / classical), mức tiền xử lý khối A và bật/tắt từ điển. Kết quả: overlay,
+ảnh sau khối A, bảng khoản thuốc, bảng vùng chữ B + C, JSON tải về.
+
 ## Dữ liệu
 
 `data/1_vaipe/{train,valid,test}/{images,labels}` — tải từ Drive nhóm, không commit (xem [data/README.md](../data/README.md)).

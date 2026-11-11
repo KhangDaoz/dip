@@ -27,3 +27,7 @@ __pycache__/
 .ipynb_checkpoints/
 .agents/
 /message.txt
+.claude/
+# Motion Studio / HyperFrames (gen video): skill, phong cách, video
+/styles/
+/videos/
