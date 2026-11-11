@@ -1,0 +1,10 @@
+{
+  "iou_match": 0.5,
+  "imgsz": 1024,
+  "yolo_conf": 0.443,
+  "classical": {
+    "a": 2.5,
+    "v": 0.2,
+    "lines": false
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "limit": 50,
+  "levels": [
+    "L0",
+    "L2",
+    "L4"
+  ],
+  "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
+  "python": "3.13.15"
+}

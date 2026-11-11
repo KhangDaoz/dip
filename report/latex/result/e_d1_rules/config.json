@@ -1,0 +1,11 @@
+{
+  "experiment": "E-D1",
+  "split": "test",
+  "n_images": 176,
+  "commit": "22e41b9dcbfb7388fa7921152162921131d1c3b3",
+  "lexicon": null,
+  "conf_yolo": 0.5,
+  "cer_thr": 0.1,
+  "input": "data/1_vaipe/test/labels",
+  "gt": "data/1_vaipe/test/items_gt.json"
+}

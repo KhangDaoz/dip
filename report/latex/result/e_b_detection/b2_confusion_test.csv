@@ -1,0 +1,8 @@
+﻿,pred_drugname,pred_quantity,pred_usage,pred_diagnose,pred_date,pred_other,pred_bg
+gt_drugname,443,0,0,0,0,0,0
+gt_quantity,0,443,0,0,0,0,0
+gt_usage,1,0,601,0,0,0,0
+gt_diagnose,0,0,0,250,0,2,1
+gt_date,0,0,0,0,176,0,0
+gt_other,0,0,0,1,0,4139,29
+gt_bg,0,0,0,1,0,51,0

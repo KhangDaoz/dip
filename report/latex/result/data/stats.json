@@ -1,0 +1,11 @@
+{
+  "n_images": 176,
+  "n_reviewed": 176,
+  "n_items": 443,
+  "n_names": 98,
+  "lexicon_size": 138,
+  "oov_items": 2,
+  "oov_items_pct": 0.45146726862302483,
+  "oov_names": 1,
+  "oov_names_pct": 1.0204081632653061
+}
