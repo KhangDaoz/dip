@@ -1,11 +1,11 @@
 % ===== Mục 4.2 — Kết quả khối B (≈ 0,5 trang) =====
 % Viết gì: bảng E-B1 (không phân lớp, so cổ điển), bảng E-B2 (từng lớp), 2–3 câu nhận xét có số. Người: Trường.
 % Nguồn số: results/E-B1/table.csv, results/E-B2/table.csv (hoặc test_metrics.json của notebook train_yolo).
-Bảng~\ref{tab:EB} so sánh khả năng tìm vùng chữ khi bỏ qua lớp (E-B1) và độ đúng từng lớp của YOLOv8s (E-B2).
+Bảng~\ref{tab:EB} so sánh khả năng tìm vùng chữ khi bỏ qua lớp trong E-B1 và độ đúng từng lớp của YOLOv8s trong E-B2.
 
 \begin{table}[H]
 \centering
-\caption{Phát hiện vùng chữ trên 176 ảnh kiểm tra, IoU $\ge0{,}5$. Trên: không phân lớp (E-B1). Dưới: YOLOv8s từng lớp (E-B2).}\label{tab:EB}
+\caption{Phát hiện vùng chữ trên 176 ảnh kiểm tra, IoU $\ge0{,}5$. Trên: không phân lớp E-B1. Dưới: YOLOv8s từng lớp E-B2.}\label{tab:EB}
 \small
 \begin{tabular}{lcccc}
 \toprule
@@ -26,7 +26,7 @@ Cộng dồn mọi vùng & \num{0.991} & \num{0.995} & \num{0.993} & \num{0.995}
 \par\smallskip{\footnotesize Nguồn: \path{result/e_b_detection/}. Ngưỡng tin cậy 0,443 chọn trên tập kiểm định.}
 \end{table}
 
-YOLOv8s tìm được hầu hết vùng chữ với F1 \num{0.993}, cao hơn phương pháp cổ điển \num{0.175} điểm (\num{0.818}) và nhanh hơn (\num{0.031} so với \num{0.061} giây mỗi ảnh).
+YOLOv8s tìm được hầu hết vùng chữ với F1 \num{0.993}, cao hơn phương pháp cổ điển \num{0.175} điểm so với \num{0.818} và nhanh hơn với \num{0.031} so với \num{0.061} giây mỗi ảnh.
 Phương pháp cổ điển bỏ sót 1364 trong 6086 vùng và tạo thêm 744 khung thừa, còn YOLOv8s chỉ bỏ sót 30 vùng.
-Theo lớp, tên thuốc, số lượng, cách dùng và ngày đạt F1 từ \num{0.999} trở lên, còn lớp yếu nhất là \texttt{other} (\num{0.990}) và \texttt{diagnose} (\num{0.994}).
-Ma trận nhầm lẫn (Hình~\ref{fig:confusion}, Phụ lục~\ref{app:examples}) cho thấy lỗi chủ yếu là bỏ sót 29 vùng \texttt{other} và dự đoán thừa 51 khung \texttt{other}, chỉ 4 vùng bị nhầm sang lớp khác.
+Theo lớp, tên thuốc, số lượng, cách dùng và ngày đạt F1 từ \num{0.999} trở lên, còn lớp yếu nhất là \texttt{other} đạt \num{0.990} và \texttt{diagnose} đạt \num{0.994}.
+Ma trận nhầm lẫn ở Hình~\ref{fig:confusion}, Phụ lục~\ref{app:examples} cho thấy lỗi chủ yếu là bỏ sót 29 vùng \texttt{other} và dự đoán thừa 51 khung \texttt{other}, chỉ 4 vùng bị nhầm sang lớp khác.

@@ -7,11 +7,11 @@ Sau vài năm, những giấy tờ này thành một xấp rời rạc đến t�
 Khi bác sĩ hỏi ``lần trước dùng thuốc gì'', người bệnh phải lục lại giấy tờ hoặc trả lời theo trí nhớ.
 
 Người cao tuổi và người mắc bệnh mạn tính chịu gánh nặng lớn nhất vì họ khám định kỳ và dùng nhiều thuốc cùng lúc.
-Việt Nam có khoảng 14,2 triệu người từ 60 tuổi trở lên (điều tra dân số giữa kỳ 2024), và 26,2\% người từ 18 đến 69 tuổi bị tăng huyết áp (STEPS 2021).
-Trong một nghiên cứu trên 380 bệnh nhân tăng huyết áp tại Bệnh viện Quân y 354 (2023), 41,6\% đã quên uống thuốc trong hai tuần gần nhất.
+Theo điều tra dân số giữa kỳ 2024, Việt Nam có 14,2 triệu người từ 60 tuổi trở lên, và khảo sát STEPS 2021 cho thấy 26,2\% người từ 18 đến 69 tuổi bị tăng huyết áp.
+Nghiên cứu năm 2023 trên 380 bệnh nhân tăng huyết áp tại Bệnh viện Quân y 354 ghi nhận 41,6\% đã quên uống thuốc trong hai tuần gần nhất.
 
 Các ứng dụng hiện có chưa giải quyết được việc này.
-Hồ sơ bệnh án ở Việt Nam chưa được tập trung (JMIR, 2021).
+Theo JMIR năm 2021, hồ sơ bệnh án ở Việt Nam chưa được tập trung.
 VNeID và VssID chỉ có đơn khám bảo hiểm y tế tại các cơ sở đã liên thông dữ liệu, còn ứng dụng của từng bệnh viện chỉ chứa dữ liệu của chính bệnh viện đó.
 Tờ đơn giấy vẫn là nguồn thông tin đầy đủ nhất mà người bệnh có trong tay.
 
@@ -29,7 +29,7 @@ Phiếu xét nghiệm và giấy ra viện để lại cho giai đoạn sau.
   \item Chẩn đoán của bác sĩ.
   \item Ngày kê đơn.
 \end{itemize}
-Dưới đây là ví dụ về dạng đầu ra, lấy từ đơn ở Hình~\ref{fig:example} (Phụ lục~\ref{app:examples}) và rút gọn còn một khoản thuốc.
+Dưới đây là ví dụ về dạng đầu ra, lấy từ đơn ở Hình~\ref{fig:example} trong Phụ lục~\ref{app:examples} và rút gọn còn một khoản thuốc.
 \begin{Verbatim}[fontsize=\small, frame=single, framesep=2.5mm, xleftmargin=1cm, xrightmargin=1cm]
 {
   "items": [
@@ -47,7 +47,7 @@ Dưới đây là ví dụ về dạng đầu ra, lấy từ đơn ở Hình~\re
 
 Bài toán có ba khó khăn chính:
 \begin{itemize}
-  \item Chữ nhỏ (khung chữ cao trung vị 20 đến 32~px, khoảng 1,4 đến 2\% chiều cao ảnh) và có dấu tiếng Việt, trong khi nhiều thuốc chỉ khác nhau ở hàm lượng như ``CEPHALEXIN 250MG'' và ``CEPHALEXIN PMP 500'', nên sai một chữ số là thành thuốc khác liều.
+  \item Chữ nhỏ, khung chữ chỉ cao trung vị 20 đến 32~px tức 1,4 đến 2\% chiều cao ảnh, và có dấu tiếng Việt, trong khi nhiều thuốc chỉ khác nhau ở hàm lượng như ``CEPHALEXIN 250MG'' và ``CEPHALEXIN PMP 500'', nên sai một chữ số là thành thuốc khác liều.
   \item Các trường của một khoản thuốc nằm rời nhau nên phải xác định vùng chữ nào thuộc khoản nào.
   \item Ảnh chụp có thể bị nghiêng, mờ, đổ bóng hoặc nén mạnh.
 \end{itemize}
@@ -58,7 +58,7 @@ Bài toán có ba khó khăn chính:
 Sau đó YOLOv8 phát hiện và phân lớp vùng chữ, VietOCR đã tinh chỉnh đọc chữ trong từng vùng, và một bộ luật kết hợp từ điển tên thuốc ghép các vùng thành khoản thuốc.
 Đóng góp của nhóm gồm:
 \begin{enumerate}
-  \item Xây dựng pipeline trả về JSON có cấu trúc, đạt F1 khoản thuốc \num{0.9966} (tỉ lệ đơn đúng hoàn toàn \num{0.9830}) trên 176 ảnh kiểm tra của VAIPE.
+  \item Xây dựng pipeline trả về JSON có cấu trúc, đạt F1 khoản thuốc \num{0.9966} và tỉ lệ đơn đúng hoàn toàn \num{0.9830} trên 176 ảnh kiểm tra của VAIPE.
   \item Tinh chỉnh VietOCR trên vùng chữ đơn thuốc, giảm tỉ lệ lỗi ký tự (CER) từ \num{0.0864} xuống \num{0.0329}.
   \item So sánh pipeline học sâu với pipeline cổ điển và với mô hình thị giác--ngôn ngữ (VLM) zero-shot trên cùng tập kiểm tra, đồng thời đo ảnh hưởng của tiền xử lý khi ảnh suy giảm.
 \end{enumerate}

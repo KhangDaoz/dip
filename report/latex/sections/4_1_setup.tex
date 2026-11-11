@@ -1,9 +1,9 @@
 % Mục 4.1. Thiết lập và độ đo (khoảng 0,5 trang). Người viết: Hiếu.
-Huấn luyện chạy trên Kaggle (GPU T4), còn suy luận và đánh giá chạy trên máy cá nhân (CPU Intel Core i7-12700H, GPU RTX~3050 4~GB), Python 3.13, seed 42, theo các thư viện trong \path{code/requirements-dl.txt}.
+Quá trình huấn luyện chạy trên GPU T4 của Kaggle, còn suy luận và đánh giá chạy trên máy cá nhân dùng CPU Intel Core i7-12700H, GPU RTX~3050 4~GB, Python 3.13 và \texttt{seed} bằng 42, theo các thư viện trong \path{code/requirements-dl.txt}.
 Mọi số liệu được tính trên 176 ảnh kiểm tra bằng mã trong \path{code/experiments/}.
 
 Với bài toán phát hiện, dự đoán và nhãn chuẩn được ghép tham lam theo IoU giảm dần, mỗi nhãn chuẩn ghép tối đa một lần.
-Cặp có IoU từ 0,5 trở lên (và cùng lớp, nếu đo có lớp) được tính là dương tính đúng, và P, R, F1 tính theo công thức của Chương~8:
+Cặp có IoU từ 0,5 trở lên, đồng thời cùng lớp khi đánh giá theo lớp, được tính là dương tính đúng, và P, R, F1 tính theo công thức của Chương~8:
 \begin{equation}\label{eq:prf}
   \mathrm{IoU}(K_1,K_2)=\frac{|K_1\cap K_2|}{|K_1\cup K_2|},\qquad
   P=\frac{TP}{TP+FP},\quad R=\frac{TP}{TP+FN},\quad F_1=\frac{2PR}{P+R}.
@@ -16,5 +16,5 @@ Hai chuỗi được chuẩn hóa Unicode NFC và gộp khoảng trắng trướ
 
 Độ đo chính của đồ án là F1 khoản thuốc.
 Một khoản dự đoán khớp một khoản chuẩn khi CER của tên không quá 0,1 và số lượng bằng nhau, và việc ghép được làm tham lam theo CER tên tăng dần.
-Ngoài ra nhóm báo cáo F1 tên thuốc (chỉ xét tên), tỉ lệ đúng số lượng và tỉ lệ đơn đúng hoàn toàn, tức mọi khoản khớp và không thừa khoản nào.
+Ngoài ra nhóm báo cáo F1 tên thuốc khi chỉ xét trường tên, tỉ lệ đúng số lượng và tỉ lệ đơn đúng hoàn toàn, tức mọi khoản khớp và không thừa khoản nào.
 Khoảng tin cậy 95\% của F1 khoản thuốc lấy bằng bootstrap \num{1000} lần theo ảnh~\cite{efron1993bootstrap}.
