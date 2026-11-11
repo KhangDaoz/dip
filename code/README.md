@@ -19,13 +19,12 @@ sửa test trong cùng commit.
 code/
 ├── src/
 │   ├── common/      boxes (IoU, đổi định dạng, ghép tham lam), contracts, io, paths, seed, experiment
-│   ├── vaipe/       đọc nhãn VAIPE 6 lớp (train 820 / valid 176 / test 176)
-│   ├── enhance/     A — nắn phối cảnh, chỉnh nghiêng, khử bóng, khử nhiễu, CLAHE; preset none/geom/light/full
+│   ├── vaipe/       đọc nhãn VAIPE 6 lớp (train 820 / valid 176 / test 176); degrade (phép làm hỏng ảnh)
+│   ├── enhance/     A — nắn phối cảnh, chỉnh nghiêng, khử bóng, khử nhiễu, CLAHE (+ binarize: Sauvola, Otsu)
 │   ├── detect/      B — yolo.py
 │   ├── recognize/   C — vietocr_engine.py
 │   ├── assemble/    D — (chưa có)
 │   └── metrics/     P/R/F1 @IoU + ma trận nhầm lẫn, CER/WER, F1 khoản thuốc + bootstrap CI
-├── legacy/          code pipeline v1 — KHÔNG sửa; enhance/, metrics/, tools/ và các đối chứng cổ điển import từ đây
 ├── tools/           to_yolo, to_vietocr, make_degraded (L0/L2/L4), download_weights
 ├── notebooks/       train_yolo, finetune_vietocr (Kaggle)
 ├── configs/         vietocr_vgg_transformer.yml (image_max_width 1024 — khớp lúc fine-tune)

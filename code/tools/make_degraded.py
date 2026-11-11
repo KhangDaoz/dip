@@ -1,7 +1,6 @@
 """Sinh ảnh test suy biến 3 mức L0/L2/L4 (plan §2.4).
 
-Dùng bọc `legacy/synthetic/degrade.py` — các phép: rotate, perspective, gaussian_blur,
-motion_blur, shadow, glare, jpeg, gaussian_noise.
+Các phép biến đổi ở `src/vaipe/degrade.py`: rotate, perspective, gaussian_blur, motion_blur, shadow, jpeg.
 
 L0: ảnh gốc (không biến đổi).
 L2: xoay ±2°, Gauss blur σ=1-1.5, bóng nhẹ, JPEG q=60-80.
@@ -20,7 +19,7 @@ import numpy as np
 
 from common.io import read_image, write_image
 from common.paths import VAIPE_DEGRADED, vaipe_images
-from legacy.synthetic.degrade import (
+from vaipe.degrade import (
     rotate, perspective, gaussian_blur, motion_blur, shadow, jpeg,
 )
 

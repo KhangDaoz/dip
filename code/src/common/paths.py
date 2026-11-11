@@ -9,7 +9,6 @@ RESULTS_DIR = REPO_DIR / "results"
 OUT_DIR = REPO_DIR / "out"
 SAMPLES_DIR = CODE_DIR / "samples"
 WEIGHTS_DIR = CODE_DIR / "weights"
-LEGACY_DIR = CODE_DIR / "legacy"
 
 # VAIPE — bộ dữ liệu chính của v2
 VAIPE_DIR = DATA_DIR / "1_vaipe"

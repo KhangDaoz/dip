@@ -9,7 +9,7 @@ description = "Trích xuất thông tin đơn thuốc VAIPE — đồ án Xử l
 requires-python = ">=3.10"
 
 [tool.setuptools.packages.find]
-where = ["src", "."]
+where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

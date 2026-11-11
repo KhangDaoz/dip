@@ -14,7 +14,8 @@ import numpy as np
 
 from .clahe import clahe
 from .denoise import denoise
-from .deskew import deskew, rectify
+from .deskew import deskew
+from .rectify import rectify
 from .shadow import remove_shadows
 
 STEPS = ("rectify", "deskew", "shadow", "denoise", "clahe")

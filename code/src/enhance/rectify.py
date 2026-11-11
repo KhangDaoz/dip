@@ -1,11 +1,17 @@
-"""H6 tìm 4 góc tờ giấy (KeHoach.md mục 5.1).
+"""A1 nắn phối cảnh (ch. 5: Canny; ch. 2: nội suy khi ánh xạ ngược).
 
-Mọi hàm trả về mảng 4×2 float theo thứ tự TL, TR, BR, BL trên ảnh đầu vào, hoặc None nếu thất bại.
+Tìm 4 góc tờ giấy: contour → Hough → hình chữ nhật bao nhỏ nhất → cả ảnh; rồi warpPerspective.
+Góc trả về theo thứ tự TL, TR, BR, BL (mảng 4×2 float).
 """
+from __future__ import annotations
+
 import cv2
 import numpy as np
 
+from common.io import to_gray
+
 MIN_AREA_RATIO = 0.2   # tứ giác phải chiếm >= 20 % ảnh mới coi là tờ giấy
+INTERPOLATION = {"bicubic": cv2.INTER_CUBIC, "bilinear": cv2.INTER_LINEAR, "nearest": cv2.INTER_NEAREST}
 
 
 def order_corners(pts) -> np.ndarray:
@@ -29,9 +35,8 @@ def _edges(gray, canny_low, canny_high):
     return cv2.dilate(edges, np.ones((3, 3), np.uint8))  # nối chỗ biên đứt (C7 · S24)
 
 
-def corners_contour(gray: np.ndarray, canny_low: int = 50, canny_high: int = 100,
-                    approx_eps: float = 0.02):
-    """Phương án chính: Canny (C5 · S36–49, T1 = 2·T2) → đường bao lớn nhất → xấp xỉ tứ giác."""
+def corners_contour(gray: np.ndarray, canny_low: int = 50, canny_high: int = 150, approx_eps: float = 0.02):
+    """Phương án chính: Canny → đường bao lớn nhất → xấp xỉ tứ giác."""
     edges = _edges(gray, canny_low, canny_high)
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in sorted(contours, key=cv2.contourArea, reverse=True)[:5]:
@@ -54,7 +59,7 @@ def _intersect(l1, l2):
     return px, py
 
 
-def corners_hough(gray: np.ndarray, canny_low: int = 50, canny_high: int = 100):
+def corners_hough(gray: np.ndarray, canny_low: int = 50, canny_high: int = 150):
     """Dự phòng 1: đường thẳng Hough → 4 cạnh ngoài cùng (trên, dưới, trái, phải) → giao điểm."""
     h, w = gray.shape
     edges = _edges(gray, canny_low, canny_high)
@@ -85,8 +90,7 @@ def corners_minrect(gray: np.ndarray):
     contours, _ = cv2.findContours(paper, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if not contours:
         return None
-    box = cv2.boxPoints(cv2.minAreaRect(max(contours, key=cv2.contourArea)))
-    q = order_corners(box)
+    q = order_corners(cv2.boxPoints(cv2.minAreaRect(max(contours, key=cv2.contourArea))))
     q[:, 0] = np.clip(q[:, 0], 0, gray.shape[1] - 1)
     q[:, 1] = np.clip(q[:, 1], 0, gray.shape[0] - 1)
     return q if _valid_quad(q, gray.shape) else None
@@ -103,8 +107,8 @@ def is_full_frame(q, shape, tol: float = 0.02) -> bool:
     return np.abs(np.asarray(q) - full_image_corners(shape)).max() < tol * max(h, w)
 
 
-def find_corners(gray: np.ndarray, canny_low: int = 50, canny_high: int = 100) -> tuple:
-    """Chạy lần lượt contour → hough → minrect → cả ảnh. Trả về (corners, method), method ∈ CORNER_METHODS."""
+def find_corners(gray: np.ndarray, canny_low: int = 50, canny_high: int = 150) -> tuple:
+    """Chạy lần lượt contour → hough → minrect → cả ảnh. Trả về (corners, method)."""
     for method, fn in (("contour", lambda g: corners_contour(g, canny_low, canny_high)),
                        ("hough", lambda g: corners_hough(g, canny_low, canny_high)),
                        ("minrect", corners_minrect)):
@@ -112,3 +116,34 @@ def find_corners(gray: np.ndarray, canny_low: int = 50, canny_high: int = 100) -
         if q is not None and not is_full_frame(q, gray.shape):
             return q, method
     return full_image_corners(gray.shape), "full_image"
+
+
+def homography_from_corners(corners: np.ndarray) -> tuple:
+    """H 3×3 từ 4 góc (TL, TR, BR, BL) sang hình chữ nhật đích. Trả về (H, (width, height)).
+
+    Cạnh đích = cạnh dài hơn trong mỗi cặp cạnh đối (giữ độ phân giải).
+    """
+    c = np.asarray(corners, dtype=np.float32).reshape(4, 2)
+    tl, tr, br, bl = c
+    width = max(int(round(max(np.linalg.norm(tr - tl), np.linalg.norm(br - bl)))), 1)
+    height = max(int(round(max(np.linalg.norm(bl - tl), np.linalg.norm(br - tr)))), 1)
+    dst = np.float32([[0, 0], [width - 1, 0], [width - 1, height - 1], [0, height - 1]])
+    return cv2.getPerspectiveTransform(c, dst), (width, height)
+
+
+def warp(img: np.ndarray, H: np.ndarray, size: tuple, interpolation: str = "bicubic") -> np.ndarray:
+    """Ánh xạ ngược theo H, nội suy giữa các mẫu (C2 · S23–24)."""
+    return cv2.warpPerspective(img, np.asarray(H, dtype=np.float64), tuple(int(v) for v in size),
+                               flags=INTERPOLATION[interpolation], borderMode=cv2.BORDER_REPLICATE)
+
+
+def rectify(img: np.ndarray, canny_low: int = 50, canny_high: int = 150) -> tuple:
+    """A1: Canny → 4 góc → warpPerspective. Không tìm được tờ giấy thì trả ảnh gốc.
+
+    Trả về (ảnh, method) với method ∈ {contour, hough, minrect, full_image}.
+    """
+    corners, method = find_corners(to_gray(img), canny_low, canny_high)
+    if method == "full_image":
+        return img, method
+    H, size = homography_from_corners(corners)
+    return warp(img, H, size), method
