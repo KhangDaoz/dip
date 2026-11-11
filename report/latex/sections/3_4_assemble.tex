@@ -1,14 +1,11 @@
-% ===== Mục 3.4 — Khối D (≈ 0,5 trang) =====
-% Viết gì: chọn nhãn, dải ngang, chuẩn hóa, từ điển (tham số + lý do), đối chứng VLM. Người: Thắng.
-\Khoi{D} là bước hậu xử lý: biến danh sách vùng chữ đã đọc thành bản ghi đơn thuốc (\texttt{code/src/assemble/}).
+% Mục 3.4. Khối D (khoảng 0,5 trang). Người viết: Thắng.
+Khối D là bước hậu xử lý, biến danh sách vùng chữ đã đọc thành bản ghi đơn thuốc (\path{code/src/assemble/}) qua bốn bước.
 \begin{enumerate}[label=D\arabic*.]
-  \item \textbf{Chọn lớp.} Giữ lớp của YOLO; chỉ khi YOLO gán \texttt{other} hoặc độ tin cậy dưới 0,5 mới phân lớp lại bằng biểu thức chính quy trên chữ (ví dụ \texttt{drugname} bắt đầu bằng ``$N$)'', \texttt{quantity} bắt đầu bằng ``SL''). Hai vùng chồng nhau có IoU $>0{,}7$ thì giữ vùng tin cậy cao hơn.
-  \item \textbf{Gom theo dải ngang.} Sắp tên thuốc theo $y_0$; mỗi tên thuốc mở một dải từ $y_0$ của nó đến $y_0$ của tên kế tiếp (dải cuối đến dòng ngày). Vùng số lượng và cách dùng có tâm $y$ trong dải thuộc khoản đó. Tên thuốc xuống dòng (không có tiền tố ``$N$)'', cùng lề trái, ngay dưới) được nối vào tên trước.
-  \item \textbf{Chuẩn hóa.} Bỏ tiền tố ``$N$)'', đọc số lượng và đơn vị từ ``SL: 28 Viên'', chuẩn hóa cách dùng, đọc và kiểm tra hợp lệ ngày. Luật chịu các lỗi OCR thường gặp (``)''$\to$``]'', ``S''$\to$``5''); không chắc chắn thì giữ nguyên hoặc trả rỗng.
-  \item \textbf{Từ điển.} Đưa tên về tên chuẩn trong từ điển \KQ{số tên} tên thuốc của tập huấn luyện, so bằng tỉ số Levenshtein~\cite{levenshtein1966}. Lấy hai ứng viên $s_1\ge s_2$: thay khi $s_1\ge90$, hoặc $80\le s_1<90$ và $s_1-s_2\ge5$. Không thay nếu hai ứng viên sát nhau mà khác dãy số, hoặc tên OCR có liều đọc rõ (``250MG'') mà ứng viên không có, để tránh kéo sang thuốc khác liều.
+  \item Chọn lớp. Lớp do YOLO gán được giữ nguyên. Chỉ khi YOLO gán \texttt{other} hoặc độ tin cậy dưới 0,5 thì lớp được xét lại bằng biểu thức chính quy trên chữ, ví dụ \texttt{drugname} bắt đầu bằng ``$N$)'' và \texttt{quantity} bắt đầu bằng ``SL''. Hai vùng chồng nhau với IoU lớn hơn 0,7 thì chỉ giữ vùng có độ tin cậy cao hơn.
+  \item Gom khoản. Các tên thuốc được sắp theo $y_0$, mỗi tên mở một dải ngang kéo từ $y_0$ của nó đến $y_0$ của tên kế tiếp (dải cuối kéo đến dòng ngày). Vùng số lượng và cách dùng có tâm nằm trong dải thì thuộc khoản đó. Tên thuốc bị xuống dòng, tức không có tiền tố ``$N$)'', cùng lề trái và nằm ngay dưới, được nối vào tên trước.
+  \item Chuẩn hóa. Bỏ tiền tố ``$N$)'', tách số lượng và đơn vị từ chuỗi như ``SL: 28 Viên'', chuẩn hóa cách dùng, đọc ngày và kiểm tra ngày hợp lệ. Các luật chịu được một số lỗi OCR thường gặp như ``)'' thành ``]'' hay ``S'' thành ``5''. Trường hợp không chắc chắn thì giữ nguyên hoặc để trống.
+  \item Từ điển. Tên thuốc được đưa về tên chuẩn trong từ điển gồm \KQ{số tên} tên của tập huấn luyện, dùng độ tương tự dựa trên khoảng cách Levenshtein~\cite{levenshtein1966}. Gọi $s_1\ge s_2$ là điểm của hai ứng viên tốt nhất. Tên được thay khi $s_1\ge90$, hoặc khi $80\le s_1<90$ và $s_1-s_2\ge5$. Nhóm không thay nếu hai ứng viên sát nhau mà khác dãy số, hoặc nếu tên OCR có liều đọc rõ (như ``250MG'') mà ứng viên không có, vì như vậy dễ kéo tên sang thuốc khác liều.
 \end{enumerate}
-
-\textbf{Đối chứng VLM.}
-Qwen2.5-VL~\cite{bai2025qwen25vl} nhận nguyên ảnh và một lời nhắc cố định yêu cầu trả JSON theo đúng lược đồ trên, nhiệt độ 0.
-Đầu ra VLM đi qua cùng bước chuẩn hóa D3 và từ điển D4 để so sánh công bằng.
-\TODO{Thắng: ghi mô hình cụ thể và nhà cung cấp API đã dùng (FPT AI / OpenRouter)}
+Phương pháp đối chứng là VLM Qwen2.5-VL~\cite{bai2025qwen25vl}. Mô hình nhận nguyên ảnh cùng một lời nhắc cố định và trả về JSON theo đúng lược đồ trên, với nhiệt độ 0.
+Kết quả của VLM đi qua cùng bước chuẩn hóa D3 và từ điển D4 để việc so sánh công bằng.
+\TODO{Thắng: ghi mô hình cụ thể và nhà cung cấp API đã dùng}

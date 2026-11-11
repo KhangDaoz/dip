@@ -1,41 +1,22 @@
-% ===== Mục 2 — Dữ liệu (≈ 0,75 trang) =====
-% Viết gì: VAIPE, nhãn 6 lớp, chia tập chống rò rỉ, đáp án khoản thuốc, bộ ảnh suy giảm. Người: Hiếu.
-\subsection{Bộ dữ liệu VAIPE}\label{sec:vaipe}
-Đồ án dùng phần đơn thuốc của bộ VAIPE~\cite{vaipe}: ảnh đơn thuốc bảo hiểm y tế in máy, thông tin cá nhân đã được nguồn che.
+% Mục 2. Dữ liệu (khoảng 0,6 trang). Người viết: Hiếu.
+Đồ án dùng phần đơn thuốc của bộ VAIPE~\cite{vaipe}, gồm ảnh đơn thuốc bảo hiểm y tế in máy, đã được nguồn che thông tin cá nhân.
 Mỗi ảnh có nhãn là danh sách vùng chữ.
 Mỗi vùng gồm khung bao $[x_0,y_0,x_1,y_1]$, chữ chuẩn và một trong sáu lớp \texttt{drugname}, \texttt{quantity}, \texttt{usage}, \texttt{diagnose}, \texttt{date}, \texttt{other}.
-Vùng chữ ở mức cụm chữ, không phải cả dòng: tên thuốc và ``SL: 28 Viên'' nằm cùng hàng nhưng là hai vùng.
+Vùng chữ ở mức cụm chữ chứ không phải cả dòng, ví dụ tên thuốc và ``SL: 28 Viên'' cùng hàng nhưng là hai vùng.
 Ảnh có kích thước $760\times1070$, $770\times1420$ hoặc $1150\times1600$ pixel.
 
-\subsection{Chia tập và chống rò rỉ}\label{sec:split}
-Tập kiểm tra gốc của VAIPE (172 ảnh) không có nhãn.
-Vì vậy \num{1173} ảnh có nhãn được chia lại thành tập huấn luyện, kiểm định và kiểm tra với 820 / 176 / 176 ảnh (tỉ lệ 70/15/15, seed 42).
-Các ảnh của cùng một bệnh nhân ở các lần khám khác nhau luôn nằm cùng một tập.
-Hai ảnh được coi là của cùng bệnh nhân khi hệ số Jaccard giữa chữ trong nhãn đạt ít nhất \num{0.85}; tiêu chí này tạo ra \num{1030} nhóm.
-Mọi tham số (ngưỡng tin cậy, ngưỡng từ điển, kích thước phần tử cấu trúc, số vòng huấn luyện) được chọn trên tập kiểm định.
-Tập kiểm tra chỉ chạy một lần khi đã chốt cấu hình \chuong{8}.
+Tập kiểm tra gốc của VAIPE (172 ảnh) không có nhãn, nên \num{1173} ảnh có nhãn được chia lại thành 820 ảnh huấn luyện, 176 ảnh kiểm định và 176 ảnh kiểm tra (seed 42).
+Để tránh rò rỉ dữ liệu, các ảnh của cùng một bệnh nhân luôn nằm trong cùng một tập.
+Hai ảnh được xem là của cùng một bệnh nhân khi hệ số Jaccard giữa chữ trong nhãn đạt từ \num{0.85} trở lên, và cách này cho \num{1030} nhóm.
+Mọi tham số được chọn trên tập kiểm định, còn tập kiểm tra chỉ chạy một lần sau khi chốt cấu hình \chuong{8}.
 172 ảnh không nhãn chỉ dùng để minh họa.
 
-\subsection{Đáp án khoản thuốc và bộ ảnh suy giảm}\label{sec:items-gt}
-Nhãn VAIPE ở mức vùng chữ, không có sẵn đáp án ở mức khoản thuốc.
-Đáp án khoản thuốc được dẫn xuất bằng chính luật ghép của \khoi{D} (Mục~\ref{sec:m-assemble}) áp lên khung và chữ chuẩn, sau đó soát bằng mắt \KQ{số ảnh soát} ảnh kiểm tra.
-Tập kiểm tra có \KQ{số khoản thuốc test} khoản thuốc; \KQ{\% OOV} tên thuốc của tập kiểm tra không có trong từ điển dựng từ tập huấn luyện.
+Nhãn VAIPE ở mức vùng chữ nên chưa có đáp án ở mức khoản thuốc.
+Nhóm dẫn xuất đáp án này bằng chính luật ghép của khối D (Mục~\ref{sec:m-assemble}) áp lên khung và chữ chuẩn, rồi soát bằng mắt \KQ{số ảnh soát} ảnh.
+Tập kiểm tra có \KQ{số khoản thuốc test} khoản thuốc, trong đó \KQ{\% OOV} tên thuốc không có trong từ điển dựng từ tập huấn luyện.
 
-Để đo độ bền, 176 ảnh kiểm tra được làm suy giảm ở các mức L0 (gốc), L2 và L4 (seed 42) bằng các phép biến đổi của Chương~3 (tích chập Gauss, mờ chuyển động) và Chương~2 (xoay, phối cảnh), Bảng~\ref{tab:degrade}.
+Để đo độ bền, 176 ảnh kiểm tra được làm suy giảm thành hai mức L2 và L4 (seed 42, \path{code/tools/make_degraded.py}), còn L0 là ảnh gốc.
+Mức L2 gồm xoay ngẫu nhiên $\pm2^\circ$, mờ Gauss $\sigma$ từ 0,8 đến 1,2, bóng nhẹ và nén JPEG chất lượng 60 đến 80.
+Mức L4 xoay đến $\pm5^\circ$, thêm biến dạng phối cảnh, mờ chuyển động dài 9~px, bóng đậm và nén JPEG chất lượng 25 đến 40.
+Các phép này dùng kiến thức Chương~2 (xoay, phối cảnh) và Chương~3 (tích chập Gauss, mờ chuyển động).
 Ảnh suy giảm hình học không còn khớp khung gốc nên chỉ dùng cho độ đo đầu-cuối.
-
-\begin{table}[H]
-\centering
-\caption{Các mức suy giảm của bộ ảnh kiểm tra (cộng dồn, tham số lấy ngẫu nhiên trong khoảng).}\label{tab:degrade}
-\small
-\begin{tabularx}{\linewidth}{cX}
-\toprule
-\textbf{Mức} & \textbf{Biến đổi} \\
-\midrule
-L0 & Ảnh gốc \\
-L2 & Xoay ngẫu nhiên $\pm2^\circ$; mờ Gauss $\sigma$ 0,8--1,2; bóng nhẹ (giảm sáng tối đa 25\%); JPEG chất lượng 60--80 \\
-L4 & Xoay $\pm5^\circ$; phối cảnh (dịch 4 góc tối đa 5\% cạnh); mờ Gauss $\sigma$ 0,8--1,2; mờ chuyển động dài 9~px; bóng đậm (65\%); JPEG chất lượng 25--40 \\
-\bottomrule
-\end{tabularx}
-\par\smallskip{\footnotesize Sinh bằng \texttt{code/tools/make\_degraded.py}. }
-\end{table}

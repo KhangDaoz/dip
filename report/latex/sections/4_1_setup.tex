@@ -1,18 +1,22 @@
-% ===== Mục 4.1 — Thiết lập và độ đo (≈ 0,5 trang) =====
-% Viết gì: phần cứng, phiên bản, định nghĩa độ đo dùng chung. Người: Hiếu.
-Huấn luyện chạy trên Kaggle (GPU T4); suy luận và đánh giá chạy trên máy cá nhân \TODO{CPU}, GPU RTX~3050 4~GB, Python 3.11, PyTorch \KQ{phiên bản}, Ultralytics \KQ{phiên bản}, VietOCR 0.3.13, seed 42.
-Mọi số liệu trên 176 ảnh kiểm tra; mã chạy lại ở \texttt{code/experiments/}.
+% Mục 4.1. Thiết lập và độ đo (khoảng 0,5 trang). Người viết: Hiếu.
+Huấn luyện chạy trên Kaggle (GPU T4). Suy luận và đánh giá chạy trên máy cá nhân \TODO{CPU}, GPU RTX~3050 4~GB, Python 3.11, PyTorch \KQ{phiên bản}, Ultralytics \KQ{phiên bản}, VietOCR 0.3.13, seed 42.
+Mọi số liệu tính trên 176 ảnh kiểm tra và chạy lại được bằng mã trong \path{code/experiments/}.
 
-\textbf{Phát hiện.} Dự đoán và nhãn chuẩn được ghép tham lam theo IoU giảm dần, mỗi nhãn chuẩn ghép tối đa một lần; cặp có IoU $\ge0{,}5$ (và cùng lớp, nếu đo có lớp) là dương tính đúng \chuong{8}:
+Với bài toán phát hiện, dự đoán và nhãn chuẩn được ghép tham lam theo IoU giảm dần, mỗi nhãn chuẩn ghép tối đa một lần.
+Cặp có IoU từ 0,5 trở lên (và cùng lớp, nếu đo có lớp) được tính là dương tính đúng \chuong{8}:
 \begin{equation}\label{eq:prf}
   \mathrm{IoU}(K_1,K_2)=\frac{|K_1\cap K_2|}{|K_1\cup K_2|},\qquad
   P=\frac{TP}{TP+FP},\quad R=\frac{TP}{TP+FN},\quad F_1=\frac{2PR}{P+R}.
 \end{equation}
-$TP$, $FP$, $FN$ cộng dồn trên toàn tập, không lấy trung bình từng ảnh. mAP50 tính bằng Ultralytics, chỉ báo cáo kèm.
+$TP$, $FP$ và $FN$ được cộng dồn trên toàn tập chứ không lấy trung bình theo ảnh.
+mAP50 do Ultralytics tính và chỉ báo cáo kèm.
 
-\textbf{Nhận dạng.} Tỉ lệ lỗi ký tự $\mathrm{CER}=\sum_i d(\hat s_i,s_i)\,/\sum_i|s_i|$, với $d$ là khoảng cách Levenshtein~\cite{levenshtein1966} và $s_i$ là chuỗi chuẩn; WER tính tương tự trên từ.
-Trước khi so, cả hai chuỗi được chuẩn hóa Unicode NFC và gộp khoảng trắng; có phân biệt hoa thường.
+Với nhận dạng, độ đo là tỉ lệ lỗi ký tự $\mathrm{CER}=\sum_i d(\hat s_i,s_i)\,/\sum_i|s_i|$, trong đó $d$ là khoảng cách Levenshtein~\cite{levenshtein1966} giữa chuỗi dự đoán $\hat s_i$ và chuỗi chuẩn $s_i$.
+WER tính tương tự trên từ.
+Hai chuỗi được chuẩn hóa Unicode NFC và gộp khoảng trắng trước khi so, có phân biệt hoa thường.
 
-\textbf{Đầu-cuối (độ đo chính).} Một khoản dự đoán khớp một khoản chuẩn khi CER của tên $\le0{,}1$ và số lượng bằng nhau; ghép tham lam theo CER tên tăng dần.
-Từ đó tính F1 khoản thuốc, F1 tên thuốc (chỉ xét tên), tỉ lệ đúng số lượng và tỉ lệ đơn đúng hoàn toàn (mọi khoản khớp, không khoản thừa).
+Độ đo chính của đồ án là F1 khoản thuốc.
+Một khoản dự đoán khớp một khoản chuẩn khi CER của tên không quá 0,1 và số lượng bằng nhau, việc ghép làm tham lam theo CER tên tăng dần.
+F1 tên thuốc chỉ xét tên.
+Nhóm còn báo cáo tỉ lệ đúng số lượng và tỉ lệ đơn đúng hoàn toàn, tức mọi khoản khớp và không thừa khoản nào.
 Khoảng tin cậy 95\% của F1 khoản thuốc lấy bằng bootstrap \num{1000} lần theo ảnh~\cite{efron1993bootstrap}.

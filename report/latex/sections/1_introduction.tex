@@ -1,33 +1,55 @@
-% ===== Mục 1 — Đặt vấn đề (≈ 0,5–0,75 trang) =====
-% Viết gì: bối cảnh, bài toán (đầu vào/đầu ra), khó khăn, hướng tiếp cận, đóng góp. Người: Hiếu.
+% Mục 1. Đặt vấn đề (khoảng 0,75 trang). Người viết: Hiếu.
+% Nguồn số liệu bối cảnh: Điều tra dân số giữa kỳ 2024, STEPS 2021, JMIR 2021, nghiên cứu tại BV Quân y 354 (2023).
+% Cần thêm vào refs/common.bib rồi đổi chú thích trong ngoặc thành \cite{}.
 \subsection{Bối cảnh}\label{sec:context}
-Đơn thuốc bảo hiểm y tế ở Việt Nam phần lớn vẫn được in trên giấy và giao cho người bệnh.
-Để theo dõi thuốc đang dùng, nhắc giờ uống hay đối chiếu giữa các lần khám, người bệnh hoặc người chăm sóc phải đọc và nhập lại bằng tay tên thuốc, số lượng và cách dùng.
-Việc nhập tay vừa tốn thời gian vừa dễ sai, nhất là với tên thuốc dài kèm hàm lượng như ``GLUCOFAST 850 850mg''.
-Một hệ thống tự đọc ảnh đơn thuốc và trả về dữ liệu có cấu trúc giúp số hóa bước này.
+Mỗi lần đi khám, người bệnh ở Việt Nam mang về một tờ đơn thuốc, một phiếu xét nghiệm hoặc một giấy ra viện.
+Sau vài năm, những giấy tờ này thành một xấp rời rạc đến từ nhiều bệnh viện, phòng khám và nhà thuốc.
+Khi bác sĩ hỏi ``lần trước dùng thuốc gì'', người bệnh phải lục lại giấy tờ hoặc trả lời theo trí nhớ.
+
+Người cao tuổi và người mắc bệnh mạn tính chịu gánh nặng lớn nhất vì họ khám định kỳ và dùng nhiều thuốc cùng lúc.
+Việt Nam có khoảng 14,2 triệu người từ 60 tuổi trở lên (Điều tra dân số giữa kỳ 2024), và 26,2\% người từ 18 đến 69 tuổi bị tăng huyết áp (STEPS 2021).
+Trong một nghiên cứu trên 380 bệnh nhân tăng huyết áp tại Bệnh viện Quân y 354 (2023), 41,6\% đã quên uống thuốc trong hai tuần gần nhất.
+
+Các ứng dụng hiện có chưa giải quyết được việc này.
+Hồ sơ bệnh án ở Việt Nam chưa được tập trung (JMIR, 2021).
+VNeID và VssID chỉ có đơn khám bảo hiểm y tế tại các cơ sở đã liên thông dữ liệu, còn ứng dụng của từng bệnh viện chỉ chứa dữ liệu của chính bệnh viện đó.
+Tờ đơn giấy vẫn là nguồn thông tin đầy đủ nhất mà người bệnh có trong tay.
+
+Nhóm hướng tới MedTrack AI, một ứng dụng di động biến ảnh chụp giấy tờ y tế thành hồ sơ sức khỏe có cấu trúc.
+Người dùng chụp đơn, hệ thống đọc và tách thông tin, người dùng xác nhận, rồi ứng dụng tạo lịch uống thuốc và dòng thời gian khám chữa bệnh.
+Trong phạm vi môn Xử lý ảnh, đồ án chỉ làm khâu lõi của ứng dụng là đọc ảnh đơn thuốc thành dữ liệu có cấu trúc.
+Phiếu xét nghiệm và giấy ra viện để lại cho giai đoạn sau.
 
 \subsection{Phát biểu bài toán}\label{sec:problem}
-Đầu vào là ảnh một đơn thuốc.
-Đầu ra là một bản ghi JSON gồm:
-\begin{enumerate}
-  \item danh sách khoản thuốc, mỗi khoản có tên thuốc, số lượng, đơn vị và cách dùng;
-  \item chẩn đoán;
+Đầu vào của bài toán là ảnh chụp hoặc ảnh quét một đơn thuốc.
+
+Đầu ra là một bản ghi JSON gồm ba trường:
+\begin{itemize}
+  \item danh sách khoản thuốc, mỗi khoản có tên thuốc, số lượng, đơn vị và cách dùng,
+  \item chẩn đoán,
   \item ngày kê đơn.
-\end{enumerate}
-Bài toán khó ở ba điểm.
-Thứ nhất, chữ nhỏ (cao khoảng 15--25~px) và tiếng Việt có dấu, nên chỉ sai một dấu thanh hoặc một chữ số là sai thông tin (``250mg'' và ``500mg'' là hai liều khác nhau).
-Thứ hai, các trường của một khoản thuốc không nằm trên một dòng: tên thuốc và số lượng cùng hàng nhưng cách xa nhau, cách dùng nằm ở dòng dưới, nên phải biết vùng chữ nào thuộc khoản nào.
-Thứ ba, ảnh thực tế có thể bị nghiêng, mờ, có bóng hoặc nén mạnh.
+\end{itemize}
+Ví dụ, khoản thuốc đầu tiên của đơn ở Hình~\ref{fig:example} (Phụ lục~\ref{app:examples}) được trả về như sau.
+\begin{center}\small
+\texttt{\{"name": "NOVOXIM-500 0,5g", "quantity": 20, "unit": "Viên",}\\
+\texttt{\ "usage": ["Sáng 2 Viên", "Chiều 2 Viên"]\}}
+\end{center}
 
-\subsection{Hướng tiếp cận}\label{sec:approach}
-Đồ án thực hiện theo Lựa chọn~2 của học phần: một pipeline nhiều bước, mỗi bước có phương pháp đối chứng và độ đo định lượng.
-Pipeline gồm bốn khối: tiền xử lý ảnh bằng kỹ thuật cổ điển của học phần \chuong{2, 3, 5, 7}, phát hiện và phân lớp vùng chữ bằng YOLOv8, nhận dạng chữ bằng VietOCR tinh chỉnh, và ghép khoản thuốc bằng luật kết hợp từ điển tên thuốc.
-Mỗi khối được so với một phương án đối chứng; toàn pipeline được so với một mô hình thị giác--ngôn ngữ (VLM) đọc thẳng ảnh mà không qua huấn luyện.
+Bài toán có ba khó khăn chính:
+\begin{itemize}
+  \item sai một ký tự là sai thông tin, vì chữ in nhỏ (cao khoảng 15 đến 25~px), có dấu tiếng Việt, và ``250mg'' khác ``500mg'',
+  \item các trường của một khoản thuốc nằm rời nhau, nên phải xác định vùng chữ nào thuộc khoản nào,
+  \item ảnh chụp có thể bị nghiêng, mờ, đổ bóng hoặc nén mạnh.
+\end{itemize}
 
-\subsection{Đóng góp}\label{sec:contrib-list}
+\subsection{Hướng tiếp cận và đóng góp}\label{sec:approach}
+Đồ án làm theo Lựa chọn~2 của học phần, tức là một pipeline nhiều bước, mỗi bước có phương pháp đối chứng và độ đo định lượng.
+Pipeline có bốn khối.
+Khối đầu tiên tiền xử lý ảnh bằng các kỹ thuật cổ điển của học phần \chuong{2, 3, 5, 7}.
+Sau đó YOLOv8 phát hiện và phân lớp vùng chữ, VietOCR đã tinh chỉnh đọc chữ, và một bộ luật kết hợp từ điển tên thuốc ghép các vùng thành khoản thuốc.
+Đóng góp của nhóm gồm:
 \begin{enumerate}
-  \item Pipeline 4 khối trả về JSON có cấu trúc, đạt F1 khoản thuốc \KQ{F1 khoản DL} trên 176 ảnh kiểm tra của VAIPE.
-  \item Tinh chỉnh VietOCR trên vùng chữ đơn thuốc, giảm tỉ lệ lỗi ký tự từ \num{0.0864} xuống \num{0.0329} so với trọng số công bố.
-  \item So sánh định lượng trên cùng tập kiểm tra giữa pipeline học sâu, pipeline cổ điển và VLM zero-shot.
-  \item Đo ảnh hưởng của tiền xử lý cổ điển lên pipeline học sâu khi ảnh bị suy giảm ở nhiều mức.
+  \item xây dựng pipeline trả về JSON có cấu trúc, đạt F1 khoản thuốc \KQ{F1 khoản DL} trên 176 ảnh kiểm tra của VAIPE,
+  \item tinh chỉnh VietOCR trên vùng chữ đơn thuốc, giảm tỉ lệ lỗi ký tự (CER) từ \num{0.0864} xuống \num{0.0329},
+  \item so sánh pipeline học sâu với pipeline cổ điển và với mô hình thị giác--ngôn ngữ (VLM) zero-shot trên cùng tập kiểm tra, đồng thời đo ảnh hưởng của tiền xử lý khi ảnh suy giảm.
 \end{enumerate}

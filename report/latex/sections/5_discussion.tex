@@ -1,18 +1,12 @@
-% ===== Mục 5 — Thảo luận (≈ 0,75 trang) =====
-% Viết gì: mỗi ý 2–3 câu CÓ SỐ từ mục 4. Người: Hiếu + Thắng.
-\subsection{Khi nào cổ điển đủ, khi nào cần học sâu}
-\TODO{So dòng (i)/(ii) với (iii) ở Bảng~\ref{tab:ED2} và E-B1: cổ điển tìm vùng chữ được nhưng không phân lớp, nên phải dựa vào luật trên chữ OCR — lỗi OCR kéo theo lỗi phân lớp. Phần nào cổ điển vẫn đáng dùng (tiền xử lý khi ảnh xấu, theo E-A1)}
+% Mục 5. Thảo luận (khoảng 0,6 trang). Mỗi ý 2 đến 3 câu có số lấy từ mục 4. Người viết: Hiếu và Thắng.
+\TODO{Cổ điển và học sâu. So dòng (i), (ii) với (iii) ở Bảng~\ref{tab:ED2} và kết quả E-B1. Phương pháp cổ điển vẫn tìm được vùng chữ nhưng không phân lớp, nên phải dựa vào luật trên chữ OCR và lỗi OCR kéo theo lỗi phân lớp. Nêu phần nào của phương pháp cổ điển vẫn đáng dùng, dựa trên E-A1.}
 
-\subsection{Học sâu theo khối so với VLM đầu-cuối}
-\TODO{Thắng: VLM mạnh ở đâu (không cần huấn luyện, đọc ngữ cảnh), yếu ở đâu (bịa tên/liều, chậm, phụ thuộc API, gửi ảnh y tế ra ngoài). Dẫn số từ Bảng~\ref{tab:ED2}}
+\TODO{Thắng: học sâu theo khối và VLM. VLM mạnh ở chỗ không cần huấn luyện và đọc được ngữ cảnh. VLM yếu ở chỗ nào (bịa tên hoặc liều, chậm, phụ thuộc API, phải gửi ảnh y tế ra ngoài). Dẫn số từ Bảng~\ref{tab:ED2}.}
 
-\subsection{Hạn chế}
-\begin{itemize}
-  \item VAIPE là ảnh in máy, sạch, cùng một mẫu đơn; kết quả chưa được kiểm chứng trên ảnh chụp điện thoại thật hay mẫu đơn của bệnh viện khác. Bộ suy giảm tổng hợp (Mục~\ref{sec:items-gt}) chỉ mô phỏng một phần.
-  \item Đáp án khoản thuốc được dẫn xuất bằng chính luật của \khoi{D}, chỉ soát bằng mắt \KQ{số ảnh} ảnh; E-D1 $=1{,}000$ vì thế chỉ chứng tỏ luật nhất quán, không chứng tỏ đáp án đúng tuyệt đối.
-  \item Từ điển tên thuốc lấy từ tập huấn luyện; \KQ{\% OOV} tên thuốc kiểm tra nằm ngoài từ điển và không được hưởng lợi.
-  \item \TODO{phần đã cắt vì thời gian: E-B3 (đường cong dữ liệu), E-C2 (tiền xử lý vùng cắt), E-D3; Tesseract / B cổ điển nếu không chạy}
-\end{itemize}
+Nhóm thấy ba hạn chế.
+Thứ nhất, VAIPE là ảnh in máy, sạch và cùng một mẫu đơn, nên kết quả chưa nói được gì về ảnh chụp điện thoại thật hay đơn của bệnh viện khác, và bộ ảnh suy giảm chỉ mô phỏng được một phần.
+Thứ hai, đáp án khoản thuốc được dẫn xuất bằng chính luật của khối D và chỉ soát bằng mắt \KQ{số ảnh} ảnh, nên E-D1 bằng \num{1.000} chỉ cho thấy luật nhất quán.
+Thứ ba, từ điển lấy từ tập huấn luyện nên \KQ{\% OOV} tên thuốc kiểm tra nằm ngoài từ điển không được hưởng lợi.
+\TODO{Ghi các phần đã cắt vì thời gian: E-B3, E-C2, E-D3, và Tesseract hoặc khối B cổ điển nếu không chạy}
 
-\subsection{Hướng phát triển}
-\TODO{1--2 câu: thu ảnh chụp thật để đánh giá; huấn luyện YOLO/VietOCR có tăng cường suy giảm; bỏ vùng \texttt{other} trước OCR để tăng tốc; từ điển thuốc quốc gia thay cho từ điển tập huấn luyện}
+\TODO{Hướng phát triển, 1 đến 2 câu. Thu ảnh chụp thật để đánh giá, huấn luyện lại có tăng cường suy giảm, bỏ vùng \texttt{other} trước OCR để tăng tốc, dùng từ điển thuốc quốc gia thay cho từ điển của tập huấn luyện.}
